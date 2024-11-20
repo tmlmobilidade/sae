@@ -18,7 +18,7 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
-  apps/slamanager-bridge:
+  apps/bridge:
     dependencies:
       '@helperkits/logger':
         specifier: 20240703.1726.24
@@ -61,7 +61,7 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
-  apps/slamanager-buffer:
+  apps/buffer:
     dependencies:
       '@helperkits/logger':
         specifier: 20240703.1726.24
@@ -104,7 +104,7 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
-  apps/slamanager-feeder:
+  apps/feeder:
     dependencies:
       '@helperkits/logger':
         specifier: 20240703.1726.24
@@ -144,7 +144,7 @@ importers:
         specifier: 5.6.3
         version: 5.6.3
 
-  apps/slamanager-monitor:
+  apps/monitor:
     dependencies:
       '@helperkits/logger':
         specifier: 20240703.1726.24
@@ -165,9 +165,6 @@ importers:
         specifier: 6.10.0
         version: 6.10.0
     devDependencies:
-      '@carrismetropolitana/eslint':
-        specifier: 20241024.1600.5
-        version: 20241024.1600.5
       '@types/luxon':
         specifier: 3.4.2
         version: 3.4.2

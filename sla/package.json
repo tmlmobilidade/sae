@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/sae-slas",
+	"name": "@tmlmobilidade/sae-sla",
 	"private": true,
 	"scripts": {
 		"build": "turbo build",

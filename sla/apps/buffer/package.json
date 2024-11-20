@@ -1,26 +1,25 @@
 {
-	"name": "@joao-vasconcelos/go-slamanager-buffer",
+	"name": "@tmlmobilidade/sae-sla-buffer",
 	"version": "1.0.0",
 	"type": "module",
-	"private": true,
-	"main": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"files": ["dist/"],
+	"files": ["dist"],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
-		"start": "tsc && resolve-tspaths && node dist/index.js",
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev": "dotenv-run -f ./secrets/development/.env.development -- tsx watch ./src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint . --fix",
-		"build": "tsc && resolve-tspaths",
-		"watch": "tsc -w"
+		"start": "node dist/index.js"
 	},
 	"dependencies": {
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20241010.1355.31",
 		"dotenv": "16.4.5",
-		"pg": "8.13.1",
 		"luxon": "3.5.0",
-		"mongodb": "6.10.0",
+		"pg": "8.13.1",
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
