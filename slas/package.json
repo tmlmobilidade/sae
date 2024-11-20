@@ -1,0 +1,21 @@
+{
+	"name": "@tmlmobilidade/sae-slas",
+	"private": true,
+	"scripts": {
+		"build": "turbo build",
+		"dev": "turbo dev",
+		"lint": "turbo lint"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20241024.1600.5",
+		"turbo": "2.3.0",
+		"typescript": "5.6.3"
+	},
+	"workspaces": [
+		"apps/*"
+	],
+	"packageManager": "pnpm@9.14.2",
+	"engines": {
+		"node": ">=18"
+	}
+}
