@@ -1,19 +1,21 @@
 {
-  "name": "@tmlmobilidade/alerts",
-  "private": true,
-  "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint"
-  },
-  "devDependencies": {
-    "@carrismetropolitana/eslint": "^20241024.1600.5",
-    "prettier": "^3.2.5",
-    "turbo": "^2.3.0",
-    "typescript": "5.5.4"
-  },
-  "packageManager": "pnpm@8.15.6",
-  "engines": {
-    "node": ">=18"
-  }
+	"name": "@tmlmobilidade/alerts",
+	"private": true,
+	"scripts": {
+		"build": "turbo build",
+		"dev": "turbo dev",
+		"docker:local:down": "docker compose -f docker/local/compose.local.yaml down",
+		"docker:local:up": "docker compose -f docker/local/compose.local.yaml up -d --build",
+		"lint": "turbo lint"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "^20241024.1600.5",
+		"prettier": "^3.2.5",
+		"turbo": "^2.3.0",
+		"typescript": "5.5.4"
+	},
+	"packageManager": "pnpm@8.15.6",
+	"engines": {
+		"node": ">=18"
+	}
 }
