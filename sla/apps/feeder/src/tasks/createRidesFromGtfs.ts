@@ -1,40 +1,19 @@
 /* * */
 
+import { unzipFile } from '@/modules/unzipFile.js';
 import DBWRITER from '@/services/DBWRITER.js';
 import OFFERMANAGERDB from '@/services/OFFERMANAGERDB.js';
 import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
+import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import crypto from 'crypto';
 import { parse as csvParser } from 'csv-parse';
-import extract from 'extract-zip';
 import fs from 'fs';
 import { DateTime } from 'luxon';
 
 /* * */
 
-async function unzipFile(zipFilePath, outputDir) {
-	await extract(zipFilePath, { dir: outputDir });
-	setDirectoryPermissions(outputDir);
-}
-
-/* * */
-
-const setDirectoryPermissions = (dirPath, mode = 0o666) => {
-	const files = fs.readdirSync(dirPath, { withFileTypes: true });
-	for (const file of files) {
-		const filePath = `${dirPath}/${file.name}`;
-		if (file.isDirectory()) {
-			setDirectoryPermissions(filePath, mode);
-		}
-		else {
-			fs.chmodSync(filePath, mode);
-		}
-	}
-};
-
-/* * */
-
-export default async () => {
+export async function createRidesFromGtfs() {
 	//
 
 	try {
@@ -163,7 +142,7 @@ export default async () => {
 
 						if (savedCalendar) {
 							// If this service_id was previously saved, add the current date to it
-							savedCalendarDates.set(data.service_id, Array.from(new Set([...savedCalendar, data.date])));
+							savedCalendarDates.set(data.service_id, Array.from(new Set([data.date, ...savedCalendar])));
 						}
 						else {
 							// If this is the first time we're seeing this service_id, initiate the dates array with the current date

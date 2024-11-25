@@ -1,8 +1,7 @@
 /* * */
 
 import 'dotenv/config';
-
-import start from './start.js';
+import { createRidesFromGtfs } from '@/tasks/createRidesFromGtfs.js';
 
 /* * */
 
@@ -14,7 +13,7 @@ const RUN_INTERVAL = 60000; // 1 minute
 	//
 
 	const runOnInterval = async () => {
-		await start();
+		await createRidesFromGtfs();
 		setTimeout(runOnInterval, RUN_INTERVAL);
 	};
 

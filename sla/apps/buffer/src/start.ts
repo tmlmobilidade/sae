@@ -6,6 +6,7 @@ import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { rides } from '@tmlmobilidade/services/interfaces';
 import { DateTime } from 'luxon';
 
 /* * */
