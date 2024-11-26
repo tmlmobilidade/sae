@@ -1,10 +1,12 @@
 /* * */
 
+import combineClasses from '@/utils/combineClasses';
+
 import styles from './styles.module.css';
 
 /* * */
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	children?: React.ReactNode
 	forceOverflow?: boolean
 	fullHeight?: boolean
@@ -13,12 +15,12 @@ interface Props {
 
 /* * */
 
-export function Surface({ children, forceOverflow, fullHeight, variant = 'default' }: Props) {
+export function Surface({ children, className, forceOverflow, fullHeight, variant = 'default', ...props }: Props) {
 	//
 
 	if (variant === 'standout') {
 		return (
-			<div className={`${styles.container} ${styles[variant]} ${forceOverflow && styles.forceOverflow} ${fullHeight && styles.fullHeight}`}>
+			<div className={combineClasses(styles.container, styles[variant], forceOverflow && styles.forceOverflow, fullHeight && styles.fullHeight, className)} {...props}>
 				<div className={styles.inner}>
 					{children}
 				</div>
@@ -28,14 +30,14 @@ export function Surface({ children, forceOverflow, fullHeight, variant = 'defaul
 
 	if (variant === 'alerts') {
 		return (
-			<div className={`${styles.container} ${styles[variant]} ${forceOverflow && styles.forceOverflow} ${fullHeight && styles.fullHeight}`}>
+			<div className={combineClasses(styles.container, styles[variant], forceOverflow && styles.forceOverflow, fullHeight && styles.fullHeight, className)} {...props}>
 				{children}
 			</div>
 		);
 	}
 
 	return (
-		<div className={`${styles.container} ${styles[variant]} ${forceOverflow && styles.forceOverflow} ${fullHeight && styles.fullHeight}`}>
+		<div className={combineClasses(styles.container, styles[variant], forceOverflow && styles.forceOverflow, fullHeight && styles.fullHeight, className)} {...props}>
 			{children}
 		</div>
 	);

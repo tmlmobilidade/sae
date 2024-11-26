@@ -1,6 +1,5 @@
 /* * */
-
-import Providers from '@/providers';
+import { GlobalProviders } from '@/providers/global-providers';
 import { Inter } from 'next/font/google';
 
 /* * */
@@ -37,9 +36,9 @@ export default async function RootLayout({ children }) {
 				<meta content="transparent" name="theme-color" />
 			</head>
 			<body>
-				<Providers>
+				<GlobalProviders>
 					{children}
-				</Providers>
+				</GlobalProviders>
 			</body>
 		</html>
 	);

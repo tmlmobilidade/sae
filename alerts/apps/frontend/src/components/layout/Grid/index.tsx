@@ -1,11 +1,11 @@
 /* * */
+import combineClasses from '@/utils/combineClasses';
 
 import styles from './styles.module.css';
 
 /* * */
 
-interface Props {
-	children?: React.ReactNode
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	columns?: 'a' | 'aab' | 'ab' | 'abb' | 'abc' | 'abcd'
 	hAlign?: 'center' | 'end' | 'start'
 	vAlign?: 'center' | 'end' | 'start'
@@ -14,9 +14,9 @@ interface Props {
 
 /* * */
 
-export function Grid({ children, columns = 'a', hAlign = 'start', vAlign = 'start', withGap }: Props) {
+export function Grid({ children, className, columns = 'a', hAlign = 'start', vAlign = 'start', withGap }: Props) {
 	return (
-		<div className={`${styles.container} ${styles[columns]} ${styles[`hAlign${hAlign}`]} ${styles[`vAlign${vAlign}`]} ${withGap && styles.withGap}`}>
+		<div className={combineClasses(styles.container, styles[columns], styles[`hAlign${hAlign}`], styles[`vAlign${vAlign}`], withGap && styles.withGap, className)}>
 			{children}
 		</div>
 	);

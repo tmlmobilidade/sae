@@ -1,11 +1,12 @@
 /* * */
 
-import { FastifyInstance } from 'fastify';
-import FastifyService from '@/services/fastify.service';
-import { AlertsController } from './alerts.controller';
 import authorizationMiddleware from '@/middleware/authorization.middleware';
+import FastifyService from '@/services/fastify.service';
 import { Permissions } from '@tmlmobilidade/services/lib';
 import { Alert } from '@tmlmobilidade/services/types';
+import { FastifyInstance } from 'fastify';
+
+import { AlertsController } from './alerts.controller';
 
 /* * */
 
@@ -22,10 +23,10 @@ server.register(
 			{
 				preHandler: authorizationMiddleware<Alert>(
 					Permissions.alerts.scope,
-					Permissions.alerts.actions.list
+					Permissions.alerts.actions.list,
 				),
 			},
-			AlertsController.getAll
+			AlertsController.getAll,
 		);
 
 		// GET /alerts/:id
@@ -34,10 +35,10 @@ server.register(
 			{
 				preHandler: authorizationMiddleware<Alert>(
 					Permissions.alerts.scope,
-					Permissions.alerts.actions.read
+					Permissions.alerts.actions.read,
 				),
 			},
-			AlertsController.getById
+			AlertsController.getById,
 		);
 
 		// POST /alerts
@@ -46,10 +47,10 @@ server.register(
 			{
 				preHandler: authorizationMiddleware<Alert>(
 					Permissions.alerts.scope,
-					Permissions.alerts.actions.create
+					Permissions.alerts.actions.create,
 				),
 			},
-			AlertsController.create
+			AlertsController.create,
 		);
 
 		// PUT /alerts/:id
@@ -58,10 +59,10 @@ server.register(
 			{
 				preHandler: authorizationMiddleware<Alert>(
 					Permissions.alerts.scope,
-					Permissions.alerts.actions.update
+					Permissions.alerts.actions.update,
 				),
 			},
-			AlertsController.update
+			AlertsController.update,
 		);
 
 		// DELETE /alerts/:id
@@ -70,13 +71,13 @@ server.register(
 			{
 				preHandler: authorizationMiddleware<Alert>(
 					Permissions.alerts.scope,
-					Permissions.alerts.actions.delete
+					Permissions.alerts.actions.delete,
 				),
 			},
-			AlertsController.delete
+			AlertsController.delete,
 		);
 
 		next();
 	},
-	{ prefix: namespace }
+	{ prefix: namespace },
 );

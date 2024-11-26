@@ -2,7 +2,6 @@
 
 /* * */
 
-import { EnvironmentContextProvider } from '@/contexts/Environment.context';
 import { getCssVariableValue } from '@/utils/getCssVariableValue';
 import { MantineProvider, MantineProviderProps } from '@mantine/core';
 import { DatesProvider, DatesProviderSettings } from '@mantine/dates';
@@ -14,12 +13,11 @@ import { useEffect } from 'react';
 interface Props {
 	children: React.ReactNode
 	themeData: MantineProviderProps['theme']
-	themeId: string
 }
 
 /* * */
 
-export function ThemeProviders({ children, themeData, themeId }: Props) {
+export function ThemeProviders({ children, themeData }: Props) {
 	//
 
 	//
@@ -52,9 +50,7 @@ export function ThemeProviders({ children, themeData, themeId }: Props) {
 		<MantineProvider defaultColorScheme="auto" theme={themeData}>
 			<DatesProvider settings={mantineDatesSettings}>
 				<ModalsProvider>
-					<EnvironmentContextProvider value={themeId}>
-						{children}
-					</EnvironmentContextProvider>
+					{children}
 				</ModalsProvider>
 			</DatesProvider>
 		</MantineProvider>
