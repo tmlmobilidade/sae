@@ -1,16 +1,14 @@
 /* * */
 
-import { unzipFile } from '@/modules/unzipFile.js';
-import DBWRITER from '@/services/DBWRITER.js';
-import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { plans, rides } from '@tmlmobilidade/services/interfaces';
-import { createOperationalDate, OperationalDate } from '@tmlmobilidade/services/types';
+import { MongoDbWriter } from '@helperkits/writer';
+import { hashedShapes, hashedTrips, plans, rides } from '@tmlmobilidade/services/interfaces';
+import { CreateHashedShapeDto, CreateHashedTripDto, createOperationalDate, CreateRideDto, HashedShapePoint, HashedTripWaypoint, OperationalDate } from '@tmlmobilidade/services/types';
 import crypto from 'crypto';
 import { parse as csvParser } from 'csv-parse';
+import extract from 'extract-zip';
 import fs from 'fs';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -25,9 +23,9 @@ export async function createRidesFromGtfs() {
 		//
 		// Setup database writers
 
-		const hashedTripsDbWritter = new DBWRITER('HashedTrip', SLAMANAGERDB.HashedTrip);
-		const hashedShapesDbWritter = new DBWRITER('HashedShape', SLAMANAGERDB.HashedShape);
-		const ridesDbWritter = new DBWRITER('Rides', SLAMANAGERDB.TripAnalysis);
+		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', hashedTrips.collection);
+		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', hashedShapes.collection);
+		const ridesDbWritter = new MongoDbWriter('Rides', rides.collection);
 
 		//
 		// Setup variables to keep track of created IDs
@@ -61,8 +59,8 @@ export async function createRidesFromGtfs() {
 				const savedTrips = new Map();
 				const savedStops = new Map();
 				const savedRoutes = new Map();
-				const savedShapes = new Map();
-				const savedStopTimes = new Map();
+				const savedShapes = new Map<string, HashedShapePoint[]>();
+				const savedStopTimes = new Map<string, HashedTripWaypoint[]>();
 
 				const referencedStops = new Set();
 				const referencedShapes = new Set();
@@ -124,7 +122,7 @@ export async function createRidesFromGtfs() {
 							currentOperationalDate = createOperationalDate(data.date);
 						}
 						catch (error) {
-							LOGGER.error(`Error parsing date ${data.date} of plan ${planData._id}`, error);
+							LOGGER.error(`Error creating operational date "${data.date}" for service_id "${data.service_id}" of plan ${planData._id}`, error);
 							return;
 						}
 
@@ -296,7 +294,8 @@ export async function createRidesFromGtfs() {
 
 						if (!referencedShapes.has(data.shape_id)) return;
 
-						const thisShapeRowPoint = {
+						const thisShapeRowPoint: HashedShapePoint = {
+							shape_dist_traveled: data.shape_dist_traveled,
 							shape_pt_lat: data.shape_pt_lat,
 							shape_pt_lon: data.shape_pt_lon,
 							shape_pt_sequence: Number(data.shape_pt_sequence),
@@ -402,11 +401,12 @@ export async function createRidesFromGtfs() {
 						const stopData = savedStops.get(data.stop_id);
 						if (!stopData) return;
 
-						const parsedRowData = {
+						const parsedRowData: HashedTripWaypoint = {
 							arrival_time: data.arrival_time,
 							departure_time: data.departure_time,
 							drop_off_type: data.drop_off_type,
 							pickup_type: data.pickup_type,
+							shape_dist_traveled: data.shape_dist_traveled,
 							stop_id: data.stop_id,
 							stop_lat: stopData.stop_lat,
 							stop_lon: stopData.stop_lon,
@@ -464,7 +464,7 @@ export async function createRidesFromGtfs() {
 						//
 						// Setup the hashed trip data
 
-						const hashedTripData = {
+						const hashableHashedTripData: Omit<CreateHashedTripDto, '_id'> = {
 							//
 							agency_id: routeData.agency_id,
 							//
@@ -489,44 +489,58 @@ export async function createRidesFromGtfs() {
 						// Hash the hashed trip contents to prevent duplicates
 						// Check if this hashed trip already exists. If it does not exist, save it to the database.
 
-						hashedTripData.code = crypto.createHash('sha256').update(JSON.stringify(hashedTripData)).digest('hex');
-						const currentHashedTripAlreadyExists = await SLAMANAGERDB.HashedTrip.findOne({ code: hashedTripData.code });
-						if (!currentHashedTripAlreadyExists) await hashedTripsDbWritter.write(hashedTripData, { filter: { code: hashedTripData.code }, upsert: true });
-						createdHashedTripCodes.add(hashedTripData.code);
+						const hashedTripData: CreateHashedTripDto = {
+							...hashableHashedTripData,
+							_id: crypto.createHash('sha256').update(JSON.stringify(hashableHashedTripData)).digest('hex'),
+						};
+
+						const currentHashedTripAlreadyExists = await hashedTrips.findById(hashedTripData._id);
+
+						if (!currentHashedTripAlreadyExists) {
+							await hashedTripsDbWritter.write(hashedTripData, { filter: { _id: hashedTripData._id }, upsert: true });
+						}
+
+						createdHashedTripCodes.add(hashedTripData._id);
 
 						//
 						// Setup the hashed shape data
 
-						const hashedShapeData = {
+						const hashableHashedShapeData: Omit<CreateHashedShapeDto, '_id'> = {
 							agency_id: routeData.agency_id,
 							points: shapeData?.sort((a, b) => a.shape_pt_sequence - b.shape_pt_sequence),
-							shape_id: tripData.shape_id,
 						};
 
 						//
 						// Hash the hashed shape contents to prevent duplicates
 						// Check if this hashed shape already exists. If it does not exist, save it to the database.
 
-						hashedShapeData.code = crypto.createHash('sha256').update(JSON.stringify(hashedShapeData)).digest('hex');
-						const currentHashedShapeAlreadyExists = await SLAMANAGERDB.HashedShape.findOne({ code: hashedShapeData.code });
-						if (!currentHashedShapeAlreadyExists) await hashedShapesDbWritter.write(hashedShapeData, { filter: { code: hashedShapeData.code }, upsert: true });
-						createdHashedShapeCodes.add(hashedShapeData.code);
+						const hashedShapeData: CreateHashedShapeDto = {
+							...hashableHashedShapeData,
+							_id: crypto.createHash('sha256').update(JSON.stringify(hashableHashedShapeData)).digest('hex'),
+						};
+
+						const currentHashedShapeAlreadyExists = await hashedShapes.findById(hashedShapeData._id);
+
+						if (!currentHashedShapeAlreadyExists) {
+							await hashedShapesDbWritter.write(hashedShapeData, { filter: { _id: hashedShapeData._id }, upsert: true });
+						}
+
+						createdHashedShapeCodes.add(hashedShapeData._id);
 
 						//
 						// Create a trip analysis document for each day this trip is scheduled to run
 
 						for (const calendarDate of calendarDatesData) {
 							//
-							const rideData = {
+							const rideData: CreateRideDto = {
+								_id: `${planData._id}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
 								agency_id: routeData.agency_id,
 								analysis: [],
-								analysis_timestamp: null,
-								code: `${planData._id}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
-								hashed_shape_code: hashedShapeData.code,
-								hashed_trip_code: hashedTripData.code,
+								extension: hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled,
+								hashed_shape_id: hashedShapeData._id,
+								hashed_trip_id: hashedTripData._id,
 								line_id: routeData.line_id,
 								operational_day: calendarDate,
-								parse_timestamp: new Date(),
 								pattern_id: tripData.pattern_id,
 								plan_id: planData._id,
 								route_id: routeData.route_id,
@@ -534,13 +548,12 @@ export async function createRidesFromGtfs() {
 								service_id: tripData.service_id,
 								status: 'pending',
 								trip_id: tripData.trip_id,
-								user_notes: '',
 							};
 							//
 							const ridesOptions = {
 								//
 								filter: {
-									code: rideData.code,
+									_id: rideData._id,
 									// status: 'pending',
 								},
 								//
@@ -552,7 +565,7 @@ export async function createRidesFromGtfs() {
 							//
 							await ridesDbWritter.write(rideData, ridesOptions);
 							//
-							createdTripAnalysisCodes.add(rideData.code);
+							createdTripAnalysisCodes.add(rideData._id);
 							//
 						}
 
@@ -626,3 +639,25 @@ async function parseCsvFile(filePath: string, rowParser: (rowData: any) => Promi
 		await rowParser(rowData);
 	}
 }
+
+/* * */
+
+export async function unzipFile(zipFilePath, outputDir) {
+	await extract(zipFilePath, { dir: outputDir });
+	setDirectoryPermissions(outputDir);
+}
+
+/* * */
+
+const setDirectoryPermissions = (dirPath, mode = 0o666) => {
+	const files = fs.readdirSync(dirPath, { withFileTypes: true });
+	for (const file of files) {
+		const filePath = `${dirPath}/${file.name}`;
+		if (file.isDirectory()) {
+			setDirectoryPermissions(filePath, mode);
+		}
+		else {
+			fs.chmodSync(filePath, mode);
+		}
+	}
+};
