@@ -12,7 +12,7 @@ import styles from './styles.module.css';
 export default function Page() {
 	return (
 		<PageWrapper>
-			<Grid className={styles.grid} columns="abb">
+			<Grid className={styles.grid} columns="abb" withGap>
 				<AlertList />
 				<AlertDetail />
 			</Grid>

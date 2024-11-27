@@ -8,6 +8,7 @@ interface AlertsListState {
 	actions: {
 		fetchAlerts: () => void
 		setSelected: (alert: Alert) => void
+		setSelectedAlertId: (alertId: string) => void
 		updateFilterByDate: (value: string) => void
 		updateFilterByLineId: (value: string) => void
 		updateFilterBySearchQuery: (value: string) => void
@@ -43,6 +44,9 @@ export const useAlertsListStore = create<AlertsListState>()(subscribeWithSelecto
 		},
 		setSelected: (alert: Alert) => {
 			set(state => ({ data: { ...state.data, selected: alert } }));
+		},
+		setSelectedAlertId: (alertId: string) => {
+			set(state => ({ data: { ...state.data, selected: state.data.raw.find(alert => alert._id?.toString() === alertId) || null } }));
 		},
 		updateFilterByDate: (value: string) => {
 			set(state => ({ filters: { ...state.filters, by_date: value } }));

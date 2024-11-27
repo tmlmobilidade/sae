@@ -10,14 +10,16 @@ import styles from './styles.module.css';
 
 interface Props {
 	alert: Alert
+	onSelect?: (selected: Alert) => void
 	selected?: boolean
 }
 
-export default function AlertListCard({ alert, selected = false }: Props) {
+export default function AlertListCard({ alert, onSelect, selected = false }: Props) {
 	const setSelected = useAlertsListStore(state => state.actions.setSelected);
 
 	const handleClick = () => {
 		setSelected(alert);
+		onSelect?.(alert);
 	};
 
 	return (

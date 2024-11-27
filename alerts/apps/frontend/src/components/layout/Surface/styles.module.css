@@ -250,3 +250,23 @@
 		border-radius: unset;
 	}
 }
+
+/* * */
+/* CONTAINER / VARIANTS / PADDING */
+
+.padding_sm {
+	padding: var(--size-spacing-5);
+}
+
+
+.padding_md {
+	padding: var(--size-spacing-10);
+}
+
+.padding_lg {
+	padding: var(--size-spacing-15);
+}
+
+.padding_none {
+	padding: 0;
+}
