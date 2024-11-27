@@ -6,6 +6,7 @@ import OFFERMANAGERDB from '@/services/OFFERMANAGERDB.js';
 import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
+import { plans } from '@tmlmobilidade/services/interfaces';
 import crypto from 'crypto';
 import { parse as csvParser } from 'csv-parse';
 import fs from 'fs';
@@ -53,7 +54,8 @@ export async function createRidesFromGtfs() {
 		// 4.
 		// Get all archives (GTFS plans) from GO database, and iterate on each one
 
-		const allArchivesData = await OFFERMANAGERDB.Archive.find({ slamanager_feeder_status: { $in: ['pending', 'partial'] }, status: 'active' }).toArray();
+		const allArchivesRes = await fetch('https://go.carrismetropolitana.pt/api/archives/public'); // OFFERMANAGERDB.Archive.find({ slamanager_feeder_status: { $in: ['pending', 'partial'] }, status: 'active' }).toArray();
+		const allArchivesData = await allArchivesRes.json();
 
 		console.log(`→ Found ${allArchivesData.length} archives to process...`);
 
@@ -62,8 +64,9 @@ export async function createRidesFromGtfs() {
 				//
 
 				// 4.1.
-				// Skip if this archive has no associated operation plan
+				// Skip if this archive is not parseable
 
+				if (archiveData.slamanager_feeder_status !== 'pending' && archiveData.slamanager_feeder_status !== 'partial') continue;
 				if (!archiveData.operation_plan) continue;
 
 				// 4.2.
