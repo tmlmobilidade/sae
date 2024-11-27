@@ -2,11 +2,11 @@
 
 import { unzipFile } from '@/modules/unzipFile.js';
 import DBWRITER from '@/services/DBWRITER.js';
-import OFFERMANAGERDB from '@/services/OFFERMANAGERDB.js';
 import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { plans } from '@tmlmobilidade/services/interfaces';
+import { plans, rides } from '@tmlmobilidade/services/interfaces';
+import { createOperationalDate, OperationalDate } from '@tmlmobilidade/services/types';
 import crypto from 'crypto';
 import { parse as csvParser } from 'csv-parse';
 import fs from 'fs';
@@ -15,64 +15,49 @@ import { DateTime } from 'luxon';
 /* * */
 
 export async function createRidesFromGtfs() {
-	//
-
 	try {
-		console.log();
-		console.log('------------------------');
-		console.log((new Date()).toISOString());
-		console.log('------------------------');
-		console.log();
+		//
+
+		LOGGER.init();
 
 		const globalTimer = new TIMETRACKER();
-		console.log('Starting...');
 
-		// 1.
-		// Connect to databases
-
-		console.log();
-		console.log('→ Connecting to databases...');
-
-		await OFFERMANAGERDB.connect();
-		await SLAMANAGERDB.connect();
-
-		// 2.
+		//
 		// Setup database writers
 
 		const hashedTripsDbWritter = new DBWRITER('HashedTrip', SLAMANAGERDB.HashedTrip);
 		const hashedShapesDbWritter = new DBWRITER('HashedShape', SLAMANAGERDB.HashedShape);
-		const tripAnalysisDbWritter = new DBWRITER('TripAnalysis', SLAMANAGERDB.TripAnalysis);
+		const ridesDbWritter = new DBWRITER('Rides', SLAMANAGERDB.TripAnalysis);
 
-		// 3.
+		//
 		// Setup variables to keep track of created IDs
 
-		const parsedArchiveCodes = new Set();
+		const parsedPlanIds = new Set();
 		const createdHashedTripCodes = new Set();
 		const createdHashedShapeCodes = new Set();
 		const createdTripAnalysisCodes = new Set();
 
 		// 4.
-		// Get all archives (GTFS plans) from GO database, and iterate on each one
+		// Get all Plans and iterate on each one
 
-		const allArchivesRes = await fetch('https://go.carrismetropolitana.pt/api/archives/public'); // OFFERMANAGERDB.Archive.find({ slamanager_feeder_status: { $in: ['pending', 'partial'] }, status: 'active' }).toArray();
-		const allArchivesData = await allArchivesRes.json();
+		const allPlansData = await plans.all();
 
-		console.log(`→ Found ${allArchivesData.length} archives to process...`);
+		console.log(`→ Found ${allPlansData.length} Plans to process...`);
 
-		for (const [archiveIndex, archiveData] of allArchivesData.entries()) {
+		for (const [planIndex, planData] of allPlansData.entries()) {
 			try {
 				//
 
-				// 4.1.
-				// Skip if this archive is not parseable
+				//
+				// Skip parsing if this plan is not parseable
 
-				if (archiveData.slamanager_feeder_status !== 'pending' && archiveData.slamanager_feeder_status !== 'partial') continue;
-				if (!archiveData.operation_plan) continue;
+				if (!planData.operation_file) continue;
+				if (planData.status === 'pending') continue;
 
-				// 4.2.
-				// Setup variables to save formatted entities found in this archive
+				//
+				// Setup variables to save formatted entities found in this Plan
 
-				const savedCalendarDates = new Map();
+				const savedCalendarDates = new Map<string, OperationalDate[]>();
 				const savedTrips = new Map();
 				const savedStops = new Map();
 				const savedRoutes = new Map();
@@ -83,92 +68,102 @@ export async function createRidesFromGtfs() {
 				const referencedShapes = new Set();
 				const referencedRoutes = new Set();
 
-				// 4.3.
-				// Get the associated start and end dates for this archive.
+				//
+				// Get the associated start and end dates for this plan.
 				// Even though most operation plans (GTFS files) will be annual, as in having calendar_dates for a given year,
 				// they are valid only on a given set of days, usually one month. Therefore we have multiple annual plans, each one
 				// valid on a different month. The validity dates will be used to clip the calendars and only saved the actual part
 				// of the plan that was actually active in that period.
 
-				const startDateString = '20240101';
-				const endDateString = DateTime.now().startOf('day').toFormat('yyyyMMdd');
+				//
+				// Setup a temporary location to extract each GTFS plan
 
-				if (startDateString > archiveData.end_date || endDateString < archiveData.start_date || endDateString <= archiveData.slamanager_feeder_last_processed_date) {
-					console.log();
-					console.log(`[${archiveIndex + 1}/${allArchivesData.length}] Skipping archive ${archiveData.code} because startDateString (${startDateString}) > archiveData.end_date (${archiveData.end_date}) or endDateString (${endDateString}) < archiveData.start_date (${archiveData.start_date})`);
-					console.log();
-					continue;
-				}
+				const downloadUrl = `https://go.carrismetropolitana.pt/api/media/${planData.operation_file}/download_public`;
+				const downloadDirPath = `${process.env.APP_TMP_DIR}/downloads/${planData.operation_file}.zip`;
+				const extractDirPath = `${process.env.APP_TMP_DIR}/extractions/${Math.floor(Math.random() * 1000)}/${planData._id}`;
 
-				// 4.4.
-				// Setup a temporary location to extract each GTFS archive
+				//
+				// Download and unzip the associated operation plan
 
-				const archiveFilePath = `${process.env.APP_STORAGE_DIR}/archives/${archiveData.operation_plan.toString()}.zip`;
-				const extractDirPath = `${process.env.APP_TMP_DIR}/extractions/${Math.floor(Math.random() * 1000)}/${archiveData._id}`;
+				const planFileData = await fetch(downloadUrl).then(response => response.blob());
+				const planFileBuffer = await planFileData.arrayBuffer();
 
-				// 4.5.
-				// Unzip the associated operation plan
+				fs.writeFileSync(downloadDirPath, Buffer.from(planFileBuffer));
 
-				await unzipFile(archiveFilePath, extractDirPath);
+				await unzipFile(downloadDirPath, extractDirPath);
 
-				// 4.6.
-				// Log progress
+				LOGGER.info(`[${planIndex + 1}/${allPlansData.length}] Plan ${planData._id} | valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
 
-				console.log();
-				console.log(`[${archiveIndex + 1}/${allArchivesData.length}] Archive ${archiveData.code} | start_date: ${archiveData.start_date} | end_date: ${archiveData.end_date}`);
-				console.log();
-
-				// The order of execution matters when parsing each file. This is because archives are valid on a set of dates.
+				//
+				// The order of execution matters when parsing each file. This is because plans are valid on a set of dates.
 				// By first parsing calendar_dates.txt, we know exactly which service_ids "were active" in the set of dates.
-				// Then when parsing trips.txt, only trips that belong to those service_ids will be included. And so on, for each file.
+				// Then, when parsing trips.txt, only trips that belong to those service_ids will be included. And so on, for each file.
 				// By having a list of trips we can extract only the necessary info from the other files, and thus reducing significantly
 				// the amount of information to be checked.
 
-				// 4.7.
-				// Extract calendar_dates.txt and filter only service_ids valid between the given archive start_date and end_date.
+				//
+				// Extract calendar_dates.txt and filter only service_ids valid between the given plan start_date and end_date.
 
 				try {
 					//
 
-					console.log(`→ Reading zip entry "calendar_dates.txt" of archive "${archiveData.code}"...`);
+					LOGGER.info(`Reading zip entry "calendar_dates.txt" of plan "${planData._id}"...`);
 
-					// 4.7.1.
+					//
 					// Parse each row, and save only the matching servic_ids
 
 					const parseEachRow = async (data) => {
 						//
-						// Skip if this row's date is before the archive's start date or after the archive's end date
-						if (data.date < archiveData.start_date || data.date > archiveData.end_date || data.date < startDateString || data.date > endDateString) return;
 
+						//
+						// Validate the date to ensure it is of type OperationalDate
+
+						let currentOperationalDate: OperationalDate;
+
+						try {
+							currentOperationalDate = createOperationalDate(data.date);
+						}
+						catch (error) {
+							LOGGER.error(`Error parsing date ${data.date} of plan ${planData._id}`, error);
+							return;
+						}
+
+						//
+						// Skip if this row's date is before the plan's start date or after the plan's end date
+
+						if (currentOperationalDate < planData.valid_from || currentOperationalDate > planData.valid_until) return;
+
+						//
 						// Get the previously saved calendar
+
 						const savedCalendar = savedCalendarDates.get(data.service_id);
 
 						if (savedCalendar) {
 							// If this service_id was previously saved, add the current date to it
-							savedCalendarDates.set(data.service_id, Array.from(new Set([data.date, ...savedCalendar])));
+							savedCalendarDates.set(data.service_id, Array.from(new Set([currentOperationalDate, ...savedCalendar])));
 						}
 						else {
 							// If this is the first time we're seeing this service_id, initiate the dates array with the current date
-							savedCalendarDates.set(data.service_id, [data.date]);
+							savedCalendarDates.set(data.service_id, [currentOperationalDate]);
 						}
 						//
 					};
 
-					// 4.7.2.
+					//
 					// Setup the CSV parsing operation
 
 					await parseCsvFile(`${extractDirPath}/calendar_dates.txt`, parseEachRow);
 
-					console.log(`✔︎ Finished processing "calendar_dates.txt" of archive "${archiveData.code}".`);
+					LOGGER.success(`Finished processing "calendar_dates.txt" of plan "${planData._id}"`);
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error processing "calendar_dates.txt" file.', error);
+					LOGGER.error('Error processing "calendar_dates.txt" file.', error);
 					throw new Error('✖︎ Error processing "calendar_dates.txt" file.');
 				}
 
-				// 4.8.
+				//
 				// Next up: trips.txt
 				// Now that the calendars are sorted out, the jobs is easier for the trips.
 				// Only include trips which have the referenced service IDs saved before.
@@ -176,17 +171,22 @@ export async function createRidesFromGtfs() {
 				try {
 					//
 
-					console.log(`→ Reading zip entry "trips.txt" of archive "${archiveData.code}"...`);
+					LOGGER.info(`Reading zip entry "trips.txt" of plan "${planData._id}"...`);
 
-					// 4.8.1.
+					//
 					// For each trip, check if the associated service_id was saved in the previous step or not.
 					// Include it if yes, skip otherwise.
 
 					const parseEachRow = async (data) => {
 						//
+
+						//
 						// Skip if this row's service_id was not saved before
 						if (!savedCalendarDates.has(data.service_id)) return;
+
+						//
 						// Format the exported row. Only include the minimum required to prevent memory bloat later on.
+
 						const parsedRowData = {
 							pattern_id: data.pattern_id,
 							route_id: data.route_id,
@@ -195,11 +195,17 @@ export async function createRidesFromGtfs() {
 							trip_headsign: data.trip_headsign,
 							trip_id: data.trip_id,
 						};
+
+						//
 						// Save this trip for later
+
 						savedTrips.set(data.trip_id, parsedRowData);
+
+						//
 						// Reference the route_id and shape_id to filter them later
 						referencedRoutes.add(data.route_id);
 						referencedShapes.add(data.shape_id);
+
 						//
 					};
 
@@ -208,32 +214,37 @@ export async function createRidesFromGtfs() {
 
 					await parseCsvFile(`${extractDirPath}/trips.txt`, parseEachRow);
 
-					console.log(`✔︎ Finished processing "trips.txt" of archive "${archiveData.code}".`);
+					LOGGER.success(`Finished processing "trips.txt" of plan "${planData._id}"`);
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error processing "trips.txt" file.', error);
+					LOGGER.error('Error processing "trips.txt" file.', error);
 					throw new Error('✖︎ Error processing "trips.txt" file.');
 				}
 
-				// 4.9.
+				//
 				// Next up: routes.txt
 				// For routes, only include the ones referenced in the filtered trips.
 
 				try {
 					//
 
-					console.log(`→ Reading zip entry "routes.txt" of archive "${archiveData.code}"...`);
+					LOGGER.info(`Reading zip entry "routes.txt" of plan "${planData._id}"...`);
 
 					// 4.9.1.
 					// For each route, only save the ones referenced by previously saved trips.
 
 					const parseEachRow = async (data) => {
 						//
+
+						//
 						// Skip if this row's route_id was not saved before
 						if (!referencedRoutes.has(data.route_id)) return;
+
+						//
 						// Format the exported row
+
 						const parsedRowData = {
 							agency_id: data.agency_id,
 							line_id: data.line_id,
@@ -245,8 +256,9 @@ export async function createRidesFromGtfs() {
 							route_short_name: data.route_short_name,
 							route_text_color: data.route_text_color,
 						};
-						//
+
 						savedRoutes.set(data.route_id, parsedRowData);
+
 						//
 					};
 
@@ -255,40 +267,46 @@ export async function createRidesFromGtfs() {
 
 					await parseCsvFile(`${extractDirPath}/routes.txt`, parseEachRow);
 
-					console.log(`✔︎ Finished processing "routes.txt" of archive "${archiveData.code}".`);
+					LOGGER.success(`Finished processing "routes.txt" of plan "${planData._id}"`);
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error processing "routes.txt" file.', error);
+					LOGGER.error('Error processing "routes.txt" file.', error);
 					throw new Error('✖︎ Error processing "routes.txt" file.');
 				}
 
-				// 4.10.
+				//
 				// Next up: shapes.txt
 				// Do a similiar check as the previous step. Only include the shapes for trips referenced before.
 
 				try {
 					//
 
-					console.log(`→ Reading zip entry "shapes.txt" of archive "${archiveData.code}"...`);
+					LOGGER.info(`Reading zip entry "shapes.txt" of plan "${planData._id}"...`);
 
-					// 4.10.1.
+					//
 					// For each point of each shape, check if the shape_id was referenced by valid trips.
 
 					const parseEachRow = async (data) => {
 						//
-						// Skip if this row's trip_id was not saved before
-						if (!referencedShapes.has(data.shape_id)) return;
+
 						//
+						// Skip if this row's trip_id was not saved before
+
+						if (!referencedShapes.has(data.shape_id)) return;
+
 						const thisShapeRowPoint = {
 							shape_pt_lat: data.shape_pt_lat,
 							shape_pt_lon: data.shape_pt_lon,
 							shape_pt_sequence: Number(data.shape_pt_sequence),
 						};
-						// Get the previously saved shape
-						const savedShape = savedShapes.has(data.shape_id);
+
 						//
+						// Get the previously saved shape
+
+						const savedShape = savedShapes.has(data.shape_id);
+
 						if (savedShape) {
 							// If this shape_id was previously saved, add the current point to it
 							savedShapes.get(data.shape_id).push(thisShapeRowPoint);
@@ -297,24 +315,25 @@ export async function createRidesFromGtfs() {
 							// If this is the first time we're seeing this shape_id, initiate the points array with the current point
 							savedShapes.set(data.shape_id, [thisShapeRowPoint]);
 						}
+
 						//
 					};
 
-					// 4.10.2.
+					//
 					// Setup the CSV parsing operation
 
 					await parseCsvFile(`${extractDirPath}/shapes.txt`, parseEachRow);
 
-					console.log(`✔︎ Finished processing "shapes.txt" of archive "${archiveData.code}".`);
+					LOGGER.success(`Finished processing "shapes.txt" of plan "${planData._id}"`);
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error processing "shapes.txt" file.', error);
+					LOGGER.error('Error processing "shapes.txt" file.', error);
 					throw new Error('✖︎ Error processing "shapes.txt" file.');
 				}
 
-				// 4.11.
+				//
 				// Next up: stops.txt
 				// For stops, include all of them since we don't have a way to filter them yet like trips/routes/shapes.
 				// By saving all of them, we also speed up the processing of each stop_time by including the stop data right away.
@@ -322,9 +341,9 @@ export async function createRidesFromGtfs() {
 				try {
 					//
 
-					console.log(`→ Reading zip entry "stops.txt" of archive "${archiveData.code}"...`);
+					console.log(`→ Reading zip entry "stops.txt" of plan "${planData._id}"...`);
 
-					// 4.11.1.
+					//
 					// Save all stops, but only the mininum required data.
 
 					const parseEachRow = async (data) => {
@@ -340,21 +359,21 @@ export async function createRidesFromGtfs() {
 						//
 					};
 
-					// 4.11.2.
+					//
 					// Setup the CSV parsing operation
 
 					await parseCsvFile(`${extractDirPath}/stops.txt`, parseEachRow);
 
-					console.log(`✔︎ Finished processing "stops.txt" of archive "${archiveData.code}".`);
+					LOGGER.success(`Finished processing "stops.txt" of plan "${planData._id}"`);
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error processing "stops.txt" file.', error);
+					LOGGER.error('Error processing "stops.txt" file.', error);
 					throw new Error('✖︎ Error processing "stops.txt" file.');
 				}
 
-				// 4.12.
+				//
 				// Next up: stop_times.txt
 				// Do a similiar check as the previous steps. Only include the stop_times for trips referenced before.
 				// Since this is the most resource intensive operation of them all, include the associated stop data
@@ -363,20 +382,26 @@ export async function createRidesFromGtfs() {
 				try {
 					//
 
-					console.log(`→ Reading zip entry "stop_times.txt" of archive "${archiveData.code}"...`);
+					LOGGER.info(`Reading zip entry "stop_times.txt" of plan "${planData._id}"...`);
 
-					// 4.12.1.
+					//
 					// For each stop of each trip, check if the associated trip_id was saved in the previous step or not.
 					// Save valid stop times along with the associated stop data.
 
 					const parseEachRow = async (data) => {
 						//
+
+						//
 						// Skip if this row's trip_id was not saved before
+
 						if (!savedTrips.has(data.trip_id)) return;
+
+						//
 						// Get the associated stop data. Skip if none found.
+
 						const stopData = savedStops.get(data.stop_id);
 						if (!stopData) return;
-						//
+
 						const parsedRowData = {
 							arrival_time: data.arrival_time,
 							departure_time: data.departure_time,
@@ -389,17 +414,18 @@ export async function createRidesFromGtfs() {
 							stop_sequence: Number(data.stop_sequence),
 							timepoint: data.timepoint,
 						};
-						//
+
 						const savedStopTime = savedStopTimes.has(data.trip_id);
-						//
+
 						if (savedStopTime) {
 							savedStopTimes.get(data.trip_id).push(parsedRowData);
 						}
 						else {
 							savedStopTimes.set(data.trip_id, [parsedRowData]);
 						}
-						//
+
 						referencedStops.add(data.stop_id);
+
 						//
 					};
 
@@ -408,16 +434,16 @@ export async function createRidesFromGtfs() {
 
 					await parseCsvFile(`${extractDirPath}/stop_times.txt`, parseEachRow);
 
-					console.log(`✔︎ Finished processing "stop_times.txt" of archive "${archiveData.code}".`);
+					LOGGER.success(`Finished processing "stop_times.txt" of plan "${planData._id}"`);
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error processing "stop_times.txt" file.', error);
+					LOGGER.error('Error processing "stop_times.txt" file.', error);
 					throw new Error('✖︎ Error processing "stop_times.txt" file.');
 				}
 
-				// 4.13.
+				//
 				// Transform each trip object into the database format, and save it to the database.
 				// Combine the previously extracted info from all files into a single object.
 
@@ -427,7 +453,7 @@ export async function createRidesFromGtfs() {
 					for (const tripData of savedTrips.values()) {
 						//
 
-						// 4.13.1.
+						//
 						// Get associated data
 
 						const calendarDatesData = savedCalendarDates.get(tripData.service_id);
@@ -435,7 +461,7 @@ export async function createRidesFromGtfs() {
 						const routeData = savedRoutes.get(tripData.route_id);
 						const shapeData = savedShapes.get(tripData.shape_id);
 
-						// 4.13.2.
+						//
 						// Setup the hashed trip data
 
 						const hashedTripData = {
@@ -459,7 +485,7 @@ export async function createRidesFromGtfs() {
 							//
 						};
 
-						// 4.13.3.
+						//
 						// Hash the hashed trip contents to prevent duplicates
 						// Check if this hashed trip already exists. If it does not exist, save it to the database.
 
@@ -468,7 +494,7 @@ export async function createRidesFromGtfs() {
 						if (!currentHashedTripAlreadyExists) await hashedTripsDbWritter.write(hashedTripData, { filter: { code: hashedTripData.code }, upsert: true });
 						createdHashedTripCodes.add(hashedTripData.code);
 
-						// 4.13.4.
+						//
 						// Setup the hashed shape data
 
 						const hashedShapeData = {
@@ -477,7 +503,7 @@ export async function createRidesFromGtfs() {
 							shape_id: tripData.shape_id,
 						};
 
-						// 4.13.5.
+						//
 						// Hash the hashed shape contents to prevent duplicates
 						// Check if this hashed shape already exists. If it does not exist, save it to the database.
 
@@ -486,23 +512,23 @@ export async function createRidesFromGtfs() {
 						if (!currentHashedShapeAlreadyExists) await hashedShapesDbWritter.write(hashedShapeData, { filter: { code: hashedShapeData.code }, upsert: true });
 						createdHashedShapeCodes.add(hashedShapeData.code);
 
-						// 4.13.6.
+						//
 						// Create a trip analysis document for each day this trip is scheduled to run
 
 						for (const calendarDate of calendarDatesData) {
 							//
-							const tripAnalysisData = {
+							const rideData = {
 								agency_id: routeData.agency_id,
 								analysis: [],
 								analysis_timestamp: null,
-								archive_id: archiveData.code,
-								code: `${archiveData.code}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
+								code: `${planData._id}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
 								hashed_shape_code: hashedShapeData.code,
 								hashed_trip_code: hashedTripData.code,
 								line_id: routeData.line_id,
 								operational_day: calendarDate,
 								parse_timestamp: new Date(),
 								pattern_id: tripData.pattern_id,
+								plan_id: planData._id,
 								route_id: routeData.route_id,
 								scheduled_start_time: hashedTripData.path?.length > 0 ? hashedTripData.path[0]?.arrival_time : null,
 								service_id: tripData.service_id,
@@ -511,10 +537,10 @@ export async function createRidesFromGtfs() {
 								user_notes: '',
 							};
 							//
-							const tripAnalysisOptions = {
+							const ridesOptions = {
 								//
 								filter: {
-									code: tripAnalysisData.code,
+									code: rideData.code,
 									// status: 'pending',
 								},
 								//
@@ -524,13 +550,13 @@ export async function createRidesFromGtfs() {
 								//
 							};
 							//
-							await tripAnalysisDbWritter.write(tripAnalysisData, tripAnalysisOptions);
+							await ridesDbWritter.write(rideData, ridesOptions);
 							//
-							createdTripAnalysisCodes.add(tripAnalysisData.code);
+							createdTripAnalysisCodes.add(rideData.code);
 							//
 						}
 
-						// 4.13.7.
+						//
 						// Delete the current trip to free up memory sooner
 
 						savedTrips.delete(tripData.trip_id);
@@ -541,78 +567,46 @@ export async function createRidesFromGtfs() {
 
 					await hashedTripsDbWritter.flush();
 					await hashedShapesDbWritter.flush();
-					await tripAnalysisDbWritter.flush();
+					await ridesDbWritter.flush();
 
 					//
 				}
 				catch (error) {
-					console.log('✖︎ Error transforming or saving shapes to database.', error);
+					LOGGER.error('Error transforming or saving shapes to database.', error);
 					throw new Error('✖︎ Error transforming or saving shapes to database.');
 				}
 
-				// 4.14.
-				// Mark this archive as processed if everything went well and if the all dates within the archive were processed.
-				// If not all dates were processed, mark it as partial.
+				//
+				// Remove orphan rides from plans which dates have changed since previous run.
+				// Delete all rides for this plan_id that fall outside the current Plan valid range.
 
-				if (endDateString < archiveData.end_date) {
-					await OFFERMANAGERDB.Archive.updateOne({ code: archiveData.code }, { $set: { slamanager_feeder_last_processed_date: endDateString, slamanager_feeder_status: 'partial' } });
-					console.log(`✔︎ Marked archive ${archiveData.code} as "partial" because not all dates were processed.`);
-				}
-				else {
-					await OFFERMANAGERDB.Archive.updateOne({ code: archiveData.code }, { $set: { slamanager_feeder_last_processed_date: archiveData.end_date, slamanager_feeder_status: 'processed' } });
-					console.log(`✔︎ Marked archive ${archiveData.code} as "processed".`);
-				}
+				await rides.deleteMany({ operational_day: { $nin: Array.from(savedCalendarDates.values()).flat() }, plan_id: planData._id });
 
-				parsedArchiveCodes.add(archiveData.code);
+				parsedPlanIds.add(planData._id);
 
 				//
 
-				console.log(`✔︎ Finished processing archive ${archiveData.code}`);
-				console.log();
-				console.log('- - - - - - - - - - - - - - - - - - - - -');
+				LOGGER.success(`Finished processing plan ${planData._id}`);
+				LOGGER.divider();
+
+				//
 			}
 			catch (error) {
-				console.log(`✖︎ Error processing archive ${archiveData.code}`, error);
-				await OFFERMANAGERDB.Archive.updateOne({ code: archiveData.code }, { $set: { slamanager_feeder_status: 'error' } });
+				LOGGER.error(`Error processing plan ${planData._id}`, error);
 			}
 
 			//
 		}
 
-		// console.log();
-		// console.log('→ Deleting stale entries...');
-
-		// const staleTripAnalysisCodes = [];
-		// const existingTripAnalysisCodes = await SLAMANAGERDB.TripAnalysis.find({ archive_id: { $in: Array.from(parsedArchiveCodes) } }, 'code').stream();
-		// for await (const existingTripAnalysisData of existingTripAnalysisCodes) {
-		// 	if (!createdTripAnalysisCodes.has(existingTripAnalysisData.code)) staleTripAnalysisCodes.push(existingTripAnalysisData.code);
-		// }
-		// const deletedTripAnalysisEntries = await SLAMANAGERDB.TripAnalysis.deleteMany({ code: { $in: staleTripAnalysisCodes } });
-
-		// //
-		// const existingAndUsedHashedTripCodes = new Set(await SLAMANAGERDB.TripAnalysis.distinct('hashed_trip_code'));
-		// const deletedHashedTripEntries = await SLAMANAGERDB.HashedTrip.deleteMany({ code: { $nin: Array.from(existingAndUsedHashedTripCodes) } });
-
-		// //
-		// const existingAndUsedHashedShapeCodes = new Set(await SLAMANAGERDB.TripAnalysis.distinct('hashed_shape_code'));
-		// const deletedHashedShapeEntries = await SLAMANAGERDB.HashedShape.deleteMany({ code: { $nin: Array.from(existingAndUsedHashedShapeCodes) } });
-
-		// console.log(`✔︎ Deleted stale entries: HashedTrip: ${deletedHashedTripEntries.deletedCount} | HashedShape: ${deletedHashedShapeEntries.deletedCount} | TripAnalysis: ${deletedTripAnalysisEntries.deletedCount}`);
-		// console.log();
-
 		//
 
-		console.log();
-		console.log('- - - - - - - - - - - - - - - - - - - - -');
-		console.log(`Run took ${globalTimer.get()}.`);
-		console.log('- - - - - - - - - - - - - - - - - - - - -');
-		console.log();
+		LOGGER.terminate(`Run took ${globalTimer.get()}`);
 
 		//
 	}
-	catch (err) {
-		console.log('✖︎ An error occurred. Halting execution.', err);
-		console.log('✖︎ Retrying in 10 seconds...');
+	catch (error) {
+		LOGGER.error('An error occurred. Halting execution.', error);
+		LOGGER.error('Retrying in 10 seconds...');
 		setTimeout(() => {
 			process.exit(0); // End process
 		}, 10000); // after 10 seconds
@@ -623,7 +617,8 @@ export async function createRidesFromGtfs() {
 
 /* * */
 
-async function parseCsvFile(filePath, rowParser = async () => null) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function parseCsvFile(filePath: string, rowParser: (rowData: any) => Promise<void>) {
 	const parser = csvParser({ bom: true, columns: true, record_delimiter: ['\n', '\r', '\r\n'], skip_empty_lines: true, trim: true });
 	const fileStream = fs.createReadStream(filePath);
 	const stream = fileStream.pipe(parser);
