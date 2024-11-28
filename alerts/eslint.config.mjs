@@ -10,6 +10,7 @@ export default [
     rules: {
       '@stylistic/indent': 'warn',
       '@stylistic/jsx-indent-props': 'off',
+      '@typescript-eslint/no-extraneous-class': 'off',
     },
   },
 ]

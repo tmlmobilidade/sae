@@ -31,6 +31,7 @@
 }
 
 .title {
+	user-select: none;
     font-size: var(--font-size-text);
     color: var(--color-system-text-200);
     flex: 1;

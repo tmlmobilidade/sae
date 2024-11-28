@@ -1,4 +1,5 @@
 /* * */
+import { ConfigProviders } from '@/providers/client-providers';
 import { GlobalProviders } from '@/providers/global-providers';
 import { Inter } from 'next/font/google';
 
@@ -37,7 +38,7 @@ export default async function RootLayout({ children }) {
 			</head>
 			<body>
 				<GlobalProviders>
-					{children}
+					<ConfigProviders>{children}</ConfigProviders>
 				</GlobalProviders>
 			</body>
 		</html>

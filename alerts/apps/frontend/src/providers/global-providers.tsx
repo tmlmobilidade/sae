@@ -9,6 +9,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 export function GlobalProviders({ children }) {
 	return (
+
 		<ThemeProviders themeData={websiteTheme}>
 			<NuqsAdapter>
 				<Notifications styles={{ root: { marginTop: '60px' } }} />
