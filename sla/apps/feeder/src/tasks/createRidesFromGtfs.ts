@@ -35,7 +35,7 @@ export async function createRidesFromGtfs() {
 		const createdHashedShapeCodes = new Set();
 		const createdTripAnalysisCodes = new Set();
 
-		// 4.
+		//
 		// Get all Plans and iterate on each one
 
 		const allPlansData = await plans.all();
@@ -260,7 +260,7 @@ export async function createRidesFromGtfs() {
 						//
 					};
 
-					// 4.9.2.
+					//
 					// Setup the CSV parsing operation
 
 					await parseCsvFile(`${extractDirPath}/routes.txt`, parseEachRow);
@@ -429,7 +429,7 @@ export async function createRidesFromGtfs() {
 						//
 					};
 
-					// 4.12.2.
+					//
 					// Setup the CSV parsing operation
 
 					await parseCsvFile(`${extractDirPath}/stop_times.txt`, parseEachRow);
