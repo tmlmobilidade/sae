@@ -8,7 +8,8 @@ export default [
   ...node,
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@stylistic/indent': 'warn',
+      '@stylistic/jsx-indent-props': 'off',
     },
   },
 ]

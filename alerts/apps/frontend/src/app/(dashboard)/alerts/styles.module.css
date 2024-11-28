@@ -1,3 +1,10 @@
 .grid {
 	height: 100%;
 }
+
+.detailContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	flex: 1;
+}

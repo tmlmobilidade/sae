@@ -1,6 +1,6 @@
 'use client';
 
-import { useAlertsListStore } from '@/store/alerts-list.store';
+import { useAlertsListContext } from '@/components/context/AlertList.context';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Alert } from '@tmlmobilidade/services/types';
 
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function AlertListCard({ alert, onSelect, selected = false }: Props) {
-	const setSelected = useAlertsListStore(state => state.actions.setSelected);
+	const setSelected = useAlertsListContext().actions.setSelected;
 
 	const handleClick = () => {
 		setSelected(alert);
