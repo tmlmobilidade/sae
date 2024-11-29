@@ -21,26 +21,25 @@ export async function createRidesFromGtfs() {
 		const globalTimer = new TIMETRACKER();
 
 		//
-		// Setup database writers
+		// Setup database writer
 
-		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', hashedTrips.collection);
-		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', hashedShapes.collection);
-		const ridesDbWritter = new MongoDbWriter('Rides', rides.collection);
+		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', await hashedTrips.getCollection());
+		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', await hashedShapes.getCollection());
+		const ridesDbWritter = new MongoDbWriter('Rides', await rides.getCollection());
 
 		//
 		// Setup variables to keep track of created IDs
 
-		const parsedPlanIds = new Set();
-		const createdHashedTripCodes = new Set();
-		const createdHashedShapeCodes = new Set();
-		const createdTripAnalysisCodes = new Set();
+		const parsedPlanIds = new Set<string>();
+		const createdHashedTripIds = new Set<string>();
+		const createdHashedShapeIds = new Set<string>();
 
 		//
 		// Get all Plans and iterate on each one
 
 		const allPlansData = await plans.all();
 
-		console.log(`→ Found ${allPlansData.length} Plans to process...`);
+		LOGGER.info(`Found ${allPlansData.length} Plans to process...`);
 
 		for (const [planIndex, planData] of allPlansData.entries()) {
 			try {
@@ -54,6 +53,8 @@ export async function createRidesFromGtfs() {
 
 				//
 				// Setup variables to save formatted entities found in this Plan
+
+				const savedRideIds = new Set<string>();
 
 				const savedCalendarDates = new Map<string, OperationalDate[]>();
 				const savedTrips = new Map();
@@ -74,11 +75,18 @@ export async function createRidesFromGtfs() {
 				// of the plan that was actually active in that period.
 
 				//
-				// Setup a temporary location to extract each GTFS plan
+				// Prepare the working directories for the current plan
 
-				const downloadUrl = `https://go.carrismetropolitana.pt/api/media/${planData.operation_file}/download_public`;
-				const downloadDirPath = `${process.env.APP_TMP_DIR}/downloads/${planData.operation_file}.zip`;
-				const extractDirPath = `${process.env.APP_TMP_DIR}/extractions/${Math.floor(Math.random() * 1000)}/${planData._id}`;
+				const downloadUrl = `${process.env.GO_API_HOST}/api/media/${planData.operation_file}/download_public`;
+				const workdirPath = `${process.env.APP_TMP_DIR}/sae-feeder/${planData._id}`;
+				const downloadFilePath = `${workdirPath}/${planData.operation_file}.zip`;
+				const extractDirPath = `${workdirPath}/extracted`;
+
+				if (fs.existsSync(workdirPath)) {
+					fs.rmSync(workdirPath, { force: true, recursive: true });
+				}
+
+				fs.mkdirSync(workdirPath, { recursive: true });
 
 				//
 				// Download and unzip the associated operation plan
@@ -86,9 +94,9 @@ export async function createRidesFromGtfs() {
 				const planFileData = await fetch(downloadUrl).then(response => response.blob());
 				const planFileBuffer = await planFileData.arrayBuffer();
 
-				fs.writeFileSync(downloadDirPath, Buffer.from(planFileBuffer));
+				fs.writeFileSync(downloadFilePath, Buffer.from(planFileBuffer));
 
-				await unzipFile(downloadDirPath, extractDirPath);
+				await unzipFile(downloadFilePath, extractDirPath);
 
 				LOGGER.info(`[${planIndex + 1}/${allPlansData.length}] Plan ${planData._id} | valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
 
@@ -500,7 +508,7 @@ export async function createRidesFromGtfs() {
 							await hashedTripsDbWritter.write(hashedTripData, { filter: { _id: hashedTripData._id }, upsert: true });
 						}
 
-						createdHashedTripCodes.add(hashedTripData._id);
+						createdHashedTripIds.add(hashedTripData._id);
 
 						//
 						// Setup the hashed shape data
@@ -525,7 +533,7 @@ export async function createRidesFromGtfs() {
 							await hashedShapesDbWritter.write(hashedShapeData, { filter: { _id: hashedShapeData._id }, upsert: true });
 						}
 
-						createdHashedShapeCodes.add(hashedShapeData._id);
+						createdHashedShapeIds.add(hashedShapeData._id);
 
 						//
 						// Create a trip analysis document for each day this trip is scheduled to run
@@ -565,7 +573,7 @@ export async function createRidesFromGtfs() {
 							//
 							await ridesDbWritter.write(rideData, ridesOptions);
 							//
-							createdTripAnalysisCodes.add(rideData._id);
+							savedRideIds.add(rideData._id);
 							//
 						}
 
@@ -590,10 +598,13 @@ export async function createRidesFromGtfs() {
 				}
 
 				//
-				// Remove orphan rides from plans which dates have changed since previous run.
+				// Remove rides that were previously parsed from this plan but which should not be included anymore.
 				// Delete all rides for this plan_id that fall outside the current Plan valid range.
 
-				await rides.deleteMany({ operational_day: { $nin: Array.from(savedCalendarDates.values()).flat() }, plan_id: planData._id });
+				const deleteStaleRidesResult = await rides.deleteMany({ _id: { $nin: Array.from(savedRideIds) }, plan_id: planData._id });
+				LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plan ${planData._id}`);
+
+				//
 
 				parsedPlanIds.add(planData._id);
 
@@ -610,6 +621,22 @@ export async function createRidesFromGtfs() {
 
 			//
 		}
+
+		//
+		// Remove all hashed trips and shapes that were not referenced by any ride
+
+		const deleteUnusedHashedTripsResult = await hashedTrips.deleteMany({ _id: { $nin: Array.from(createdHashedTripIds) } });
+		LOGGER.info(`Deleted ${deleteUnusedHashedTripsResult.deletedCount} unused Hashed Trips.`);
+
+		const deleteUnusedHashedShapesResult = await hashedShapes.deleteMany({ _id: { $nin: Array.from(createdHashedShapeIds) } });
+		LOGGER.info(`Deleted ${deleteUnusedHashedShapesResult.deletedCount} unused Hashed Shapes.`);
+
+		//
+		// Delete all rides from plans that do not exist anymore
+
+		const allPlansIds = allPlansData.map(plan => plan._id);
+		const deleteStaleRidesResult = await rides.deleteMany({ plan_id: { $nin: allPlansIds } });
+		LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plans that do not exist anymore.`);
 
 		//
 

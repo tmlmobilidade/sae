@@ -1,6 +1,5 @@
 /* * */
 
-import 'dotenv/config';
 import { createRidesFromGtfs } from '@/tasks/createRidesFromGtfs.js';
 
 /* * */

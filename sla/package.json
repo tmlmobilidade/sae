@@ -3,7 +3,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
-		"dev": "turbo dev",
+		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
@@ -15,7 +15,7 @@
 	"workspaces": [
 		"apps/*"
 	],
-	"packageManager": "pnpm@9.14.2",
+	"packageManager": "npm@10.9.1",
 	"engines": {
 		"node": ">=18"
 	}
