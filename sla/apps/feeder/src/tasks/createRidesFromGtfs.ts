@@ -31,8 +31,8 @@ export async function createRidesFromGtfs() {
 		// Setup variables to keep track of created IDs
 
 		const parsedPlanIds = new Set<string>();
-		const createdHashedTripIds = new Set<string>();
-		const createdHashedShapeIds = new Set<string>();
+		const savedHashedTripIds = new Set<string>();
+		const savedHashedShapeIds = new Set<string>();
 
 		//
 		// Get all Plans and iterate on each one
@@ -46,15 +46,45 @@ export async function createRidesFromGtfs() {
 				//
 
 				//
-				// Skip parsing if this plan is not parseable
+				// Skip this plan if it does not have an associated operation file
 
-				if (!planData.operation_file) continue;
-				if (planData.status === 'pending') continue;
+				if (!planData.operation_file) {
+					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | No operation file found.`);
+					continue;
+				}
+
+				//
+				// Skip this plan if it is not yet approved
+
+				if (!planData.is_approved) {
+					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | Plan is not approved.`);
+					continue;
+				}
+
+				//
+				// Skip this plan if its feeder status is other than 'waiting'
+
+				if (planData.feeder_status !== 'waiting') {
+					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | Plan feeder_status is '${planData.feeder_status}'. Only 'waiting' plans will be processed.`);
+					continue;
+				}
+
+				//
+				// At this point, the plan will be processed.
+				// Mark it as 'processing' to prevent multiple concurrent runs.
+
+				await plans.updateById(planData._id, { feeder_status: 'processing' });
+
+				LOGGER.info(`[${planIndex + 1}/${allPlansData.length}] Processing Plan ${planData._id} | valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
 
 				//
 				// Setup variables to save formatted entities found in this Plan
 
 				const savedRideIds = new Set<string>();
+
+				const referencedStopIds = new Set<string>();
+				const referencedShapeIds = new Set<string>();
+				const referencedRouteIds = new Set<string>();
 
 				const savedCalendarDates = new Map<string, OperationalDate[]>();
 				const savedTrips = new Map();
@@ -62,17 +92,6 @@ export async function createRidesFromGtfs() {
 				const savedRoutes = new Map();
 				const savedShapes = new Map<string, HashedShapePoint[]>();
 				const savedStopTimes = new Map<string, HashedTripWaypoint[]>();
-
-				const referencedStops = new Set();
-				const referencedShapes = new Set();
-				const referencedRoutes = new Set();
-
-				//
-				// Get the associated start and end dates for this plan.
-				// Even though most operation plans (GTFS files) will be annual, as in having calendar_dates for a given year,
-				// they are valid only on a given set of days, usually one month. Therefore we have multiple annual plans, each one
-				// valid on a different month. The validity dates will be used to clip the calendars and only saved the actual part
-				// of the plan that was actually active in that period.
 
 				//
 				// Prepare the working directories for the current plan
@@ -89,7 +108,7 @@ export async function createRidesFromGtfs() {
 				fs.mkdirSync(workdirPath, { recursive: true });
 
 				//
-				// Download and unzip the associated operation plan
+				// Download and unzip the associated operation file
 
 				const planFileData = await fetch(downloadUrl).then(response => response.blob());
 				const planFileBuffer = await planFileData.arrayBuffer();
@@ -97,8 +116,6 @@ export async function createRidesFromGtfs() {
 				fs.writeFileSync(downloadFilePath, Buffer.from(planFileBuffer));
 
 				await unzipFile(downloadFilePath, extractDirPath);
-
-				LOGGER.info(`[${planIndex + 1}/${allPlansData.length}] Plan ${planData._id} | valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
 
 				//
 				// The order of execution matters when parsing each file. This is because plans are valid on a set of dates.
@@ -209,8 +226,8 @@ export async function createRidesFromGtfs() {
 
 						//
 						// Reference the route_id and shape_id to filter them later
-						referencedRoutes.add(data.route_id);
-						referencedShapes.add(data.shape_id);
+						referencedRouteIds.add(data.route_id);
+						referencedShapeIds.add(data.shape_id);
 
 						//
 					};
@@ -246,7 +263,7 @@ export async function createRidesFromGtfs() {
 
 						//
 						// Skip if this row's route_id was not saved before
-						if (!referencedRoutes.has(data.route_id)) return;
+						if (!referencedRouteIds.has(data.route_id)) return;
 
 						//
 						// Format the exported row
@@ -300,7 +317,7 @@ export async function createRidesFromGtfs() {
 						//
 						// Skip if this row's trip_id was not saved before
 
-						if (!referencedShapes.has(data.shape_id)) return;
+						if (!referencedShapeIds.has(data.shape_id)) return;
 
 						const thisShapeRowPoint: HashedShapePoint = {
 							shape_dist_traveled: data.shape_dist_traveled,
@@ -432,7 +449,7 @@ export async function createRidesFromGtfs() {
 							savedStopTimes.set(data.trip_id, [parsedRowData]);
 						}
 
-						referencedStops.add(data.stop_id);
+						referencedStopIds.add(data.stop_id);
 
 						//
 					};
@@ -508,7 +525,7 @@ export async function createRidesFromGtfs() {
 							await hashedTripsDbWritter.write(hashedTripData, { filter: { _id: hashedTripData._id }, upsert: true });
 						}
 
-						createdHashedTripIds.add(hashedTripData._id);
+						savedHashedTripIds.add(hashedTripData._id);
 
 						//
 						// Setup the hashed shape data
@@ -533,7 +550,7 @@ export async function createRidesFromGtfs() {
 							await hashedShapesDbWritter.write(hashedShapeData, { filter: { _id: hashedShapeData._id }, upsert: true });
 						}
 
-						createdHashedShapeIds.add(hashedShapeData._id);
+						savedHashedShapeIds.add(hashedShapeData._id);
 
 						//
 						// Create a trip analysis document for each day this trip is scheduled to run
@@ -605,6 +622,9 @@ export async function createRidesFromGtfs() {
 				LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plan ${planData._id}`);
 
 				//
+				// Mark this plan as 'success' to indicate that it was processed successfully
+
+				await plans.updateById(planData._id, { feeder_status: 'success' });
 
 				parsedPlanIds.add(planData._id);
 
@@ -616,6 +636,7 @@ export async function createRidesFromGtfs() {
 				//
 			}
 			catch (error) {
+				await plans.updateById(planData._id, { feeder_status: 'error' });
 				LOGGER.error(`Error processing plan ${planData._id}`, error);
 			}
 
@@ -623,20 +644,22 @@ export async function createRidesFromGtfs() {
 		}
 
 		//
-		// Remove all hashed trips and shapes that were not referenced by any ride
-
-		const deleteUnusedHashedTripsResult = await hashedTrips.deleteMany({ _id: { $nin: Array.from(createdHashedTripIds) } });
-		LOGGER.info(`Deleted ${deleteUnusedHashedTripsResult.deletedCount} unused Hashed Trips.`);
-
-		const deleteUnusedHashedShapesResult = await hashedShapes.deleteMany({ _id: { $nin: Array.from(createdHashedShapeIds) } });
-		LOGGER.info(`Deleted ${deleteUnusedHashedShapesResult.deletedCount} unused Hashed Shapes.`);
-
-		//
 		// Delete all rides from plans that do not exist anymore
 
-		const allPlansIds = allPlansData.map(plan => plan._id);
-		const deleteStaleRidesResult = await rides.deleteMany({ plan_id: { $nin: allPlansIds } });
+		const allPlanIds = allPlansData.map(plan => plan._id);
+		const deleteStaleRidesResult = await rides.deleteMany({ plan_id: { $nin: allPlanIds } });
 		LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plans that do not exist anymore.`);
+
+		//
+		// Remove all hashed trips and shapes that are not referenced by any ride
+
+		const allHashedTripIdsFromRides = await rides.distinct('hashed_trip_id');
+		const deleteUnusedHashedTripsResult = await hashedTrips.deleteMany({ _id: { $nin: allHashedTripIdsFromRides } });
+		LOGGER.info(`Deleted ${deleteUnusedHashedTripsResult.deletedCount} unused Hashed Trips.`);
+
+		const allHashedShapeIdsFromRides = await rides.distinct('hashed_shape_id');
+		const deleteUnusedHashedShapesResult = await hashedShapes.deleteMany({ _id: { $nin: allHashedShapeIdsFromRides } });
+		LOGGER.info(`Deleted ${deleteUnusedHashedShapesResult.deletedCount} unused Hashed Shapes.`);
 
 		//
 
