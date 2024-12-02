@@ -6,7 +6,6 @@ import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
-import { rides } from '@tmlmobilidade/services/interfaces';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -194,7 +193,7 @@ async function syncDocuments(documentType: string, operationalDay: string, pcgiC
 
 /* * */
 
-export default async () => {
+export async function ensureParity() {
 	try {
 		//
 
