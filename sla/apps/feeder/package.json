@@ -27,8 +27,8 @@
 		"@carrismetropolitana/eslint": "20241024.1600.5",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.10.1",
-		"tsx": "4.19.2",
 		"resolve-tspaths": "0.8.23",
+		"tsx": "4.19.2",
 		"typescript": "5.7.2"
 	}
 }
