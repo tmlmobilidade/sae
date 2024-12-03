@@ -565,7 +565,7 @@ export async function createRidesFromGtfs() {
 								hashed_shape_id: hashedShapeData._id,
 								hashed_trip_id: hashedTripData._id,
 								line_id: routeData.line_id,
-								operational_day: calendarDate,
+								operational_date: calendarDate,
 								pattern_id: tripData.pattern_id,
 								plan_id: planData._id,
 								route_id: routeData.route_id,

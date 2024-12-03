@@ -6,6 +6,7 @@ import SLAMANAGERDB from '@/services/SLAMANAGERDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { vehicleEvents } from '@tmlmobilidade/services/interfaces';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -193,7 +194,7 @@ async function syncDocuments(documentType: string, operationalDay: string, pcgiC
 
 /* * */
 
-export async function ensureParity() {
+export async function ensureFullSync() {
 	try {
 		//
 
@@ -201,28 +202,46 @@ export async function ensureParity() {
 
 		const globalTimer = new TIMETRACKER();
 
-		// 1.
-		// Connect to databases
+		//
+		// Connect to databases and setup DB writers
 
-		LOGGER.info('Connecting to databases...');
-
-		await SLAMANAGERDB.connect();
-		await SLAMANAGERBUFFERDB.connect();
 		await PCGIDB.connect();
 
-		const bufferDataDbWritter = new MongoDbWriter('BufferData', SLAMANAGERBUFFERDB.BufferData, { batch_size: 100000 });
+		const vehicleEventsDbWritter = new MongoDbWriter('VehicleEvents', await vehicleEvents.getCollection(), { batch_size: 1000 });
 
-		LOGGER.divider();
+		//
+		// Stream all PCGIDB Vehicle Event documents that are before now minus 30 minutes,
+		// sorted in descending order of timestamp, to ensure the most recent documents are processed first.
 
-		// 2.
-		// Get all existing operational days, even ones that are already buffered.
-		// Sort them in descending order to process the most recent days first.
+		const thirtyMinutesAgo = DateTime.now().minus({ minutes: 30 });
 
-		const allOperationalDays = await SLAMANAGERDB.TripAnalysis.distinct('operational_day');
+		const
 
-		allOperationalDays.sort((a: string, b: string) => b.localeCompare(a));
+		const pcgidbVehicleEventsStream = PCGIDB.VehicleEvents
+			.find({ millis: { $lte: thirtyMinutesAgo.toMillis() } })
+			.sort({ millis: -1 })
+			.stream();
 
-		LOGGER.info(`Found ${allOperationalDays.length} operational days. Checking each one...`);
+		for await (const vehicleEvent of pcgidbVehicleEventsStream) {
+			console.log(vehicleEvent);
+		}
+
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
 
 		// 3.
 		// Iterate on each day

@@ -3,7 +3,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
-		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
+		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-watcher",
 		"lint": "turbo lint"
 	},
 	"devDependencies": {

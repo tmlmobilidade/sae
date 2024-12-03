@@ -7,6 +7,7 @@ volumes:
   ridesdbdata:
   hashedtripsdbdata:
   hashedshapesdbdata:
+  vehicleeventsdbdata:
 
 services:
   #
@@ -94,3 +95,24 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=hashedshapesdbuser
       - MONGO_INITDB_ROOT_PASSWORD=hashedshapesdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  vehicleeventsdb:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27105:27017
+    volumes:
+      - vehicleeventsdbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=vehicleeventsdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=vehicleeventsdbpassword
