@@ -4,11 +4,12 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
 import { hashedShapes, hashedTrips, plans, rides } from '@tmlmobilidade/services/interfaces';
-import { CreateHashedShapeDto, CreateHashedTripDto, createOperationalDate, CreateRideDto, HashedShapePoint, HashedTripWaypoint, OperationalDate } from '@tmlmobilidade/services/types';
+import { CreateHashedShapeDto, CreateHashedTripDto, createOperationalDate, CreateRideDto, HashedShapePoint, HashedTripWaypoint, OPERATIONAL_DATE_FORMAT, OperationalDate } from '@tmlmobilidade/services/types';
 import crypto from 'crypto';
 import { parse as csvParser } from 'csv-parse';
 import extract from 'extract-zip';
 import fs from 'fs';
+import { DateTime } from 'luxon';
 
 /* * */
 
@@ -557,22 +558,46 @@ export async function createRidesFromGtfs() {
 
 						for (const calendarDate of calendarDatesData) {
 							//
+							const extensionScheduledInMeters = convertMetersOrKilometersToMeters(hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled, hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled);
+							//
+							const startTimeScheduled = hashedTripData.path?.length > 0 ? hashedTripData.path[0]?.arrival_time : '-';
+							const startTimeScheduledUnix = convertOperationTimeStringAndOperationalDateToUnixTimestamp(startTimeScheduled, calendarDate);
+							//
+							const endTimeScheduled = hashedTripData.path?.length > 0 ? hashedTripData.path[hashedTripData.path.length - 1]?.arrival_time : '-';
+							const endTimeScheduledUnix = convertOperationTimeStringAndOperationalDateToUnixTimestamp(endTimeScheduled, calendarDate);
+							const runtimeScheduled = endTimeScheduledUnix - startTimeScheduledUnix;
+							//
 							const rideData: CreateRideDto = {
 								_id: `${planData._id}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
 								agency_id: routeData.agency_id,
 								analysis: [],
-								extension: hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled,
+								driver_id: null,
+								extension_observed: null,
+								extension_scheduled: extensionScheduledInMeters,
 								hashed_shape_id: hashedShapeData._id,
 								hashed_trip_id: hashedTripData._id,
+								headsign: tripData.trip_headsign,
 								line_id: routeData.line_id,
+								line_type: routeData.line_type,
 								operational_date: calendarDate,
+								passengers_estimated: null,
 								pattern_id: tripData.pattern_id,
 								plan_id: planData._id,
+								refunds_amount: null,
+								refunds_count: null,
 								route_id: routeData.route_id,
-								scheduled_start_time: hashedTripData.path?.length > 0 ? hashedTripData.path[0]?.arrival_time : null,
-								service_id: tripData.service_id,
+								runtime_observed: null,
+								runtime_scheduled: runtimeScheduled,
+								sales_amount: null,
+								sales_count: null,
+								start_time_observed: null,
+								start_time_observed_unix: null,
+								start_time_scheduled: startTimeScheduled,
+								start_time_scheduled_unix: startTimeScheduledUnix,
 								status: 'pending',
 								trip_id: tripData.trip_id,
+								validations_count: null,
+								vehicle_id: null,
 							};
 							//
 							const ridesOptions = {
@@ -692,10 +717,10 @@ async function parseCsvFile(filePath: string, rowParser: (rowData: any) => Promi
 
 /* * */
 
-export async function unzipFile(zipFilePath, outputDir) {
+const unzipFile = async (zipFilePath, outputDir) => {
 	await extract(zipFilePath, { dir: outputDir });
 	setDirectoryPermissions(outputDir);
-}
+};
 
 /* * */
 
@@ -710,4 +735,64 @@ const setDirectoryPermissions = (dirPath, mode = 0o666) => {
 			fs.chmodSync(filePath, mode);
 		}
 	}
+};
+
+/* * */
+
+/**
+ * This function checks if a value is small enough to be considered a meter value,
+ * as it should be used exclusevely for trip distance values.
+ * If the value is greater than 1, it is considered to be in meters.
+ * Converts a value to meters if it is in kilometers, otherwise returns meters.
+ *
+ * @param value - The value to be checked
+ * @param context - The context in which the value is being used
+ * @param ballpark - A ballpark value to be used as a reference. It is recommended to use the total distance of the object.
+ * @returns The value in meters
+ */
+const convertMetersOrKilometersToMeters = (value: number | string, ballpark: number | string): number => {
+	//
+
+	const valueAsNumber = Number(value);
+	const ballparkAsNumber = Number(ballpark);
+
+	if (Number.isNaN(valueAsNumber)) return -1;
+	if (Number.isNaN(ballparkAsNumber)) return -1;
+
+	// If the ballpark is bigger than 800, then the value is in meters
+	// Otherwise, the value is in kilometers. This is because it is unlikely
+	// that a trip will be smaller than 800 meters, and longer than 800 kilometers.
+
+	if (ballparkAsNumber > 800) {
+		return valueAsNumber;
+	}
+	else {
+		return valueAsNumber * 1000;
+	}
+
+	//
+};
+
+/* * */
+
+const convertOperationTimeStringAndOperationalDateToUnixTimestamp = (timeString: string, operationalDate: OperationalDate): number => {
+	//
+
+	// Return early if no time string is provided
+	if (!timeString || !operationalDate) return -1;
+
+	// Check if the timestring is in the format HH:MM:SS
+	if (!/^\d{2}:\d{2}:\d{2}$/.test(timeString)) return -1;
+
+	// Extract the individual components of the time string (HH:MM:SS)
+	const [hoursOperation, minutesOperation, secondsOperation] = timeString.split(':').map(Number);
+
+	return DateTime
+		.fromFormat(operationalDate, OPERATIONAL_DATE_FORMAT)
+		.setZone('Europe/Lisbon')
+		.set({ hour: hoursOperation, minute: minutesOperation, second: secondsOperation })
+		.toUTC()
+		.toUnixInteger();
+
+	//
 };
