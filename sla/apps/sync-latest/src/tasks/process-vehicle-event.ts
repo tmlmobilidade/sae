@@ -50,6 +50,7 @@ export async function processVehicleEvent(databaseOperation) {
 		agency_id: pcgiDocument.content.entity[0].vehicle.agencyId,
 		data: JSON.stringify(pcgiDocument),
 		event_id: pcgiDocument.content.entity[0]._id,
+		insert_timestamp: pcgiDocument.millis,
 		line_id: pcgiDocument.content.entity[0].vehicle.trip?.lineId,
 		odometer: pcgiDocument.content.entity[0].vehicle.position.odometer,
 		operational_date: operationalDate,
