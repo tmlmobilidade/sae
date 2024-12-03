@@ -35,11 +35,11 @@ export async function syncVehicleEvents() {
 		// More recent data is more important than older data, so we start syncing the most recent data first.
 		// It makes sense to divide chunks by day, but this should be adjusted according to the volume of data in each chunk.
 
-		const thirtyMinutesAgo = DateTime.now().minus({ minutes: 30 });
+		const thirtySecondsAgo = DateTime.now().minus({ seconds: 30 });
 		const oldestDataNeeded = DateTime.fromFormat('20240101', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
 
 		const allTimestampChunks = Interval
-			.fromDateTimes(oldestDataNeeded, thirtyMinutesAgo)
+			.fromDateTimes(oldestDataNeeded, thirtySecondsAgo)
 			.splitBy({ hour: 3 })
 			.sort((a, b) => b.start.toMillis() - a.start.toMillis());
 

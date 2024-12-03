@@ -3,7 +3,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
-		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-full",
+		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-full --filter=@tmlmobilidade/sae-sla-sync-latest",
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
