@@ -16,7 +16,7 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP'
 	reason: 'NO_EVENT_FOUND_FOR_NEXT_STOP_ID' | 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE' | 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME' | null
@@ -41,7 +41,7 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		// 2.
 		// Prepare the operational day date for the given trip
 
-		let operationalDayDateTimeObject = DateTime.fromFormat(analysisData.trip_analysis.operational_day, 'yyyyMMdd', { zone: 'Europe/Lisbon' }).startOf('day');
+		let operationalDayDateTimeObject = DateTime.fromFormat(analysisData.ride.operational_date, 'yyyyMMdd', { zone: 'Europe/Lisbon' }).startOf('day');
 
 		// 3.
 		// Extract the ID and the expected arrival time of the first stop of the trip

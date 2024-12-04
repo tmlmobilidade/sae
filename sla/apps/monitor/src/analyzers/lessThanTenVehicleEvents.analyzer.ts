@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'LESS_THAN_TEN_VEHICLE_EVENTS'
 	reason: 'FOUND_MORE_THAN_10_VEHICLE_EVENTS' | 'FOUND_ONLY_1_VEHICLE_EVENT' | `FOUND_ONLY_${number}_VEHICLE_EVENTS`
 	unit: 'VEHICLE_EVENTS_QTY' | null

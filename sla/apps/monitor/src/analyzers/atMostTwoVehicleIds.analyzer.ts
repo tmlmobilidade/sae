@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'AT_MOST_TWO_VEHICLE_IDS'
 	reason: 'FOUND_MORE_THAN_2_VEHICLE_IDS' | 'FOUND_ONE_OR_TWO_VEHICLE_IDS' | 'NO_VEHICLE_ID_FOUND'
 	unit: 'UNIQUE_VEHICLE_IDS' | null

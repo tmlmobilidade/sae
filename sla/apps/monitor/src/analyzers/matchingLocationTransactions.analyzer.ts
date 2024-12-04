@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'MATCHING_LOCATION_TRANSACTIONS'
 	reason: 'ALL_STOPS_HAVE_LOCATION_TRANSACTIONS' | 'MISSING_LOCATION_TRANSACTION_FOR_AT_LEAST_ONE_STOP'
 	unit: null

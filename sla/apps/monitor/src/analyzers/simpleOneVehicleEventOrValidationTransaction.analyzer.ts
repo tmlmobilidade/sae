@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION'
 	reason: 'FOUND_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION' | 'NO_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION_FOUND'
 	unit: null

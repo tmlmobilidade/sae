@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'HIGHEST_VEHICLE_EVENT_DELAY'
 	reason: null
 	unit: 'HIGHEST_EVENT_DELAY_IN_MILLISECONDS' | null

@@ -1,12 +1,10 @@
 /* * */
 
-import 'dotenv/config';
-
-import start from './start.js';
+import { validateRides } from '@/tasks/validate-rides.js';
 
 /* * */
 
-const RUN_INTERVAL = 100; // 100 milliseconds
+const RUN_INTERVAL = 1000; // 100 milliseconds
 
 /* * */
 
@@ -14,7 +12,7 @@ const RUN_INTERVAL = 100; // 100 milliseconds
 	//
 
 	const runOnInterval = async () => {
-		await start();
+		await validateRides();
 		setTimeout(runOnInterval, RUN_INTERVAL);
 	};
 

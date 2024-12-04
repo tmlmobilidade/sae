@@ -15,7 +15,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'SIMPLE_THREE_VEHICLE_EVENTS'
 	reason: 'ALL_STOPS_FOUND' | 'MISSING_FIRST_STOPS' | 'MISSING_LAST_STOPS' | 'MISSING_MIDDLE_STOPS'
 	unit: null

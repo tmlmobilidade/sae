@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'SIMPLE_ONE_VALIDATION_TRANSACTION'
 	reason: 'FOUND_AT_LEAST_ONE_VALIDATION_TRANSACTION' | 'NO_VALIDATION_TRANSACTION_FOUND'
 	unit: 'VALIDATION_TRANSACTIONS_QTY' | null

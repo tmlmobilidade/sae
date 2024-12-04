@@ -13,7 +13,7 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisResult {
+interface ExtendedAnalysisResult extends AnalysisData {
 	code: 'EXCESSIVE_VEHICLE_EVENT_DELAY'
 	reason: 'ALL_VEHICLE_EVENTS_ARE_WITHIN_DELAY_LIMITS' | `THERE_ARE_${number}_VEHICLE_EVENTS_WITH_EXCESSIVE_DELAY`
 	unit: 'COUNT_OF_VEHICLE_EVENTS_WITH_EXCESSIVE_DELAY' | null
