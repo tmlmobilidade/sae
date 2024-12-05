@@ -1,30 +1,23 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysisData.type.js';
-import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
-
-/* * */
-
-// This analyzer tests if at least one vehicle event or one validation is found for the trip.
-//
-// GRADES:
-// → PASS = At least one Vehicle Event OR one Validation Transaction is found for the trip.
-// → FAIL = No Vehicle Events OR Validation Transactions found for the trip.
+import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
 
 interface ExplicitRideAnalysis extends RideAnalysis {
 	_id: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION'
 	reason: 'FOUND_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION' | 'NO_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION_FOUND'
-	unit: null
-	value: null
 };
 
-/* * */
-
-export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
-	//
-
+/**
+ * This analyzer tests if at least one vehicle event or one validation is found for the trip.
+ *
+ * GRADES:
+ * → PASS = At least one Vehicle Event OR one Validation Transaction is found for the trip.
+ * → FAIL = No Vehicle Events OR Validation Transactions found for the trip.
+ */
+export function simpleOneVehicleEventOrValidationTransactionAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -37,7 +30,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'pass',
 				message: `Found ${analysisData.vehicle_events.length} Vehicle Events and ${analysisData.validation_transactions.length} Validation Transactions for this trip.`,
 				reason: 'FOUND_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: null,
 				value: null,
 			};
@@ -48,7 +40,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 			grade: 'fail',
 			message: 'No Vehicle Events or Validation Transactions found for this trip.',
 			reason: 'NO_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION_FOUND',
-			status: AnalysisResultStatus.COMPLETE,
 			unit: null,
 			value: null,
 		};
@@ -56,17 +47,13 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
-			grade: 'fail',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};
 	}
-
-	//
 };

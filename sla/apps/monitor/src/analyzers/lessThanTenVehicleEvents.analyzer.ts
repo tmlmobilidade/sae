@@ -1,30 +1,24 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysisData.type.js';
-import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
-
-/* * */
-
-// This analyzer tests if at the trip has less than ten Vehicle Events.
-//
-// GRADES:
-// → PASS = More than ten Vehicle Events found for the trip.
-// → FAIL = Less than or equal to ten Vehicle Events found for the trip.
+import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
 
 interface ExplicitRideAnalysis extends RideAnalysis {
 	_id: 'LESS_THAN_TEN_VEHICLE_EVENTS'
 	reason: 'FOUND_MORE_THAN_10_VEHICLE_EVENTS' | 'FOUND_ONLY_1_VEHICLE_EVENT' | `FOUND_ONLY_${number}_VEHICLE_EVENTS`
-	unit: 'VEHICLE_EVENTS_QTY' | null
-	value: null | number
+	unit: 'VEHICLE_EVENTS_QTY'
 };
 
-/* * */
-
-export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
-	//
-
+/**
+ * This analyzer tests if at the trip has less than ten Vehicle Events.
+ *
+ * GRADES:
+ * → PASS = More than ten Vehicle Events found for the trip.
+ * → FAIL = Less than or equal to ten Vehicle Events found for the trip.
+ */
+export function lessThanTenVehicleEventsAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -37,7 +31,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'pass',
 				message: `Found ${analysisData.vehicle_events.length} Vehicle Events for this trip.`,
 				reason: 'FOUND_MORE_THAN_10_VEHICLE_EVENTS',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: 'VEHICLE_EVENTS_QTY',
 				value: analysisData.vehicle_events.length,
 			};
@@ -49,7 +42,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'fail',
 				message: `Found ${analysisData.vehicle_events.length} Vehicle Events for this trip.`,
 				reason: 'FOUND_ONLY_1_VEHICLE_EVENT',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: 'VEHICLE_EVENTS_QTY',
 				value: analysisData.vehicle_events.length,
 			};
@@ -60,7 +52,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 			grade: 'fail',
 			message: `Found ${analysisData.vehicle_events.length} Vehicle Events for this trip.`,
 			reason: `FOUND_ONLY_${analysisData.vehicle_events.length}_VEHICLE_EVENTS`,
-			status: AnalysisResultStatus.COMPLETE,
 			unit: 'VEHICLE_EVENTS_QTY',
 			value: analysisData.vehicle_events.length,
 		};
@@ -68,17 +59,13 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'LESS_THAN_TEN_VEHICLE_EVENTS',
-			grade: 'fail',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};
 	}
-
-	//
 };

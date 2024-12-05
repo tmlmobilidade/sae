@@ -8,7 +8,7 @@ import { DateTime } from 'luxon';
 /* * */
 
 interface ExplicitRideAnalysis extends RideAnalysis {
-	_id: 'GEO_DELAYED_START_FIVE_MINUTES_FIRST_OUT'
+	_id: 'GEO_DELAYED_START_FIRST_OUT'
 	reason: 'NO_EVENT_OUTSIDE_GEOFENCE_FOUND' | 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE' | 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME'
 };
@@ -22,7 +22,7 @@ interface ExplicitRideAnalysis extends RideAnalysis {
  * → PASS = Trip start time delay is less than or equal to five minutes.
  * → FAIL = Trip start time delay is greater than five minutes.
  */
-export function geoDelayedStartFiveMinutesFirstOutAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
+export function geoDelayedStartFirstOutAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -100,7 +100,7 @@ export function geoDelayedStartFiveMinutesFirstOutAnalyzer(analysisData: Analysi
 
 		if (!firstEventOutsideGeofence) {
 			return {
-				_id: 'GEO_DELAYED_START_FIVE_MINUTES_FIRST_OUT',
+				_id: 'GEO_DELAYED_START_FIRST_OUT',
 				grade: 'fail',
 				message: 'No first event outside geofence found.',
 				reason: 'NO_EVENT_OUTSIDE_GEOFENCE_FOUND',
@@ -122,7 +122,7 @@ export function geoDelayedStartFiveMinutesFirstOutAnalyzer(analysisData: Analysi
 
 		if (delayInMinutes <= 5) {
 			return {
-				_id: 'GEO_DELAYED_START_FIVE_MINUTES_FIRST_OUT',
+				_id: 'GEO_DELAYED_START_FIRST_OUT',
 				grade: 'pass',
 				message: `Trip start time delay is ${delayInMinutes} minutes.`,
 				reason: 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE',
@@ -132,7 +132,7 @@ export function geoDelayedStartFiveMinutesFirstOutAnalyzer(analysisData: Analysi
 		}
 
 		return {
-			_id: 'GEO_DELAYED_START_FIVE_MINUTES_FIRST_OUT',
+			_id: 'GEO_DELAYED_START_FIRST_OUT',
 			grade: 'fail',
 			message: `Trip start time delay is ${delayInMinutes} minutes.`,
 			reason: 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE',
@@ -143,9 +143,8 @@ export function geoDelayedStartFiveMinutesFirstOutAnalyzer(analysisData: Analysi
 		//
 	}
 	catch (error) {
-		// console.log(error);
 		return {
-			_id: 'GEO_DELAYED_START_FIVE_MINUTES_FIRST_OUT',
+			_id: 'GEO_DELAYED_START_FIRST_OUT',
 			grade: 'error',
 			message: error.message,
 			reason: null,

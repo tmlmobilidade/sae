@@ -1,32 +1,25 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysisData.type.js';
-import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
-
-/* * */
-
-// This analyzer tests if at least one stop_id is found for each segment of the trip.
-// The first three stops, the first middle 4 stops and the last 3 stops for each trip are saved.
-// Then, a simple lookup for any of these Stop IDs is performed.
-//
-// GRADES:
-// → PASS = At least one Stop ID is found for each segment of the trip.
-// → FAIL = At least one segment without any matching stops.
+import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
 
 interface ExplicitRideAnalysis extends RideAnalysis {
 	_id: 'SIMPLE_THREE_VEHICLE_EVENTS'
 	reason: 'ALL_STOPS_FOUND' | 'MISSING_FIRST_STOPS' | 'MISSING_LAST_STOPS' | 'MISSING_MIDDLE_STOPS'
-	unit: null
-	value: null
 };
 
-/* * */
-
-export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
-	//
-
+/**
+ * This analyzer tests if at least one stop_id is found for each segment of the trip.
+ * The first three stops, the first middle 4 stops and the last 3 stops for each trip are saved.
+ * Then, a simple lookup for any of these Stop IDs is performed.
+ *
+ * GRADES:
+ * → PASS = At least one Stop ID is found for each segment of the trip.
+ * → FAIL = At least one segment without any matching stops.
+ */
+export function simpleThreeVehicleEventsAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -64,14 +57,14 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		// Test if at least one stop is found for each segment
 
 		for (const event of analysisData.vehicle_events) {
-			if (firstStopIds.has(event.content.entity[0].vehicle.stopId)) {
-				foundFirstStopIds.add(event.content.entity[0].vehicle.stopId);
+			if (firstStopIds.has(event.stop_id)) {
+				foundFirstStopIds.add(event.stop_id);
 			}
-			if (middleStopIds.has(event.content.entity[0].vehicle.stopId)) {
-				foundMiddleStopIds.add(event.content.entity[0].vehicle.stopId);
+			if (middleStopIds.has(event.stop_id)) {
+				foundMiddleStopIds.add(event.stop_id);
 			}
-			if (lastStopIds.has(event.content.entity[0].vehicle.stopId)) {
-				foundLastStopIds.add(event.content.entity[0].vehicle.stopId);
+			if (lastStopIds.has(event.stop_id)) {
+				foundLastStopIds.add(event.stop_id);
 			}
 		}
 
@@ -84,7 +77,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'fail',
 				message: `None of the first ${firstStopIds.size} Stop IDs was found. [${Array.from(firstStopIds).join('|')}]`,
 				reason: 'MISSING_FIRST_STOPS',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: null,
 				value: null,
 			};
@@ -96,7 +88,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'fail',
 				message: `None of the middle ${middleStopIds.size} Stop IDs was found. [${Array.from(middleStopIds).join('|')}]`,
 				reason: 'MISSING_MIDDLE_STOPS',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: null,
 				value: null,
 			};
@@ -108,7 +99,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'fail',
 				message: `None of the last ${lastStopIds.size} Stop IDs was found. [${Array.from(lastStopIds).join('|')}]`,
 				reason: 'MISSING_LAST_STOPS',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: null,
 				value: null,
 			};
@@ -119,7 +109,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 			grade: 'pass',
 			message: `Found at least one Stop ID for each section (first|middle|last). First: [${Array.from(foundFirstStopIds).join('|')}] | Middle: [${Array.from(foundMiddleStopIds).join('|')}] | Last: [${Array.from(foundLastStopIds).join('|')}]`,
 			reason: 'ALL_STOPS_FOUND',
-			status: AnalysisResultStatus.COMPLETE,
 			unit: null,
 			value: null,
 		};
@@ -127,17 +116,13 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'SIMPLE_THREE_VEHICLE_EVENTS',
-			grade: 'fail',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};
 	}
-
-	//
 };

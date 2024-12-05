@@ -67,7 +67,6 @@ export function excessiveVehicleEventDelayAnalyzer(analysisData: AnalysisData): 
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'EXCESSIVE_VEHICLE_EVENT_DELAY',
 			grade: 'error',

@@ -13,28 +13,20 @@ import { DateTime } from 'luxon';
 import { atMostTwoDriverIdsAnalyzer } from '@/analyzers/atMostTwoDriverIds.analyzer.js';
 import { atMostTwoVehicleIdsAnalyzer } from '@/analyzers/atMostTwoVehicleIds.analyzer.js';
 import { excessiveVehicleEventDelayAnalyzer } from '@/analyzers/excessiveVehicleEventDelay.analyzer.js';
-import { geoDelayedStartFiveMinutesFirstOutAnalyzer } from '@/analyzers/geoDelayedStartFiveMinutesFirstOut.analyzer.js';
-import { geoDelayedStartFiveMinutesLastInAnalyzer } from '@/analyzers/geoDelayedStartFiveMinutesLastIn.analyzer.js';
-// import { geoDelayedStartTenMinutesFirstOutAnalyzer } from '@/analyzers/geoDelayedStartTenMinutesFirstOut.analyzer.js';
-// import { geoDelayedStartTenMinutesLastInAnalyzer } from '@/analyzers/geoDelayedStartTenMinutesLastIn.analyzer.js';
-// import { geoDelayedStartThreeMinutesFirstOutAnalyzer } from '@/analyzers/geoDelayedStartThreeMinutesFirstOut.analyzer.js';
-// import { geoDelayedStartThreeMinutesLastInAnalyzer } from '@/analyzers/geoDelayedStartThreeMinutesLastIn.analyzer.js';
-// import { geoEarlyStartFirstOutAnalyzer } from '@/analyzers/geoEarlyStartFirstOut.analyzer.js';
-// import { geoEarlyStartLastInAnalyzer } from '@/analyzers/geoEarlyStartLastIn.analyzer.js';
-// import { highestVehicleEventDelayAnalyzer } from '@/analyzers/highestVehicleEventDelay.analyzer.js';
-// import { lessThanTenVehicleEventsAnalyzer } from '@/analyzers/lessThanTenVehicleEvents.analyzer.js';
-// import { matchingLocationTransactionsAnalyzer } from '@/analyzers/matchingLocationTransactions.analyzer.js';
-// import { simpleDelayedStartFiveMinutesFirstForNextStopAnalyzer } from '@/analyzers/simpleDelayedStartFiveMinutesFirstForNextStop.analyzer.js';
-// import { simpleDelayedStartFiveMinutesLastForFirstStopAnalyzer } from '@/analyzers/simpleDelayedStartFiveMinutesLastForFirstStop.analyzer.js';
-// import { simpleDelayedStartTenMinutesFirstForNextStopAnalyzer } from '@/analyzers/simpleDelayedStartTenMinutesFirstForNextStop.analyzer.js';
-// import { simpleDelayedStartTenMinutesLastForFirstStopAnalyzer } from '@/analyzers/simpleDelayedStartTenMinutesLastForFirstStop.analyzer.js';
-// import { simpleDelayedStartThreeMinutesFirstForNextStopAnalyzer } from '@/analyzers/simpleDelayedStartThreeMinutesFirstForNextStop.analyzer.js';
-// import { simpleDelayedStartThreeMinutesLastForFirstStopAnalyzer } from '@/analyzers/simpleDelayedStartThreeMinutesLastForFirstStop.analyzer.js';
-// import { simpleEarlyStartFirstForNextStopAnalyzer } from '@/analyzers/simpleEarlyStartFirstForNextStop.analyzer.js';
-// import { simpleEarlyStartLastForFirstStopAnalyzer } from '@/analyzers/simpleEarlyStartLastForFirstStop.analyzer.js';
-// import { simpleOneValidationTransactionAnalyzer } from '@/analyzers/simpleOneValidationTransaction.analyzer.js';
-// import { simpleOneVehicleEventOrValidationTransactionAnalyzer } from '@/analyzers/simpleOneVehicleEventOrValidationTransaction.analyzer.js';
-// import { simpleThreeVehicleEventsAnalyzer } from '@/analyzers/simpleThreeVehicleEvents.analyzer.js';
+import { geoDelayedStartFirstOutAnalyzer } from '@/analyzers/geoDelayedStartFirstOut.analyzer.js';
+import { geoDelayedStartLastInAnalyzer } from '@/analyzers/geoDelayedStartLastIn.analyzer.js';
+import { geoEarlyStartFirstOutAnalyzer } from '@/analyzers/geoEarlyStartFirstOut.analyzer.js';
+import { geoEarlyStartLastInAnalyzer } from '@/analyzers/geoEarlyStartLastIn.analyzer.js';
+import { highestVehicleEventDelayAnalyzer } from '@/analyzers/highestVehicleEventDelay.analyzer.js';
+import { lessThanTenVehicleEventsAnalyzer } from '@/analyzers/lessThanTenVehicleEvents.analyzer.js';
+import { matchingLocationTransactionsAnalyzer } from '@/analyzers/matchingLocationTransactions.analyzer.js';
+import { simpleDelayedStartFirstForNextStopAnalyzer } from '@/analyzers/simpleDelayedStartFirstForNextStop.analyzer.js';
+import { simpleDelayedStartLastForFirstStopAnalyzer } from '@/analyzers/simpleDelayedStartLastForFirstStop.analyzer.js';
+import { simpleEarlyStartFirstForNextStopAnalyzer } from '@/analyzers/simpleEarlyStartFirstForNextStop.analyzer.js';
+import { simpleEarlyStartLastForFirstStopAnalyzer } from '@/analyzers/simpleEarlyStartLastForFirstStop.analyzer.js';
+import { simpleOneValidationTransactionAnalyzer } from '@/analyzers/simpleOneValidationTransaction.analyzer.js';
+import { simpleOneVehicleEventOrValidationTransactionAnalyzer } from '@/analyzers/simpleOneVehicleEventOrValidationTransaction.analyzer.js';
+import { simpleThreeVehicleEventsAnalyzer } from '@/analyzers/simpleThreeVehicleEvents.analyzer.js';
 
 /* * */
 
@@ -55,57 +47,41 @@ function runAnalyzers(analysisData: AnalysisData): RideAnalysis[] {
 
 		excessiveVehicleEventDelayAnalyzer(analysisData),
 
-		// highestVehicleEventDelayAnalyzer(analysisData),
+		highestVehicleEventDelayAnalyzer(analysisData),
 
-		// lessThanTenVehicleEventsAnalyzer(analysisData),
-
-		//
-
-		// matchingLocationTransactionsAnalyzer(analysisData),
+		lessThanTenVehicleEventsAnalyzer(analysisData),
 
 		//
 
-		// geoDelayedStartThreeMinutesLastInAnalyzer(analysisData),
-
-		// geoDelayedStartThreeMinutesFirstOutAnalyzer(analysisData),
-
-		geoDelayedStartFiveMinutesLastInAnalyzer(analysisData),
-
-		geoDelayedStartFiveMinutesFirstOutAnalyzer(analysisData),
-
-		// geoDelayedStartTenMinutesLastInAnalyzer(analysisData),
-
-		// geoDelayedStartTenMinutesFirstOutAnalyzer(analysisData),
-
-		// geoEarlyStartLastInAnalyzer(analysisData),
-
-		// geoEarlyStartFirstOutAnalyzer(analysisData),
+		matchingLocationTransactionsAnalyzer(analysisData),
 
 		//
 
-		// simpleDelayedStartThreeMinutesLastForFirstStopAnalyzer(analysisData),
+		geoDelayedStartLastInAnalyzer(analysisData),
 
-		// simpleDelayedStartThreeMinutesFirstForNextStopAnalyzer(analysisData),
+		geoDelayedStartFirstOutAnalyzer(analysisData),
 
-		// simpleDelayedStartFiveMinutesLastForFirstStopAnalyzer(analysisData),
+		geoEarlyStartLastInAnalyzer(analysisData),
 
-		// simpleDelayedStartFiveMinutesFirstForNextStopAnalyzer(analysisData),
-
-		// simpleDelayedStartTenMinutesLastForFirstStopAnalyzer(analysisData),
-
-		// simpleDelayedStartTenMinutesFirstForNextStopAnalyzer(analysisData),
-
-		// simpleEarlyStartFirstForNextStopAnalyzer(analysisData),
-
-		// simpleEarlyStartLastForFirstStopAnalyzer(analysisData),
+		geoEarlyStartFirstOutAnalyzer(analysisData),
 
 		//
 
-		// simpleOneVehicleEventOrValidationTransactionAnalyzer(analysisData),
+		simpleDelayedStartLastForFirstStopAnalyzer(analysisData),
 
-		// simpleOneValidationTransactionAnalyzer(analysisData),
+		simpleDelayedStartFirstForNextStopAnalyzer(analysisData),
 
-		// simpleThreeVehicleEventsAnalyzer(analysisData),
+		simpleEarlyStartFirstForNextStopAnalyzer(analysisData),
+
+		simpleEarlyStartLastForFirstStopAnalyzer(analysisData),
+
+		//
+
+		simpleOneVehicleEventOrValidationTransactionAnalyzer(analysisData),
+
+		simpleOneValidationTransactionAnalyzer(analysisData),
+
+		simpleThreeVehicleEventsAnalyzer(analysisData),
 
 		/* * * * */
 
@@ -191,6 +167,7 @@ export async function validateRides() {
 				//
 			}
 			catch (error) {
+				await rides.updateById(rideDocument._id, { status: 'error' });
 				LOGGER.error('An error occurred while processing a ride.', error);
 			}
 		}

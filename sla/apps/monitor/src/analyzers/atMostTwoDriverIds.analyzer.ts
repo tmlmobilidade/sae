@@ -68,7 +68,6 @@ export function atMostTwoDriverIdsAnalyzer(analysisData: AnalysisData): Explicit
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'AT_MOST_TWO_DRIVER_IDS',
 			grade: 'error',

@@ -1,30 +1,24 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysisData.type.js';
-import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
-
-/* * */
-
-// This analyzer tests for the highest event delay between the vehicle and PCGI.
-//
-// GRADES:
-// → PASS = Delay between Vehicle and PCGI timestamps is less than 10 seconds.
-// → FAIL = Delay between Vehicle and PCGI timestamps is equal to or higher than 10 seconds.
+import { RideAnalysis } from '@tmlmobilidade/services/types';
+import { DateTime } from 'luxon';
 
 /* * */
 
 interface ExplicitRideAnalysis extends RideAnalysis {
 	_id: 'HIGHEST_VEHICLE_EVENT_DELAY'
-	reason: null
-	unit: 'HIGHEST_EVENT_DELAY_IN_MILLISECONDS' | null
-	value: null | number
+	unit: 'HIGHEST_EVENT_DELAY_IN_MILLISECONDS'
 };
 
-/* * */
-
-export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
-	//
-
+/**
+ * This analyzer tests for the highest event delay between the vehicle and PCGI.
+ *
+ * GRADES:
+ * → PASS = Delay between Vehicle and PCGI timestamps is less than 10 seconds.
+ * → FAIL = Delay between Vehicle and PCGI timestamps is equal to or higher than 10 seconds.
+ */
+export function highestVehicleEventDelayAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -38,10 +32,10 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 
 		for (const vehicleEvent of analysisData.vehicle_events) {
 			//
-			const pcgiTimestamp = vehicleEvent.millis;
-			const vehicleTimestamp = vehicleEvent.content.entity[0].vehicle.timestamp * 1000;
+			const insertTimestamp = DateTime.fromJSDate(vehicleEvent.insert_timestamp).toMillis();
+			const vehicleTimestamp = DateTime.fromJSDate(vehicleEvent.vehicle_timestamp).toMillis();
 			//
-			const delayInMilliseconds = pcgiTimestamp - vehicleTimestamp;
+			const delayInMilliseconds = insertTimestamp - vehicleTimestamp;
 			//
 			if (delayInMilliseconds > highestEventDelaySoFar) {
 				highestEventDelaySoFar = delayInMilliseconds;
@@ -54,7 +48,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 			grade: 'pass',
 			message: null,
 			reason: null,
-			status: AnalysisResultStatus.COMPLETE,
 			unit: 'HIGHEST_EVENT_DELAY_IN_MILLISECONDS',
 			value: highestEventDelaySoFar,
 		};
@@ -62,17 +55,13 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'HIGHEST_VEHICLE_EVENT_DELAY',
-			grade: 'fail',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};
 	}
-
-	//
 };

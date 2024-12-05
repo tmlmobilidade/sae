@@ -68,7 +68,6 @@ export function atMostTwoVehicleIdsAnalyzer(analysisData: AnalysisData): Explici
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'AT_MOST_TWO_VEHICLE_IDS',
 			grade: 'error',

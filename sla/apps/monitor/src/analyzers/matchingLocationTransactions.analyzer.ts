@@ -1,30 +1,23 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysisData.type.js';
-import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
-
-/* * */
-
-// This analyzer tests if there are Location Transactions for all stops of the trip.
-//
-// GRADES:
-// → PASS = At least one Location Transaction for each stop of the trip.
-// → FAIL = Missing Location Transaction for any stop of the trip.
+import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
 
 interface ExplicitRideAnalysis extends RideAnalysis {
 	_id: 'MATCHING_LOCATION_TRANSACTIONS'
 	reason: 'ALL_STOPS_HAVE_LOCATION_TRANSACTIONS' | 'MISSING_LOCATION_TRANSACTION_FOR_AT_LEAST_ONE_STOP'
-	unit: null
-	value: null
 };
 
-/* * */
-
-export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
-	//
-
+/**
+ * This analyzer tests if there are Location Transactions for all stops of the trip.
+ *
+ * GRADES:
+ * → PASS = At least one Location Transaction for each stop of the trip.
+ * → FAIL = Missing Location Transaction for any stop of the trip.
+ */
+export function matchingLocationTransactionsAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -42,7 +35,7 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		}
 
 		for (const locationTransaction of analysisData.location_transactions) {
-			locationTransactionsStopIds.add(locationTransaction.transaction.stopLongID);
+			locationTransactionsStopIds.add(locationTransaction.stop_id);
 		}
 
 		// 3.
@@ -65,7 +58,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 				grade: 'fail',
 				message: `At least one Stop ID was not found in Location Transactions. Missing Stop IDs: [${Array.from(missingStopIds).join('|')}]`,
 				reason: 'MISSING_LOCATION_TRANSACTION_FOR_AT_LEAST_ONE_STOP',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: null,
 				value: null,
 			};
@@ -76,7 +68,6 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 			grade: 'pass',
 			message: `Found ${locationTransactionsStopIds.size} Location Transactions for ${pathStopIds.size} Stop IDs.`,
 			reason: 'ALL_STOPS_HAVE_LOCATION_TRANSACTIONS',
-			status: AnalysisResultStatus.COMPLETE,
 			unit: null,
 			value: null,
 		};
@@ -84,17 +75,13 @@ export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 		//
 	}
 	catch (error) {
-		//console.log(error);
 		return {
 			_id: 'MATCHING_LOCATION_TRANSACTIONS',
-			grade: 'fail',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};
 	}
-
-	//
 };
