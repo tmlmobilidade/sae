@@ -48,10 +48,11 @@ export async function processVehicleEvent(databaseOperation) {
 
 	const newVehicleEventDocument: CreateVehicleEventDto = {
 		_id: pcgiDocument._id,
+		_raw: JSON.stringify(pcgiDocument),
 		agency_id: pcgiDocument.content.entity[0].vehicle.agencyId,
-		data: JSON.stringify(pcgiDocument),
+		driver_id: pcgiDocument.content.entity[0].vehicle.driverId,
 		event_id: pcgiDocument.content.entity[0]._id,
-		insert_timestamp: pcgiDocument.millis,
+		insert_timestamp: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
 		line_id: pcgiDocument.content.entity[0].vehicle.trip?.lineId,
 		odometer: pcgiDocument.content.entity[0].vehicle.position.odometer,
 		operational_date: operationalDate,
@@ -60,7 +61,7 @@ export async function processVehicleEvent(databaseOperation) {
 		stop_id: pcgiDocument.content.entity[0].vehicle.stopId,
 		trip_id: pcgiDocument.content.entity[0].vehicle.trip?.tripId,
 		vehicle_id: pcgiDocument.content.entity[0].vehicle.vehicle._id,
-		vehicle_timestamp: vehicleTimestamp.toSeconds(),
+		vehicle_timestamp: vehicleTimestamp.toJSDate(),
 	};
 
 	//
@@ -75,7 +76,7 @@ export async function processVehicleEvent(databaseOperation) {
 			const uniqueOperationalDates: OperationalDate[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.operational_date)));
 			// Invalidate all rides with new data
 			const ridesCollection = await rides.getCollection();
-			const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'complete' } });
+			const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
 			LOGGER.info(`SYNC LATEST [vehicle_events]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new vehicle_events data (${invalidationTimer.get()})`);
 			LOGGER.divider();
 		}

@@ -15,8 +15,8 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'SIMPLE_THREE_VEHICLE_EVENTS'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'SIMPLE_THREE_VEHICLE_EVENTS'
 	reason: 'ALL_STOPS_FOUND' | 'MISSING_FIRST_STOPS' | 'MISSING_LAST_STOPS' | 'MISSING_MIDDLE_STOPS'
 	unit: null
 	value: null
@@ -24,7 +24,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -80,8 +80,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!foundFirstStopIds.size) {
 			return {
-				code: 'SIMPLE_THREE_VEHICLE_EVENTS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'SIMPLE_THREE_VEHICLE_EVENTS',
+				grade: 'fail',
 				message: `None of the first ${firstStopIds.size} Stop IDs was found. [${Array.from(firstStopIds).join('|')}]`,
 				reason: 'MISSING_FIRST_STOPS',
 				status: AnalysisResultStatus.COMPLETE,
@@ -92,8 +92,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!foundMiddleStopIds.size) {
 			return {
-				code: 'SIMPLE_THREE_VEHICLE_EVENTS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'SIMPLE_THREE_VEHICLE_EVENTS',
+				grade: 'fail',
 				message: `None of the middle ${middleStopIds.size} Stop IDs was found. [${Array.from(middleStopIds).join('|')}]`,
 				reason: 'MISSING_MIDDLE_STOPS',
 				status: AnalysisResultStatus.COMPLETE,
@@ -104,8 +104,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!foundLastStopIds.size) {
 			return {
-				code: 'SIMPLE_THREE_VEHICLE_EVENTS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'SIMPLE_THREE_VEHICLE_EVENTS',
+				grade: 'fail',
 				message: `None of the last ${lastStopIds.size} Stop IDs was found. [${Array.from(lastStopIds).join('|')}]`,
 				reason: 'MISSING_LAST_STOPS',
 				status: AnalysisResultStatus.COMPLETE,
@@ -115,8 +115,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'SIMPLE_THREE_VEHICLE_EVENTS',
-			grade: AnalysisResultGrade.PASS,
+			_id: 'SIMPLE_THREE_VEHICLE_EVENTS',
+			grade: 'pass',
 			message: `Found at least one Stop ID for each section (first|middle|last). First: [${Array.from(foundFirstStopIds).join('|')}] | Middle: [${Array.from(foundMiddleStopIds).join('|')}] | Last: [${Array.from(foundLastStopIds).join('|')}]`,
 			reason: 'ALL_STOPS_FOUND',
 			status: AnalysisResultStatus.COMPLETE,
@@ -127,10 +127,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'SIMPLE_THREE_VEHICLE_EVENTS',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'SIMPLE_THREE_VEHICLE_EVENTS',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

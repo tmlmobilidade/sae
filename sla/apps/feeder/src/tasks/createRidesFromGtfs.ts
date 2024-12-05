@@ -561,11 +561,12 @@ export async function createRidesFromGtfs() {
 							const extensionScheduledInMeters = convertMetersOrKilometersToMeters(hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled, hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled);
 							//
 							const startTimeScheduled = hashedTripData.path?.length > 0 ? hashedTripData.path[0]?.arrival_time : '-';
-							const startTimeScheduledUnix = convertOperationTimeStringAndOperationalDateToUnixTimestamp(startTimeScheduled, calendarDate);
+							const startTimeScheduledDate = convertOperationTimeStringAndOperationalDateToJsDate(startTimeScheduled, calendarDate);
 							//
-							const endTimeScheduled = hashedTripData.path?.length > 0 ? hashedTripData.path[hashedTripData.path.length - 1]?.arrival_time : '-';
-							const endTimeScheduledUnix = convertOperationTimeStringAndOperationalDateToUnixTimestamp(endTimeScheduled, calendarDate);
-							const runtimeScheduled = endTimeScheduledUnix - startTimeScheduledUnix;
+							const endTimeScheduledString = hashedTripData.path?.length > 0 ? hashedTripData.path[hashedTripData.path.length - 1]?.arrival_time : '-';
+							const endTimeScheduledDate = convertOperationTimeStringAndOperationalDateToJsDate(endTimeScheduledString, calendarDate);
+							const runtimeScheduledMillis = DateTime.fromJSDate(endTimeScheduledDate).toMillis() - DateTime.fromJSDate(startTimeScheduledDate).toMillis();
+							const runtimeScheduled = Math.trunc(runtimeScheduledMillis / 1000 / 60);
 							//
 							const rideData: CreateRideDto = {
 								_id: `${planData._id}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
@@ -578,7 +579,6 @@ export async function createRidesFromGtfs() {
 								hashed_trip_id: hashedTripData._id,
 								headsign: tripData.trip_headsign,
 								line_id: routeData.line_id,
-								line_type: routeData.line_type,
 								operational_date: calendarDate,
 								passengers_estimated: null,
 								pattern_id: tripData.pattern_id,
@@ -591,9 +591,7 @@ export async function createRidesFromGtfs() {
 								sales_amount: null,
 								sales_count: null,
 								start_time_observed: null,
-								start_time_observed_unix: null,
-								start_time_scheduled: startTimeScheduled,
-								start_time_scheduled_unix: startTimeScheduledUnix,
+								start_time_scheduled: startTimeScheduledDate,
 								status: 'pending',
 								trip_id: tripData.trip_id,
 								validations_count: null,
@@ -775,14 +773,14 @@ const convertMetersOrKilometersToMeters = (value: number | string, ballpark: num
 
 /* * */
 
-const convertOperationTimeStringAndOperationalDateToUnixTimestamp = (timeString: string, operationalDate: OperationalDate): number => {
+const convertOperationTimeStringAndOperationalDateToJsDate = (timeString: string, operationalDate: OperationalDate): Date => {
 	//
 
 	// Return early if no time string is provided
-	if (!timeString || !operationalDate) return -1;
+	if (!timeString || !operationalDate) return new Date(0);
 
 	// Check if the timestring is in the format HH:MM:SS
-	if (!/^\d{2}:\d{2}:\d{2}$/.test(timeString)) return -1;
+	if (!/^\d{2}:\d{2}:\d{2}$/.test(timeString)) return new Date(0);
 
 	// Extract the individual components of the time string (HH:MM:SS)
 	const [hoursOperation, minutesOperation, secondsOperation] = timeString.split(':').map(Number);
@@ -791,8 +789,7 @@ const convertOperationTimeStringAndOperationalDateToUnixTimestamp = (timeString:
 		.fromFormat(operationalDate, OPERATIONAL_DATE_FORMAT)
 		.setZone('Europe/Lisbon')
 		.set({ hour: hoursOperation, minute: minutesOperation, second: secondsOperation })
-		.toUTC()
-		.toUnixInteger();
+		.toJSDate();
 
 	//
 };

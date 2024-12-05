@@ -1,30 +1,24 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysisData.type.js';
-import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
+import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
 
-// This analyzer tests if the trip has at most two vehicle IDs (at least one, maximum of two).
-//
-// GRADES:
-// → PASS = At least one Vehicle, and maximum two Vehicle IDs for the trip.
-// → FAIL = No Vehicle or more than two Vehicle IDs for the trip.
-
-/* * */
-
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'AT_MOST_TWO_VEHICLE_IDS'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'AT_MOST_TWO_VEHICLE_IDS'
 	reason: 'FOUND_MORE_THAN_2_VEHICLE_IDS' | 'FOUND_ONE_OR_TWO_VEHICLE_IDS' | 'NO_VEHICLE_ID_FOUND'
-	unit: 'UNIQUE_VEHICLE_IDS' | null
-	value: null | number
+	unit: 'UNIQUE_VEHICLE_IDS'
 };
 
-/* * */
-
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
-	//
-
+/**
+ * This analyzer tests if the trip has at most two vehicle IDs (at least one, maximum of two).
+ *
+ * GRADES:
+ * → PASS = At least one Vehicle, and maximum two Vehicle IDs for the trip.
+ * → FAIL = No Vehicle or more than two Vehicle IDs for the trip.
+ */
+export function atMostTwoVehicleIdsAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	try {
 		//
 
@@ -37,16 +31,15 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		// Test for how many driver IDs are found
 
 		for (const event of analysisData.vehicle_events) {
-			foundVehicleIds.add(event.content.entity[0].vehicle.vehicle._id);
+			foundVehicleIds.add(event.vehicle_id);
 		}
 
 		if (foundVehicleIds.size === 0) {
 			return {
-				code: 'AT_MOST_TWO_VEHICLE_IDS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'AT_MOST_TWO_VEHICLE_IDS',
+				grade: 'fail',
 				message: 'No Vehicle IDs found for this trip.',
 				reason: 'NO_VEHICLE_ID_FOUND',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: 'UNIQUE_VEHICLE_IDS',
 				value: 0,
 			};
@@ -54,22 +47,20 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (foundVehicleIds.size > 2) {
 			return {
-				code: 'AT_MOST_TWO_VEHICLE_IDS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'AT_MOST_TWO_VEHICLE_IDS',
+				grade: 'fail',
 				message: `Found ${foundVehicleIds.size} Vehicle IDs for this trip.`,
 				reason: 'FOUND_MORE_THAN_2_VEHICLE_IDS',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: 'UNIQUE_VEHICLE_IDS',
 				value: foundVehicleIds.size,
 			};
 		}
 
 		return {
-			code: 'AT_MOST_TWO_VEHICLE_IDS',
-			grade: AnalysisResultGrade.PASS,
+			_id: 'AT_MOST_TWO_VEHICLE_IDS',
+			grade: 'pass',
 			message: `Found ${foundVehicleIds.size} Vehicle IDs for this trip.`,
 			reason: 'FOUND_ONE_OR_TWO_VEHICLE_IDS',
-			status: AnalysisResultStatus.COMPLETE,
 			unit: 'UNIQUE_VEHICLE_IDS',
 			value: foundVehicleIds.size,
 		};
@@ -77,17 +68,14 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'AT_MOST_TWO_VEHICLE_IDS',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'AT_MOST_TWO_VEHICLE_IDS',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};
 	}
-
-	//
 };

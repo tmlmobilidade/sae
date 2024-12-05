@@ -13,8 +13,8 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'HIGHEST_VEHICLE_EVENT_DELAY'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'HIGHEST_VEHICLE_EVENT_DELAY'
 	reason: null
 	unit: 'HIGHEST_EVENT_DELAY_IN_MILLISECONDS' | null
 	value: null | number
@@ -22,7 +22,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -50,8 +50,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'HIGHEST_VEHICLE_EVENT_DELAY',
-			grade: AnalysisResultGrade.PASS,
+			_id: 'HIGHEST_VEHICLE_EVENT_DELAY',
+			grade: 'pass',
 			message: null,
 			reason: null,
 			status: AnalysisResultStatus.COMPLETE,
@@ -62,10 +62,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'HIGHEST_VEHICLE_EVENT_DELAY',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'HIGHEST_VEHICLE_EVENT_DELAY',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

@@ -4,8 +4,8 @@ import PCGIDB from '@/services/PCGIDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
-import { vehicleEvents } from '@tmlmobilidade/services/interfaces';
-import { CreateVehicleEventDto } from '@tmlmobilidade/services/types';
+import { rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
+import { CreateVehicleEventDto, OperationalDate } from '@tmlmobilidade/services/types';
 import { getOperationalDate } from '@tmlmobilidade/services/utils';
 import { DateTime, Interval } from 'luxon';
 
@@ -36,7 +36,7 @@ export async function syncVehicleEvents() {
 		// It makes sense to divide chunks by day, but this should be adjusted according to the volume of data in each chunk.
 
 		const thirtySecondsAgo = DateTime.now().minus({ seconds: 30 });
-		const oldestDataNeeded = DateTime.fromFormat('20240101', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
+		const oldestDataNeeded = DateTime.fromFormat('20241201', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
 
 		const allTimestampChunks = Interval
 			.fromDateTimes(oldestDataNeeded, thirtySecondsAgo)
@@ -67,8 +67,8 @@ export async function syncVehicleEvents() {
 
 			const allSlaVehicleEventDocumentIds = await vehicleEventsCollection.distinct('_id', {
 				insert_timestamp: {
-					$gte: timestampChunk.start.toMillis(),
-					$lte: timestampChunk.end.toMillis(),
+					$gte: timestampChunk.start.toJSDate(),
+					$lte: timestampChunk.end.toJSDate(),
 				},
 			});
 
@@ -91,13 +91,35 @@ export async function syncVehicleEvents() {
 					.find({ _id: { $in: missingDocuments } })
 					.stream();
 
+				//
+				// Setup the callback function that will be called on the DB Writer flush operation
+				// to invalidate all the rides that are affected by the new vehicle events.
+
+				const flushCallback = async (flushedData) => {
+					try {
+						const invalidationTimer = new TIMETRACKER();
+						// Extract the unique trip_ids and unique operational_dates from the flushed data
+						const uniqueTripIds: string[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.trip_id)));
+						const uniqueOperationalDates: OperationalDate[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.operational_date)));
+						// Invalidate all rides with new data
+						const ridesCollection = await rides.getCollection();
+						const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
+						LOGGER.info(`SYNC FULL [vehicle_events]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new vehicle_events data (${invalidationTimer.get()})`);
+						LOGGER.divider();
+					}
+					catch (error) {
+						LOGGER.error('Error in flushCallback', error);
+					}
+				};
+
 				for await (const pcgiDocument of missingDocumentsStream) {
 					const vehicleTimestamp = DateTime.fromSeconds(pcgiDocument.content.entity[0].vehicle.timestamp);
 					const operationalDate = getOperationalDate(vehicleTimestamp);
 					const newVehicleEventDocument: CreateVehicleEventDto = {
 						_id: pcgiDocument._id,
+						_raw: JSON.stringify(pcgiDocument),
 						agency_id: pcgiDocument.content.entity[0].vehicle.agencyId,
-						data: JSON.stringify(pcgiDocument),
+						driver_id: pcgiDocument.content.entity[0].vehicle.driverId,
 						event_id: pcgiDocument.content.entity[0]._id,
 						insert_timestamp: pcgiDocument.millis,
 						line_id: pcgiDocument.content.entity[0].vehicle.trip?.lineId,
@@ -108,12 +130,12 @@ export async function syncVehicleEvents() {
 						stop_id: pcgiDocument.content.entity[0].vehicle.stopId,
 						trip_id: pcgiDocument.content.entity[0].vehicle.trip?.tripId,
 						vehicle_id: pcgiDocument.content.entity[0].vehicle.vehicle._id,
-						vehicle_timestamp: vehicleTimestamp.toSeconds(),
+						vehicle_timestamp: vehicleTimestamp.toJSDate(),
 					};
-					await vehicleEventsDbWritter.write(newVehicleEventDocument, { filter: { _id: newVehicleEventDocument._id }, upsert: true });
+					await vehicleEventsDbWritter.write(newVehicleEventDocument, { filter: { _id: newVehicleEventDocument._id }, upsert: true }, () => null, flushCallback);
 				}
 
-				await vehicleEventsDbWritter.flush();
+				await vehicleEventsDbWritter.flush(flushCallback);
 
 				LOGGER.success(`Synced ${missingDocuments.length} documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}.`);
 				continue;

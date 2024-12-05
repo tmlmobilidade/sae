@@ -13,8 +13,8 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION'
 	reason: 'FOUND_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION' | 'NO_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION_FOUND'
 	unit: null
 	value: null
@@ -22,7 +22,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -33,8 +33,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (analysisData.vehicle_events.length > 0 || analysisData.validation_transactions.length > 0) {
 			return {
-				code: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
-				grade: AnalysisResultGrade.PASS,
+				_id: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
+				grade: 'pass',
 				message: `Found ${analysisData.vehicle_events.length} Vehicle Events and ${analysisData.validation_transactions.length} Validation Transactions for this trip.`,
 				reason: 'FOUND_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
 				status: AnalysisResultStatus.COMPLETE,
@@ -44,8 +44,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
+			grade: 'fail',
 			message: 'No Vehicle Events or Validation Transactions found for this trip.',
 			reason: 'NO_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION_FOUND',
 			status: AnalysisResultStatus.COMPLETE,
@@ -56,10 +56,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'SIMPLE_ONE_VEHICLE_EVENT_OR_VALIDATION_TRANSACTION',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

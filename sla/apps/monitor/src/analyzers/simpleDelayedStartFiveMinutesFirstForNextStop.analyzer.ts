@@ -16,8 +16,8 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP'
 	reason: 'NO_EVENT_FOUND_FOR_NEXT_STOP_ID' | 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE' | 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME' | null
 	value: null | number
@@ -25,7 +25,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -91,8 +91,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!firstEventForNextStopId) {
 			return {
-				code: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
+				grade: 'fail',
 				message: 'No event found for the next stop ID after the first stop ID.',
 				reason: 'NO_EVENT_FOUND_FOR_NEXT_STOP_ID',
 				status: AnalysisResultStatus.COMPLETE,
@@ -114,8 +114,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (delayInMinutes <= 5) {
 			return {
-				code: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
-				grade: AnalysisResultGrade.PASS,
+				_id: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
+				grade: 'pass',
 				message: `Trip start time delay is ${delayInMinutes} minutes.`,
 				reason: 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE',
 				status: AnalysisResultStatus.COMPLETE,
@@ -125,8 +125,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
+			grade: 'fail',
 			message: `Trip start time delay is ${delayInMinutes} minutes.`,
 			reason: 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE',
 			status: AnalysisResultStatus.COMPLETE,
@@ -137,10 +137,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'SIMPLE_DELAYED_START_FIVE_MINUTES_FIRST_FOR_NEXT_STOP',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

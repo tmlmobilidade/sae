@@ -17,8 +17,8 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT'
 	reason: 'NO_EVENT_OUTSIDE_GEOFENCE_FOUND' | 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_THREE_MINUTES_LATE' | 'TRIP_STARTED_MORE_THAN_THREE_MINUTES_LATE'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME' | null
 	value: null | number
@@ -26,7 +26,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -100,8 +100,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!firstEventOutsideGeofence) {
 			return {
-				code: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
+				grade: 'fail',
 				message: 'No first event outside geofence found.',
 				reason: 'NO_EVENT_OUTSIDE_GEOFENCE_FOUND',
 				status: AnalysisResultStatus.COMPLETE,
@@ -123,8 +123,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (delayInMinutes <= 3) {
 			return {
-				code: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
-				grade: AnalysisResultGrade.PASS,
+				_id: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
+				grade: 'pass',
 				message: `Trip start time delay is ${delayInMinutes} minutes.`,
 				reason: 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_THREE_MINUTES_LATE',
 				status: AnalysisResultStatus.COMPLETE,
@@ -134,8 +134,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
+			grade: 'fail',
 			message: `Trip start time delay is ${delayInMinutes} minutes.`,
 			reason: 'TRIP_STARTED_MORE_THAN_THREE_MINUTES_LATE',
 			status: AnalysisResultStatus.COMPLETE,
@@ -146,10 +146,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'GEO_DELAYED_START_THREE_MINUTES_FIRST_OUT',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

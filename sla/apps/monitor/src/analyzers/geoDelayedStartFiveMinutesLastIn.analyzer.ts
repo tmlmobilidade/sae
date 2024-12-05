@@ -2,31 +2,29 @@
 
 import { AnalysisData } from '@/types/analysisData.type.js';
 import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/types/analysisResult.type.js';
+import { RideAnalysis, VehicleEvent } from '@tmlmobilidade/services/types';
 import * as turf from '@turf/turf';
 import { DateTime } from 'luxon';
 
 /* * */
 
-// This analyzer tests if there is an excess delay starting the trip using geographic data.
-// It uses the timestamp of the last event that is inside the geofence
-// of the first stop of the trip to determine the trip start time.
-//
-// GRADES:
-// → PASS = Trip start time delay is less than or equal to five minutes.
-// → FAIL = Trip start time delay is greater than five minutes.
-
-/* * */
-
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN'
 	reason: 'NO_EVENT_INSIDE_GEOFENCE_FOUND' | 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE' | 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME' | null
 	value: null | number
 };
 
-/* * */
-
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+/**
+ * This analyzer tests if there is an excess delay starting the trip using geographic data.
+ * It uses the timestamp of the last event that is inside the geofence
+ * of the first stop of the trip to determine the trip start time.
+ *
+ * GRADES:
+ * → PASS = Trip start time delay is less than or equal to five minutes.
+ * → FAIL = Trip start time delay is greater than five minutes.
+ */
+export function geoDelayedStartFiveMinutesLastInAnalyzer(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -49,9 +47,9 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		const firstStopExpectedArrivalTime = sortedTripPath[0]?.arrival_time;
 
-		const expectedArrivalTimeHours = firstStopExpectedArrivalTime.split(':')[0];
-		const expectedArrivalTimeMinutes = firstStopExpectedArrivalTime.split(':')[1];
-		const expectedArrivalTimeSeconds = firstStopExpectedArrivalTime.split(':')[2];
+		const expectedArrivalTimeHours = Number(firstStopExpectedArrivalTime.split(':')[0]);
+		const expectedArrivalTimeMinutes = Number(firstStopExpectedArrivalTime.split(':')[1]);
+		const expectedArrivalTimeSeconds = Number(firstStopExpectedArrivalTime.split(':')[2]);
 
 		if (expectedArrivalTimeHours > 23 && expectedArrivalTimeMinutes > 59 && expectedArrivalTimeSeconds > 59) {
 			operationalDayDateTimeObject = operationalDayDateTimeObject.plus({ days: 1 });
@@ -69,7 +67,7 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		// Sort vehicle events by vehicle timestamp
 
 		const sortedVehicleEvents = analysisData.vehicle_events?.sort((a, b) => {
-			return a.content.entity[0].vehicle.timestamp - b.content.entity[0].vehicle.timestamp;
+			return DateTime.fromJSDate(a.vehicle_timestamp).toMillis() - DateTime.fromJSDate(b.vehicle_timestamp).toMillis();
 		});
 
 		// 5.
@@ -78,11 +76,13 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		let atLeastOneEventWasFoundInsideGeofense = false;
 
-		let lastEventInsideGeofence = null;
+		let lastEventInsideGeofence: null | VehicleEvent = null;
 
 		for (const vehicleEventData of sortedVehicleEvents) {
 			//
-			const vehicleEventTurfPoint = turf.point([vehicleEventData.content.entity[0].vehicle.position.longitude, vehicleEventData.content.entity[0].vehicle.position.latitude]);
+			const parsedVehicleEventRawData = JSON.parse(vehicleEventData._raw);
+			//
+			const vehicleEventTurfPoint = turf.point([parsedVehicleEventRawData.content.entity[0].vehicle.position.longitude, parsedVehicleEventRawData.content.entity[0].vehicle.position.latitude]);
 			//
 			const vehicleEventIsInsideGefense = turf.booleanPointInPolygon(vehicleEventTurfPoint, firstStopTurfBuffer);
 			//
@@ -98,11 +98,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!lastEventInsideGeofence) {
 			return {
-				code: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
+				grade: 'fail',
 				message: 'No event was found inside the geofence of the first stop.',
 				reason: 'NO_EVENT_INSIDE_GEOFENCE_FOUND',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: null,
 				value: null,
 			};
@@ -111,8 +110,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		// 6.
 		// Check the timestamp of the event against the expected arrival time of the first stop
 
-		const lastEventInsideGeofenceTimestamp = lastEventInsideGeofence?.content.entity[0].vehicle.timestamp;
-		const lastEventInsideGeofenceDateTimeObject = DateTime.fromSeconds(lastEventInsideGeofenceTimestamp, { zone: 'Europe/Lisbon' });
+		const lastEventInsideGeofenceTimestamp = lastEventInsideGeofence?.vehicle_timestamp;
+		const lastEventInsideGeofenceDateTimeObject = DateTime.fromJSDate(lastEventInsideGeofenceTimestamp, { zone: 'Europe/Lisbon' });
 
 		const delayInMinutes = lastEventInsideGeofenceDateTimeObject.diff(expectedArrivalTimeDateTimeObject, 'minutes').minutes;
 
@@ -121,22 +120,20 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (delayInMinutes <= 5) {
 			return {
-				code: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
-				grade: AnalysisResultGrade.PASS,
+				_id: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
+				grade: 'pass',
 				message: `Trip start time delay is ${delayInMinutes} minutes.`,
 				reason: 'TRIP_STARTED_LESS_THAN_OR_EQUAL_TO_FIVE_MINUTES_LATE',
-				status: AnalysisResultStatus.COMPLETE,
 				unit: 'MINUTES_FROM_SCHEDULED_START_TIME',
 				value: delayInMinutes,
 			};
 		}
 
 		return {
-			code: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
+			grade: 'fail',
 			message: `Trip start time delay is ${delayInMinutes} minutes.`,
 			reason: 'TRIP_STARTED_MORE_THAN_FIVE_MINUTES_LATE',
-			status: AnalysisResultStatus.COMPLETE,
 			unit: 'MINUTES_FROM_SCHEDULED_START_TIME',
 			value: delayInMinutes,
 		};
@@ -144,13 +141,12 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'GEO_DELAYED_START_FIVE_MINUTES_LAST_IN',
+			grade: 'error',
 			message: error.message,
 			reason: null,
-			status: AnalysisResultStatus.ERROR,
 			unit: null,
 			value: null,
 		};

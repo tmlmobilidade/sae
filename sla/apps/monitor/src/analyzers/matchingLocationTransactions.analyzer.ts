@@ -13,8 +13,8 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'MATCHING_LOCATION_TRANSACTIONS'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'MATCHING_LOCATION_TRANSACTIONS'
 	reason: 'ALL_STOPS_HAVE_LOCATION_TRANSACTIONS' | 'MISSING_LOCATION_TRANSACTION_FOR_AT_LEAST_ONE_STOP'
 	unit: null
 	value: null
@@ -22,7 +22,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -61,8 +61,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (missingStopIds.size > 0) {
 			return {
-				code: 'MATCHING_LOCATION_TRANSACTIONS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'MATCHING_LOCATION_TRANSACTIONS',
+				grade: 'fail',
 				message: `At least one Stop ID was not found in Location Transactions. Missing Stop IDs: [${Array.from(missingStopIds).join('|')}]`,
 				reason: 'MISSING_LOCATION_TRANSACTION_FOR_AT_LEAST_ONE_STOP',
 				status: AnalysisResultStatus.COMPLETE,
@@ -72,8 +72,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'MATCHING_LOCATION_TRANSACTIONS',
-			grade: AnalysisResultGrade.PASS,
+			_id: 'MATCHING_LOCATION_TRANSACTIONS',
+			grade: 'pass',
 			message: `Found ${locationTransactionsStopIds.size} Location Transactions for ${pathStopIds.size} Stop IDs.`,
 			reason: 'ALL_STOPS_HAVE_LOCATION_TRANSACTIONS',
 			status: AnalysisResultStatus.COMPLETE,
@@ -84,10 +84,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'MATCHING_LOCATION_TRANSACTIONS',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'MATCHING_LOCATION_TRANSACTIONS',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

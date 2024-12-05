@@ -13,8 +13,8 @@ import { AnalysisResult, AnalysisResultGrade, AnalysisResultStatus } from '@/typ
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'LESS_THAN_TEN_VEHICLE_EVENTS'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'LESS_THAN_TEN_VEHICLE_EVENTS'
 	reason: 'FOUND_MORE_THAN_10_VEHICLE_EVENTS' | 'FOUND_ONLY_1_VEHICLE_EVENT' | `FOUND_ONLY_${number}_VEHICLE_EVENTS`
 	unit: 'VEHICLE_EVENTS_QTY' | null
 	value: null | number
@@ -22,7 +22,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -33,8 +33,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (analysisData.vehicle_events.length > 10) {
 			return {
-				code: 'LESS_THAN_TEN_VEHICLE_EVENTS',
-				grade: AnalysisResultGrade.PASS,
+				_id: 'LESS_THAN_TEN_VEHICLE_EVENTS',
+				grade: 'pass',
 				message: `Found ${analysisData.vehicle_events.length} Vehicle Events for this trip.`,
 				reason: 'FOUND_MORE_THAN_10_VEHICLE_EVENTS',
 				status: AnalysisResultStatus.COMPLETE,
@@ -45,8 +45,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (analysisData.vehicle_events.length === 1) {
 			return {
-				code: 'LESS_THAN_TEN_VEHICLE_EVENTS',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'LESS_THAN_TEN_VEHICLE_EVENTS',
+				grade: 'fail',
 				message: `Found ${analysisData.vehicle_events.length} Vehicle Events for this trip.`,
 				reason: 'FOUND_ONLY_1_VEHICLE_EVENT',
 				status: AnalysisResultStatus.COMPLETE,
@@ -56,8 +56,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'LESS_THAN_TEN_VEHICLE_EVENTS',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'LESS_THAN_TEN_VEHICLE_EVENTS',
+			grade: 'fail',
 			message: `Found ${analysisData.vehicle_events.length} Vehicle Events for this trip.`,
 			reason: `FOUND_ONLY_${analysisData.vehicle_events.length}_VEHICLE_EVENTS`,
 			status: AnalysisResultStatus.COMPLETE,
@@ -68,10 +68,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'LESS_THAN_TEN_VEHICLE_EVENTS',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'LESS_THAN_TEN_VEHICLE_EVENTS',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

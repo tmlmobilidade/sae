@@ -17,8 +17,8 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'GEO_EARLY_START_FIRST_OUT'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'GEO_EARLY_START_FIRST_OUT'
 	reason: 'NO_EVENT_OUTSIDE_GEOFENCE_FOUND' | 'TRIP_STARTED_AT_OR_LATER_THAN_SCHEDULED' | 'TRIP_STARTED_EARLIER_THAN_SCHEDULED'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME' | null
 	value: null | number
@@ -26,7 +26,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -100,8 +100,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!firstEventOutsideGeofence) {
 			return {
-				code: 'GEO_EARLY_START_FIRST_OUT',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'GEO_EARLY_START_FIRST_OUT',
+				grade: 'fail',
 				message: 'No first event outside geofence found.',
 				reason: 'NO_EVENT_OUTSIDE_GEOFENCE_FOUND',
 				status: AnalysisResultStatus.COMPLETE,
@@ -123,8 +123,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (delayInMinutes < 0) {
 			return {
-				code: 'GEO_EARLY_START_FIRST_OUT',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'GEO_EARLY_START_FIRST_OUT',
+				grade: 'fail',
 				message: `Trip started ${delayInMinutes} minutes earlier than scheduled.`,
 				reason: 'TRIP_STARTED_EARLIER_THAN_SCHEDULED',
 				status: AnalysisResultStatus.COMPLETE,
@@ -134,8 +134,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'GEO_EARLY_START_FIRST_OUT',
-			grade: AnalysisResultGrade.PASS,
+			_id: 'GEO_EARLY_START_FIRST_OUT',
+			grade: 'pass',
 			message: `Trip started ${delayInMinutes} minutes after scheduled time.`,
 			reason: 'TRIP_STARTED_AT_OR_LATER_THAN_SCHEDULED',
 			status: AnalysisResultStatus.COMPLETE,
@@ -146,10 +146,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'GEO_EARLY_START_FIRST_OUT',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'GEO_EARLY_START_FIRST_OUT',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,

@@ -16,8 +16,8 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-interface ExtendedAnalysisResult extends AnalysisData {
-	code: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP'
+interface ExplicitRideAnalysis extends RideAnalysis {
+	_id: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP'
 	reason: 'NO_LAST_EVENT_FOR_FIRST_STOP_ID' | 'TRIP_STARTED_AT_OR_LATER_THAN_SCHEDULED' | 'TRIP_STARTED_EARLIER_THAN_SCHEDULED'
 	unit: 'MINUTES_FROM_SCHEDULED_START_TIME' | null
 	value: null | number
@@ -25,7 +25,7 @@ interface ExtendedAnalysisResult extends AnalysisData {
 
 /* * */
 
-export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
+export function ANALYZERNAME(analysisData: AnalysisData): ExplicitRideAnalysis {
 	//
 
 	try {
@@ -93,8 +93,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (!lastEventForFirstStopId) {
 			return {
-				code: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
+				grade: 'fail',
 				message: 'No last event for first stop ID found.',
 				reason: 'NO_LAST_EVENT_FOR_FIRST_STOP_ID',
 				status: AnalysisResultStatus.COMPLETE,
@@ -116,8 +116,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 
 		if (delayInMinutes < 0) {
 			return {
-				code: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
-				grade: AnalysisResultGrade.FAIL,
+				_id: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
+				grade: 'fail',
 				message: `Trip started ${delayInMinutes} minutes earlier than scheduled.`,
 				reason: 'TRIP_STARTED_EARLIER_THAN_SCHEDULED',
 				status: AnalysisResultStatus.COMPLETE,
@@ -127,8 +127,8 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		}
 
 		return {
-			code: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
-			grade: AnalysisResultGrade.PASS,
+			_id: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
+			grade: 'pass',
 			message: `Trip started ${delayInMinutes} minutes after scheduled time.`,
 			reason: 'TRIP_STARTED_AT_OR_LATER_THAN_SCHEDULED',
 			status: AnalysisResultStatus.COMPLETE,
@@ -139,10 +139,10 @@ export default (analysisData: AnalysisData): ExtendedAnalysisResult => {
 		//
 	}
 	catch (error) {
-		console.log(error);
+		//console.log(error);
 		return {
-			code: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
-			grade: AnalysisResultGrade.FAIL,
+			_id: 'SIMPLE_EARLY_START_LAST_FOR_FIRST_STOP',
+			grade: 'fail',
 			message: error.message,
 			reason: null,
 			status: AnalysisResultStatus.ERROR,
