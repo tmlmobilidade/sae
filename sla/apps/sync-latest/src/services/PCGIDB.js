@@ -90,6 +90,7 @@ class PCGIDB {
 			// Setup databases
 
 			const coreManagementDatabase = mongoClientInstance.db('CoreManagement');
+			const salesManagementDatabase = mongoClientInstance.db('SalesManagement');
 			const validationsManagementDatabase = mongoClientInstance.db('ValidationsManagement');
 			const locationManagementDatabase = mongoClientInstance.db('LocationManagement');
 
@@ -98,6 +99,7 @@ class PCGIDB {
 
 			this.VehicleEvents = coreManagementDatabase.collection('VehicleEvents');
 			this.ValidationEntity = validationsManagementDatabase.collection('validationEntity');
+			this.SalesEntity = salesManagementDatabase.collection('salesEntity');
 			this.LocationEntity = locationManagementDatabase.collection('locationEntity');
 
 			//

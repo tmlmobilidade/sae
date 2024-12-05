@@ -3,8 +3,10 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
-		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-latest --filter=@tmlmobilidade/sae-sla-sync-full --filter=@tmlmobilidade/sae-sla-feeder --filter=@tmlmobilidade/sae-sla-monitor",
-		"lint": "turbo lint"
+		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-full",
+		"lint": "turbo lint",
+		"sync-full": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-full",
+		"sync-latest": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-latest"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241024.1600.5",

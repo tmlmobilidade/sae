@@ -8,6 +8,7 @@ volumes:
   hashedtripsdbdata:
   hashedshapesdbdata:
   vehicleeventsdbdata:
+  apext11dbdata:
 
 services:
   #
@@ -116,3 +117,24 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=vehicleeventsdbuser
       - MONGO_INITDB_ROOT_PASSWORD=vehicleeventsdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  apext11db:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27106:27017
+    volumes:
+      - apext11dbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=apext11dbuser
+      - MONGO_INITDB_ROOT_PASSWORD=apext11dbpassword

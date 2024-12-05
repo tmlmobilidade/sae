@@ -5,7 +5,7 @@ import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
 import { rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
 import { emailProvider } from '@tmlmobilidade/services/providers';
-import { CreateVehicleEventDto, OperationalDate } from '@tmlmobilidade/services/types';
+import { OperationalDate, VehicleEvent } from '@tmlmobilidade/services/types';
 import { getOperationalDate } from '@tmlmobilidade/services/utils';
 import { DateTime } from 'luxon';
 
@@ -46,22 +46,24 @@ export async function processVehicleEvent(databaseOperation) {
 	//
 	// Create a new vehicle event document and write it to the VehicleEvents collection
 
-	const newVehicleEventDocument: CreateVehicleEventDto = {
+	const newVehicleEventDocument: VehicleEvent = {
 		_id: pcgiDocument._id,
 		_raw: JSON.stringify(pcgiDocument),
 		agency_id: pcgiDocument.content.entity[0].vehicle.agencyId,
+		created_at: vehicleTimestamp.toJSDate(),
 		driver_id: pcgiDocument.content.entity[0].vehicle.driverId,
 		event_id: pcgiDocument.content.entity[0]._id,
-		insert_timestamp: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
+		extra_trip_id: pcgiDocument.content.entity[0].vehicle.trip?.extraTripId,
 		line_id: pcgiDocument.content.entity[0].vehicle.trip?.lineId,
 		odometer: pcgiDocument.content.entity[0].vehicle.position.odometer,
 		operational_date: operationalDate,
 		pattern_id: pcgiDocument.content.entity[0].vehicle.trip?.patternId,
+		received_at: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
 		route_id: pcgiDocument.content.entity[0].vehicle.trip?.routeId,
 		stop_id: pcgiDocument.content.entity[0].vehicle.stopId,
 		trip_id: pcgiDocument.content.entity[0].vehicle.trip?.tripId,
+		updated_at: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
 		vehicle_id: pcgiDocument.content.entity[0].vehicle.vehicle._id,
-		vehicle_timestamp: vehicleTimestamp.toJSDate(),
 	};
 
 	//

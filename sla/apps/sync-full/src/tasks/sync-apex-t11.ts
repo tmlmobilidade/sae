@@ -4,14 +4,14 @@ import PCGIDB from '@/services/PCGIDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
-import { rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
-import { OperationalDate, VehicleEvent } from '@tmlmobilidade/services/types';
+import { apexT11, rides } from '@tmlmobilidade/services/interfaces';
+import { ApexT11, OperationalDate } from '@tmlmobilidade/services/types';
 import { getOperationalDate } from '@tmlmobilidade/services/utils';
 import { DateTime, Interval } from 'luxon';
 
 /* * */
 
-export async function syncVehicleEvents() {
+export async function syncApexT11() {
 	try {
 		//
 
@@ -24,8 +24,8 @@ export async function syncVehicleEvents() {
 
 		await PCGIDB.connect();
 
-		const vehicleEventsCollection = await vehicleEvents.getCollection();
-		const vehicleEventsDbWritter = new MongoDbWriter('vehicle_events', vehicleEventsCollection, { batch_size: 100000 });
+		const apexT11Collection = await apexT11.getCollection();
+		const apexT11DbWritter = new MongoDbWriter('apex_t11', apexT11Collection, { batch_size: 100000 });
 
 		//
 		// In order to sync both collections in a manageable way, due to the high volume of data,
@@ -59,26 +59,26 @@ export async function syncVehicleEvents() {
 			//
 			// Get distinct IDs from each database in the current timestamp chunk
 
-			const allPcgidbVehicleEventDocumentIds = await PCGIDB.VehicleEvents.distinct('_id', {
-				millis: {
-					$gte: timestampChunk.start.toMillis(),
-					$lte: timestampChunk.end.toMillis(),
+			const allPcgidbApexT11DocumentIds = await PCGIDB.ValidationEntity.distinct('_id', {
+				'transaction.transactionDate': {
+					$gte: timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
+					$lte: timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
 				},
 			});
 
-			const allSlaVehicleEventDocumentIds = await vehicleEventsCollection.distinct('_id', {
+			const allSlaApexT11DocumentIds = await apexT11Collection.distinct('_id', {
 				received_at: {
 					$gte: timestampChunk.start.toJSDate(),
 					$lte: timestampChunk.end.toJSDate(),
 				},
 			});
 
-			const uniqueSlaVehicleEventDocumentIds = new Set(allSlaVehicleEventDocumentIds.map(String));
+			const uniqueSlaApexT11DocumentIds = new Set(allSlaApexT11DocumentIds.map(String));
 
 			//
 			// Check if all documents in PCGIDB are already synced
 
-			const missingDocuments = allPcgidbVehicleEventDocumentIds.filter(documentId => !uniqueSlaVehicleEventDocumentIds.has(String(documentId)));
+			const missingDocuments = allPcgidbApexT11DocumentIds.filter(documentId => !uniqueSlaApexT11DocumentIds.has(String(documentId)));
 
 			//
 			// If there are missing documents, sync them
@@ -88,7 +88,7 @@ export async function syncVehicleEvents() {
 
 				LOGGER.info(`Found ${missingDocuments.length} unsynced documents. Syncing...`);
 
-				const missingDocumentsStream = PCGIDB.VehicleEvents
+				const missingDocumentsStream = PCGIDB.ValidationEntity
 					.find({ _id: { $in: missingDocuments } })
 					.stream();
 
@@ -105,7 +105,7 @@ export async function syncVehicleEvents() {
 						// Invalidate all rides with new data
 						const ridesCollection = await rides.getCollection();
 						const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
-						LOGGER.info(`SYNC FULL [vehicle_events]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new vehicle_events data (${invalidationTimer.get()})`);
+						LOGGER.info(`SYNC FULL [apex_t11]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t11 data (${invalidationTimer.get()})`);
 						LOGGER.divider();
 					}
 					catch (error) {
@@ -114,31 +114,33 @@ export async function syncVehicleEvents() {
 				};
 
 				for await (const pcgiDocument of missingDocumentsStream) {
-					const vehicleTimestamp = DateTime.fromSeconds(pcgiDocument.content.entity[0].vehicle.timestamp);
-					const operationalDate = getOperationalDate(vehicleTimestamp);
-					const newVehicleEventDocument: VehicleEvent = {
-						_id: pcgiDocument._id,
+					const transactionDate = DateTime.fromISO(pcgiDocument.transaction.transactionDate);
+					const operationalDate = getOperationalDate(transactionDate);
+					const newApexT11Document: ApexT11 = {
+						_id: pcgiDocument.transaction.transactionId,
 						_raw: JSON.stringify(pcgiDocument),
-						agency_id: pcgiDocument.content.entity[0].vehicle.agencyId,
-						created_at: vehicleTimestamp.toJSDate(),
-						driver_id: pcgiDocument.content.entity[0].vehicle.driverId,
-						event_id: pcgiDocument.content.entity[0]._id,
-						extra_trip_id: pcgiDocument.content.entity[0].vehicle.trip?.extraTripId,
-						line_id: pcgiDocument.content.entity[0].vehicle.trip?.lineId,
-						odometer: pcgiDocument.content.entity[0].vehicle.position.odometer,
+						agency_id: pcgiDocument.transaction.operatorLongID,
+						apex_version: pcgiDocument.transaction.apexVersion,
+						card_serial_number: pcgiDocument.transaction.cardSerialNumber,
+						created_at: transactionDate.toJSDate(),
+						device_id: pcgiDocument.transaction.deviceID,
+						line_id: pcgiDocument.transaction.lineLongID,
+						mac_ase_counter_value: pcgiDocument.transaction.macDataFields.aseCounterValue,
+						mac_sam_serial_number: pcgiDocument.transaction.macDataFields.samSerialNumber,
 						operational_date: operationalDate,
-						pattern_id: pcgiDocument.content.entity[0].vehicle.trip?.patternId,
-						received_at: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
-						route_id: pcgiDocument.content.entity[0].vehicle.trip?.routeId,
-						stop_id: pcgiDocument.content.entity[0].vehicle.stopId,
-						trip_id: pcgiDocument.content.entity[0].vehicle.trip?.tripId,
-						updated_at: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
-						vehicle_id: pcgiDocument.content.entity[0].vehicle.vehicle._id,
+						pattern_id: pcgiDocument.transaction.patternLongID,
+						product_id: pcgiDocument.transaction.productLongID,
+						received_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
+						stop_id: pcgiDocument.transaction.stopLongID,
+						trip_id: pcgiDocument.transaction.journeyID,
+						updated_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
+						validation_status: pcgiDocument.transaction.validationStatus,
+						vehicle_id: pcgiDocument.transaction.vehicleID,
 					};
-					await vehicleEventsDbWritter.write(newVehicleEventDocument, { filter: { _id: newVehicleEventDocument._id }, upsert: true }, () => null, flushCallback);
+					await apexT11DbWritter.write(newApexT11Document, { filter: { _id: newApexT11Document._id }, upsert: true }, () => null, flushCallback);
 				}
 
-				await vehicleEventsDbWritter.flush(flushCallback);
+				await apexT11DbWritter.flush(flushCallback);
 
 				LOGGER.success(`Synced ${missingDocuments.length} documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}.`);
 				continue;
