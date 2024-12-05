@@ -1,6 +1,6 @@
 /* * */
 
-import { AnalysisData } from '@/types/analysisData.type.js';
+import { AnalysisData } from '@/types/analysis-data.type.js';
 import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
@@ -34,7 +34,7 @@ export function matchingLocationTransactionsAnalyzer(analysisData: AnalysisData)
 			pathStopIds.add(pathStop.stop_id);
 		}
 
-		for (const locationTransaction of analysisData.location_transactions) {
+		for (const locationTransaction of analysisData.apex_t19) {
 			locationTransactionsStopIds.add(locationTransaction.stop_id);
 		}
 

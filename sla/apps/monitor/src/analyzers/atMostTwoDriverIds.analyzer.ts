@@ -1,6 +1,6 @@
 /* * */
 
-import { AnalysisData } from '@/types/analysisData.type.js';
+import { AnalysisData } from '@/types/analysis-data.type.js';
 import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */

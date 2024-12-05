@@ -1,6 +1,7 @@
 /* * */
 
-import { AnalysisData } from '@/types/analysisData.type.js';
+import { AnalysisData } from '@/types/analysis-data.type.js';
+import { sortByDate } from '@/utils/sort-by-date.util.js';
 import { RideAnalysis } from '@tmlmobilidade/services/types';
 import * as turf from '@turf/turf';
 import { DateTime } from 'luxon';
@@ -62,9 +63,7 @@ export function geoEarlyStartLastInAnalyzer(analysisData: AnalysisData): Explici
 		// 4.
 		// Sort vehicle events by vehicle timestamp
 
-		const sortedVehicleEvents = analysisData.vehicle_events?.sort((a, b) => {
-			return DateTime.fromJSDate(a.vehicle_timestamp).toMillis() - DateTime.fromJSDate(b.vehicle_timestamp).toMillis();
-		});
+		const sortedVehicleEvents = sortByDate(analysisData.vehicle_events, 'created_at');
 
 		// 5.
 		// For each point, check if they are inside the geofence or not
@@ -106,7 +105,7 @@ export function geoEarlyStartLastInAnalyzer(analysisData: AnalysisData): Explici
 		// 6.
 		// Check the timestamp of the event against the expected arrival time of the first stop
 
-		const firstEventOutsideGeofenceTimestamp = lastEventInsideGeofence?.vehicle_timestamp;
+		const firstEventOutsideGeofenceTimestamp = lastEventInsideGeofence?.created_at;
 		const firstEventOutsideGeofenceDateTimeObject = DateTime.fromJSDate(firstEventOutsideGeofenceTimestamp, { zone: 'Europe/Lisbon' });
 
 		const delayInMinutes = firstEventOutsideGeofenceDateTimeObject.diff(expectedArrivalTimeDateTimeObject, 'minutes').minutes;

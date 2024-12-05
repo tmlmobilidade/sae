@@ -1,6 +1,6 @@
 /* * */
 
-import { AnalysisData } from '@/types/analysisData.type.js';
+import { AnalysisData } from '@/types/analysis-data.type.js';
 import { RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
@@ -25,14 +25,14 @@ export function simpleOneValidationTransactionAnalyzer(analysisData: AnalysisDat
 		// 1.
 		// Test if at least one Validation Transaction is found
 
-		if (analysisData.validation_transactions.length > 0) {
+		if (analysisData.apex_t11.length > 0) {
 			return {
 				_id: 'SIMPLE_ONE_VALIDATION_TRANSACTION',
 				grade: 'pass',
-				message: `Found ${analysisData.validation_transactions.length} Validation Transactions for this trip.`,
+				message: `Found ${analysisData.apex_t11.length} Validation Transactions for this trip.`,
 				reason: 'FOUND_AT_LEAST_ONE_VALIDATION_TRANSACTION',
 				unit: 'VALIDATION_TRANSACTIONS_QTY',
-				value: analysisData.validation_transactions.length,
+				value: analysisData.apex_t11.length,
 			};
 		}
 

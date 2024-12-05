@@ -1,6 +1,7 @@
 /* * */
 
-import { AnalysisData } from '@/types/analysisData.type.js';
+import { AnalysisData } from '@/types/analysis-data.type.js';
+import { sortByDate } from '@/utils/sort-by-date.util.js';
 import { RideAnalysis } from '@tmlmobilidade/services/types';
 import { DateTime } from 'luxon';
 
@@ -57,9 +58,7 @@ export function simpleEarlyStartLastForFirstStopAnalyzer(analysisData: AnalysisD
 		// 4.
 		// Sort vehicle events by vehicle timestamp
 
-		const sortedVehicleEvents = analysisData.vehicle_events?.sort((a, b) => {
-			return DateTime.fromJSDate(a.vehicle_timestamp).toMillis() - DateTime.fromJSDate(b.vehicle_timestamp).toMillis();
-		});
+		const sortedVehicleEvents = sortByDate(analysisData.vehicle_events, 'created_at');
 
 		// 5.
 		// For each point, check if they are inside the geofence or not
@@ -99,7 +98,7 @@ export function simpleEarlyStartLastForFirstStopAnalyzer(analysisData: AnalysisD
 		// 6.
 		// Check the timestamp of the event against the expected arrival time of the first stop
 
-		const lastEventForFirstStopIdTimestamp = lastEventForFirstStopId?.vehicle_timestamp;
+		const lastEventForFirstStopIdTimestamp = lastEventForFirstStopId?.created_at;
 		const lastEventForFirstStopIdDateTimeObject = DateTime.fromJSDate(lastEventForFirstStopIdTimestamp, { zone: 'Europe/Lisbon' });
 
 		const delayInMinutes = lastEventForFirstStopIdDateTimeObject.diff(expectedArrivalTimeDateTimeObject, 'minutes').minutes;

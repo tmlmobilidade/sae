@@ -1,11 +1,11 @@
 /* * */
 
-import type { AnalysisData } from '@/types/analysisData.type.js';
-import type { RideAnalysis } from '@tmlmobilidade/services/types';
+import type { AnalysisData } from '@/types/analysis-data.type.js';
 
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
+import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
+import { type ApexT11, type ApexT19, type HashedShape, type HashedTrip, type RideAnalysis, ValidationStatus, type VehicleEvent } from '@tmlmobilidade/services/types';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -127,19 +127,40 @@ export async function validateRides() {
 
 				await rides.updateById(rideDocument._id, { status: 'processing' });
 
-				const hashedShapeData = await hashedShapes.findById(rideDocument.hashed_shape_id);
-				const hashedTripData = await hashedTrips.findById(rideDocument.hashed_trip_id);
-				const vehicleEventsData = await vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				//
+				// Await all promises
+
+				let hashedShapeData: HashedShape;
+				let hashedTripData: HashedTrip;
+				let apexT11Data: ApexT11[];
+				let apexT19Data: ApexT19[];
+				let vehicleEventsData: VehicleEvent[];
+
+				await Promise
+					.all([
+						hashedShapes.findById(rideDocument.hashed_shape_id),
+						hashedTrips.findById(rideDocument.hashed_trip_id),
+						apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id }),
+						apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id }),
+						vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id }),
+					])
+					.then(([hashedShape, hashedTrip, apexT11, apexT19, vehicleEvents]) => {
+						hashedShapeData = hashedShape;
+						hashedTripData = hashedTrip;
+						apexT11Data = apexT11;
+						apexT19Data = apexT19;
+						vehicleEventsData = vehicleEvents;
+					});
 
 				//
+				// Prepare the data for analysis
 
 				const analysisData: AnalysisData = {
+					apex_t11: apexT11Data,
+					apex_t19: apexT19Data,
 					hashed_shape: hashedShapeData,
 					hashed_trip: hashedTripData,
-					location_transactions: [],
 					ride: rideDocument,
-					sales: [],
-					validation_transactions: [],
 					vehicle_events: vehicleEventsData,
 				};
 
@@ -156,6 +177,13 @@ export async function validateRides() {
 				const failAnalysisCount = analysisResult.filter(item => item.grade === 'fail');
 
 				const errorAnalysisCount = analysisResult.filter(item => item.grade === 'error').map(item => item._id);
+
+				//
+				// Populate Ride with additional data
+
+				rideDocument.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id)));
+				rideDocument.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id)));
+				rideDocument.validations_count = apexT11Data.filter(item => item.validation_status === ValidationStatus._0_ContractValid || item.validation_status === ValidationStatus._4_CardInWhiteList || item.validation_status === ValidationStatus._5_ProfileInWhiteList || item.validation_status === ValidationStatus._6_Interchange).length;
 
 				//
 				// Update trip with analysis result and status
