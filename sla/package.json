@@ -5,6 +5,7 @@
 		"build": "turbo build",
 		"dev": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-full",
 		"lint": "turbo lint",
+		"monitor": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor",
 		"sync-full": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-full",
 		"sync-latest": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-latest"
 	},

@@ -1,11 +1,10 @@
 /* * */
 
-import type { AnalysisData } from '@/types/analysis-data.type.js';
-
+import { AnalysisData } from '@/types/analysis-data.type.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
-import { type ApexT11, type ApexT19, type HashedShape, type HashedTrip, type RideAnalysis, ValidationStatus, type VehicleEvent } from '@tmlmobilidade/services/types';
+import { RideAnalysis, ValidationStatus } from '@tmlmobilidade/services/types';
 import { DateTime } from 'luxon';
 
 /* * */
@@ -130,27 +129,17 @@ export async function validateRides() {
 				//
 				// Await all promises
 
-				let hashedShapeData: HashedShape;
-				let hashedTripData: HashedTrip;
-				let apexT11Data: ApexT11[];
-				let apexT19Data: ApexT19[];
-				let vehicleEventsData: VehicleEvent[];
+				const fetchAnalysisDataTimer = new TIMETRACKER();
 
-				await Promise
-					.all([
-						hashedShapes.findById(rideDocument.hashed_shape_id),
-						hashedTrips.findById(rideDocument.hashed_trip_id),
-						apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id }),
-						apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id }),
-						vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id }),
-					])
-					.then(([hashedShape, hashedTrip, apexT11, apexT19, vehicleEvents]) => {
-						hashedShapeData = hashedShape;
-						hashedTripData = hashedTrip;
-						apexT11Data = apexT11;
-						apexT19Data = apexT19;
-						vehicleEventsData = vehicleEvents;
-					});
+				const hashedShapePromise = hashedShapes.findById(rideDocument.hashed_shape_id);
+				const hashedTripPromise = hashedTrips.findById(rideDocument.hashed_trip_id);
+				const apexT11Promise = apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				const apexT19Promise = apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				const vehicleEventsPromise = vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+
+				const [hashedShapeData, hashedTripData, apexT11Data, apexT19Data, vehicleEventsData] = await Promise.all([hashedShapePromise, hashedTripPromise, apexT11Promise, apexT19Promise, vehicleEventsPromise]);
+
+				const fetchAnalysisDataTime = fetchAnalysisDataTimer.get();
 
 				//
 				// Prepare the data for analysis
@@ -190,7 +179,7 @@ export async function validateRides() {
 
 				await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
 
-				LOGGER.success(`[${counter}] | ${rideDocument._id} (${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
+				LOGGER.success(`[${counter}] | ${rideDocument._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 
 				//
 			}
