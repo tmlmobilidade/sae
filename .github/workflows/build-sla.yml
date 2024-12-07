@@ -161,8 +161,8 @@ jobs:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sla-latest:
-    name: sla-latest (NodeJS)
+  sla-sync-latest:
+    name: sla-sync-latest (NodeJS)
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -192,5 +192,5 @@ jobs:
         with:
           push: true
           context: ./sla
-          file: ./sla/apps/latest/Dockerfile
-          tags: ghcr.io/tmlmobilidade/sae-sla-latest:${{ github.ref_name }}
+          file: ./sla/apps/sync-latest/Dockerfile
+          tags: ghcr.io/tmlmobilidade/sae-sla-sync-latest:${{ github.ref_name }}
