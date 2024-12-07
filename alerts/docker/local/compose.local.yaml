@@ -1,0 +1,26 @@
+name: sae-alerts-local
+
+services:
+    alerts-db:
+        image: mongo:latest
+        ports:
+            - 37004:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+            MONGO_INITDB_DATABASE: production
+        volumes:
+            - ./data/alerts.dump:/dump/db.dump
+            - ./setup.sh:/docker-entrypoint-initdb.d/setup.sh
+
+    auth-db:
+        image: mongo:latest
+        ports:
+            - 37005:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+            MONGO_INITDB_DATABASE: production
+        volumes:
+            - ./data/users.dump:/dump/db.dump
+            - ./setup.sh:/docker-entrypoint-initdb.d/setup.sh
