@@ -147,6 +147,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: List directory
+        run: ls -la
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@master
         with:
