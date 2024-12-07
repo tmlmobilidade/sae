@@ -1,4 +1,5 @@
 # # #
+
 # Stage 1: Build the application
 
 FROM node:alpine AS build
@@ -16,6 +17,7 @@ RUN npx @helperkits/bumper bump
 RUN npm run build
 
 # # #
+
 # Stage 2: Create the final image
 
 FROM node:alpine

@@ -1,0 +1,162 @@
+# # #
+
+name: tmlmobilidade-interfaces
+
+volumes:
+  plansdbdata:
+  ridesdbdata:
+  hashedtripsdbdata:
+  hashedshapesdbdata:
+  vehicleeventsdbdata:
+  apext11dbdata:
+  apext19dbdata:
+
+services:
+  #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  plansdb:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27101:27017
+    volumes:
+      - plansdbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=plansdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=plansdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  ridesdb:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27102:27017
+    volumes:
+      - ridesdbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=ridesdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=ridesdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  hashedtripsdb:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27103:27017
+    volumes:
+      - hashedtripsdbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=hashedtripsdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=hashedtripsdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  hashedshapesdb:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27104:27017
+    volumes:
+      - hashedshapesdbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=hashedshapesdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=hashedshapesdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  vehicleeventsdb:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27105:27017
+    volumes:
+      - vehicleeventsdbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=vehicleeventsdbuser
+      - MONGO_INITDB_ROOT_PASSWORD=vehicleeventsdbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  apext11db:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27106:27017
+    volumes:
+      - apext11dbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=apext11dbuser
+      - MONGO_INITDB_ROOT_PASSWORD=apext11dbpassword
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  apext19db:
+    image: mongo
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    ports:
+      - 27107:27017
+    volumes:
+      - apext19dbdata:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=apext19dbuser
+      - MONGO_INITDB_ROOT_PASSWORD=apext19dbpassword

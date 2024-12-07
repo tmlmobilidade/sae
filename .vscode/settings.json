@@ -50,7 +50,7 @@
 	],
 
 	"eslint.workingDirectories": [
-		{"mode": "auto"}
+		{ "mode": "auto" }
 	],
 
 	"files.eol": "\n",
