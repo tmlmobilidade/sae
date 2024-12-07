@@ -41,7 +41,7 @@ jobs:
   #       with:
   #         push: true
   #         context: ./sla
-  #         file: ./apps/bridge/Dockerfile
+  #         file: ./sla/apps/bridge/Dockerfile
   #         tags: ghcr.io/tmlmobilidade/sae-sla-bridge:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -78,7 +78,7 @@ jobs:
         with:
           push: true
           context: ./sla
-          file: ./apps/feeder/Dockerfile
+          file: ./sla/apps/feeder/Dockerfile
           tags: ghcr.io/tmlmobilidade/sae-sla-feeder:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -115,7 +115,7 @@ jobs:
         with:
           push: true
           context: ./sla
-          file: ./apps/monitor/Dockerfile
+          file: ./sla/apps/monitor/Dockerfile
           tags: ghcr.io/tmlmobilidade/sae-sla-monitor:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -152,7 +152,7 @@ jobs:
         with:
           push: true
           context: ./sla
-          file: ./apps/sync-full/Dockerfile
+          file: ./sla/apps/sync-full/Dockerfile
           tags: ghcr.io/tmlmobilidade/sae-sla-sync-full:${{ github.ref_name }}
 
   # # # # # # # # # # # # # # # # # # # # #
@@ -189,5 +189,5 @@ jobs:
         with:
           push: true
           context: ./sla
-          file: ./apps/latest/Dockerfile
+          file: ./sla/apps/latest/Dockerfile
           tags: ghcr.io/tmlmobilidade/sae-sla-latest:${{ github.ref_name }}
