@@ -1,29 +1,48 @@
 # # #
-# Stage 1: Build the application
+# DEFINE THE BASE IMAGE
 
-FROM node:alpine AS build
+FROM node:alpine AS base
+
+ENV PROJECT=feeder
+
+RUN npm install -g turbo@^2
+
+
+# # #
+# BUILDER STAGE
+
+FROM base AS pruner
 
 WORKDIR /app
-
-COPY package.json ./
-
-RUN npm install && npm cache clean --force
 
 COPY . .
 
-RUN npx @helperkits/bumper bump
+RUN turbo prune --scope=@carrismetropolitana/api-${PROJECT} --docker
 
-RUN npm run build
 
 # # #
-# Stage 2: Create the final image
+# INSTALLER STAGE
 
-FROM node:alpine
+FROM base AS builder
 
 WORKDIR /app
 
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./
+# First install the dependencies (as they change less often)
+COPY --from=pruner /app/out/json/ .
+RUN npm install
 
-CMD ["node", "dist/index.js"]
+# Build the project
+COPY --from=pruner /app/out/full/ .
+RUN turbo run build --filter=@carrismetropolitana/api-${PROJECT}
+
+
+# # #
+# RUNNER STAGE
+
+FROM base AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app .
+
+CMD node apps/$PROJECT/dist/index.js
