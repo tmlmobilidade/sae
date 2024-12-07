@@ -132,6 +132,23 @@ package-lock.json
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+/.pnp
+.yarn/*
 
+# Turborepo
 .turbo
 .turbo/*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+*.pem
+
+# NextJS
+.vercel
+next-env.d.ts
