@@ -124,7 +124,6 @@ dist
 
 # Lockfiles
 pnpm-lock.yaml
-package-lock.json
 
 # yarn v2
 .yarn/cache
