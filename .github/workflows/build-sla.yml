@@ -40,7 +40,7 @@ jobs:
   #       uses: docker/build-push-action@master
   #       with:
   #         push: true
-  context: ./sla
+  #         context: ./sla
   #         file: ./apps/bridge/Dockerfile
   #         tags: ghcr.io/tmlmobilidade/sae-sla-bridge:${{ github.ref_name }}
 
