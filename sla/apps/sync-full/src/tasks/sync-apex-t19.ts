@@ -35,9 +35,8 @@ export async function syncApexT19() {
 		// More recent data is more important than older data, so we start syncing the most recent data first.
 		// It makes sense to divide chunks by day, but this should be adjusted according to the volume of data in each chunk.
 
-		// const thirtySecondsAgo = DateTime.now().minus({ seconds: 30 });
-		const thirtySecondsAgo = DateTime.fromFormat('20241021', 'yyyyMMdd').set({ hour: 3, minute: 59, second: 59 });
-		const oldestDataNeeded = DateTime.fromFormat('20241014', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
+		const thirtySecondsAgo = DateTime.now().minus({ seconds: 30 });
+		const oldestDataNeeded = DateTime.fromFormat('20241101', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
 
 		const allTimestampChunks = Interval
 			.fromDateTimes(oldestDataNeeded, thirtySecondsAgo)
