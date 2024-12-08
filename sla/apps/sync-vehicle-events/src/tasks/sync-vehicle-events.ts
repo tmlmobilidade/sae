@@ -56,22 +56,39 @@ export async function syncVehicleEvents() {
 			LOGGER.info(`Processing timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}...`);
 
 			//
-			// Get distinct IDs from each database in the current timestamp chunk
+			// Prepare the query for this timestamp chunk
 
-			const allPcgidbVehicleEventDocumentIds = await PCGIDB.VehicleEvents.distinct('_id', {
+			const pcgidbQuery = {
 				millis: {
 					$gte: timestampChunk.start.toMillis(),
 					$lte: timestampChunk.end.toMillis(),
 				},
-			});
+			};
 
-			const allSlaVehicleEventDocumentIds = await vehicleEventsCollection.distinct('_id', {
+			const slaQuery = {
 				received_at: {
 					$gte: timestampChunk.start.toJSDate(),
 					$lte: timestampChunk.end.toJSDate(),
 				},
-			});
+			};
 
+			//
+			// Get distinct IDs from each database in the current timestamp chunk
+
+			const allPcgidbVehicleEventDocumentCount = await PCGIDB.VehicleEvents.countDocuments(pcgidbQuery);
+			const allSlaVehicleEventDocumentCount = await vehicleEventsCollection.countDocuments(slaQuery);
+			if (allPcgidbVehicleEventDocumentCount === allSlaVehicleEventDocumentCount) {
+				LOGGER.success(`Found the same number of documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} are already in sync.`);
+				continue;
+			}
+
+			LOGGER.info(`Mismatch: Found ${allPcgidbVehicleEventDocumentCount} documents in PCGIDB and ${allSlaVehicleEventDocumentCount} documents in SLA for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}.`);
+
+			//
+			// Get distinct IDs from each database in the current timestamp chunk
+
+			const allPcgidbVehicleEventDocumentIds = await PCGIDB.VehicleEvents.distinct('_id', pcgidbQuery);
+			const allSlaVehicleEventDocumentIds = await vehicleEventsCollection.distinct('_id', slaQuery);
 			const uniqueSlaVehicleEventDocumentIds = new Set(allSlaVehicleEventDocumentIds.map(String));
 
 			//

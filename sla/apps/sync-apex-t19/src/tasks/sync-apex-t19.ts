@@ -56,23 +56,40 @@ export async function syncApexT19() {
 			LOGGER.info(`Processing timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}...`);
 
 			//
-			// Get distinct IDs from each database in the current timestamp chunk
+			// Prepare the query for this timestamp chunk
 
-			const allPcgidbApexT19DocumentIds = await PCGIDB.ValidationEntity.distinct('_id', {
+			const pcgidbQuery = {
 				'transaction.transactionDate': {
 					$gte: timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
 					$lte: timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
 				},
-			});
+			};
 
-			const allSlaApexT19DocumentIds = await apexT19Collection.distinct('_id', {
+			const slaQuery = {
 				received_at: {
 					$gte: timestampChunk.start.toJSDate(),
 					$lte: timestampChunk.end.toJSDate(),
 				},
-			});
+			};
 
-			const uniqueSlaApexT19DocumentIds = new Set(allSlaApexT19DocumentIds.map(String));
+			//
+			// Get distinct IDs from each database in the current timestamp chunk
+
+			const allPcgidbApexT19DocumentCount = await PCGIDB.ValidationEntity.countDocuments(pcgidbQuery);
+			const allSlaApexT19DocumenCount = await apexT19Collection.countDocuments(slaQuery);
+			if (allPcgidbApexT19DocumentCount === allSlaApexT19DocumenCount) {
+				LOGGER.success(`Found the same number of documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} are already in sync.`);
+				continue;
+			}
+
+			LOGGER.info(`Mismatch: Found ${allPcgidbApexT19DocumentCount} documents in PCGIDB and ${allSlaApexT19DocumenCount} documents in SLA for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}.`);
+
+			//
+			// Get distinct IDs from each database in the current timestamp chunk
+
+			const allPcgidbApexT19DocumentIds = await PCGIDB.ValidationEntity.distinct('_id', pcgidbQuery);
+			const allSlaApexT19DocumenIds = await apexT19Collection.distinct('_id', slaQuery);
+			const uniqueSlaApexT19DocumentIds = new Set(allSlaApexT19DocumenIds.map(String));
 
 			//
 			// Check if all documents in PCGIDB are already synced
