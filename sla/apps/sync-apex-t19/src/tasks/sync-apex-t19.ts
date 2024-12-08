@@ -66,7 +66,7 @@ export async function syncApexT19() {
 			};
 
 			const slaQuery = {
-				received_at: {
+				created_at: {
 					$gte: timestampChunk.start.toJSDate(),
 					$lte: timestampChunk.end.toJSDate(),
 				},

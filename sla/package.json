@@ -6,7 +6,9 @@
 		"dev": "turbo dev",
 		"lint": "turbo lint",
 		"monitor": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor",
-		"sync-latest": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-latest",
+		"stream": "turbo dev --filter=@tmlmobilidade/sae-sla-stream",
+		"sync-apex-t11": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-apex-t11",
+		"sync-apex-t19": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-apex-t19",
 		"sync-vehicle-events": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-vehicle-events"
 	},
 	"devDependencies": {
