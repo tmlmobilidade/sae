@@ -87,7 +87,7 @@ export async function syncApexT19() {
 			//
 			// Get distinct IDs from each database in the current timestamp chunk
 
-			const allPcgidbApexT19DocumentIds = await PCGIDB.ValidationEntity.distinct('_id', pcgidbQuery);
+			const allPcgidbApexT19DocumentIds = await PCGIDB.ValidationEntity.distinct('transaction.transactionId', pcgidbQuery);
 			const allSlaApexT19DocumenIds = await apexT19Collection.distinct('_id', slaQuery);
 			const uniqueSlaApexT19DocumentIds = new Set(allSlaApexT19DocumenIds.map(String));
 
