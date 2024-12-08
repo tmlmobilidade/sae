@@ -105,7 +105,6 @@ export async function syncApexT11() {
 						const ridesCollection = await rides.getCollection();
 						const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
 						LOGGER.info(`SYNC FULL [apex_t11]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t11 data (${invalidationTimer.get()})`);
-						LOGGER.divider();
 					}
 					catch (error) {
 						LOGGER.error('Error in flushCallback', error);

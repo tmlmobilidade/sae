@@ -105,7 +105,6 @@ export async function syncVehicleEvents() {
 						const ridesCollection = await rides.getCollection();
 						const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
 						LOGGER.info(`SYNC FULL [vehicle_events]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new vehicle_events data (${invalidationTimer.get()})`);
-						LOGGER.divider();
 					}
 					catch (error) {
 						LOGGER.error('Error in flushCallback', error);
