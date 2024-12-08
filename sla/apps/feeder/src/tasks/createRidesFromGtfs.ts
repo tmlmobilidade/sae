@@ -657,6 +657,7 @@ export async function createRidesFromGtfs() {
 			catch (error) {
 				await plans.updateById(planData._id, { feeder_status: 'error' });
 				LOGGER.error(`Error processing plan ${planData._id}`, error);
+				LOGGER.divider();
 			}
 
 			//
