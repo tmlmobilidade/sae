@@ -47,10 +47,10 @@ export async function createRidesFromGtfs() {
 				//
 
 				//
-				// Skip this plan if it does not have an associated operation file
+				// Skip this plan if its feeder status is other than 'waiting'
 
-				if (!planData.operation_file) {
-					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | No operation file found.`);
+				if (planData.feeder_status !== 'waiting') {
+					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | Plan feeder_status is '${planData.feeder_status}'. Only 'waiting' plans will be processed.`);
 					continue;
 				}
 
@@ -63,10 +63,10 @@ export async function createRidesFromGtfs() {
 				}
 
 				//
-				// Skip this plan if its feeder status is other than 'waiting'
+				// Skip this plan if it does not have an associated operation file
 
-				if (planData.feeder_status !== 'waiting') {
-					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | Plan feeder_status is '${planData.feeder_status}'. Only 'waiting' plans will be processed.`);
+				if (!planData.operation_file) {
+					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | No operation file found.`);
 					continue;
 				}
 
@@ -76,6 +76,7 @@ export async function createRidesFromGtfs() {
 
 				await plans.updateById(planData._id, { feeder_status: 'processing' });
 
+				LOGGER.divider();
 				LOGGER.info(`[${planIndex + 1}/${allPlansData.length}] Processing Plan ${planData._id} | valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
 
 				//
