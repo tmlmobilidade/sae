@@ -558,7 +558,7 @@ export async function createRidesFromGtfs() {
 
 						for (const calendarDate of calendarDatesData) {
 							//
-							const extensionScheduledInMeters = convertMetersOrKilometersToMeters(hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled, hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled);
+							const extensionScheduledInMeters = convertMetersOrKilometersToMeters(hashedTripData?.path[hashedTripData?.path?.length - 1]?.shape_dist_traveled, hashedTripData?.path[hashedTripData?.path?.length - 1]?.shape_dist_traveled);
 							//
 							const startTimeScheduled = hashedTripData.path?.length > 0 ? hashedTripData.path[0]?.arrival_time : '-';
 							const startTimeScheduledDate = convertOperationTimeStringAndOperationalDateToJsDate(startTimeScheduled, calendarDate);
