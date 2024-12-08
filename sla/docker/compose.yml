@@ -93,8 +93,8 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-full:
-    image: ghcr.io/tmlmobilidade/sae-sla-sync-full:production
+  sync-apex-t11:
+    image: ghcr.io/tmlmobilidade/sae-sla-sync-apex-t11:production
     deploy:
       restart_policy:
         condition: on-failure
@@ -114,8 +114,50 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  sync-latest:
-    image: ghcr.io/tmlmobilidade/sae-sla-sync-latest:production
+  sync-apex-t19:
+    image: ghcr.io/tmlmobilidade/sae-sla-sync-apex-t19:production
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/production/.env
+    secrets:
+      - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  sync-vehicle-events:
+    image: ghcr.io/tmlmobilidade/sae-sla-sync-vehicle-events:production
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/production/.env
+    secrets:
+      - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  stream:
+    image: ghcr.io/tmlmobilidade/sae-sla-stream:production
     deploy:
       restart_policy:
         condition: on-failure

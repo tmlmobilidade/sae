@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/sae-sla-sync-full",
+	"name": "@tmlmobilidade/sae-sla-sync-apex-t11",
 	"version": "1.0.0",
 	"type": "module",
 	"files": ["dist"],

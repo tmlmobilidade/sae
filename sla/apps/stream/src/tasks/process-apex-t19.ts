@@ -11,7 +11,7 @@ import { DateTime } from 'luxon';
 
 /* * */
 
-const apexT19DbWritter = new MongoDbWriter('apex_t19', await apexT19.getCollection(), { batch_size: 50 });
+const apexT19DbWritter = new MongoDbWriter('apex_t19', await apexT19.getCollection(), { batch_size: 250 });
 
 /* * */
 

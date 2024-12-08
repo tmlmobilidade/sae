@@ -4,7 +4,7 @@
 FROM node:alpine AS base
 
 ENV SCOPE=sla
-ENV PROJECT=sync-latest
+ENV PROJECT=sync-apex-t19
 
 RUN npm install -g turbo@^2
 
