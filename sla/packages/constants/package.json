@@ -1,0 +1,18 @@
+{
+	"name": "@tmlmobilidade/sae-sla-pckg-constants",
+	"version": "1.0.0",
+	"type": "module",
+	"files": ["dist"],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20241024.1600.5",
+		"@types/node": "22.10.1",
+		"resolve-tspaths": "0.8.23",
+		"typescript": "5.7.2"
+	}
+}

@@ -4,14 +4,12 @@ import PCGIDB from '@/services/PCGIDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { CHUNK_LOG_DATE_FORMAT } from '@tmlmobilidade/sae-sla-pckg-constants';
+import { parseApexT19 } from '@tmlmobilidade/sae-sla-pckg-parse';
+import { syncDocuments } from '@tmlmobilidade/sae-sla-pckg-sync';
 import { apexT19, rides } from '@tmlmobilidade/services/interfaces';
-import { ApexT19, OperationalDate } from '@tmlmobilidade/services/types';
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { OperationalDate } from '@tmlmobilidade/services/types';
 import { DateTime, Interval } from 'luxon';
-
-/* * */
-
-const CHUNK_FORMAT = 'yyyy-LL-dd\' \'HH\'h \'mm\'m \'ss\'s\'';
 
 /* * */
 
@@ -49,7 +47,7 @@ export async function syncApexT19() {
 
 		//
 		// Iterate over each timestamp chunk and sync the documents.
-		// Timestamp chunks are sorted in descending order, so the most recent data is processed first.
+		// Timestamp chunks are sorted in descending order, so that more recent data is processed first.
 		// Timestamp chunks are in the format { start: day1, end: day2 }, so end is always greater than start.
 		// This might be confusing as the array of chunks itself is sorted in descending order, but the chunks individually are not.
 
@@ -58,74 +56,8 @@ export async function syncApexT19() {
 
 			const chunkTimer = new TIMETRACKER();
 
-			LOGGER.divider(`[${chunkIndex + 1}/${allTimestampChunks.length}]`);
-			LOGGER.info(`Processing chunk (${chunkData.end.toFormat(CHUNK_FORMAT)}) › (${chunkData.start.toFormat(CHUNK_FORMAT)})...`);
-
-			//
-			// Prepare the query for this timestamp chunk
-
-			const pcgidbQuery = {
-				'transaction.transactionDate': {
-					$gte: chunkData.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
-					$lte: chunkData.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
-				},
-			};
-
-			const slaQuery = {
-				created_at: {
-					$gte: chunkData.start.toJSDate(),
-					$lte: chunkData.end.toJSDate(),
-				},
-			};
-
-			//
-			// Get distinct IDs from each database in the current timestamp chunk
-
-			const quickCountTimer = new TIMETRACKER();
-
-			const allPcgidbApexT19DocumentCount = await PCGIDB.LocationEntity.countDocuments(pcgidbQuery);
-			const allSlaApexT19DocumenCount = await apexT19Collection.countDocuments(slaQuery);
-			if (allPcgidbApexT19DocumentCount === allSlaApexT19DocumenCount) {
-				LOGGER.success(`MATCH - Found the same number of documents. (${allPcgidbApexT19DocumentCount} PCGIDB = ${allSlaApexT19DocumenCount} SLA) (${quickCountTimer.get()})`);
-				continue;
-			}
-
-			LOGGER.info(`MISMATCH - Found different number of documents. (${allPcgidbApexT19DocumentCount} PCGIDB != ${allSlaApexT19DocumenCount} SLA) (${quickCountTimer.get()})`);
-
-			//
-			// Get distinct IDs from each database in the current timestamp chunk
-
-			const distinctQueryTimer = new TIMETRACKER();
-
-			const allPcgidbApexT19DocumentIds = await PCGIDB.LocationEntity.distinct('transaction.transactionId', pcgidbQuery);
-			const uniquePcgidbApexT19DocumentIds = new Set(allPcgidbApexT19DocumentIds);
-
-			const allSlaApexT19DocumenIds = await apexT19Collection.distinct('_id', slaQuery);
-			const uniqueSlaApexT19DocumentIds = new Set(allSlaApexT19DocumenIds);
-
-			//
-			// Check if all documents in PCGIDB are already synced
-
-			const missingDocuments = allPcgidbApexT19DocumentIds.filter((documentId: string) => !uniqueSlaApexT19DocumentIds.has(documentId));
-			const extraDocuments = allSlaApexT19DocumenIds.filter((documentId: string) => !uniquePcgidbApexT19DocumentIds.has(documentId));
-
-			if (missingDocuments.length === 0) {
-				LOGGER.success(`Chunk complete. All document IDs matched. (${distinctQueryTimer.get()})`);
-			}
-
-			if (extraDocuments.length > 0) {
-				await apexT19Collection.deleteMany({ _id: { $in: extraDocuments }, created_at: { $gte: chunkData.start.toJSDate(), $lte: chunkData.end.toJSDate() } });
-				LOGGER.info(`Removed ${extraDocuments.length} extra document IDs in SLA APEX T19 (${distinctQueryTimer.get()})`);
-			}
-
-			//
-			// If there are missing documents, sync them
-
-			LOGGER.info(`Found ${missingDocuments.length} unmatched document IDs (${distinctQueryTimer.get()})`);
-
-			const missingDocumentsStream = PCGIDB.LocationEntity
-				.find({ 'transaction.transactionId': { $in: missingDocuments } })
-				.stream();
+			LOGGER.spacer(1);
+			LOGGER.divider(`[${chunkIndex + 1}/${allTimestampChunks.length}] - ${chunkData.end.toFormat(CHUNK_LOG_DATE_FORMAT)} › ${chunkData.start.toFormat(CHUNK_LOG_DATE_FORMAT)}`, 100);
 
 			//
 			// Setup the callback function that will be called on the DB Writer flush operation
@@ -140,40 +72,59 @@ export async function syncApexT19() {
 					// Invalidate all rides with new data
 					const ridesCollection = await rides.getCollection();
 					const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
-					LOGGER.info(`SYNC FULL [apex_t19]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t19 data (${invalidationTimer.get()})`);
+					LOGGER.info(`Flush: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t19 data (${invalidationTimer.get()})`);
 				}
 				catch (error) {
 					LOGGER.error('Error in flushCallback', error);
 				}
 			};
 
-			for await (const pcgiDocument of missingDocumentsStream) {
-				const transactionDate = DateTime.fromISO(pcgiDocument.transaction.transactionDate);
-				const operationalDate = getOperationalDate(transactionDate);
-				const newApexT19Document: ApexT19 = {
-					_id: pcgiDocument.transaction.transactionId,
-					_raw: JSON.stringify(pcgiDocument),
-					agency_id: pcgiDocument.transaction.operatorLongID,
-					apex_version: pcgiDocument.transaction.apexVersion,
-					created_at: transactionDate.toJSDate(),
-					device_id: pcgiDocument.transaction.deviceID,
-					line_id: pcgiDocument.transaction.lineLongID,
-					mac_ase_counter_value: pcgiDocument.transaction.macDataFields.aseCounterValue,
-					mac_sam_serial_number: pcgiDocument.transaction.macDataFields.samSerialNumber,
-					operational_date: operationalDate,
-					pattern_id: pcgiDocument.transaction.patternLongID,
-					received_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
-					stop_id: pcgiDocument.transaction.stopLongID,
-					trip_id: pcgiDocument.transaction.journeyID,
-					updated_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
-					vehicle_id: pcgiDocument.transaction.vehicleID,
-				};
-				await apexT19DbWritter.write(newApexT19Document, { filter: { _id: newApexT19Document._id }, upsert: true }, () => null, flushCallback);
-			}
+			//
+			// Prepare the queries to compare documents from each database
+			// in the current timestamp chunk.
 
-			await apexT19DbWritter.flush(flushCallback);
+			const pcgiQuery = {
+				'transaction.transactionDate': {
+					$gte: chunkData.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
+					$lte: chunkData.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
+				},
+			};
 
-			LOGGER.success(`Chunk complete. Synced ${missingDocuments.length} new documents. (${chunkTimer.get()})`);
+			const slaQuery = {
+				created_at: {
+					$gte: chunkData.start.toJSDate(),
+					$lte: chunkData.end.toJSDate(),
+				},
+			};
+
+			//
+			// Sync the documents
+
+			await syncDocuments({
+
+				dbWriter: apexT19DbWritter,
+
+				docParser: parseApexT19,
+
+				flushCallback: flushCallback,
+
+				pcgiCollection: PCGIDB.LocationEntity,
+
+				pcgiIdKey: 'transaction.transactionId',
+
+				pcgiQuery: pcgiQuery,
+
+				slaCollection: apexT19Collection,
+
+				slaIdKey: '_id',
+
+				slaQuery: slaQuery,
+
+			});
+
+			//
+
+			LOGGER.success(`Chunk sync complete (${chunkTimer.get()})`);
 
 			//
 		}
