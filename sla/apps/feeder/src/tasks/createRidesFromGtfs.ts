@@ -99,7 +99,7 @@ export async function createRidesFromGtfs() {
 				// Prepare the working directories for the current plan
 
 				const downloadUrl = `${process.env.GO_API_HOST}/api/media/${planData.operation_file}/download_public`;
-				const workdirPath = `${process.env.APP_TMP_DIR}/sae-feeder/${planData._id}`;
+				const workdirPath = `/tmp/sae-feeder/${planData._id}`;
 				const downloadFilePath = `${workdirPath}/${planData.operation_file}.zip`;
 				const extractDirPath = `${workdirPath}/extracted`;
 
