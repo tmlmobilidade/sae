@@ -1,0 +1,26 @@
+# # #
+
+name: tmlmobilidade-bridge
+
+services:
+  #
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  testdb:
+    image: postgres:alpine
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+    ports:
+      - 5432:5432
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    environment:
+      - POSTGRES_DB=testdb
+      - POSTGRES_USER=testdbuser
+      - POSTGRES_PASSWORD=testdbpassword

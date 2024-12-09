@@ -3,11 +3,10 @@
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { parseVehicleEvent } from '@tmlmobilidade/sae-sla-pckg-parse';
 import { rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
 import { emailProvider } from '@tmlmobilidade/services/providers';
-import { OperationalDate, VehicleEvent } from '@tmlmobilidade/services/types';
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
-import { DateTime } from 'luxon';
+import { OperationalDate } from '@tmlmobilidade/services/types';
 
 /* * */
 
@@ -39,32 +38,7 @@ export async function processVehicleEvent(databaseOperation) {
 	// Extract the PCGI document from the database operation
 	// and transform the vehicle timestamp into an operational date.
 
-	const pcgiDocument = databaseOperation.fullDocument;
-	const vehicleTimestamp = DateTime.fromSeconds(pcgiDocument.content.entity[0].vehicle.timestamp);
-	const operationalDate = getOperationalDate(vehicleTimestamp);
-
-	//
-	// Create a new vehicle event document and write it to the VehicleEvents collection
-
-	const newVehicleEventDocument: VehicleEvent = {
-		_id: pcgiDocument._id,
-		_raw: JSON.stringify(pcgiDocument),
-		agency_id: pcgiDocument.content.entity[0].vehicle.agencyId,
-		created_at: vehicleTimestamp.toJSDate(),
-		driver_id: pcgiDocument.content.entity[0].vehicle.driverId,
-		event_id: pcgiDocument.content.entity[0]._id,
-		extra_trip_id: pcgiDocument.content.entity[0].vehicle.trip?.extraTripId,
-		line_id: pcgiDocument.content.entity[0].vehicle.trip?.lineId,
-		odometer: pcgiDocument.content.entity[0].vehicle.position.odometer,
-		operational_date: operationalDate,
-		pattern_id: pcgiDocument.content.entity[0].vehicle.trip?.patternId,
-		received_at: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
-		route_id: pcgiDocument.content.entity[0].vehicle.trip?.routeId,
-		stop_id: pcgiDocument.content.entity[0].vehicle.stopId,
-		trip_id: pcgiDocument.content.entity[0].vehicle.trip?.tripId,
-		updated_at: DateTime.fromMillis(pcgiDocument.millis).toJSDate(),
-		vehicle_id: pcgiDocument.content.entity[0].vehicle.vehicle._id,
-	};
+	const newVehicleEventDocument = parseVehicleEvent(databaseOperation.fullDocument);
 
 	//
 	// Setup the callback function that will be called on the DB Writer flush operation

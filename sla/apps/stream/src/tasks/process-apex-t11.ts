@@ -3,11 +3,10 @@
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { parseApexT11 } from '@tmlmobilidade/sae-sla-pckg-parse';
 import { apexT11, rides } from '@tmlmobilidade/services/interfaces';
 import { emailProvider } from '@tmlmobilidade/services/providers';
-import { ApexT11, OperationalDate } from '@tmlmobilidade/services/types';
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
-import { DateTime } from 'luxon';
+import { OperationalDate } from '@tmlmobilidade/services/types';
 
 /* * */
 
@@ -39,34 +38,7 @@ export async function processApexT11(databaseOperation) {
 	// Extract the PCGI document from the database operation
 	// and transform the vehicle timestamp into an operational date.
 
-	const pcgiDocument = databaseOperation.fullDocument;
-	const transactionDate = DateTime.fromISO(pcgiDocument.transaction.transactionDate);
-	const operationalDate = getOperationalDate(transactionDate);
-
-	//
-	// Create a new transaction document and write it to the ApexT11 collection
-
-	const newApexT11Document: ApexT11 = {
-		_id: pcgiDocument.transaction.transactionId,
-		_raw: JSON.stringify(pcgiDocument),
-		agency_id: pcgiDocument.transaction.operatorLongID,
-		apex_version: pcgiDocument.transaction.apexVersion,
-		card_serial_number: pcgiDocument.transaction.cardSerialNumber,
-		created_at: transactionDate.toJSDate(),
-		device_id: pcgiDocument.transaction.deviceID,
-		line_id: pcgiDocument.transaction.lineLongID,
-		mac_ase_counter_value: pcgiDocument.transaction.macDataFields.aseCounterValue,
-		mac_sam_serial_number: pcgiDocument.transaction.macDataFields.samSerialNumber,
-		operational_date: operationalDate,
-		pattern_id: pcgiDocument.transaction.patternLongID,
-		product_id: pcgiDocument.transaction.productLongID,
-		received_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
-		stop_id: pcgiDocument.transaction.stopLongID,
-		trip_id: pcgiDocument.transaction.journeyID,
-		updated_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
-		validation_status: pcgiDocument.transaction.validationStatus,
-		vehicle_id: pcgiDocument.transaction.vehicleID,
-	};
+	const newApexT11Document = parseApexT11(databaseOperation.fullDocument);
 
 	//
 	// Setup the callback function that will be called on the DB Writer flush operation
