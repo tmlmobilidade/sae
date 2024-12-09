@@ -43,18 +43,22 @@ export async function createRidesFromGtfs() {
 		// Get all Plans and iterate on each one
 
 		const allPlansData = await plans.all();
+		const allPlansDataSorted = allPlansData.sort((a, b) => b.valid_from.localeCompare(a.valid_from));
 
 		LOGGER.info(`Found ${allPlansData.length} Plans to process...`);
 
-		for (const [planIndex, planData] of allPlansData.entries()) {
+		for (const [planIndex, planData] of allPlansDataSorted.entries()) {
 			try {
 				//
+
+				LOGGER.spacer(1);
+				LOGGER.divider(`[${planIndex + 1}/${allPlansData.length}] - ${planData._id}`);
 
 				//
 				// Skip this plan if its feeder status is other than 'waiting'
 
 				if (planData.feeder_status !== 'waiting') {
-					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | Plan feeder_status is '${planData.feeder_status}'. Only 'waiting' plans will be processed.`);
+					LOGGER.error(`Skip processing: feeder_status is '${planData.feeder_status}'. Only 'waiting' plans will be processed.`);
 					continue;
 				}
 
@@ -62,7 +66,7 @@ export async function createRidesFromGtfs() {
 				// Skip this plan if it is not yet approved
 
 				if (!planData.is_approved) {
-					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | Plan is not approved.`);
+					LOGGER.error(`Skip processing: Plan is not approved.`);
 					continue;
 				}
 
@@ -70,7 +74,7 @@ export async function createRidesFromGtfs() {
 				// Skip this plan if it does not have an associated operation file
 
 				if (!planData.operation_file) {
-					LOGGER.error(`[${planIndex + 1}/${allPlansData.length}] Skipping Plan ${planData._id} | No operation file found.`);
+					LOGGER.error(`Skip processing: No operation file found.`);
 					continue;
 				}
 
@@ -80,8 +84,7 @@ export async function createRidesFromGtfs() {
 
 				await plans.updateById(planData._id, { feeder_status: 'processing' });
 
-				LOGGER.divider();
-				LOGGER.info(`[${planIndex + 1}/${allPlansData.length}] Processing Plan ${planData._id} | valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
+				LOGGER.success(`Processing started: valid_from: ${planData.valid_from} | valid_until: ${planData.valid_until}`);
 
 				//
 				// Setup variables to save formatted entities found in this Plan
@@ -660,7 +663,6 @@ export async function createRidesFromGtfs() {
 				//
 
 				LOGGER.success(`Finished processing plan ${planData._id}`);
-				LOGGER.divider();
 
 				//
 			}
@@ -672,6 +674,9 @@ export async function createRidesFromGtfs() {
 
 			//
 		}
+
+		LOGGER.spacer(1);
+		LOGGER.divider('CLEANUP');
 
 		//
 		// Delete all rides from plans that do not exist anymore
