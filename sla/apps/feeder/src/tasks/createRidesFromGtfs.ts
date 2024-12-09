@@ -559,12 +559,17 @@ export async function createRidesFromGtfs() {
 
 						for (const calendarDate of calendarDatesData) {
 							//
-							const extensionScheduledInMeters = convertMetersOrKilometersToMeters(hashedTripData?.path[hashedTripData?.path?.length - 1]?.shape_dist_traveled, hashedTripData?.path[hashedTripData?.path?.length - 1]?.shape_dist_traveled);
+							if (hashedTripData?.path?.length === 0) {
+								LOGGER.error(`Trip ${tripData.trip_id} has no path data. Skipping...`);
+								continue;
+							}
 							//
-							const startTimeScheduled = hashedTripData.path?.length > 0 ? hashedTripData.path[0]?.arrival_time : '-';
+							const extensionScheduledInMeters = convertMetersOrKilometersToMeters(hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled, hashedTripData.path[hashedTripData.path.length - 1].shape_dist_traveled);
+							//
+							const startTimeScheduled = hashedTripData.path[0].arrival_time;
 							const startTimeScheduledDate = convertOperationTimeStringAndOperationalDateToJsDate(startTimeScheduled, calendarDate);
 							//
-							const endTimeScheduledString = hashedTripData.path?.length > 0 ? hashedTripData.path[hashedTripData.path.length - 1]?.arrival_time : '-';
+							const endTimeScheduledString = hashedTripData.path[hashedTripData.path.length - 1].arrival_time;
 							const endTimeScheduledDate = convertOperationTimeStringAndOperationalDateToJsDate(endTimeScheduledString, calendarDate);
 							const runtimeScheduledMillis = DateTime.fromJSDate(endTimeScheduledDate).toMillis() - DateTime.fromJSDate(startTimeScheduledDate).toMillis();
 							const runtimeScheduled = Math.trunc(runtimeScheduledMillis / 1000 / 60);
@@ -630,8 +635,8 @@ export async function createRidesFromGtfs() {
 					//
 				}
 				catch (error) {
-					LOGGER.error('Error transforming or saving shapes to database.', error);
-					throw new Error('✖︎ Error transforming or saving shapes to database.');
+					LOGGER.error('Error transforming or saving Shapes, Trips or Rides to database.', error);
+					throw new Error('✖︎ Error transforming or saving Shapes, Trips or Rides to database.');
 				}
 
 				//
