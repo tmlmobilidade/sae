@@ -28,8 +28,8 @@ export async function createRidesFromGtfs() {
 		const hashedTripsCollection = await hashedTrips.getCollection();
 		const ridesCollection = await rides.getCollection();
 
-		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', hashedShapesCollection);
-		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', hashedTripsCollection);
+		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', hashedShapesCollection);
+		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', hashedTripsCollection);
 		const ridesDbWritter = new MongoDbWriter('Rides', ridesCollection);
 
 		//
