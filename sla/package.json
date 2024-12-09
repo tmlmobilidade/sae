@@ -4,6 +4,7 @@
 	"scripts": {
 		"build": "turbo build",
 		"dev": "turbo dev",
+		"feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
 		"lint": "turbo lint",
 		"monitor": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor",
 		"stream": "turbo dev --filter=@tmlmobilidade/sae-sla-stream",

@@ -24,9 +24,13 @@ export async function createRidesFromGtfs() {
 		//
 		// Setup database writer
 
-		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', await hashedTrips.getCollection());
-		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', await hashedShapes.getCollection());
-		const ridesDbWritter = new MongoDbWriter('Rides', await rides.getCollection());
+		const hashedShapesCollection = await hashedShapes.getCollection();
+		const hashedTripsCollection = await hashedTrips.getCollection();
+		const ridesCollection = await rides.getCollection();
+
+		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', hashedShapesCollection);
+		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', hashedTripsCollection);
+		const ridesDbWritter = new MongoDbWriter('Rides', ridesCollection);
 
 		//
 		// Setup variables to keep track of created IDs
@@ -679,13 +683,35 @@ export async function createRidesFromGtfs() {
 		//
 		// Remove all hashed trips and shapes that are not referenced by any ride
 
-		const allHashedTripIdsFromRides = await rides.distinct('hashed_trip_id');
-		const deleteUnusedHashedTripsResult = await hashedTrips.deleteMany({ _id: { $nin: allHashedTripIdsFromRides } });
-		LOGGER.info(`Deleted ${deleteUnusedHashedTripsResult.deletedCount} unused Hashed Trips.`);
+		const staleHashedShapesTimer = new TIMETRACKER();
 
-		const allHashedShapeIdsFromRides = await rides.distinct('hashed_shape_id');
-		const deleteUnusedHashedShapesResult = await hashedShapes.deleteMany({ _id: { $nin: allHashedShapeIdsFromRides } });
-		LOGGER.info(`Deleted ${deleteUnusedHashedShapesResult.deletedCount} unused Hashed Shapes.`);
+		const allHashedShapeIds = await hashedShapesCollection.aggregate([{ $group: { _id: '$_id' } }]).toArray();
+		const allHashedShapeIdsUnique = new Set(allHashedShapeIds.map(doc => doc._id));
+		const hashedShapeIdsInUse = await ridesCollection.aggregate([{ $group: { _id: '$hashed_shape_id' } }]).toArray();
+		hashedShapeIdsInUse.forEach(hashedShapeId => allHashedShapeIdsUnique.delete(hashedShapeId._id));
+
+		if (allHashedShapeIdsUnique.size > 0) {
+			const deleteUnusedHashedShapesResult = await hashedShapes.deleteMany({ _id: { $in: Array.from(allHashedShapeIdsUnique) } });
+			LOGGER.info(`Deleted ${deleteUnusedHashedShapesResult.deletedCount} unused Hashed Shapes.`);
+		}
+
+		LOGGER.info(`Found ${allHashedShapeIdsUnique.size} unused Hashed Shapes. (${staleHashedShapesTimer.get()})`);
+
+		//
+
+		const staleHashedTripsTimer = new TIMETRACKER();
+
+		const allHashedTripIds = await hashedTripsCollection.aggregate([{ $group: { _id: '$_id' } }]).toArray();
+		const allHashedTripIdsUnique = new Set(allHashedTripIds.map(doc => doc._id));
+		const hashedTripIdsInUse = await ridesCollection.aggregate([{ $group: { _id: '$hashed_trip_id' } }]).toArray();
+		hashedTripIdsInUse.forEach(hashedTripId => allHashedTripIdsUnique.delete(hashedTripId._id));
+
+		if (allHashedTripIdsUnique.size > 0) {
+			const deleteUnusedHashedTripsResult = await hashedTrips.deleteMany({ _id: { $in: Array.from(allHashedTripIdsUnique) } });
+			LOGGER.info(`Deleted ${deleteUnusedHashedTripsResult.deletedCount} unused Hashed Trips.`);
+		}
+
+		LOGGER.info(`Found ${allHashedTripIdsUnique.size} unused Hashed Trips. (${staleHashedTripsTimer.get()})`);
 
 		//
 
