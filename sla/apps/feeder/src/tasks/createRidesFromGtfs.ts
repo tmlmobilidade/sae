@@ -28,9 +28,9 @@ export async function createRidesFromGtfs() {
 		const hashedTripsCollection = await hashedTrips.getCollection();
 		const ridesCollection = await rides.getCollection();
 
-		const hashedShapesDbWritter = new MongoDbWriter('HashedShape', hashedShapesCollection);
-		const hashedTripsDbWritter = new MongoDbWriter('HashedTrip', hashedTripsCollection);
-		const ridesDbWritter = new MongoDbWriter('Rides', ridesCollection);
+		const hashedShapesDbWritter = new MongoDbWriter('hashed_shapes', hashedShapesCollection);
+		const hashedTripsDbWritter = new MongoDbWriter('hashed_trips', hashedTripsCollection);
+		const ridesDbWritter = new MongoDbWriter('rides', ridesCollection);
 
 		//
 		// Setup variables to keep track of created IDs
