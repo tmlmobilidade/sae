@@ -53,13 +53,13 @@ export async function syncDocuments<T>({ dbWriter, docParser, flushCallback, pcg
 		const distinctQueryTimer = new TIMETRACKER();
 
 		const pcgiDocIds = await pcgiCollection.distinct(pcgiIdKey, pcgiQuery);
-		const pcgiDocIdsUnique = new Set(pcgiDocIds);
+		const pcgiDocIdsUnique = new Set(pcgiDocIds.map(String));
 
 		const slaDocIds = await slaCollection.distinct(slaIdKey, slaQuery);
-		const slaDocIdsUnique = new Set(slaDocIds);
+		const slaDocIdsUnique = new Set(slaDocIds.map(String));
 
-		const missingDocuments = pcgiDocIds.filter((documentId: string) => !slaDocIdsUnique.has(documentId));
-		const extraDocuments = slaDocIds.filter((documentId: string) => !pcgiDocIdsUnique.has(documentId));
+		const missingDocuments = pcgiDocIds.filter((documentId: string) => !slaDocIdsUnique.has(String(documentId)));
+		const extraDocuments = slaDocIds.filter((documentId: string) => !pcgiDocIdsUnique.has(String(documentId)));
 
 		LOGGER.info(`PCGI Total: ${pcgiDocIds.length} | PCGI Unique: ${pcgiDocIdsUnique.size} | SLA Total: ${slaDocIds.length} | SLA Unique: ${slaDocIdsUnique.size} | SLA Missing: ${missingDocuments.length} | SLA Extra: ${extraDocuments.length} (${distinctQueryTimer.get()})`);
 
