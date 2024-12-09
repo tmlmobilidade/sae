@@ -11,6 +11,10 @@ import { DateTime, Interval } from 'luxon';
 
 /* * */
 
+const CHUNK_FORMAT = 'yyyy-LL-dd\' \'HH\'h \'mm\'m \'ss\'s\'';
+
+/* * */
+
 export async function syncApexT19() {
 	try {
 		//
@@ -49,118 +53,127 @@ export async function syncApexT19() {
 		// Timestamp chunks are in the format { start: day1, end: day2 }, so end is always greater than start.
 		// This might be confusing as the array of chunks itself is sorted in descending order, but the chunks individually are not.
 
-		for (const timestampChunk of allTimestampChunks) {
+		for (const [chunkIndex, chunkData] of allTimestampChunks.entries()) {
 			//
 
-			LOGGER.divider();
-			LOGGER.info(`Processing timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}...`);
+			const chunkTimer = new TIMETRACKER();
+
+			LOGGER.divider(`[${chunkIndex + 1}/${allTimestampChunks.length}]`);
+			LOGGER.info(`Processing chunk (${chunkData.end.toFormat(CHUNK_FORMAT)}) › (${chunkData.start.toFormat(CHUNK_FORMAT)})...`);
 
 			//
 			// Prepare the query for this timestamp chunk
 
 			const pcgidbQuery = {
 				'transaction.transactionDate': {
-					$gte: timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
-					$lte: timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
+					$gte: chunkData.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
+					$lte: chunkData.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss'),
 				},
 			};
 
 			const slaQuery = {
 				created_at: {
-					$gte: timestampChunk.start.toJSDate(),
-					$lte: timestampChunk.end.toJSDate(),
+					$gte: chunkData.start.toJSDate(),
+					$lte: chunkData.end.toJSDate(),
 				},
 			};
 
 			//
 			// Get distinct IDs from each database in the current timestamp chunk
 
-			const allPcgidbApexT19DocumentCount = await PCGIDB.ValidationEntity.countDocuments(pcgidbQuery);
+			const quickCountTimer = new TIMETRACKER();
+
+			const allPcgidbApexT19DocumentCount = await PCGIDB.LocationEntity.countDocuments(pcgidbQuery);
 			const allSlaApexT19DocumenCount = await apexT19Collection.countDocuments(slaQuery);
 			if (allPcgidbApexT19DocumentCount === allSlaApexT19DocumenCount) {
-				LOGGER.success(`Found the same number of documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} are already in sync.`);
+				LOGGER.success(`MATCH - Found the same number of documents. (${allPcgidbApexT19DocumentCount} PCGIDB = ${allSlaApexT19DocumenCount} SLA) (${quickCountTimer.get()})`);
 				continue;
 			}
 
-			LOGGER.info(`Mismatch: Found ${allPcgidbApexT19DocumentCount} documents in PCGIDB and ${allSlaApexT19DocumenCount} documents in SLA for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}.`);
+			LOGGER.info(`MISMATCH - Found different number of documents. (${allPcgidbApexT19DocumentCount} PCGIDB != ${allSlaApexT19DocumenCount} SLA) (${quickCountTimer.get()})`);
 
 			//
 			// Get distinct IDs from each database in the current timestamp chunk
 
-			const allPcgidbApexT19DocumentIds = await PCGIDB.ValidationEntity.distinct('transaction.transactionId', pcgidbQuery);
+			const distinctQueryTimer = new TIMETRACKER();
+
+			const allPcgidbApexT19DocumentIds = await PCGIDB.LocationEntity.distinct('transaction.transactionId', pcgidbQuery);
+			const uniquePcgidbApexT19DocumentIds = new Set(allPcgidbApexT19DocumentIds);
+
 			const allSlaApexT19DocumenIds = await apexT19Collection.distinct('_id', slaQuery);
-			const uniqueSlaApexT19DocumentIds = new Set(allSlaApexT19DocumenIds.map(String));
+			const uniqueSlaApexT19DocumentIds = new Set(allSlaApexT19DocumenIds);
 
 			//
 			// Check if all documents in PCGIDB are already synced
 
-			const missingDocuments = allPcgidbApexT19DocumentIds.filter(documentId => !uniqueSlaApexT19DocumentIds.has(String(documentId)));
+			const missingDocuments = allPcgidbApexT19DocumentIds.filter((documentId: string) => !uniqueSlaApexT19DocumentIds.has(documentId));
+			const extraDocuments = allSlaApexT19DocumenIds.filter((documentId: string) => !uniquePcgidbApexT19DocumentIds.has(documentId));
+
+			if (missingDocuments.length === 0) {
+				LOGGER.success(`Chunk complete. All document IDs matched. (${distinctQueryTimer.get()})`);
+			}
+
+			if (extraDocuments.length > 0) {
+				await apexT19Collection.deleteMany({ _id: { $in: extraDocuments }, created_at: { $gte: chunkData.start.toJSDate(), $lte: chunkData.end.toJSDate() } });
+				LOGGER.info(`Removed ${extraDocuments.length} extra document IDs in SLA APEX T19 (${distinctQueryTimer.get()})`);
+			}
 
 			//
 			// If there are missing documents, sync them
 
-			if (missingDocuments.length > 0) {
-				//
+			LOGGER.info(`Found ${missingDocuments.length} unmatched document IDs (${distinctQueryTimer.get()})`);
 
-				LOGGER.info(`Found ${missingDocuments.length} unsynced documents. Syncing...`);
+			const missingDocumentsStream = PCGIDB.LocationEntity
+				.find({ 'transaction.transactionId': { $in: missingDocuments } })
+				.stream();
 
-				const missingDocumentsStream = PCGIDB.ValidationEntity
-					.find({ _id: { $in: missingDocuments } })
-					.stream();
+			//
+			// Setup the callback function that will be called on the DB Writer flush operation
+			// to invalidate all the rides that are affected by the new vehicle events.
 
-				//
-				// Setup the callback function that will be called on the DB Writer flush operation
-				// to invalidate all the rides that are affected by the new vehicle events.
-
-				const flushCallback = async (flushedData) => {
-					try {
-						const invalidationTimer = new TIMETRACKER();
-						// Extract the unique trip_ids and unique operational_dates from the flushed data
-						const uniqueTripIds: string[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.trip_id)));
-						const uniqueOperationalDates: OperationalDate[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.operational_date)));
-						// Invalidate all rides with new data
-						const ridesCollection = await rides.getCollection();
-						const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
-						LOGGER.info(`SYNC FULL [apex_t19]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t19 data (${invalidationTimer.get()})`);
-					}
-					catch (error) {
-						LOGGER.error('Error in flushCallback', error);
-					}
-				};
-
-				for await (const pcgiDocument of missingDocumentsStream) {
-					const transactionDate = DateTime.fromISO(pcgiDocument.transaction.transactionDate);
-					const operationalDate = getOperationalDate(transactionDate);
-					const newApexT19Document: ApexT19 = {
-						_id: pcgiDocument.transaction.transactionId,
-						_raw: JSON.stringify(pcgiDocument),
-						agency_id: pcgiDocument.transaction.operatorLongID,
-						apex_version: pcgiDocument.transaction.apexVersion,
-						created_at: transactionDate.toJSDate(),
-						device_id: pcgiDocument.transaction.deviceID,
-						line_id: pcgiDocument.transaction.lineLongID,
-						mac_ase_counter_value: pcgiDocument.transaction.macDataFields.aseCounterValue,
-						mac_sam_serial_number: pcgiDocument.transaction.macDataFields.samSerialNumber,
-						operational_date: operationalDate,
-						pattern_id: pcgiDocument.transaction.patternLongID,
-						received_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
-						stop_id: pcgiDocument.transaction.stopLongID,
-						trip_id: pcgiDocument.transaction.journeyID,
-						updated_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
-						vehicle_id: pcgiDocument.transaction.vehicleID,
-					};
-					await apexT19DbWritter.write(newApexT19Document, { filter: { _id: newApexT19Document._id }, upsert: true }, () => null, flushCallback);
+			const flushCallback = async (flushedData) => {
+				try {
+					const invalidationTimer = new TIMETRACKER();
+					// Extract the unique trip_ids and unique operational_dates from the flushed data
+					const uniqueTripIds: string[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.trip_id)));
+					const uniqueOperationalDates: OperationalDate[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.operational_date)));
+					// Invalidate all rides with new data
+					const ridesCollection = await rides.getCollection();
+					const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
+					LOGGER.info(`SYNC FULL [apex_t19]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t19 data (${invalidationTimer.get()})`);
 				}
+				catch (error) {
+					LOGGER.error('Error in flushCallback', error);
+				}
+			};
 
-				await apexT19DbWritter.flush(flushCallback);
-
-				LOGGER.success(`Synced ${missingDocuments.length} documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')}.`);
-				continue;
-
-				//
+			for await (const pcgiDocument of missingDocumentsStream) {
+				const transactionDate = DateTime.fromISO(pcgiDocument.transaction.transactionDate);
+				const operationalDate = getOperationalDate(transactionDate);
+				const newApexT19Document: ApexT19 = {
+					_id: pcgiDocument.transaction.transactionId,
+					_raw: JSON.stringify(pcgiDocument),
+					agency_id: pcgiDocument.transaction.operatorLongID,
+					apex_version: pcgiDocument.transaction.apexVersion,
+					created_at: transactionDate.toJSDate(),
+					device_id: pcgiDocument.transaction.deviceID,
+					line_id: pcgiDocument.transaction.lineLongID,
+					mac_ase_counter_value: pcgiDocument.transaction.macDataFields.aseCounterValue,
+					mac_sam_serial_number: pcgiDocument.transaction.macDataFields.samSerialNumber,
+					operational_date: operationalDate,
+					pattern_id: pcgiDocument.transaction.patternLongID,
+					received_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
+					stop_id: pcgiDocument.transaction.stopLongID,
+					trip_id: pcgiDocument.transaction.journeyID,
+					updated_at: DateTime.fromISO(pcgiDocument.createdAt).toJSDate(),
+					vehicle_id: pcgiDocument.transaction.vehicleID,
+				};
+				await apexT19DbWritter.write(newApexT19Document, { filter: { _id: newApexT19Document._id }, upsert: true }, () => null, flushCallback);
 			}
 
-			LOGGER.success(`All documents for timestamp chunk from ${timestampChunk.start.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} to ${timestampChunk.end.toFormat('yyyy-LL-dd\'T\'HH\':\'mm\':\'ss')} are already in sync.`);
+			await apexT19DbWritter.flush(flushCallback);
+
+			LOGGER.success(`Chunk complete. Synced ${missingDocuments.length} new documents. (${chunkTimer.get()})`);
 
 			//
 		}
