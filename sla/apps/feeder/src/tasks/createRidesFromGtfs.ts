@@ -563,7 +563,7 @@ export async function createRidesFromGtfs() {
 
 						for (const calendarDate of calendarDatesData) {
 							//
-							if (hashedTripData?.path?.length === 0) {
+							if (!hashedTripData || !hashedTripData.path || hashedTripData.path.length === 0) {
 								LOGGER.error(`Trip ${tripData.trip_id} has no path data. Skipping...`);
 								continue;
 							}
