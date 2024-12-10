@@ -15,7 +15,7 @@ import { DateTime } from 'luxon';
 	//
 	// Setup variables
 
-	const fastify = Fastify({ logger: true });
+	const fastify = Fastify({ logger: false });
 
 	const ridesCollection = await rides.getCollection();
 
@@ -85,7 +85,13 @@ import { DateTime } from 'luxon';
 	//
 	// Start the API service
 
-	fastify.listen({ host: '::0', port: 5050 });
+	fastify.listen({ host: '::0', port: 5050 }, (err, address) => {
+		if (err) {
+			console.log(err);
+			process.exit(1);
+		}
+		LOGGER.info(`Server listening at ${address}`);
+	});
 
 	//
 })();
