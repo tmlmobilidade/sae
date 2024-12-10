@@ -38,7 +38,7 @@ export async function syncApexT11() {
 		// It makes sense to divide chunks by day, but this should be adjusted according to the volume of data in each chunk.
 
 		const thirtySecondsAgo = DateTime.now().minus({ seconds: 30 });
-		const oldestDataNeeded = DateTime.fromFormat('20241101', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
+		const oldestDataNeeded = DateTime.fromFormat('20240801', 'yyyyMMdd').set({ hour: 4, minute: 0, second: 0 });
 
 		const allTimestampChunks = Interval
 			.fromDateTimes(oldestDataNeeded, thirtySecondsAgo)
