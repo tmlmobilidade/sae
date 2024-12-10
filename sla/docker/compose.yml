@@ -97,7 +97,7 @@ services:
     image: ghcr.io/tmlmobilidade/sae-sla-monitor-worker:production
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 2
       restart_policy:
         condition: on-failure
         delay: 30s
