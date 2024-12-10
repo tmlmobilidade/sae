@@ -211,8 +211,7 @@ export async function validateRides() {
 				//
 				// Update trip with analysis result and status
 
-				// await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
-				rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
+				await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
 
 				LOGGER.success(`[${counter}] | ${rideDocument._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 				// LOGGER.success(`[${counter}] | ${rideDocument._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
