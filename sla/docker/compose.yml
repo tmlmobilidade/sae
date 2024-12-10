@@ -75,7 +75,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   monitor-coordinator:
-    image: ghcr.io/tmlmobilidade/sae-sla-monitor:production
+    image: ghcr.io/tmlmobilidade/sae-sla-monitor-coordinator:production
     deploy:
       restart_policy:
         condition: on-failure
@@ -94,7 +94,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
 
   monitor-worker:
-    image: ghcr.io/tmlmobilidade/sae-sla-monitor:production
+    image: ghcr.io/tmlmobilidade/sae-sla-monitor-worker:production
     deploy:
       mode: replicated
       replicas: 3

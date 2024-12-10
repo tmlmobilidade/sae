@@ -15,7 +15,7 @@ import { DateTime } from 'luxon';
 	//
 	// Setup variables
 
-	const fastify = Fastify({ logger: false });
+	const fastify = Fastify({ logger: true });
 
 	const ridesCollection = await rides.getCollection();
 
