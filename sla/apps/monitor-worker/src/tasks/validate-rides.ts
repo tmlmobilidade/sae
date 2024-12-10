@@ -5,7 +5,6 @@ import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
 import { RideAnalysis, ValidationStatus } from '@tmlmobilidade/services/types';
-import { DateTime } from 'luxon';
 
 /* * */
 
@@ -26,10 +25,6 @@ import { simpleEarlyStartLastForFirstStopAnalyzer } from '@/analyzers/simpleEarl
 import { simpleOneValidationTransactionAnalyzer } from '@/analyzers/simpleOneValidationTransaction.analyzer.js';
 import { simpleOneVehicleEventOrValidationTransactionAnalyzer } from '@/analyzers/simpleOneVehicleEventOrValidationTransaction.analyzer.js';
 import { simpleThreeVehicleEventsAnalyzer } from '@/analyzers/simpleThreeVehicleEvents.analyzer.js';
-
-/* * */
-
-const BATCH_SIZE = 1000;
 
 /* * */
 
@@ -98,81 +93,67 @@ export async function validateRides() {
 		const globalTimer = new TIMETRACKER();
 
 		//
-		// Get all rides that are pending analysis and which started before the current time,
-		// sorted in descending order to prioritize the most recent rides
+		// Ask the coordinator for a batch of ride IDs to process
 
-		const currentTime = DateTime.now().setZone('Europe/Lisbon').toJSDate();
+		const fetchCoordinatorTimer = new TIMETRACKER();
 
-		const ridesCollection = await rides.getCollection();
+		const rideIdsBatchResponse = await fetch(process.env.MONITOR_COORDINATOR_URL);
+		const rideIdsBatch = await rideIdsBatchResponse.json();
 
-		const fetchRidesTimer = new TIMETRACKER();
-
-		const allPendingRides = await ridesCollection
-			.find({ start_time_scheduled: { $lte: currentTime }, status: 'pending' })
-			.sort({ start_time_scheduled: -1, trip_id: -1 })
-			.limit(BATCH_SIZE)
-			.toArray();
-
-		LOGGER.info(`Fetched ${allPendingRides.length} rides in ${fetchRidesTimer.get()}.`);
+		const fetchCoordinatorTimerResult = fetchCoordinatorTimer.get();
 
 		//
+		// With the list of ride IDs, fetch the actual ride documents to be processsed
 
-		const queueingTimer = new TIMETRACKER();
+		const fetchRideDocumentsTimer = new TIMETRACKER();
 
-		const batchRideIds = allPendingRides.map(item => item._id);
+		const ridesBatch = await rides.findMany({ _id: { $in: rideIdsBatch } });
 
-		await ridesCollection.updateMany({ _id: { $in: batchRideIds } }, { $set: { status: 'processing' } });
-
-		LOGGER.info(`Queued ${allPendingRides.length} rides in ${queueingTimer.get()}.`);
+		LOGGER.info(`Processing ${ridesBatch.length} rides... (coordinator: ${fetchCoordinatorTimerResult} | interface: ${fetchRideDocumentsTimer.get()})`);
+		LOGGER.spacer(1);
 
 		//
 		// Process each ride
 
-		let counter = 0;
-
-		for (const rideDocument of allPendingRides) {
+		for (const [rideIndex, rideData] of ridesBatch.entries()) {
 			try {
 				//
 
-				counter++;
-
 				const rideAnalysisTimer = new TIMETRACKER();
-
-				// await rides.updateById(rideDocument._id, { status: 'processing' });
 
 				//
 				// Await all promises
 
 				const fetchAnalysisDataTimer = new TIMETRACKER();
 
-				const hashedShapePromise = hashedShapes.findById(rideDocument.hashed_shape_id);
-				const hashedTripPromise = hashedTrips.findById(rideDocument.hashed_trip_id);
-				const apexT11Promise = apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				const apexT19Promise = apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				const vehicleEventsPromise = vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				const hashedShapePromise = hashedShapes.findById(rideData.hashed_shape_id);
+				const hashedTripPromise = hashedTrips.findById(rideData.hashed_trip_id);
+				const apexT11Promise = apexT11.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
+				const apexT19Promise = apexT19.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
+				const vehicleEventsPromise = vehicleEvents.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
 
 				const [hashedShapeData, hashedTripData, apexT11Data, apexT19Data, vehicleEventsData] = await Promise.all([hashedShapePromise, hashedTripPromise, apexT11Promise, apexT19Promise, vehicleEventsPromise]);
 
 				const fetchAnalysisDataTime = fetchAnalysisDataTimer.get();
 
 				// const fetchHashedShapeDataTimer = new TIMETRACKER();
-				// const hashedShapeData = await hashedShapes.findById(rideDocument.hashed_shape_id);
+				// const hashedShapeData = await hashedShapes.findById(rideData.hashed_shape_id);
 				// const fetchHashedShapeDataTime = fetchHashedShapeDataTimer.get();
 
 				// const fetchHashedTripDataTimer = new TIMETRACKER();
-				// const hashedTripData = await hashedTrips.findById(rideDocument.hashed_trip_id);
+				// const hashedTripData = await hashedTrips.findById(rideData.hashed_trip_id);
 				// const fetchHashedTripDataTime = fetchHashedTripDataTimer.get();
 
 				// const fetchApexT11DataTimer = new TIMETRACKER();
-				// const apexT11Data = await apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				// const apexT11Data = await apexT11.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
 				// const fetchApexT11DataTime = fetchApexT11DataTimer.get();
 
 				// const fetchApexT19DataTimer = new TIMETRACKER();
-				// const apexT19Data = await apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				// const apexT19Data = await apexT19.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
 				// const fetchApexT19DataTime = fetchApexT19DataTimer.get();
 
 				// const fetchVehicleEventsDataTimer = new TIMETRACKER();
-				// const vehicleEventsData = await vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				// const vehicleEventsData = await vehicleEvents.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
 				// const fetchVehicleEventsDataTime = fetchVehicleEventsDataTimer.get();
 
 				//
@@ -183,7 +164,7 @@ export async function validateRides() {
 					apex_t19: apexT19Data,
 					hashed_shape: hashedShapeData,
 					hashed_trip: hashedTripData,
-					ride: rideDocument,
+					ride: rideData,
 					vehicle_events: vehicleEventsData,
 				};
 
@@ -204,22 +185,22 @@ export async function validateRides() {
 				//
 				// Populate Ride with additional data
 
-				rideDocument.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id)));
-				rideDocument.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id)));
-				rideDocument.validations_count = apexT11Data.filter(item => item.validation_status === ValidationStatus._0_ContractValid || item.validation_status === ValidationStatus._4_CardInWhiteList || item.validation_status === ValidationStatus._5_ProfileInWhiteList || item.validation_status === ValidationStatus._6_Interchange).length;
+				rideData.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id)));
+				rideData.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id)));
+				rideData.validations_count = apexT11Data.filter(item => item.validation_status === ValidationStatus._0_ContractValid || item.validation_status === ValidationStatus._4_CardInWhiteList || item.validation_status === ValidationStatus._5_ProfileInWhiteList || item.validation_status === ValidationStatus._6_Interchange).length;
 
 				//
 				// Update trip with analysis result and status
 
-				await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
+				await rides.updateById(rideData._id, { analysis: analysisResult, status: 'complete' });
 
-				LOGGER.success(`[${counter}] | ${rideDocument._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
-				// LOGGER.success(`[${counter}] | ${rideDocument._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
+				LOGGER.success(`[${rideIndex}/${ridesBatch.length}] ${rideData._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
+				// LOGGER.success(`[${counter}] | ${rideData._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 
 				//
 			}
 			catch (error) {
-				await rides.updateById(rideDocument._id, { status: 'error' });
+				await rides.updateById(rideData._id, { status: 'error' });
 				LOGGER.error('An error occurred while processing a ride.', error);
 			}
 		}

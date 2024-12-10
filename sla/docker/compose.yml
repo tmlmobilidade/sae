@@ -74,7 +74,26 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  monitor:
+  monitor-coordinator:
+    image: ghcr.io/tmlmobilidade/sae-sla-monitor:production
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - ./secrets/production/.env
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  monitor-worker:
     image: ghcr.io/tmlmobilidade/sae-sla-monitor:production
     deploy:
       mode: replicated

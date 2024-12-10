@@ -1,0 +1,91 @@
+/* * */
+
+import LOGGER from '@helperkits/logger';
+import TIMETRACKER from '@helperkits/timer';
+import { CHUNK_LOG_DATE_FORMAT } from '@tmlmobilidade/sae-sla-pckg-constants';
+import { rides } from '@tmlmobilidade/services/interfaces';
+import Fastify from 'fastify';
+import { DateTime } from 'luxon';
+
+/* * */
+
+(async function init() {
+	//
+
+	//
+	// Setup variables
+
+	const fastify = Fastify({ logger: false });
+
+	const ridesCollection = await rides.getCollection();
+
+	let isBusy = false;
+
+	//
+	// Setup the API service
+
+	fastify.get('/', async () => {
+		//
+
+		//
+		// The whole point of a coordinator is to prevent multiple instances
+		// from processing the same documents at the same time. For that reason,
+		// we need to make sure that instances request the next batch of documents
+		// sequentially. To do that, we implement a simple lock mechanism.
+
+		while (isBusy) {
+			LOGGER.info('Waiting for another request to complete...');
+			await new Promise(resolve => setTimeout(resolve, 500));
+		}
+
+		//
+		// Set the busy flag to prevent other requests
+		// from being processed until the current one is done.
+
+		isBusy = true;
+
+		//
+		// Find all ride IDs that are pending analysis and which started before the current time,
+		// sorted in descending order to prioritize the most recent rides.
+
+		const batchSize = 1000;
+		const currentTime = DateTime.now().setZone('Europe/Lisbon');
+
+		const fetchTimer = new TIMETRACKER();
+
+		const latestPendingRides = await ridesCollection
+			.aggregate([
+				{ $match: { start_time_scheduled: { $lte: currentTime.toJSDate() }, status: 'pending' } },
+				{ $sort: { start_time_scheduled: -1, trip_id: -1 } },
+				{ $limit: batchSize },
+			])
+			.toArray();
+
+		const latestPendingRidesIds = latestPendingRides.map(ride => ride._id);
+
+		const fetchTimerResult = fetchTimer.get();
+
+		//
+		// Mark those rides as 'processing' to ensure the next batch of rides does not include them,
+		// and return them to the caller instance.
+
+		const markTimer = new TIMETRACKER();
+
+		await ridesCollection.updateMany({ _id: { $in: latestPendingRidesIds } }, { $set: { status: 'processing' } });
+
+		LOGGER.info(`New batch: Qty ${batchSize} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})`);
+
+		isBusy = false;
+
+		return latestPendingRidesIds;
+
+		//
+	});
+
+	//
+	// Start the API service
+
+	fastify.listen({ port: 5050 });
+
+	//
+})();
