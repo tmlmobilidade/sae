@@ -85,7 +85,7 @@ import { DateTime } from 'luxon';
 	//
 	// Start the API service
 
-	fastify.listen({ port: 5050 });
+	fastify.listen({ host: '::0', port: 5050 });
 
 	//
 })();
