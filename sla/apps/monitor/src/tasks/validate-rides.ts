@@ -129,37 +129,37 @@ export async function validateRides() {
 				//
 				// Await all promises
 
-				// const fetchAnalysisDataTimer = new TIMETRACKER();
+				const fetchAnalysisDataTimer = new TIMETRACKER();
 
-				// const hashedShapePromise = hashedShapes.findById(rideDocument.hashed_shape_id);
-				// const hashedTripPromise = hashedTrips.findById(rideDocument.hashed_trip_id);
-				// const apexT11Promise = apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				// const apexT19Promise = apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				// const vehicleEventsPromise = vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				const hashedShapePromise = hashedShapes.findById(rideDocument.hashed_shape_id);
+				const hashedTripPromise = hashedTrips.findById(rideDocument.hashed_trip_id);
+				const apexT11Promise = apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				const apexT19Promise = apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				const vehicleEventsPromise = vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
 
-				// const [hashedShapeData, hashedTripData, apexT11Data, apexT19Data, vehicleEventsData] = await Promise.all([hashedShapePromise, hashedTripPromise, apexT11Promise, apexT19Promise, vehicleEventsPromise]);
+				const [hashedShapeData, hashedTripData, apexT11Data, apexT19Data, vehicleEventsData] = await Promise.all([hashedShapePromise, hashedTripPromise, apexT11Promise, apexT19Promise, vehicleEventsPromise]);
 
-				// const fetchAnalysisDataTime = fetchAnalysisDataTimer.get();
+				const fetchAnalysisDataTime = fetchAnalysisDataTimer.get();
 
-				const fetchHashedShapeDataTimer = new TIMETRACKER();
-				const hashedShapeData = await hashedShapes.findById(rideDocument.hashed_shape_id);
-				const fetchHashedShapeDataTime = fetchHashedShapeDataTimer.get();
+				// const fetchHashedShapeDataTimer = new TIMETRACKER();
+				// const hashedShapeData = await hashedShapes.findById(rideDocument.hashed_shape_id);
+				// const fetchHashedShapeDataTime = fetchHashedShapeDataTimer.get();
 
-				const fetchHashedTripDataTimer = new TIMETRACKER();
-				const hashedTripData = await hashedTrips.findById(rideDocument.hashed_trip_id);
-				const fetchHashedTripDataTime = fetchHashedTripDataTimer.get();
+				// const fetchHashedTripDataTimer = new TIMETRACKER();
+				// const hashedTripData = await hashedTrips.findById(rideDocument.hashed_trip_id);
+				// const fetchHashedTripDataTime = fetchHashedTripDataTimer.get();
 
-				const fetchApexT11DataTimer = new TIMETRACKER();
-				const apexT11Data = await apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				const fetchApexT11DataTime = fetchApexT11DataTimer.get();
+				// const fetchApexT11DataTimer = new TIMETRACKER();
+				// const apexT11Data = await apexT11.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				// const fetchApexT11DataTime = fetchApexT11DataTimer.get();
 
-				const fetchApexT19DataTimer = new TIMETRACKER();
-				const apexT19Data = await apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				const fetchApexT19DataTime = fetchApexT19DataTimer.get();
+				// const fetchApexT19DataTimer = new TIMETRACKER();
+				// const apexT19Data = await apexT19.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				// const fetchApexT19DataTime = fetchApexT19DataTimer.get();
 
-				const fetchVehicleEventsDataTimer = new TIMETRACKER();
-				const vehicleEventsData = await vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
-				const fetchVehicleEventsDataTime = fetchVehicleEventsDataTimer.get();
+				// const fetchVehicleEventsDataTimer = new TIMETRACKER();
+				// const vehicleEventsData = await vehicleEvents.findMany({ operational_date: rideDocument.operational_date, trip_id: rideDocument.trip_id });
+				// const fetchVehicleEventsDataTime = fetchVehicleEventsDataTimer.get();
 
 				//
 				// Prepare the data for analysis
@@ -199,8 +199,8 @@ export async function validateRides() {
 
 				await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
 
-				// LOGGER.success(`[${counter}] | ${rideDocument._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
-				LOGGER.success(`[${counter}] | ${rideDocument._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
+				LOGGER.success(`[${counter}] | ${rideDocument._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
+				// LOGGER.success(`[${counter}] | ${rideDocument._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 
 				//
 			}
