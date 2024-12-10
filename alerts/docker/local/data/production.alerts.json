@@ -1,0 +1,2328 @@
+[
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfe5"
+		},
+		"active_period_end_date": "20240330",
+		"active_period_start_date": "20240704",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-06-01T17:15:02.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240411",
+		"publish_start_date": "20240120",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010003", "010002"],
+		"updated_at": {
+			"$date": "2024-06-11T01:53:08.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfe6"
+		},
+		"active_period_end_date": "20240629",
+		"active_period_start_date": "20240906",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2023-12-01T16:55:44.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240623",
+		"publish_start_date": "20240910",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-03-20T16:57:33.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfe7"
+		},
+		"active_period_end_date": "20240825",
+		"active_period_start_date": "20240220",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-11-08T05:39:07.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240929",
+		"publish_start_date": "20240620",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-06-10T01:02:02.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfe8"
+		},
+		"active_period_end_date": "20240324",
+		"active_period_start_date": "20240405",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-09-08T01:23:55.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240425",
+		"publish_start_date": "20231202",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010003", "010002"],
+		"updated_at": {
+			"$date": "2023-12-24T22:51:48.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfe9"
+		},
+		"active_period_end_date": "20240129",
+		"active_period_start_date": "20240828",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-07-03T03:46:07.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231227",
+		"publish_start_date": "20241002",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2024-08-24T03:31:42.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfea"
+		},
+		"active_period_end_date": "20240725",
+		"active_period_start_date": "20240103",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2024-07-09T20:06:14.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240423",
+		"publish_start_date": "20241012",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010001"],
+		"updated_at": {
+			"$date": "2024-10-02T06:27:51.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfeb"
+		},
+		"active_period_end_date": "20240514",
+		"active_period_start_date": "20240823",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-02-19T12:40:42.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240404",
+		"publish_start_date": "20240624",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2024-02-12T22:44:52.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfec"
+		},
+		"active_period_end_date": "20231222",
+		"active_period_start_date": "20241102",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-06-26T04:42:06.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240605",
+		"publish_start_date": "20240717",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2023-11-23T22:18:29.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfed"
+		},
+		"active_period_end_date": "20240808",
+		"active_period_start_date": "20240216",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-10-02T20:35:28.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241021",
+		"publish_start_date": "20240529",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010002"],
+		"updated_at": {
+			"$date": "2024-03-14T08:19:43.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfee"
+		},
+		"active_period_end_date": "20240514",
+		"active_period_start_date": "20240618",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-11-17T00:55:56.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240820",
+		"publish_start_date": "20240304",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-07-01T16:01:01.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfef"
+		},
+		"active_period_end_date": "20240617",
+		"active_period_start_date": "20240613",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-02-12T01:33:09.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240512",
+		"publish_start_date": "20231211",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010002"],
+		"updated_at": {
+			"$date": "2024-10-29T12:10:53.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff0"
+		},
+		"active_period_end_date": "20240721",
+		"active_period_start_date": "20231202",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-02-14T17:18:17.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240123",
+		"publish_start_date": "20240324",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010003"],
+		"updated_at": {
+			"$date": "2024-01-01T07:43:20.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff1"
+		},
+		"active_period_end_date": "20240812",
+		"active_period_start_date": "20240125",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-09-19T07:16:31.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240511",
+		"publish_start_date": "20240807",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-06-07T06:51:44.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff2"
+		},
+		"active_period_end_date": "20240712",
+		"active_period_start_date": "20240330",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-01-21T06:08:54.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240817",
+		"publish_start_date": "20240827",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010003", "010002"],
+		"updated_at": {
+			"$date": "2024-07-15T11:53:31.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff3"
+		},
+		"active_period_end_date": "20241025",
+		"active_period_start_date": "20240717",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-08-10T05:05:47.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240513",
+		"publish_start_date": "20240110",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010001", "010003"],
+		"updated_at": {
+			"$date": "2024-09-01T03:46:16.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff4"
+		},
+		"active_period_end_date": "20240105",
+		"active_period_start_date": "20240515",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-10-29T02:18:33.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240728",
+		"publish_start_date": "20241001",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010001"],
+		"updated_at": {
+			"$date": "2024-10-12T17:55:11.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff5"
+		},
+		"active_period_end_date": "20240117",
+		"active_period_start_date": "20240906",
+		"agency_ids": [44],
+		"cause": "POLICE_ACTIVITY",
+		"created_at": {
+			"$date": "2024-06-18T15:27:46.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241001",
+		"publish_start_date": "20240320",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001", "010003"],
+		"updated_at": {
+			"$date": "2024-04-07T08:20:28.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff6"
+		},
+		"active_period_end_date": "20240710",
+		"active_period_start_date": "20240406",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2024-08-06T17:11:51.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240225",
+		"publish_start_date": "20241002",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-01-12T23:37:03.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff7"
+		},
+		"active_period_end_date": "20240217",
+		"active_period_start_date": "20240513",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-08-29T10:25:14.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231218",
+		"publish_start_date": "20231224",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-05-04T03:59:07.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff8"
+		},
+		"active_period_end_date": "20241102",
+		"active_period_start_date": "20241105",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-01-31T08:52:10.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240330",
+		"publish_start_date": "20240712",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010002"],
+		"updated_at": {
+			"$date": "2024-07-05T18:19:18.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecff9"
+		},
+		"active_period_end_date": "20240216",
+		"active_period_start_date": "20231205",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-09-04T19:47:49.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240508",
+		"publish_start_date": "20240928",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-05-26T19:46:12.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecffa"
+		},
+		"active_period_end_date": "20240227",
+		"active_period_start_date": "20240104",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-07-12T19:57:16.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240929",
+		"publish_start_date": "20240221",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-09-08T15:32:00.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecffb"
+		},
+		"active_period_end_date": "20241004",
+		"active_period_start_date": "20241026",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-07-21T16:51:08.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240719",
+		"publish_start_date": "20241027",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010003"],
+		"updated_at": {
+			"$date": "2024-06-15T08:35:33.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecffc"
+		},
+		"active_period_end_date": "20240207",
+		"active_period_start_date": "20240211",
+		"agency_ids": [44],
+		"cause": "DEMONSTRATION",
+		"created_at": {
+			"$date": "2024-05-25T14:57:54.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241113",
+		"publish_start_date": "20240302",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-06-14T10:57:27.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecffd"
+		},
+		"active_period_end_date": "20240806",
+		"active_period_start_date": "20240730",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-07-13T02:43:35.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231218",
+		"publish_start_date": "20240601",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2024-03-27T14:23:04.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecffe"
+		},
+		"active_period_end_date": "20240315",
+		"active_period_start_date": "20231121",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-03-18T04:47:20.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231212",
+		"publish_start_date": "20241107",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-07-12T01:17:18.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beecfff"
+		},
+		"active_period_end_date": "20240131",
+		"active_period_start_date": "20240606",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-09-26T20:22:02.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240123",
+		"publish_start_date": "20231221",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010003"],
+		"updated_at": {
+			"$date": "2024-04-02T11:29:47.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed000"
+		},
+		"active_period_end_date": "20240209",
+		"active_period_start_date": "20241012",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-01-07T04:29:57.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240407",
+		"publish_start_date": "20240623",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-01-17T04:39:23.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed001"
+		},
+		"active_period_end_date": "20241030",
+		"active_period_start_date": "20231208",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-05-17T07:50:49.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240520",
+		"publish_start_date": "20240325",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-10-18T05:23:00.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed002"
+		},
+		"active_period_end_date": "20240110",
+		"active_period_start_date": "20240329",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2024-01-02T13:16:26.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231209",
+		"publish_start_date": "20240119",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-05-21T19:59:17.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed003"
+		},
+		"active_period_end_date": "20240727",
+		"active_period_start_date": "20240204",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-06-11T01:29:08.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240830",
+		"publish_start_date": "20240403",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-02-26T00:25:05.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed004"
+		},
+		"active_period_end_date": "20240823",
+		"active_period_start_date": "20240820",
+		"agency_ids": [44],
+		"cause": "POLICE_ACTIVITY",
+		"created_at": {
+			"$date": "2024-04-06T16:38:20.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240512",
+		"publish_start_date": "20240203",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-04-29T22:36:57.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed005"
+		},
+		"active_period_end_date": "20240712",
+		"active_period_start_date": "20231205",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-10-19T13:47:58.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240922",
+		"publish_start_date": "20240415",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003", "010002"],
+		"updated_at": {
+			"$date": "2024-02-09T04:54:29.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed006"
+		},
+		"active_period_end_date": "20240902",
+		"active_period_start_date": "20240403",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2024-07-18T11:00:18.000Z"
+		},
+		"effect": "MODIFIED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240908",
+		"publish_start_date": "20240531",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-02-10T23:23:56.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed007"
+		},
+		"active_period_end_date": "20240727",
+		"active_period_start_date": "20240404",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-05-15T21:49:02.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241017",
+		"publish_start_date": "20231218",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010],
+		"stop_ids": ["010001", "010003"],
+		"updated_at": {
+			"$date": "2024-11-08T15:27:19.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed008"
+		},
+		"active_period_end_date": "20241114",
+		"active_period_start_date": "20241109",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-01-01T01:21:05.000Z"
+		},
+		"effect": "MODIFIED_SERVICE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240711",
+		"publish_start_date": "20231227",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-01-02T08:08:27.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed009"
+		},
+		"active_period_end_date": "20240903",
+		"active_period_start_date": "20240220",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2024-07-28T05:25:41.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240820",
+		"publish_start_date": "20231220",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010001"],
+		"updated_at": {
+			"$date": "2024-06-06T19:40:28.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed00a"
+		},
+		"active_period_end_date": "20240522",
+		"active_period_start_date": "20240721",
+		"agency_ids": [44],
+		"cause": "HOLIDAY",
+		"created_at": {
+			"$date": "2024-07-03T16:34:15.000Z"
+		},
+		"effect": "MODIFIED_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231216",
+		"publish_start_date": "20240731",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010003"],
+		"updated_at": {
+			"$date": "2024-06-25T08:20:57.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed00b"
+		},
+		"active_period_end_date": "20240104",
+		"active_period_start_date": "20241024",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2024-02-19T16:29:12.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240130",
+		"publish_start_date": "20240606",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003", "010002", "010001"],
+		"updated_at": {
+			"$date": "2024-09-15T06:50:59.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed00c"
+		},
+		"active_period_end_date": "20241022",
+		"active_period_start_date": "20240914",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2023-12-15T01:44:37.000Z"
+		},
+		"effect": "MODIFIED_SERVICE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240130",
+		"publish_start_date": "20240712",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-07-02T11:03:07.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed00d"
+		},
+		"active_period_end_date": "20240725",
+		"active_period_start_date": "20240218",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-03-08T15:04:50.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240317",
+		"publish_start_date": "20240307",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010002", "010003"],
+		"updated_at": {
+			"$date": "2024-05-24T20:13:12.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed00e"
+		},
+		"active_period_end_date": "20241027",
+		"active_period_start_date": "20240211",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-08-17T20:08:17.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240118",
+		"publish_start_date": "20240714",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-04-14T13:12:35.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed00f"
+		},
+		"active_period_end_date": "20240902",
+		"active_period_start_date": "20240226",
+		"agency_ids": [44],
+		"cause": "OTHER_CAUSE",
+		"created_at": {
+			"$date": "2024-10-08T18:19:47.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240803",
+		"publish_start_date": "20240302",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-10-07T01:42:12.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed010"
+		},
+		"active_period_end_date": "20240809",
+		"active_period_start_date": "20240615",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2023-12-27T07:04:53.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240311",
+		"publish_start_date": "20231206",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010002"],
+		"updated_at": {
+			"$date": "2024-04-26T21:50:17.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed011"
+		},
+		"active_period_end_date": "20240629",
+		"active_period_start_date": "20240814",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-01-08T13:10:26.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240619",
+		"publish_start_date": "20240406",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-10-20T03:06:15.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed012"
+		},
+		"active_period_end_date": "20231217",
+		"active_period_start_date": "20240318",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-05-24T09:47:19.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240228",
+		"publish_start_date": "20241114",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010002", "010001"],
+		"updated_at": {
+			"$date": "2024-04-15T09:50:20.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed013"
+		},
+		"active_period_end_date": "20240601",
+		"active_period_start_date": "20231204",
+		"agency_ids": [44],
+		"cause": "DEMONSTRATION",
+		"created_at": {
+			"$date": "2024-05-01T19:05:57.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240518",
+		"publish_start_date": "20240124",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010],
+		"stop_ids": ["010002", "010003"],
+		"updated_at": {
+			"$date": "2024-07-06T20:32:53.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed014"
+		},
+		"active_period_end_date": "20240911",
+		"active_period_start_date": "20240406",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-11-14T07:05:01.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240816",
+		"publish_start_date": "20240612",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-05-17T10:48:07.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed015"
+		},
+		"active_period_end_date": "20231223",
+		"active_period_start_date": "20241101",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-07-11T13:24:38.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240125",
+		"publish_start_date": "20240209",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-01-10T07:15:08.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed016"
+		},
+		"active_period_end_date": "20231208",
+		"active_period_start_date": "20231213",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2023-12-24T06:49:11.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240130",
+		"publish_start_date": "20240323",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-05-22T11:05:44.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed017"
+		},
+		"active_period_end_date": "20240701",
+		"active_period_start_date": "20240903",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-02-04T19:04:25.000Z"
+		},
+		"effect": "MODIFIED_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241117",
+		"publish_start_date": "20240928",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-08-23T23:52:25.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed018"
+		},
+		"active_period_end_date": "20240514",
+		"active_period_start_date": "20240912",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-05-08T02:52:06.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241005",
+		"publish_start_date": "20240208",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010002", "010001"],
+		"updated_at": {
+			"$date": "2024-07-04T10:16:31.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed019"
+		},
+		"active_period_end_date": "20240307",
+		"active_period_start_date": "20240211",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-09-24T14:59:47.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240513",
+		"publish_start_date": "20241112",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2024-01-25T17:39:07.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed01a"
+		},
+		"active_period_end_date": "20240621",
+		"active_period_start_date": "20240106",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-11-16T13:07:58.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231126",
+		"publish_start_date": "20241020",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010002", "010001"],
+		"updated_at": {
+			"$date": "2023-12-16T10:57:08.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed01b"
+		},
+		"active_period_end_date": "20240313",
+		"active_period_start_date": "20240301",
+		"agency_ids": [44],
+		"cause": "HOLIDAY",
+		"created_at": {
+			"$date": "2024-06-25T12:48:56.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240617",
+		"publish_start_date": "20240329",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010001"],
+		"updated_at": {
+			"$date": "2024-08-02T07:46:26.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed01c"
+		},
+		"active_period_end_date": "20240706",
+		"active_period_start_date": "20240614",
+		"agency_ids": [44],
+		"cause": "MAINTENANCE",
+		"created_at": {
+			"$date": "2024-04-06T02:02:01.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240905",
+		"publish_start_date": "20240525",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-05-13T10:38:33.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed01d"
+		},
+		"active_period_end_date": "20240305",
+		"active_period_start_date": "20240720",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-10-20T01:52:05.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240406",
+		"publish_start_date": "20240123",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001", "010002"],
+		"updated_at": {
+			"$date": "2024-05-23T18:12:27.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed01e"
+		},
+		"active_period_end_date": "20240110",
+		"active_period_start_date": "20231206",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-01-24T05:21:23.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240113",
+		"publish_start_date": "20240823",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010001"],
+		"updated_at": {
+			"$date": "2024-11-01T22:51:09.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed01f"
+		},
+		"active_period_end_date": "20240604",
+		"active_period_start_date": "20241103",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-03-04T02:43:32.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241029",
+		"publish_start_date": "20240716",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-07-21T22:18:35.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed020"
+		},
+		"active_period_end_date": "20240615",
+		"active_period_start_date": "20240512",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-04-02T05:00:11.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240221",
+		"publish_start_date": "20240116",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-01-29T12:56:39.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed021"
+		},
+		"active_period_end_date": "20240512",
+		"active_period_start_date": "20240323",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2024-04-26T18:56:05.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231202",
+		"publish_start_date": "20241113",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001", "010002"],
+		"updated_at": {
+			"$date": "2023-11-29T10:31:07.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed022"
+		},
+		"active_period_end_date": "20240110",
+		"active_period_start_date": "20240402",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-05-12T08:40:16.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240414",
+		"publish_start_date": "20231203",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001", "010002", "010003"],
+		"updated_at": {
+			"$date": "2024-11-19T01:08:55.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed023"
+		},
+		"active_period_end_date": "20240520",
+		"active_period_start_date": "20231210",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-03-31T20:34:49.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240411",
+		"publish_start_date": "20240424",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010001"],
+		"updated_at": {
+			"$date": "2024-11-15T23:07:40.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed024"
+		},
+		"active_period_end_date": "20240829",
+		"active_period_start_date": "20240519",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-08-03T11:09:15.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240913",
+		"publish_start_date": "20240720",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2023-12-21T16:34:12.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed025"
+		},
+		"active_period_end_date": "20240301",
+		"active_period_start_date": "20240313",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-04-30T07:15:25.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240422",
+		"publish_start_date": "20231124",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2024-10-12T16:45:16.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed026"
+		},
+		"active_period_end_date": "20241119",
+		"active_period_start_date": "20231229",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-03-20T14:53:07.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231210",
+		"publish_start_date": "20240319",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-04-22T17:58:12.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed027"
+		},
+		"active_period_end_date": "20240804",
+		"active_period_start_date": "20240614",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-05-05T18:12:48.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240322",
+		"publish_start_date": "20240326",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-02-08T21:17:30.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed028"
+		},
+		"active_period_end_date": "20240526",
+		"active_period_start_date": "20231223",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-05-04T22:41:02.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240421",
+		"publish_start_date": "20240101",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010001"],
+		"updated_at": {
+			"$date": "2024-09-12T20:09:01.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed029"
+		},
+		"active_period_end_date": "20240420",
+		"active_period_start_date": "20240320",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-10-11T01:19:39.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20231209",
+		"publish_start_date": "20241112",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010001"],
+		"updated_at": {
+			"$date": "2024-01-30T12:17:32.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed02a"
+		},
+		"active_period_end_date": "20240726",
+		"active_period_start_date": "20240603",
+		"agency_ids": [44],
+		"cause": "DEMONSTRATION",
+		"created_at": {
+			"$date": "2024-05-05T05:24:54.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240525",
+		"publish_start_date": "20231222",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-01-26T16:37:43.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed02b"
+		},
+		"active_period_end_date": "20240527",
+		"active_period_start_date": "20241117",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-05-05T13:07:36.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240315",
+		"publish_start_date": "20240118",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-06-10T15:28:17.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed02c"
+		},
+		"active_period_end_date": "20240116",
+		"active_period_start_date": "20240803",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2024-01-28T18:51:53.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240310",
+		"publish_start_date": "20240208",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2023-11-27T17:25:38.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed02d"
+		},
+		"active_period_end_date": "20241114",
+		"active_period_start_date": "20240826",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2023-12-28T13:18:25.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240726",
+		"publish_start_date": "20241011",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2023-12-06T21:27:24.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed02e"
+		},
+		"active_period_end_date": "20240910",
+		"active_period_start_date": "20240615",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-08-05T16:42:18.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240115",
+		"publish_start_date": "20240226",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-09-10T23:12:56.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed02f"
+		},
+		"active_period_end_date": "20240719",
+		"active_period_start_date": "20241005",
+		"agency_ids": [44],
+		"cause": "DEMONSTRATION",
+		"created_at": {
+			"$date": "2023-12-07T01:37:39.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240806",
+		"publish_start_date": "20240313",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-09-13T05:13:31.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed030"
+		},
+		"active_period_end_date": "20240529",
+		"active_period_start_date": "20231210",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-09-01T18:04:35.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240716",
+		"publish_start_date": "20240510",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-04-13T03:23:53.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed031"
+		},
+		"active_period_end_date": "20241117",
+		"active_period_start_date": "20241017",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-04-15T01:43:43.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240826",
+		"publish_start_date": "20240703",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-04-01T21:00:38.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed032"
+		},
+		"active_period_end_date": "20240213",
+		"active_period_start_date": "20241009",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-08-29T11:21:13.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240516",
+		"publish_start_date": "20231206",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010001"],
+		"updated_at": {
+			"$date": "2024-02-05T12:15:26.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed033"
+		},
+		"active_period_end_date": "20240330",
+		"active_period_start_date": "20240102",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-05-30T03:41:13.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240831",
+		"publish_start_date": "20240620",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-04-01T14:10:22.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed034"
+		},
+		"active_period_end_date": "20240320",
+		"active_period_start_date": "20240507",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-07-17T15:40:38.000Z"
+		},
+		"effect": "MODIFIED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240328",
+		"publish_start_date": "20240814",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-10-01T14:37:41.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed035"
+		},
+		"active_period_end_date": "20240201",
+		"active_period_start_date": "20241108",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2024-04-20T07:43:08.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240621",
+		"publish_start_date": "20240818",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-10-05T19:40:30.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed036"
+		},
+		"active_period_end_date": "20241106",
+		"active_period_start_date": "20240326",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2024-02-17T01:38:41.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240803",
+		"publish_start_date": "20240416",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2023-12-31T17:09:13.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed037"
+		},
+		"active_period_end_date": "20240921",
+		"active_period_start_date": "20240822",
+		"agency_ids": [44],
+		"cause": "TECHNICAL_PROBLEM",
+		"created_at": {
+			"$date": "2024-06-26T19:20:17.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241111",
+		"publish_start_date": "20241011",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002", "010003", "010001"],
+		"updated_at": {
+			"$date": "2024-09-03T08:23:00.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed038"
+		},
+		"active_period_end_date": "20240508",
+		"active_period_start_date": "20240510",
+		"agency_ids": [44],
+		"cause": "HOLIDAY",
+		"created_at": {
+			"$date": "2024-07-26T04:17:16.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240126",
+		"publish_start_date": "20240822",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010001", "010003"],
+		"updated_at": {
+			"$date": "2024-08-03T01:55:07.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed039"
+		},
+		"active_period_end_date": "20231228",
+		"active_period_start_date": "20240105",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-03-21T02:24:53.000Z"
+		},
+		"effect": "SIGNIFICANT_DELAYS",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240419",
+		"publish_start_date": "20240817",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010001", "010003"],
+		"updated_at": {
+			"$date": "2024-06-21T15:32:29.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed03a"
+		},
+		"active_period_end_date": "20240221",
+		"active_period_start_date": "20241108",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-05-09T12:19:22.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240119",
+		"publish_start_date": "20241025",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-06-22T03:12:14.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed03b"
+		},
+		"active_period_end_date": "20240313",
+		"active_period_start_date": "20240914",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-08-24T21:24:46.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240816",
+		"publish_start_date": "20240616",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010001", "010003", "010002"],
+		"updated_at": {
+			"$date": "2024-07-26T05:16:53.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed03c"
+		},
+		"active_period_end_date": "20240728",
+		"active_period_start_date": "20231206",
+		"agency_ids": [44],
+		"cause": "CONSTRUCTION",
+		"created_at": {
+			"$date": "2023-12-17T16:47:56.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240528",
+		"publish_start_date": "20240806",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010001", "010003"],
+		"updated_at": {
+			"$date": "2024-11-01T07:44:24.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed03d"
+		},
+		"active_period_end_date": "20240917",
+		"active_period_start_date": "20240217",
+		"agency_ids": [44],
+		"cause": "STRIKE",
+		"created_at": {
+			"$date": "2024-07-15T13:15:01.000Z"
+		},
+		"effect": "ADDITIONAL_SERVICE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240820",
+		"publish_start_date": "20240829",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-04-21T19:57:08.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed03e"
+		},
+		"active_period_end_date": "20241004",
+		"active_period_start_date": "20240729",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-02-08T08:28:07.000Z"
+		},
+		"effect": "NO_EFFECT",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240120",
+		"publish_start_date": "20240422",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010002", "010003"],
+		"updated_at": {
+			"$date": "2024-06-30T04:03:21.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed03f"
+		},
+		"active_period_end_date": "20240927",
+		"active_period_start_date": "20231215",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2024-10-12T01:08:31.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240129",
+		"publish_start_date": "20241019",
+		"publish_status": "EXPIRED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010001", "010002"],
+		"updated_at": {
+			"$date": "2024-10-08T21:20:00.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed040"
+		},
+		"active_period_end_date": "20241004",
+		"active_period_start_date": "20231220",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-06-18T14:17:09.000Z"
+		},
+		"effect": "ACCESSIBILITY_ISSUE",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240822",
+		"publish_start_date": "20231210",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010001", "010002", "010003"],
+		"updated_at": {
+			"$date": "2024-03-01T08:15:25.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed041"
+		},
+		"active_period_end_date": "20240226",
+		"active_period_start_date": "20240101",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-07-24T01:46:46.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240124",
+		"publish_start_date": "20241026",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-07-06T13:44:28.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed042"
+		},
+		"active_period_end_date": "20240510",
+		"active_period_start_date": "20240407",
+		"agency_ids": [44],
+		"cause": "UNKNOWN_CAUSE",
+		"created_at": {
+			"$date": "2024-05-02T19:39:06.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241003",
+		"publish_start_date": "20240902",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010002"],
+		"updated_at": {
+			"$date": "2024-01-23T05:02:43.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed043"
+		},
+		"active_period_end_date": "20241011",
+		"active_period_start_date": "20240718",
+		"agency_ids": [44],
+		"cause": "POLICE_ACTIVITY",
+		"created_at": {
+			"$date": "2023-12-15T12:22:54.000Z"
+		},
+		"effect": "UNKNOWN_EFFECT",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240627",
+		"publish_start_date": "20241008",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020],
+		"stop_ids": ["010001"],
+		"updated_at": {
+			"$date": "2024-01-25T20:51:40.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed044"
+		},
+		"active_period_end_date": "20240803",
+		"active_period_start_date": "20240623",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-07-08T01:57:29.000Z"
+		},
+		"effect": "STOP_MOVED",
+		"line_ids": [4002, 4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240110",
+		"publish_start_date": "20241106",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40020, 40010],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2024-11-03T18:36:17.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed045"
+		},
+		"active_period_end_date": "20240618",
+		"active_period_start_date": "20240710",
+		"agency_ids": [44],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-04-19T19:36:00.000Z"
+		},
+		"effect": "OTHER_EFFECT",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240425",
+		"publish_start_date": "20241021",
+		"publish_status": "UNPUBLISHED",
+		"route_ids": [40010],
+		"stop_ids": ["010001", "010002"],
+		"updated_at": {
+			"$date": "2023-12-04T11:54:48.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed046"
+		},
+		"active_period_end_date": "20240216",
+		"active_period_start_date": "20240817",
+		"agency_ids": [44],
+		"cause": "MEDICAL_EMERGENCY",
+		"created_at": {
+			"$date": "2024-11-01T07:11:58.000Z"
+		},
+		"effect": "REDUCED_SERVICE",
+		"line_ids": [4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20240105",
+		"publish_start_date": "20240407",
+		"publish_status": "ARCHIVED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003", "010001"],
+		"updated_at": {
+			"$date": "2023-11-26T14:58:03.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed047"
+		},
+		"active_period_end_date": "20241029",
+		"active_period_start_date": "20241112",
+		"agency_ids": [44],
+		"cause": "POLICE_ACTIVITY",
+		"created_at": {
+			"$date": "2024-02-06T11:45:27.000Z"
+		},
+		"effect": "DETOUR",
+		"line_ids": [4001],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241022",
+		"publish_start_date": "20240207",
+		"publish_status": "PUBLISHED",
+		"route_ids": [40020],
+		"stop_ids": ["010003", "010002"],
+		"updated_at": {
+			"$date": "2023-12-10T11:50:06.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e0487fc13ae5a6beed048"
+		},
+		"active_period_end_date": "20240421",
+		"active_period_start_date": "20240213",
+		"agency_ids": [44],
+		"cause": "WEATHER",
+		"created_at": {
+			"$date": "2024-01-30T12:02:36.000Z"
+		},
+		"effect": "NO_SERVICE",
+		"line_ids": [4001, 4002],
+		"municipality_ids": [1502],
+		"publish_end_date": "20241028",
+		"publish_start_date": "20240324",
+		"publish_status": "EXPIRED",
+		"route_ids": [40010, 40020],
+		"stop_ids": ["010003"],
+		"updated_at": {
+			"$date": "2023-12-06T17:59:41.000Z"
+		}
+	},
+	{
+		"_id": {
+			"$oid": "673e253622ba476b77778997"
+		},
+		"active_period_end_date": "20240330",
+		"active_period_start_date": "20240704",
+		"agency_ids": [],
+		"cause": "ACCIDENT",
+		"created_at": {
+			"$date": "2024-11-20T18:06:46.059Z"
+		},
+		"description": "jusi was here",
+		"effect": "ADDITIONAL_SERVICE",
+		"image_url": "1234",
+		"line_ids": [],
+		"municipality_ids": [],
+		"publish_end_date": "20240411",
+		"publish_start_date": "20240120",
+		"publish_status": "PUBLISHED",
+		"route_ids": [],
+		"stop_ids": [],
+		"title": "test",
+		"updated_at": {
+			"$date": "2024-11-20T18:06:46.059Z"
+		}
+	}
+]
