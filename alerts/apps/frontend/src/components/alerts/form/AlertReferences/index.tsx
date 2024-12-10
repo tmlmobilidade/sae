@@ -1,21 +1,29 @@
-import { AlertFormReferenceSectionOptions, useAlertDetailContext } from '@/components/context/AlertDetail.context';
+'use client';
+
+import Button from '@/components/common/Button';
+import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
 import { MultiSelect, SegmentedControl, Title } from '@mantine/core';
+import { openConfirmModal } from '@mantine/modals';
+import { Alert, AlertSchema } from '@tmlmobilidade/services/types';
 import { useMemo } from 'react';
 
+import AlertReferencesAgency from '../AlertReferencesAgency';
+import AlertReferencesRoutes from '../AlertReferencesRoutes';
+import AlertReferencesStops from '../AlertReferencesStops';
 import styles from './styles.module.css';
 
 export default function AlertReferences() {
 	//
 	// A. Get Data
-	const alertDetailContext = useAlertDetailContext();
+	const { data, flags } = useAlertDetailContext();
 
 	//
 	// B. Transform Data
 	const availableLiveMunicipalities = useMemo(() => {
-		if (!alertDetailContext.data.municipalities) return [];
+		if (!data.municipalities) return [];
 
-		return alertDetailContext.data.municipalities.map(municipality => ({
+		return data.municipalities.map(municipality => ({
 			label: municipality.name,
 
 			// @ts-expect-error - This id is currently coming from the CMET API
@@ -23,7 +31,36 @@ export default function AlertReferences() {
 			value: municipality.id,
 		}));
 	},
-	[alertDetailContext.data.municipalities]);
+	[data.municipalities]);
+
+	//
+	// C. Handle Actions
+	const handleSegmentedControlChange = (value: Alert['reference_type']) => {
+		if (data.form.values.references.length > 0) {
+			openConfirmModal({
+				centered: true,
+				children: (
+					<>
+						<div>Você está prestes a perder as referências que já foram adicionadas.</div>
+					</>
+				),
+				closeOnClickOutside: true,
+				labels: { cancel: 'Cancelar', confirm: 'Continuar' },
+				onConfirm: () => {
+					data.form.setFieldValue('reference_type', value);
+					data.form.setFieldValue('references', []);
+				},
+				title: 'Tem certeza que deseja mudar a referência?',
+			});
+		}
+		else {
+			data.form.setFieldValue('reference_type', value);
+		}
+	};
+
+	//
+	// D. Render Components
+	if (!data.form.values.reference_type) return null;
 
 	return (
 		<Surface className={styles.surface} padding="lg">
@@ -35,22 +72,22 @@ export default function AlertReferences() {
 				label="Municípios Afetados"
 				nothingFoundMessage="Nenhum município encontrado"
 				placeholder="Selecione os municípios"
-				{...alertDetailContext.data.form.getInputProps('municipality_ids')}
+				{...data.form.getInputProps('municipality_ids')}
 				clearable
-				readOnly={alertDetailContext.flags.isReadOnly}
+				readOnly={flags.isReadOnly}
 				searchable
-				value={alertDetailContext.data.form.values.municipality_ids}
+				value={data.form.values.municipality_ids || []}
 			/>
 
 			<SegmentedControl
-				data={AlertFormReferenceSectionOptions}
-				onChange={alertDetailContext.actions.setAlertFormReferenceSection}
-				value={alertDetailContext.flags.formReferenceSection}
+				data={AlertSchema.shape.reference_type.options}
+				onChange={handleSegmentedControlChange}
+				value={data.form.values.reference_type}
 			/>
 
-			{alertDetailContext.flags.formReferenceSection === 'lines' && <div>lines</div>}
-			{alertDetailContext.flags.formReferenceSection === 'stops' && <div>stops</div>}
-			{alertDetailContext.flags.formReferenceSection === 'agencies' && <div>agencies</div>}
+			{data.form.values.reference_type === 'route' && <AlertReferencesRoutes />}
+			{data.form.values.reference_type === 'stop' && <AlertReferencesStops />}
+			{data.form.values.reference_type === 'agency' && <AlertReferencesAgency />}
 		</Surface>
 	);
 }

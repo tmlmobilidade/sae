@@ -9,6 +9,7 @@
 		"start": "next start"
 	},
 	"dependencies": {
+		"@carrismetropolitana/api-types": "^20241207.2339.36",
 		"@mantine/core": "^7.14.2",
 		"@mantine/dates": "^7.14.2",
 		"@mantine/form": "^7.14.2",
@@ -17,7 +18,7 @@
 		"@mantine/notifications": "^7.14.2",
 		"@tabler/core": "1.0.0-beta21",
 		"@tabler/icons-react": "^3.22.0",
-		"@tmlmobilidade/services": "^20241128.1433.36",
+		"@tmlmobilidade/services": "^20241210.1723.46",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"luxon": "^3.5.0",
@@ -25,7 +26,8 @@
 		"nuqs": "^2.2.3",
 		"react": "19.0.0-rc-66855b96-20241106",
 		"react-dom": "19.0.0-rc-66855b96-20241106",
-		"swr": "^2.2.5"
+		"swr": "^2.2.5",
+		"ukkonen": "^2.1.0"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/tsconfig": "^20241031.1431.3",

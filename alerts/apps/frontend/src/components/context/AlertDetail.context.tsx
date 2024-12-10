@@ -1,27 +1,25 @@
 'use client';
 
+import type { Route, Stop } from '@carrismetropolitana/api-types/network';
+
 import { useForm, UseFormReturnType, zodResolver } from '@mantine/form';
-import { Alert, AlertSchema, Municipality, Stop } from '@tmlmobilidade/services/types';
+import { Alert, AlertSchema, Municipality } from '@tmlmobilidade/services/types';
 import { createContext, useContext, useEffect, useState } from 'react';
 import useSWR from 'swr';
 
-type AlertFormReferenceSection = 'agencies' | 'lines' | 'stops';
-export const AlertFormReferenceSectionOptions: AlertFormReferenceSection[] = ['lines', 'stops', 'agencies'];
-
 interface AlertDetailContextState {
 	actions: {
-		setAlertFormReferenceSection: (value: AlertFormReferenceSection) => void
+		addReference: () => void
+		removeReference: (index: number) => void
 	}
 	data: {
 		agencies: unknown[]
 		form: UseFormReturnType<Alert>
-		lines: unknown[]
 		municipalities: Municipality[]
-		routes: unknown[]
+		routes: Route[]
 		stops: Stop[]
 	}
 	flags: {
-		formReferenceSection: AlertFormReferenceSection
 		isReadOnly: boolean
 		loading: boolean
 	}
@@ -45,14 +43,11 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 	const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
 	const [stops, setStops] = useState<Stop[]>([]);
 	const [agencies] = useState<unknown[]>(['Carris Metropolitana']);
-	const [lines, setLines] = useState<unknown[]>([]);
-	const [routes, setRoutes] = useState<unknown[]>([]);
-
-	const [formReferenceSection, setAlertFormReferenceSection] = useState<AlertFormReferenceSection>('lines');
+	const [routes, setRoutes] = useState<Route[]>([]);
 
 	const { data: municipalitiesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/locations/municipalities');
 	const { data: stopsData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/stops');
-	const { data: linesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/lines');
+	// const { data: linesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/lines');
 	const { data: routesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/routes');
 
 	//
@@ -82,41 +77,56 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 		if (routesData) setRoutes(routesData);
 	}, [routesData]);
 
-	// Line
-	useEffect(() => {
-		if (linesData) setLines(linesData);
-	}, [linesData]);
-
 	// Update form
 	useEffect(() => {
 		setLoading(true);
+
+		if (!alert.reference_type) {
+			alert.reference_type = 'route';
+			alert.references = [];
+		}
+
+		form.reset();
 		form.setValues(alert);
+
 		setLoading(false);
 	}, [alert]);
 
 	//
-	// D. Define context value
+	// D. Define actions
+	const addReference = () => {
+		const currentReferences = form.values.references || [];
+		currentReferences.push({ child_ids: [], parent_id: '' });
+		form.setFieldValue('references', currentReferences);
+	};
+
+	const removeReference = (index: number) => {
+		const currentReferences = form.values.references || [];
+		form.setFieldValue('references', currentReferences.filter((_, i) => i !== index));
+	};
+
+	//
+	// E. Define context value
 	const contextValue: AlertDetailContextState = {
 		actions: {
-			setAlertFormReferenceSection,
+			addReference,
+			removeReference,
 		},
 		data: {
 			agencies,
 			form,
-			lines,
 			municipalities,
 			routes,
 			stops,
 		},
 		flags: {
-			formReferenceSection,
 			isReadOnly: false,
 			loading,
 		},
 	};
 
 	//
-	// E. Render components
+	// F. Render components
 	return (
 		<AlertDetailContext.Provider value={contextValue}>
 			{children}
