@@ -4,7 +4,7 @@
 FROM node:alpine AS base
 
 ENV SCOPE=sla
-ENV PROJECT=monitor
+ENV PROJECT=monitor-worker
 
 RUN npm install -g turbo@^2
 
