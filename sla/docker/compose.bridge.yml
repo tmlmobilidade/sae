@@ -15,12 +15,14 @@ services:
         condition: on-failure
         delay: 30s
     ports:
-      - 5432:5432
+      - 37014:5432
     logging:
       options:
         max-size: '1m'
         max-file: '1'
     environment:
-      - POSTGRES_DB=bridgedb
-      - POSTGRES_USER=bridgedbuser
-      - POSTGRES_PASSWORD=bridgedbpassword
+      - POSTGRES_DB=$BRIDGEDB_DB
+      - POSTGRES_USER=$BRIDGEDB_USER
+      - POSTGRES_PASSWORD=$BRIDGEDB_PASSWORD
+    env_file:
+      - ./.env
