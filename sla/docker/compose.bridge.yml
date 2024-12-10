@@ -16,13 +16,34 @@ services:
         delay: 30s
     ports:
       - 37014:5432
+    volumes:
+      - ./bridge-db-data:/var/lib/postgresql/data
     logging:
       options:
         max-size: '1m'
         max-file: '1'
+    env_file:
+      - ./.env
     environment:
       - POSTGRES_DB=$BRIDGEDB_DB
       - POSTGRES_USER=$BRIDGEDB_USER
       - POSTGRES_PASSWORD=$BRIDGEDB_PASSWORD
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  bridge:
+    image: ghcr.io/tmlmobilidade/sae-sla-bridge:production
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
     env_file:
-      - ./.env
+      - .env
