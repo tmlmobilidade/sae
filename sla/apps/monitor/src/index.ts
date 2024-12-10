@@ -4,7 +4,7 @@ import { validateRides } from '@/tasks/validate-rides.js';
 
 /* * */
 
-const RUN_INTERVAL = 1000; // 100 milliseconds
+const MAX_RUN_INTERVAL = 1000; // 100 milliseconds
 
 /* * */
 
@@ -13,7 +13,7 @@ const RUN_INTERVAL = 1000; // 100 milliseconds
 
 	const runOnInterval = async () => {
 		await validateRides();
-		setTimeout(runOnInterval, RUN_INTERVAL);
+		setTimeout(runOnInterval, Math.random() * MAX_RUN_INTERVAL); // Run between 0 and MAX_RUN_INTERVAL milliseconds
 	};
 
 	runOnInterval();
