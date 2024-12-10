@@ -653,6 +653,20 @@ export async function createRidesFromGtfs() {
 				const deleteStaleRidesResult = await rides.deleteMany({ _id: { $nin: Array.from(savedRideIds) }, plan_id: planData._id });
 				LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plan ${planData._id}`);
 
+				// const staleRidesTimer = new TIMETRACKER();
+
+				// const planRideIds = await ridesCollection.aggregate([{ plan_id: planData._id }, { $group: { _id: '$_id' } }]).toArray();
+				// const planRideIdsUnique = new Set(planRideIds.map(doc => doc._id));
+
+				// savedRideIds.forEach(rideId => planRideIdsUnique.delete(rideId));
+
+				// if (planRideIdsUnique.size > 0) {
+				// 	const deleteUnusedRidesResult = await hashedTrips.deleteMany({ _id: { $in: Array.from(planRideIdsUnique) } });
+				// 	LOGGER.info(`Deleted ${deleteUnusedRidesResult.deletedCount} unused Rides.`);
+				// }
+
+				// LOGGER.info(`Found ${planRideIdsUnique.size} unused Rides. (${staleRidesTimer.get()})`);
+
 				//
 				// Mark this plan as 'success' to indicate that it was processed successfully
 
