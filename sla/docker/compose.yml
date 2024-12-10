@@ -36,25 +36,6 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  # bridge:
-  #   image: ghcr.io/tmlmobilidade/sae-sla-bridge:production
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
-  #       delay: 30s
-  #     resources:
-  #       limits:
-  #         memory: 2gb
-  #   logging:
-  #     options:
-  #       max-size: '1m'
-  #       max-file: '1'
-  #   env_file:
-  #     - .env
-
-  # # # # # # # # # # # # # # # # # # # # #
-  # # # # # # # # # # # # # # # # # # # # #
-
   feeder:
     image: ghcr.io/tmlmobilidade/sae-sla-feeder:production
     deploy:
@@ -194,3 +175,22 @@ services:
       - ./secrets/production/.env
     secrets:
       - pcgidbkey
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  bridge:
+    image: ghcr.io/tmlmobilidade/sae-sla-bridge:production
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+      resources:
+        limits:
+          memory: 2gb
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    env_file:
+      - .env
