@@ -7,21 +7,21 @@ import pg from 'pg';
 
 const client = new pg.Client({
 	connectionTimeoutMillis: 10000,
-	database: process.env.SLAMANAGERBRIDGEDB_DB,
-	host: process.env.SLAMANAGERBRIDGEDB_HOST,
-	password: process.env.SLAMANAGERBRIDGEDB_PASSWORD,
-	port: process.env.SLAMANAGERBRIDGEDB_PORT || 5432,
-	user: process.env.SLAMANAGERBRIDGEDB_USER,
+	database: process.env.BRIDGEDB_DB,
+	host: process.env.BRIDGEDB_HOST,
+	password: process.env.BRIDGEDB_PASSWORD,
+	port: process.env.BRIDGEDB_PORT || 5432,
+	user: process.env.BRIDGEDB_USER,
 });
 
 async function connect() {
 	await client.connect();
-	LOGGER.success('Connected to SLAMANAGERBRIDGEDB');
+	LOGGER.success('Connected to BRIDGEDB');
 }
 
 async function disconnect() {
 	await client.end();
-	LOGGER.success('Disconnected from SLAMANAGERBRIDGEDB');
+	LOGGER.success('Disconnected from BRIDGEDB');
 }
 
 /* * */

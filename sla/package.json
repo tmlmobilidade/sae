@@ -2,6 +2,7 @@
 	"name": "@tmlmobilidade/sae-sla",
 	"private": true,
 	"scripts": {
+		"bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",

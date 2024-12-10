@@ -8,7 +8,7 @@ services:
   # # # # # # # # # # # # # # # # # # # # #
   # # # # # # # # # # # # # # # # # # # # #
 
-  testdb:
+  bridgedb:
     image: postgres:alpine
     deploy:
       restart_policy:
@@ -21,6 +21,6 @@ services:
         max-size: '1m'
         max-file: '1'
     environment:
-      - POSTGRES_DB=testdb
-      - POSTGRES_USER=testdbuser
-      - POSTGRES_PASSWORD=testdbpassword
+      - POSTGRES_DB=bridgedb
+      - POSTGRES_USER=bridgedbuser
+      - POSTGRES_PASSWORD=bridgedbpassword

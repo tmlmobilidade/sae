@@ -1,7 +1,7 @@
 /* * */
 
 import 'dotenv/config';
-import syncValidations from '@/tasks/sync-validations.js';
+import { syncRides } from '@/tasks/sync-rides.js';
 
 /* * */
 
@@ -13,7 +13,7 @@ const RUN_INTERVAL = 3600000; // 60 minutes
 	//
 
 	const runOnInterval = async () => {
-		await syncValidations();
+		await syncRides();
 		setTimeout(runOnInterval, RUN_INTERVAL);
 	};
 
