@@ -107,7 +107,7 @@ export async function validateRides() {
 
 		const allPendingRides = ridesCollection
 			.find({ start_time_scheduled: { $lte: currentTime }, status: 'pending' })
-			.sort({ start_time_scheduled: -1 })
+			.sort({ start_time_scheduled: -1, trip_id: -1 })
 			.limit(BATCH_SIZE)
 			.stream();
 
