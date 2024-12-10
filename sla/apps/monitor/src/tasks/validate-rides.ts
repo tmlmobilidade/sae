@@ -105,18 +105,32 @@ export async function validateRides() {
 
 		const ridesCollection = await rides.getCollection();
 
-		const allPendingRides = ridesCollection
+		const fetchRidesTimer = new TIMETRACKER();
+
+		const allPendingRides = await ridesCollection
 			.find({ start_time_scheduled: { $lte: currentTime }, status: 'pending' })
 			.sort({ start_time_scheduled: -1, trip_id: -1 })
 			.limit(BATCH_SIZE)
-			.stream();
+			.toArray();
+
+		LOGGER.info(`Fetched ${allPendingRides.length} rides in ${fetchRidesTimer.get()}.`);
+
+		//
+
+		const queueingTimer = new TIMETRACKER();
+
+		const batchRideIds = allPendingRides.map(item => item._id);
+
+		await ridesCollection.updateMany({ _id: { $in: batchRideIds } }, { $set: { status: 'processing' } });
+
+		LOGGER.info(`Queued ${allPendingRides.length} rides in ${queueingTimer.get()}.`);
 
 		//
 		// Process each ride
 
 		let counter = 0;
 
-		for await (const rideDocument of allPendingRides) {
+		for (const rideDocument of allPendingRides) {
 			try {
 				//
 
@@ -124,7 +138,7 @@ export async function validateRides() {
 
 				const rideAnalysisTimer = new TIMETRACKER();
 
-				await rides.updateById(rideDocument._id, { status: 'processing' });
+				// await rides.updateById(rideDocument._id, { status: 'processing' });
 
 				//
 				// Await all promises
@@ -197,7 +211,8 @@ export async function validateRides() {
 				//
 				// Update trip with analysis result and status
 
-				await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
+				// await rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
+				rides.updateById(rideDocument._id, { analysis: analysisResult, status: 'complete' });
 
 				LOGGER.success(`[${counter}] | ${rideDocument._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 				// LOGGER.success(`[${counter}] | ${rideDocument._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
