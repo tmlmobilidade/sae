@@ -2,8 +2,8 @@
 
 /* * */
 
-import CardTemplate from '@/components/cards/CardTemplate';
-import BigNumber from '@/components/text/BigNumber';
+import { CardTemplate } from '@/components/cards/CardTemplate';
+import { BigNumber } from '@/components/text/BigNumber';
 import useSWR from 'swr';
 
 import styles from './styles.module.css';

@@ -10,20 +10,20 @@
 		"start": "next start"
 	},
 	"dependencies": {
+		"@helperkits/logger": "20240703.1726.24",
 		"@mantine/charts": "7.15.0",
 		"@mantine/core": "7.15.0",
 		"@mantine/hooks": "7.15.0",
 		"@tabler/icons-react": "3.24.0",
+		"@tmlmobilidade/services": "20241211.1605.17",
 		"luxon": "3.5.0",
-		"mongodb": "6.12.0",
 		"next": "15.1.0",
 		"papaparse": "5.4.1",
 		"react": "19.0.0",
 		"react-dom": "19.0.0",
 		"recharts": "2.14.1",
 		"sharp": "0.33.5",
-		"swr": "2.2.5",
-		"tunnel-ssh": "5.1.2"
+		"swr": "2.2.5"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241024.1600.5",

@@ -2,8 +2,9 @@
 
 /* * */
 
-import Columns from '@/components/layout/Columns';
-import ScreenWrapper from '@/components/layout/ScreenWrapper';
+import { CardSummaryFixed } from '@/components/cards/CardSummaryFixed';
+import { Columns } from '@/components/layout/Columns';
+import { ScreenWrapper } from '@/components/layout/ScreenWrapper';
 
 // import getOperationalDateStringForCurrentMonth from '@/services/getOperationalDateStringForCurrentMonth';
 // import { BarChart } from '@mantine/charts';
@@ -12,7 +13,7 @@ import ScreenWrapper from '@/components/layout/ScreenWrapper';
 
 /* * */
 
-export default function Component() {
+export function Screen3() {
 	//
 
 	//
@@ -39,83 +40,63 @@ export default function Component() {
 	return (
 		<ScreenWrapper>
 			<Columns cols={1}>
-				{/* <BarChart
-					dataKey="label"
-					h={350}
-					data={currentMonthPaxCmData?.data || [
-						{ label: 'January', value: 1 },
-						{ label: 'February', value: 1 },
-						{ label: 'March', value: 1 },
-						{ label: 'April', value: 1 },
-						{ label: 'May', value: 1 },
-						{ label: 'June', value: 1 },
-					]}
-					series={[
-						{ color: 'yellow.6', name: 'value' },
-					]}
+				<CardSummaryFixed
+					bigNumber="97%"
+					comparison="489 999"
+					endDate="2024-07-01T03:59:59"
+					isLoading={false}
+					isValidating={false}
+					level={1}
+					startDate="2024-06-01T04:00:00"
+					// timestamp="Agora"
+					title="Cumprimento Serviço (TR+Bilh)"
 				/>
 			</Columns>
 			<Columns cols={2}>
-				<BarChart
-					dataKey="label"
-					h={250}
-					data={currentMonthPax41Data?.data || [
-						{ label: 'January', value: 1 },
-						{ label: 'February', value: 1 },
-						{ label: 'March', value: 1 },
-						{ label: 'April', value: 1 },
-						{ label: 'May', value: 1 },
-						{ label: 'June', value: 1 },
-					]}
-					series={[
-						{ color: 'blue.6', name: 'value' },
-					]}
+				<CardSummaryFixed
+					bigNumber="97,1%"
+					comparison="167 926"
+					endDate="2024-07-01T03:59:59"
+					isLoading={false}
+					isValidating={false}
+					level={2}
+					startDate="2024-06-01T04:00:00"
+					// timestamp="Agora"
+					title="Área 1 / Cumprimento Serviço (TR+Bilh)"
 				/>
-				<BarChart
-					dataKey="label"
-					h={250}
-					data={currentMonthPax42Data?.data || [
-						{ label: 'January', value: 1 },
-						{ label: 'February', value: 1 },
-						{ label: 'March', value: 1 },
-						{ label: 'April', value: 1 },
-						{ label: 'May', value: 1 },
-						{ label: 'June', value: 1 },
-					]}
-					series={[
-						{ color: 'red.6', name: 'value' },
-					]}
+				<CardSummaryFixed
+					bigNumber="93,8%"
+					comparison="144 170"
+					endDate="2024-07-01T03:59:59"
+					isLoading={false}
+					isValidating={false}
+					level={2}
+					startDate="2024-06-01T04:00:00"
+					// timestamp="Agora"
+					title="Área 2 / Cumprimento Serviço (TR+Bilh)"
 				/>
-				<BarChart
-					dataKey="label"
-					h={250}
-					data={currentMonthPax43Data?.data || [
-						{ label: 'January', value: 1 },
-						{ label: 'February', value: 1 },
-						{ label: 'March', value: 1 },
-						{ label: 'April', value: 1 },
-						{ label: 'May', value: 1 },
-						{ label: 'June', value: 1 },
-					]}
-					series={[
-						{ color: 'violet.6', name: 'value' },
-					]}
+				<CardSummaryFixed
+					bigNumber="98%"
+					comparison="114 093"
+					endDate="2024-07-01T03:59:59"
+					isLoading={false}
+					isValidating={false}
+					level={2}
+					startDate="2024-06-01T04:00:00"
+					// timestamp="Agora"
+					title="Área 3 / Cumprimento Serviço (TR+Bilh)"
 				/>
-				<BarChart
-					dataKey="label"
-					h={250}
-					data={currentMonthPax44Data?.data || [
-						{ label: 'January', value: 1 },
-						{ label: 'February', value: 1 },
-						{ label: 'March', value: 1 },
-						{ label: 'April', value: 1 },
-						{ label: 'May', value: 1 },
-						{ label: 'June', value: 1 },
-					]}
-					series={[
-						{ color: 'violet.6', name: 'value' },
-					]}
-				/> */}
+				<CardSummaryFixed
+					bigNumber="98%"
+					comparison="63 810"
+					endDate="2024-07-01T03:59:59"
+					isLoading={false}
+					isValidating={false}
+					level={2}
+					startDate="2024-06-01T04:00:00"
+					// timestamp="Agora"
+					title="Área 4 / Cumprimento Serviço (TR+Bilh)"
+				/>
 			</Columns>
 		</ScreenWrapper>
 	);
