@@ -19,13 +19,13 @@
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20241204.1537.50",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
-		"@tmlmobilidade/services": "20241211.32.41",
+		"@tmlmobilidade/services": "20241211.1120.58",
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241024.1600.5",
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.10.1",
+		"@types/node": "22.10.2",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.7.2"
 	}
