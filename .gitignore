@@ -151,3 +151,7 @@ pnpm-lock.yaml
 # NextJS
 .vercel
 next-env.d.ts
+
+# Nginx secrets
+uptime.conf
+.htpasswd

@@ -1,0 +1,40 @@
+{
+	"name": "@tmlmobilidade/sae-videowall-nextjs",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev -p 3003",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start": "next start"
+	},
+	"dependencies": {
+		"@mantine/charts": "7.15.0",
+		"@mantine/core": "7.15.0",
+		"@mantine/hooks": "7.15.0",
+		"@tabler/icons-react": "3.24.0",
+		"luxon": "3.5.0",
+		"mongodb": "6.12.0",
+		"next": "15.1.0",
+		"papaparse": "5.4.1",
+		"react": "19.0.0",
+		"react-dom": "19.0.0",
+		"recharts": "2.14.1",
+		"sharp": "0.33.5",
+		"swr": "2.2.5",
+		"tunnel-ssh": "5.1.2"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20241024.1600.5",
+		"@types/luxon": "3.4.2",
+		"@types/node": "22.10.2",
+		"@types/react": "19.0.1",
+		"@types/react-dom": "19.0.2",
+		"postcss": "8.4.49",
+		"postcss-preset-mantine": "1.17.0",
+		"postcss-simple-vars": "7.0.1",
+		"typescript": "5.7.2"
+	},
+	"packageManager": "pnpm@9.15.0"
+}
