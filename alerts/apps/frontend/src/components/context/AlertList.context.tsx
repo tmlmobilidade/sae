@@ -10,6 +10,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 interface AlertsListContextState {
 	actions: {
+		createAlert: () => void
 		setSelected: (alert: Alert | null) => void
 		updateFilterByLineId: (value: string) => void
 		updateFilterBySearchQuery: (value: string) => void
@@ -116,11 +117,40 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 		setSelectedAlertId(alert?._id?.toString() || null);
 	};
 
+	const createAlert = () => {
+		const emptyAlert: Alert = {
+			_id: 'NEW_ALERT',
+			active_period_end_date: new Date(),
+			active_period_start_date: new Date(),
+			cause: 'ACCIDENT',
+			created_at: new Date(),
+			description: '',
+			effect: 'ACCESSIBILITY_ISSUE',
+			image_url: '',
+			municipality_ids: [],
+			publish_end_date: new Date(),
+			publish_start_date: new Date(),
+			publish_status: 'UNPUBLISHED',
+			reference_type: 'stop',
+			references: [],
+			title: '',
+		};
+
+		if (dataFilteredState.find(alert => alert._id?.toString() === emptyAlert._id?.toString())) {
+			return;
+		}
+
+		// Add Empty Alert to dataFilteredState
+		setDataFilteredState([...dataFilteredState, emptyAlert as Alert]);
+		setSelected(emptyAlert as Alert);
+	};
+
 	//
 	// E. Define context value
 
 	const contextValue: AlertsListContextState = {
 		actions: {
+			createAlert,
 			setSelected,
 			updateFilterByLineId,
 			updateFilterBySearchQuery,

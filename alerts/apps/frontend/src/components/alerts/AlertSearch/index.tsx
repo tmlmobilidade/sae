@@ -2,20 +2,23 @@
 
 /* * */
 
+import CreateButton from '@/components/common/CreateButton';
 import Input from '@/components/common/Input';
 import { useAlertsListContext } from '@/components/context/AlertList.context';
-import { IconCirclePlus } from '@tabler/icons-react';
 
 import styles from './styles.module.css';
 
 /* * */
 
 export default function AlertSearch() {
-	const setFilterBySearchQuery = useAlertsListContext().actions.updateFilterBySearchQuery;
-	const searchQuery = useAlertsListContext().filters.search_query;
+	const { actions, filters } = useAlertsListContext();
 
 	const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setFilterBySearchQuery(e.target.value);
+		actions.updateFilterBySearchQuery(e.target.value);
+	};
+
+	const handleCreateClick = () => {
+		actions.createAlert();
 	};
 
 	return (
@@ -24,11 +27,9 @@ export default function AlertSearch() {
 				className={styles.input}
 				onChange={handleSearchChange}
 				placeholder="Pesquisar..."
-				value={searchQuery || ''}
+				value={filters.search_query || ''}
 			/>
-			<div className={styles.button}>
-				<IconCirclePlus />
-			</div>
+			<CreateButton onClick={handleCreateClick} />
 		</div>
 	);
 }
