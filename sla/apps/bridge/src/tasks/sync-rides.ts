@@ -4,6 +4,7 @@ import BRIDGEDB from '@/services/BRIDGEDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/services/interfaces';
+import { Ride } from '@tmlmobilidade/services/types';
 import { getOperationalDate } from '@tmlmobilidade/services/utils';
 
 /* * */
@@ -25,19 +26,18 @@ async function createTableFromExample(rideDataParsed) {
 
 /* * */
 
-function parseRide(rideData) {
+function parseRide(rideData: Ride) {
 	const parsed = {
 		_id: rideData._id,
 		agency_id: rideData.agency_id,
-		archive_id: rideData.archive_id,
+		extension_scheduled: rideData.extension_scheduled,
 		line_id: rideData.line_id,
-		operational_day: rideData.operational_day,
+		operational_date: rideData.operational_date,
 		pattern_id: rideData.pattern_id,
+		plan_id: rideData.plan_id,
 		route_id: rideData.route_id,
-		scheduled_start_time: rideData.scheduled_start_time,
-		service_id: rideData.service_id,
+		start_time_scheduled: rideData.start_time_scheduled,
 		trip_id: rideData.trip_id,
-		user_notes: rideData.user_notes,
 	};
 
 	rideData.analysis.forEach((item) => {
@@ -79,7 +79,7 @@ export async function syncRides() {
 
 		const allRidesStream = ridesCollection
 			.find({ operational_date: { $lte: todaysOperationalDate } })
-			.sort({ operational_day: -1 })
+			.sort({ operational_date: -1 })
 			.stream();
 
 		for await (const rideData of allRidesStream) {

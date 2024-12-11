@@ -15,7 +15,7 @@ services:
         condition: on-failure
         delay: 30s
     ports:
-      - 37014:5432
+      - 27027:5432
     volumes:
       - ./bridge-db-data:/var/lib/postgresql/data
     logging:
