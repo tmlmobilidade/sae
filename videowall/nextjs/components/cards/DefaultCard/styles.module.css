@@ -1,0 +1,165 @@
+/* * */
+/* CONTAINER */
+
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	gap: 25px;
+	border-radius: 5px;
+	border: 2px solid transparent;
+	padding: 20px;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+}
+
+.normal {
+	color: var(--palette-blue-500);
+	border-color: var(--palette-blue-500);
+	background-color: var(--palette-blue-100);
+}
+
+.good {
+	color: var(--palette-green-500);
+	border-color: var(--palette-green-500);
+	background-color: var(--palette-green-100);
+}
+
+.bad {
+	color: var(--palette-orange-500);
+	border-color: var(--palette-orange-500);
+	background-color: var(--palette-orange-100);
+}
+
+/* * */
+/* HEADER */
+
+.headerWrapper {
+	width: 100%;
+	display: flex;
+	gap: 10px;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.headerTitle {
+	font-size: 24px;
+	font-weight: var(--font-weight-semibold);
+	line-height: 1;
+	opacity: 0.7;
+	color: white;
+}
+
+.headerIcon {
+	display: flex;
+	color: white;
+}
+
+/* * */
+/* CONTENT */
+
+.contentWrapper {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: flex-start;
+	gap: 10px;
+	height: 100%;
+}
+
+.valuePrimary {
+	font-weight: var(--font-weight-bold);
+	line-height: 1;
+	font-size: 100px;
+	color: inherit;
+}
+
+.valueSecondary {
+	font-weight: var(--font-weight-semibold);
+	line-height: 1;
+	font-size: 50px;
+}
+
+/* * */
+/* FOOTER */
+
+.footerWrapper {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	justify-content: space-between;
+}
+
+.normal .footerWrapper {
+	color: var(--palette-green-300);
+}
+
+.good .footerWrapper {
+	color: var(--palette-green-300);
+}
+
+.bad .footerWrapper {
+	color: var(--palette-orange-300);
+}
+
+/* * */
+/* * */
+/* * */
+/* * */
+/* * */
+/* * */
+/* * */
+/* * */
+/* * */
+
+
+/* * */
+/* BODY */
+
+.body {
+  width: 100%;
+}
+
+/* * */
+/* FOOTER */
+
+.footer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  gap: 10px;
+}
+
+/* * */
+/* COLUMN WRAPPER */
+
+.columnWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 7px;
+}
+
+/* * */
+/* COLUMN TITLE */
+
+.colTitle {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--system-muted);
+}
+
+.colValue {
+  font-size: 25px;
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  line-height: 1;
+  color: var(--system-dark);
+}

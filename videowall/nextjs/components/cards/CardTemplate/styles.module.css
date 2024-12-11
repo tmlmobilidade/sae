@@ -29,7 +29,7 @@
 /* TITLE */
 
 .title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: var(--font-weight-bold);
   color: var(--system-dark);
   text-transform: uppercase;

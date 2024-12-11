@@ -1,8 +1,8 @@
 /* * */
 
 import { Loader } from '@/components/common/Loader';
+import { TimestampDisplay } from '@/components/common/TimestampDisplay';
 import { LabelDateFromTo } from '@/components/text/LabelDateFromTo';
-import { LabelDateRelative } from '@/components/text/LabelDateRelative';
 
 import styles from './styles.module.css';
 
@@ -33,7 +33,7 @@ export function CardTemplate({ children, endDate = '', isLoading = false, isVali
 		<div className={styles.container}>
 			<div className={styles.header}>
 				<div className={styles.title}>{title}</div>
-				<div>{isLoading || isValidating ? <Loader size={18} visible /> : <LabelDateRelative timestamp={timestamp} />}</div>
+				<div>{isLoading || isValidating ? <Loader size={18} visible /> : <TimestampDisplay timestamp={timestamp} />}</div>
 			</div>
 			{children}
 			{(endDate || startDate) && <LabelDateFromTo endDate={endDate} startDate={startDate} />}

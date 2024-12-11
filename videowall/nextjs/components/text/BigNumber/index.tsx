@@ -8,7 +8,7 @@ interface Props {
 	direction?: 'column' | 'row'
 	label?: string
 	level?: 1 | 2 | 3
-	type?: 'highlight' | 'normal'
+	type?: 'bad' | 'good' | 'normal'
 	value?: number
 }
 

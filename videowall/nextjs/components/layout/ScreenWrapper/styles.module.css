@@ -2,18 +2,10 @@
 /* CONTAINER */
 
 .container {
-  width: 1920px;
-  height: 1080px;
-  background-color: var(--system-background);
-}
-
-/* * */
-/* CONTENT */
-
-.content {
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
-  padding: 50px;
-  min-height: 100px;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr 1fr 1fr;
+	gap: 25px;
+	padding: 25px;
+	aspect-ratio: 16/9;
 }

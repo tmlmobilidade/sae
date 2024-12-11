@@ -13,7 +13,7 @@ interface Props {
 
 /* * */
 
-export function LabelDateRelative({ timestamp = 0 }: Props) {
+export function TimestampDisplay({ timestamp = 0 }: Props) {
 	//
 
 	//

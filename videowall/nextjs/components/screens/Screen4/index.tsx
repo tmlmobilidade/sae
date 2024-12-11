@@ -11,7 +11,7 @@ import styles from './styles.module.css';
 
 /* * */
 
-export default function Screen1() {
+export function Screen4() {
 	return (
 		<ScreenWrapper>
 			<Columns cols={1}>
@@ -23,7 +23,6 @@ export default function Screen1() {
 					isValidating={false}
 					level={1}
 					startDate="2024-01-01T00:00:00"
-					// timestamp="Agora"
 					title="Percentagem de Reclamações por Total de Passageiros Transportados"
 				/>
 			</Columns>

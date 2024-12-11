@@ -1,37 +1,33 @@
 {
 
-	"[typescript]": {
-		"editor.defaultFormatter": "dbaeumer.vscode-eslint"
-	},
+	"editor.tabSize": 4,
+
+	"files.eol": "\n",
+
+	"eslint.workingDirectories": ["auto"],
+
+	// Disable the default formatter, use eslint instead
+	"prettier.enable": false,
+	"editor.formatOnSave": false,
+	"eslint.format.enable": true,
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+
+	// Disable the default CSS formatter, use stylelint instead
+	"css.validate": false,
+	"less.validate": false,
+	"scss.validate": false,
 
 	// Auto fix
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": "explicit",
-		"source.organizeImports": "never"
 	},
 
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-	"editor.formatOnSave": false,
-	"editor.tabSize": 4,
-
-	"eslint.format.enable": true,
-
-	// Silent the stylistic rules in you IDE, but still auto fix them
-	"eslint.rules.customizations": [
-		{ "rule": "style/*", "severity": "off" },
-		{ "rule": "format/*", "severity": "off" },
-		{ "rule": "*-indent", "severity": "off" },
-		{ "rule": "*-spacing", "severity": "off" },
-		{ "rule": "*-spaces", "severity": "off" },
-		{ "rule": "*-order", "severity": "off" },
-		{ "rule": "*-dangle", "severity": "off" },
-		{ "rule": "*-newline", "severity": "off" },
-		{ "rule": "*quotes", "severity": "off" },
-		{ "rule": "*semi", "severity": "off" }
-	],
-
-	// Enable the ESlint flat config support
-	"eslint.useFlatConfig": true,
+	"[css]": {
+		"editor.defaultFormatter": "stylelint.vscode-stylelint",
+		"editor.codeActionsOnSave": {
+			"source.fixAll.stylelint": "explicit"
+		}
+	},
 
 	// Enable eslint for all supported languages
 	"eslint.validate": [
@@ -49,13 +45,16 @@
 		"astro"
 	],
 
-	"eslint.workingDirectories": [
-		{ "mode": "auto" }
-	],
+	"workbench.editor.customLabels.enabled": true,
 
-	"files.eol": "\n",
+	"workbench.editor.customLabels.patterns": {
+		"**/components/**/*.js": "${dirname} (${extname})",
+		"**/components/**/*.ts": "${dirname} (${extname})",
+		"**/components/**/*.tsx": "${dirname} (${extname})",
+		"**/components/**/*.css": "${dirname} (${extname})"
+	},
 
-	// Disable the default formatter, use eslint instead
-	"prettier.enable": false
+	"typescript.tsdk": "./frontend/node_modules/typescript/lib",
+	"svg.preview.background": "custom"
 
 }
