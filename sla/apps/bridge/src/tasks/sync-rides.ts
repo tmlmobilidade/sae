@@ -6,14 +6,19 @@ import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/services/interfaces';
 import { Ride } from '@tmlmobilidade/services/types';
 import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import util from 'util';
 
 /* * */
 
 async function createTableFromExample(rideDataParsed) {
-	const keys = Object.keys(rideDataParsed);
 	const createTableQuery = `
         CREATE TABLE IF NOT EXISTS rides (
-            ${keys.map(key => `${key} TEXT`).join(',')}
+            ${Object.entries(rideDataParsed).map((key, value) => {
+				let type = 'text';
+				if (typeof value === 'number') type = 'numeric';
+				if (util.types.isDate(value)) type = 'timestamptz';
+				return `${key} ${type}`;
+			}).join(',')}
         );
     `;
 	await BRIDGEDB.client.query(createTableQuery);
@@ -38,6 +43,7 @@ function parseRide(rideData: Ride) {
 		route_id: rideData.route_id,
 		start_time_scheduled: rideData.start_time_scheduled,
 		trip_id: rideData.trip_id,
+		validations_count: rideData.validations_count,
 	};
 
 	rideData.analysis.forEach((item) => {
