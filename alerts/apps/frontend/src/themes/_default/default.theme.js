@@ -16,12 +16,13 @@ import '@/themes/_default/styles/wordpress.css';
 
 import AccordionOverride from '@/themes/_default/overrides/Accordion.module.css';
 import ButtonOverride from '@/themes/_default/overrides/Button.module.css';
+import PasswordInputOverride from '@/themes/_default/overrides/PasswordInput.module.css';
 import SegmentedControlOverride from '@/themes/_default/overrides/SegmentedControl.module.css';
 import SelectOverride from '@/themes/_default/overrides/Select.module.css';
 import SkeletonOverride from '@/themes/_default/overrides/Skeleton.module.css';
 import TextInputOverride from '@/themes/_default/overrides/TextInput.module.css';
 import combineClasses from '@/utils/combineClasses';
-import { Accordion, Button, createTheme, SegmentedControl, Select, Skeleton, TextInput } from '@mantine/core';
+import { Accordion, Button, createTheme, PasswordInput, SegmentedControl, Select, Skeleton, TextInput } from '@mantine/core';
 import { IconCaretLeftFilled } from '@tabler/icons-react';
 
 /* * */
@@ -69,6 +70,17 @@ export default createTheme({
 				if (props.variant === 'muted') {
 					defaultClasses = combineClasses(defaultClasses, [ButtonOverride.variantMuted]);
 				}
+				return defaultClasses;
+			},
+		}),
+
+		PasswordInput: PasswordInput.extend({
+			classNames: () => {
+				let defaultClasses = {
+					input: PasswordInputOverride.input,
+					section: PasswordInputOverride.section,
+					wrapper: PasswordInputOverride.wrapper,
+				};
 				return defaultClasses;
 			},
 		}),
