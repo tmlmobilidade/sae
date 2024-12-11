@@ -194,7 +194,7 @@ export async function validateRides() {
 
 				await rides.updateById(rideData._id, { analysis: analysisResult, status: 'complete' });
 
-				LOGGER.success(`[${rideIndex}/${ridesBatch.length}] ${rideData._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
+				LOGGER.success(`[${rideIndex + 1}/${ridesBatch.length}] ${rideData._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 				// LOGGER.success(`[${counter}] | ${rideData._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 
 				//
