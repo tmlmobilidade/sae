@@ -15,6 +15,7 @@ interface AlertDetailContextState {
 	data: {
 		agencies: unknown[]
 		form: UseFormReturnType<Alert>
+		id: string
 		municipalities: Municipality[]
 		routes: Route[]
 		stops: Stop[]
@@ -115,6 +116,7 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 		data: {
 			agencies,
 			form,
+			id: alert._id,
 			municipalities,
 			routes,
 			stops,

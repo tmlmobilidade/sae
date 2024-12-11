@@ -10,7 +10,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 interface AlertsListContextState {
 	actions: {
-		setSelected: (alert: Alert) => void
+		setSelected: (alert: Alert | null) => void
 		updateFilterByLineId: (value: string) => void
 		updateFilterBySearchQuery: (value: string) => void
 		updateFilterByStopId: (value: string) => void
@@ -72,14 +72,6 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 
 		let filterResult: Alert[] = alertsData || [];
 
-		if (filterByLineIdState) {
-			filterResult = filterResult.filter(alert => alert.line_ids.some(lineId => lineId === filterByLineIdState));
-		}
-
-		if (filterByStopIdState) {
-			filterResult = filterResult.filter(alert => alert.stop_ids.some(stopId => stopId === filterByStopIdState));
-		}
-
 		if (filterBySearchQueryState) {
 			filterResult = filterResult.filter((alert) => {
 				const searchQuery = filterBySearchQueryState.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -102,8 +94,7 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 	}, [allAlertsData, filterByLineIdState, filterBySearchQueryState, filterByStopIdState]);
 
 	useEffect(() => {
-		if (!selectedAlertId) setSelectedAlert(dataFilteredState[0] || null);
-		else setSelectedAlert(dataFilteredState.find(alert => alert._id?.toString() === selectedAlertId) || null);
+		setSelectedAlert(dataFilteredState.find(alert => alert._id?.toString() === selectedAlertId) || null);
 	}, [selectedAlertId, dataFilteredState]);
 
 	//
@@ -121,8 +112,8 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 		setFilterBySearchQueryState(value);
 	};
 
-	const setSelected = (alert: Alert) => {
-		setSelectedAlertId(alert._id?.toString() || null);
+	const setSelected = (alert: Alert | null) => {
+		setSelectedAlertId(alert?._id?.toString() || null);
 	};
 
 	//

@@ -21,7 +21,6 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 export const getAllAlerts = async (): Promise<Alert[]> => {
 	const response = await fetch(API_BASE_URL, {
 		headers: {
-			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
 			// 'Authorization': `Bearer ${token}`,
 		},
@@ -37,7 +36,6 @@ export const getAllAlerts = async (): Promise<Alert[]> => {
 export const getAlertById = async (id: string): Promise<Alert> => {
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		headers: {
-			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
 			// 'Authorization': `Bearer ${token}`,
 		},
@@ -88,7 +86,6 @@ export const updateAlert = async (id: string, alertData: Partial<Alert>): Promis
 export const deleteAlert = async (id: string): Promise<{ message: string }> => {
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		headers: {
-			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
 			// 'Authorization': `Bearer ${token}`,
 		},

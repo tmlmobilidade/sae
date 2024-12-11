@@ -1,6 +1,6 @@
 //
 
-import { ThemeSwitch } from '../layout/ThemeSwitch';
+import { ThemeSwitch } from '../../layout/ThemeSwitch';
 
 // CM ICON
 export function CMIcon() {

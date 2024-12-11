@@ -2,14 +2,13 @@
 
 /* * */
 
-import { TMLogo } from '@/components/AppLogos/AppLogos';
 import Button from '@/components/common/Button';
+import { TMLogo } from '@/components/common/AppLogos';
 import { Surface } from '@/components/layout/Surface';
 import toast from '@/utils/toast';
 import { PasswordInput, SimpleGrid, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { HttpException, HttpStatus } from '@tmlmobilidade/services/lib';
-import { createEmail, LoginDto, LoginDtoSchema } from '@tmlmobilidade/services/types';
+import { LoginDto, LoginDtoSchema } from '@tmlmobilidade/services/types';
 import { useState } from 'react';
 
 import { login } from '../actions/authentication';
