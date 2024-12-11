@@ -17,7 +17,6 @@ export function parseApexT19(pcgiDoc: any): ApexT19 {
 
 	return {
 		_id: pcgiDoc.transaction.transactionId,
-		_raw: JSON.stringify(pcgiDoc),
 		agency_id: pcgiDoc.transaction.operatorLongID,
 		apex_version: pcgiDoc.transaction.apexVersion,
 		created_at: transactionDate.toJSDate(),

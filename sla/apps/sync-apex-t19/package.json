@@ -21,7 +21,7 @@
 		"@tmlmobilidade/sae-sla-pckg-constants": "*",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
 		"@tmlmobilidade/sae-sla-pckg-sync": "*",
-		"@tmlmobilidade/services": "20241210.231.18",
+		"@tmlmobilidade/services": "20241211.32.41",
 		"luxon": "3.5.0",
 		"tunnel-ssh": "5.1.2"
 	},

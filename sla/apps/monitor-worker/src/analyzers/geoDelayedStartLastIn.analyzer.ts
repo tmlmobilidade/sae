@@ -76,9 +76,7 @@ export function geoDelayedStartLastInAnalyzer(analysisData: AnalysisData): Expli
 
 		for (const vehicleEventData of sortedVehicleEvents) {
 			//
-			const parsedVehicleEventRawData = JSON.parse(vehicleEventData._raw);
-			//
-			const vehicleEventTurfPoint = turf.point([parsedVehicleEventRawData.content.entity[0].vehicle.position.longitude, parsedVehicleEventRawData.content.entity[0].vehicle.position.latitude]);
+			const vehicleEventTurfPoint = turf.point([vehicleEventData.longitude, vehicleEventData.latitude]);
 			//
 			const vehicleEventIsInsideGefense = turf.booleanPointInPolygon(vehicleEventTurfPoint, firstStopTurfBuffer);
 			//

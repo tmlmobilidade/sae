@@ -17,7 +17,6 @@ export function parseApexT11(pcgiDoc: any): ApexT11 {
 
 	return {
 		_id: pcgiDoc.transaction.transactionId,
-		_raw: JSON.stringify(pcgiDoc),
 		agency_id: pcgiDoc.transaction.operatorLongID,
 		apex_version: pcgiDoc.transaction.apexVersion,
 		card_serial_number: pcgiDoc.transaction.cardSerialNumber,

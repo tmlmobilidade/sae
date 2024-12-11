@@ -19,7 +19,7 @@
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20241204.1537.50",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
-		"@tmlmobilidade/services": "20241210.231.18",
+		"@tmlmobilidade/services": "20241211.32.41",
 		"tunnel-ssh": "5.1.2"
 	},
 	"devDependencies": {
