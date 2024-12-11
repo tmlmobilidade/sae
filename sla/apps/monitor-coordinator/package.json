@@ -18,7 +18,7 @@
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@tmlmobilidade/sae-sla-pckg-constants": "*",
-		"@tmlmobilidade/services": "20241211.1120.58",
+		"@tmlmobilidade/services": "20241211.1134.16",
 		"fastify": "5.1.0",
 		"luxon": "3.5.0"
 	},
