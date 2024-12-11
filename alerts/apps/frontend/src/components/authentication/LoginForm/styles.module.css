@@ -1,0 +1,9 @@
+.logoWrapper {
+	display: flex;
+	justify-content: center;
+	margin: 2rem;
+
+	& svg {
+		scale: 1.5
+	}
+}

@@ -6,11 +6,11 @@ import { redirect } from 'next/navigation';
 
 /* * */
 
-export default async function DashboardLayout({ children }) {
+export default async function AuthenticationLayout({ children }) {
 	const session = await getSession();
 
-	if (!session) {
-		redirect('/login');
+	if (session) {
+		redirect('/alerts');
 	}
 
 	return (

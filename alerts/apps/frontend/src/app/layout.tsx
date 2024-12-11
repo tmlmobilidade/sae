@@ -24,13 +24,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
 	//
-
-	//
-	// A. Fetch data
-
-	//
 	// B. Render components
-
 	return (
 		<html className={inter.variable}>
 			<head>
