@@ -71,6 +71,12 @@ import { DateTime } from 'luxon';
 
 		const fetchTimerResult = fetchTimer.get();
 
+		if (latestPendingRidesIds.length === 0) {
+			LOGGER.info(`No rides to process | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult})`);
+			isBusy = false;
+			return [];
+		}
+
 		//
 		// Mark those rides as 'processing' to ensure the next batch of rides does not include them,
 		// and return them to the caller instance.
