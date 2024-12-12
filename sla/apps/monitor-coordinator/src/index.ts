@@ -53,12 +53,18 @@ import { DateTime } from 'luxon';
 
 		const fetchTimer = new TIMETRACKER();
 
+		// const latestPendingRides = await ridesCollection
+		// 	.aggregate([
+		// 		{ $match: { start_time_scheduled: { $lte: currentTime.toJSDate() }, status: 'pending' } },
+		// 		{ $sort: { start_time_scheduled: -1, trip_id: -1 } },
+		// 		{ $limit: batchSize },
+		// 	])
+		// 	.toArray();
+
 		const latestPendingRides = await ridesCollection
-			.aggregate([
-				{ $match: { start_time_scheduled: { $lte: currentTime.toJSDate() }, status: 'pending' } },
-				{ $sort: { start_time_scheduled: -1, trip_id: -1 } },
-				{ $limit: batchSize },
-			])
+			.find({ start_time_scheduled: { $lte: currentTime.toJSDate() }, status: 'pending' })
+			.sort({ start_time_scheduled: -1 })
+			.limit(batchSize)
 			.toArray();
 
 		const latestPendingRidesIds = latestPendingRides.map(ride => ride._id);
