@@ -79,7 +79,7 @@ import { DateTime } from 'luxon';
 
 		await ridesCollection.updateMany({ _id: { $in: latestPendingRidesIds } }, { $set: { status: 'processing' } });
 
-		LOGGER.info(`New batch: Qty ${batchSize} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})`);
+		LOGGER.info(`New batch: Qty ${latestPendingRidesIds.length} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})`);
 
 		isBusy = false;
 
