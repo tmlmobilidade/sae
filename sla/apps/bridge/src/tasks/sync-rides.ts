@@ -42,7 +42,7 @@ function parseRide(rideData: Ride) {
 		pattern_id: rideData.pattern_id,
 		plan_id: rideData.plan_id,
 		route_id: rideData.route_id,
-		start_time_scheduled: DateTime.fromJSDate(rideData.start_time_scheduled).toJSDate(),
+		start_time_scheduled: DateTime.fromJSDate(rideData.start_time_scheduled).toISO(),
 		trip_id: rideData.trip_id,
 		validations_count: rideData.validations_count,
 	};
