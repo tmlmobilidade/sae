@@ -6,6 +6,7 @@ import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/services/interfaces';
 import { Ride } from '@tmlmobilidade/services/types';
 import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { DateTime } from 'luxon';
 import util from 'util';
 
 /* * */
@@ -13,14 +14,14 @@ import util from 'util';
 async function createTableFromExample(rideDataParsed) {
 	const createTableQuery = `
         CREATE TABLE IF NOT EXISTS rides (
-            ${Object.entries(rideDataParsed).map((key, value) => {
+            ${Object.entries(rideDataParsed).map(([key, value]) => {
 				let type = 'text';
-				if (typeof value === 'number') type = 'numeric';
 				if (util.types.isDate(value)) type = 'timestamptz';
 				return `${key} ${type}`;
 			}).join(',')}
         );
     `;
+	// console.log(createTableQuery);
 	await BRIDGEDB.client.query(createTableQuery);
 	//
 	const createTableIndex = `
@@ -41,7 +42,7 @@ function parseRide(rideData: Ride) {
 		pattern_id: rideData.pattern_id,
 		plan_id: rideData.plan_id,
 		route_id: rideData.route_id,
-		start_time_scheduled: rideData.start_time_scheduled,
+		start_time_scheduled: DateTime.fromJSDate(rideData.start_time_scheduled).toJSDate(),
 		trip_id: rideData.trip_id,
 		validations_count: rideData.validations_count,
 	};
@@ -91,11 +92,16 @@ export async function syncRides() {
 		for await (const rideData of allRidesStream) {
 			console.log(`Writing ride "${rideData._id}" ...`);
 			const parsedRide = parseRide(rideData);
-			await BRIDGEDB.client.query(`
-				INSERT INTO rides (${Object.keys(parsedRide).join(',')})
-				VALUES (${Object.values(parsedRide).map(value => `'${value}'`).join(',')})
-				ON CONFLICT (_id) DO UPDATE SET ${Object.keys(parsedRide).map(key => `${key} = EXCLUDED.${key}`).join(',')};
-			`);
+			try {
+				await BRIDGEDB.client.query(`
+					INSERT INTO rides (${Object.keys(parsedRide).join(',')})
+					VALUES (${Object.values(parsedRide).map(value => `'${value}'`).join(',')})
+					ON CONFLICT (_id) DO UPDATE SET ${Object.keys(parsedRide).map(key => `${key} = EXCLUDED.${key}`).join(',')};
+					`);
+					} catch (error) {
+						console.log(parsedRide)
+					throw new Error(`Error writing ride "${rideData._id}": ${error.message}`);
+					}
 		}
 
 		LOGGER.terminate(`Run took ${globalTimer.get()}.`);
