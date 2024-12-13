@@ -12,25 +12,21 @@ interface PermissionsProps {
 }
 
 export function Permissions({ action, children, scope }: PermissionsProps) {
-	const [hasPermission, setHasPermission] = useState<null | Permission<unknown>>(null);
+	const [hasPermission, setHasPermission] = useState<boolean>(true);
 
 	useEffect(() => {
 		async function fetchPermissions() {
 			try {
-				const result = await getPermissions(scope, action);
-				setHasPermission(result);
+				await getPermissions(scope, action);
+				setHasPermission(true);
 			}
 			catch (error) {
-				return null;
+				setHasPermission(false);
 			}
 		}
 
 		fetchPermissions();
 	}, [scope, action]);
-
-	if (hasPermission === null) {
-		return null;
-	}
 
 	return hasPermission ? <>{children}</> : null;
 }

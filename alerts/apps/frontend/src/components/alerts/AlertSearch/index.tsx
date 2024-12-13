@@ -18,7 +18,7 @@ export default function AlertSearch() {
 	};
 
 	const handleCreateClick = () => {
-		actions.createAlert();
+		actions.addAlert();
 	};
 
 	return (

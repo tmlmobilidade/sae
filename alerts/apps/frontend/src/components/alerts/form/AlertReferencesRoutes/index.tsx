@@ -1,10 +1,10 @@
 'use client';
 
 import Button from '@/components/common/Button';
+import DeleteButton from '@/components/common/DeleteButton';
 import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
-import { MultiSelect, Select, Tooltip } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { MultiSelect, Select } from '@mantine/core';
 import { useMemo } from 'react';
 
 import styles from './styles.module.css';
@@ -63,9 +63,7 @@ function AlertReferencesRoutesItem({ index }: { index: number }) {
 	return (
 		<Surface className={styles.itemSurface}>
 			<div className={styles.header}>
-				<Tooltip label="Remover Rota">
-					<IconTrash className={styles.icon} onClick={() => alertDetailContext.actions.removeReference(index)} />
-				</Tooltip>
+				<DeleteButton onClick={() => alertDetailContext.actions.removeReference(index)} />
 				<div>Rota Afetada</div>
 			</div>
 			<div className={styles.body}>

@@ -2,15 +2,21 @@
 
 import type { Route, Stop } from '@carrismetropolitana/api-types/network';
 
+import { createAlert, updateAlert } from '@/actions/alerts';
+import toast from '@/utils/toast';
 import { useForm, UseFormReturnType, zodResolver } from '@mantine/form';
-import { Alert, AlertSchema, Municipality } from '@tmlmobilidade/services/types';
+import { Alert, AlertSchema, CreateAlertSchema, Municipality, UpdateAlertSchema } from '@tmlmobilidade/services/types';
+import { convertObject } from '@tmlmobilidade/services/utils';
 import { createContext, useContext, useEffect, useState } from 'react';
 import useSWR from 'swr';
+
+import { useAlertsListContext } from './AlertList.context';
 
 interface AlertDetailContextState {
 	actions: {
 		addReference: () => void
 		removeReference: (index: number) => void
+		saveAlert: () => void
 	}
 	data: {
 		agencies: unknown[]
@@ -22,6 +28,7 @@ interface AlertDetailContextState {
 	}
 	flags: {
 		isReadOnly: boolean
+		isSaving: boolean
 		loading: boolean
 	}
 }
@@ -40,6 +47,8 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 	//
 	// A. Define state
 	const [loading, setLoading] = useState(false);
+	const [isSaving, setIsSaving] = useState(false);
+	const alertsListContext = useAlertsListContext();
 
 	const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
 	const [stops, setStops] = useState<Stop[]>([]);
@@ -89,6 +98,7 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 
 		form.reset();
 		form.setValues(alert);
+		form.resetDirty();
 
 		setLoading(false);
 	}, [alert]);
@@ -106,12 +116,44 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 		form.setFieldValue('references', currentReferences.filter((_, i) => i !== index));
 	};
 
+	const saveAlert = async () => {
+		try {
+			setIsSaving(true);
+			const formValues = form.getValues();
+
+			if (alert._id === 'NEW_ALERT') {
+				const createAlertDto = convertObject(formValues, CreateAlertSchema);
+				const newAlert = await createAlert(createAlertDto);
+				toast.success({ message: 'Aviso criado com sucesso' });
+				console.log('newAlert', newAlert);
+				alertsListContext.actions.setSelectedId(newAlert.data.insertedId.toString());
+			}
+			else {
+				await updateAlert(alert._id, convertObject(formValues, UpdateAlertSchema));
+				alertsListContext.actions.updateAlert(formValues);
+				toast.success({ message: 'Aviso atualizado com sucesso' });
+			}
+		}
+		catch (error) {
+			console.error('Error saving alert:', error);
+			toast.error({
+				message: alert._id === 'NEW_ALERT'
+					? 'Erro ao criar alerta'
+					: 'Erro ao atualizar alerta',
+			});
+		}
+		finally {
+			setIsSaving(false);
+		}
+	};
+
 	//
 	// E. Define context value
 	const contextValue: AlertDetailContextState = {
 		actions: {
 			addReference,
 			removeReference,
+			saveAlert,
 		},
 		data: {
 			agencies,
@@ -123,6 +165,7 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 		},
 		flags: {
 			isReadOnly: false,
+			isSaving,
 			loading,
 		},
 	};

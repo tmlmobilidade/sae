@@ -2,7 +2,7 @@
 
 import { deleteAlert } from '@/actions/alerts';
 import { Permissions } from '@/components/authentication/Permissions';
-import CloseButton from '@/components/common/CloseButton';
+import AutoSave from '@/components/common/AutoSave/AutoSave';
 import DeleteButton from '@/components/common/DeleteButton';
 import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
 import { useAlertsListContext } from '@/components/context/AlertList.context';
@@ -13,13 +13,13 @@ import { useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 
 export default function AlertHeader() {
-	const { data } = useAlertDetailContext();
-	const { actions } = useAlertsListContext();
+	const alertDetailContext = useAlertDetailContext();
+	const alertsListContext = useAlertsListContext();
 	const router = useRouter();
 
 	async function handleDelete() {
 		try {
-			await deleteAlert(data.id);
+			await deleteAlert(alertDetailContext.data.id);
 			toast.success({ message: 'Alerta apagado com sucesso' });
 			router.refresh();
 		}
@@ -32,8 +32,18 @@ export default function AlertHeader() {
 	return (
 		<Surface className={styles.surface} padding="lg">
 			<div className={styles.left}>
-				<CloseButton onClick={() => actions.setSelected(null)} />
-				{data.id}
+				<AutoSave
+					closeType="close"
+					isDirty={alertDetailContext.data.form.isDirty()}
+					isErrorSaving={null}
+					isErrorValidating={null}
+					isLoading={false}
+					isSaving={alertDetailContext.flags.isSaving}
+					isValid={alertDetailContext.data.form.isValid()}
+					onClose={() => alertsListContext.actions.setSelected(null)}
+					onSave={alertDetailContext.actions.saveAlert}
+				/>
+				{alertDetailContext.data.id}
 			</div>
 			<Permissions action="delete" scope="alerts">
 				<DeleteButton onClick={handleDelete} />

@@ -30,8 +30,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1
       '@tmlmobilidade/services':
-        specifier: ^20241213.1724.38
-        version: 20241213.1724.38
+        specifier: ^20241213.1806.26
+        version: 20241213.1806.26
       fastify:
         specifier: ^5.1.0
         version: 5.1.0
@@ -94,8 +94,8 @@ importers:
         specifier: ^3.24.0
         version: 3.24.0(react@19.0.0)
       '@tmlmobilidade/services':
-        specifier: ^20241213.1724.38
-        version: 20241213.1724.38
+        specifier: ^20241213.1806.26
+        version: 20241213.1806.26
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1744,8 +1744,8 @@ packages:
     resolution: {integrity: sha512-qNis9e90QcdxAGV3wNIeX0Ba2R7ktm0cnqOToKHJfC2kj3fvJwEVLsw63K0/fm7NW8rSZjDSTQRmMnSg8g/wrg==}
     dev: false
 
-  /@tmlmobilidade/services@20241213.1724.38:
-    resolution: {integrity: sha512-c9DHrUqMq1dsTyup7e5CjA6d3QvMMw3v6GmqhtZMYunRKVK7D/5PcXic1AsusyomQcmvXGXk6iUvdzZklW0VxQ==}
+  /@tmlmobilidade/services@20241213.1806.26:
+    resolution: {integrity: sha512-6Tf1LWODVFpERTSwukYIfjASSA/y5d0Vl5tBxw9Yw6WwUrxeEz5PtsRyIna9oSw63fRChmTCKLDMjf+vtlqkqA==}
     dependencies:
       '@dotenv-run/cli': 1.3.6
       '@types/geojson': 7946.0.15
