@@ -2,6 +2,13 @@ name: 'SLA | Build & Test'
 
 on:
   push:
+    paths:
+      - 'sla/**'
+    branches:
+      - production
+  pull_request:
+    paths:
+      - 'sla/**'
     branches:
       - production
 
