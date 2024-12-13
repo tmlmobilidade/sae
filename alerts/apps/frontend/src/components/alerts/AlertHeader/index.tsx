@@ -30,24 +30,26 @@ export default function AlertHeader() {
 	}
 
 	return (
-		<Surface className={styles.surface} padding="lg">
-			<div className={styles.left}>
-				<AutoSave
-					closeType="close"
-					isDirty={alertDetailContext.data.form.isDirty()}
-					isErrorSaving={null}
-					isErrorValidating={null}
-					isLoading={false}
-					isSaving={alertDetailContext.flags.isSaving}
-					isValid={alertDetailContext.data.form.isValid()}
-					onClose={() => alertsListContext.actions.setSelected(null)}
-					onSave={alertDetailContext.actions.saveAlert}
-				/>
-				{alertDetailContext.data.id}
-			</div>
-			<Permissions action="delete" scope="alerts">
-				<DeleteButton onClick={handleDelete} />
-			</Permissions>
-		</Surface>
+		<div className={styles.container}>
+			<Surface className={styles.surface} padding="lg">
+				<div className={styles.left}>
+					<AutoSave
+						closeType="close"
+						isDirty={alertDetailContext.data.form.isDirty()}
+						isErrorSaving={null}
+						isErrorValidating={null}
+						isLoading={false}
+						isSaving={alertDetailContext.flags.isSaving}
+						isValid={alertDetailContext.data.form.isValid()}
+						onClose={() => alertsListContext.actions.setSelected(null)}
+						onSave={alertDetailContext.actions.saveAlert}
+					/>
+					{alertDetailContext.data.id}
+				</div>
+				<Permissions action="delete" scope="alerts">
+					<DeleteButton onClick={handleDelete} />
+				</Permissions>
+			</Surface>
+		</div>
 	);
 }

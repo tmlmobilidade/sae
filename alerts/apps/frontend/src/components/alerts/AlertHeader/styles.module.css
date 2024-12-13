@@ -1,3 +1,11 @@
+.container {
+    background-color: var(--color-system-background-200);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding-bottom: var(--size-spacing-5);
+}
+
 .surface {
     flex-direction: row;
     align-items: center;
