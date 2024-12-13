@@ -1,6 +1,5 @@
 'use client';
 
-import Button from '@/components/common/Button';
 import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
 import { MultiSelect, SegmentedControl, Title } from '@mantine/core';

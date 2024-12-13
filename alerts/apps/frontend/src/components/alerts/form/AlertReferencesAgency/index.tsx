@@ -1,10 +1,10 @@
 'use client';
 
 import Button from '@/components/common/Button';
+import DeleteButton from '@/components/common/DeleteButton';
 import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
-import { Select, Tooltip } from '@mantine/core';
-import { IconTrash } from '@tabler/icons-react';
+import { Select } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 
 import styles from './styles.module.css';
@@ -63,9 +63,7 @@ function AlertReferencesAgencyItem({ index }: { index: number }) {
 	return (
 		<Surface className={styles.itemSurface}>
 			<div className={styles.header}>
-				<Tooltip label="Remover Agência">
-					<IconTrash className={styles.icon} onClick={handleRemoveReference} />
-				</Tooltip>
+				<DeleteButton onClick={handleRemoveReference} />
 				<div>Agência Afetada</div>
 			</div>
 			<div className={styles.body}>

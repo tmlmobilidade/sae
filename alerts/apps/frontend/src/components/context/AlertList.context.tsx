@@ -4,13 +4,16 @@ import { Alert } from '@tmlmobilidade/services/types';
 /* * */
 
 import { useQueryState } from 'nuqs';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 /* * */
 
 interface AlertsListContextState {
 	actions: {
-		setSelected: (alert: Alert) => void
+		addAlert: () => void
+		setSelected: (alert: Alert | null) => void
+		setSelectedId: (id: string) => void
+		updateAlert: (alert: Alert) => void
 		updateFilterByLineId: (value: string) => void
 		updateFilterBySearchQuery: (value: string) => void
 		updateFilterByStopId: (value: string) => void
@@ -26,7 +29,9 @@ interface AlertsListContextState {
 		stop_id: null | string
 	}
 	flags: {
+
 		is_loading: boolean
+
 	}
 }
 
@@ -49,6 +54,7 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 	// A. Setup variables
 
 	const [dataFilteredState, setDataFilteredState] = useState<Alert[]>([]);
+	const [dataRawState, setDataRawState] = useState<Alert[]>([]);
 
 	const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
 	const [selectedAlertId, setSelectedAlertId] = useQueryState('alert_id');
@@ -62,7 +68,14 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 	//
 	// B. Fetch data
 
-	const allAlertsData = useMemo(() => alertsData, [alertsData]);
+	useEffect(() => {
+		if (!alertsData) return;
+		setDataRawState(alertsData);
+
+		// Initial filter application
+		const filteredAlerts = applyFiltersToData(alertsData);
+		setDataFilteredState(filteredAlerts);
+	}, [alertsData]);
 
 	//
 	// C. Transform data
@@ -71,14 +84,6 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 		//
 
 		let filterResult: Alert[] = alertsData || [];
-
-		if (filterByLineIdState) {
-			filterResult = filterResult.filter(alert => alert.line_ids.some(lineId => lineId === filterByLineIdState));
-		}
-
-		if (filterByStopIdState) {
-			filterResult = filterResult.filter(alert => alert.stop_ids.some(stopId => stopId === filterByStopIdState));
-		}
 
 		if (filterBySearchQueryState) {
 			filterResult = filterResult.filter((alert) => {
@@ -97,13 +102,12 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 	};
 
 	useEffect(() => {
-		const filteredAlerts = applyFiltersToData(allAlertsData);
+		const filteredAlerts = applyFiltersToData(dataRawState);
 		setDataFilteredState(filteredAlerts);
-	}, [allAlertsData, filterByLineIdState, filterBySearchQueryState, filterByStopIdState]);
+	}, [dataRawState, filterByLineIdState, filterBySearchQueryState, filterByStopIdState]);
 
 	useEffect(() => {
-		if (!selectedAlertId) setSelectedAlert(dataFilteredState[0] || null);
-		else setSelectedAlert(dataFilteredState.find(alert => alert._id?.toString() === selectedAlertId) || null);
+		setSelectedAlert(dataFilteredState.find(alert => alert._id?.toString() === selectedAlertId) || null);
 	}, [selectedAlertId, dataFilteredState]);
 
 	//
@@ -121,8 +125,45 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 		setFilterBySearchQueryState(value);
 	};
 
-	const setSelected = (alert: Alert) => {
-		setSelectedAlertId(alert._id?.toString() || null);
+	const setSelected = (alert: Alert | null) => {
+		setSelectedAlertId(alert?._id?.toString() || null);
+	};
+
+	const setSelectedId = (id: string) => {
+		setSelectedAlertId(id);
+	};
+
+	const addAlert = () => {
+		const emptyAlert: Alert = {
+			_id: 'NEW_ALERT',
+			active_period_end_date: new Date(),
+			active_period_start_date: new Date(),
+			cause: 'ACCIDENT',
+			created_at: new Date(),
+			description: '',
+			effect: 'ACCESSIBILITY_ISSUE',
+			image_url: undefined,
+			municipality_ids: [],
+			publish_end_date: new Date(),
+			publish_start_date: new Date(),
+			publish_status: 'UNPUBLISHED',
+			reference_type: 'stop',
+			references: [],
+			title: '',
+			updated_at: new Date(),
+		};
+
+		if (dataFilteredState.find(alert => alert._id?.toString() === emptyAlert._id?.toString())) {
+			return;
+		}
+
+		// Add Empty Alert to dataFilteredState
+		setDataFilteredState([...dataFilteredState, emptyAlert as Alert]);
+		setSelected(emptyAlert as Alert);
+	};
+
+	const updateAlert = (alert: Alert) => {
+		setDataRawState(dataRawState.map(a => a._id === alert._id ? alert : a));
 	};
 
 	//
@@ -130,14 +171,17 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 
 	const contextValue: AlertsListContextState = {
 		actions: {
+			addAlert,
 			setSelected,
+			setSelectedId,
+			updateAlert,
 			updateFilterByLineId,
 			updateFilterBySearchQuery,
 			updateFilterByStopId,
 		},
 		data: {
 			filtered: dataFilteredState,
-			raw: allAlertsData || [],
+			raw: dataRawState,
 			selected: selectedAlert,
 		},
 		filters: {

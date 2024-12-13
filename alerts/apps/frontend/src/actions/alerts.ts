@@ -1,27 +1,30 @@
-import { Alert } from '@tmlmobilidade/services/types';
+import { Alert, CreateAlertDto, InsertOneResult, UpdateAlertDto, UpdateResult } from '@tmlmobilidade/services/types';
 
 const API_BASE_URL = process.env.API_ALERTS_URL + '/alerts';
+
+interface HTTPResponse<T> {
+	data: T
+	message: string
+}
 
 /**
  * Helper function to handle HTTP responses.
  * @param response - The fetch response object.
  */
-const handleResponse = async <T>(response: Response): Promise<T> => {
+const handleResponse = async <T>(response: Response): Promise<HTTPResponse<T>> => {
 	if (!response.ok) {
 		const errorData = await response.json();
 		throw new Error(errorData.message || 'An error occurred');
 	}
-
 	return response.json();
 };
 
 /**
  * Fetch all alerts.
  */
-export const getAllAlerts = async (): Promise<Alert[]> => {
+export const getAllAlerts = async (): Promise<HTTPResponse<Alert[]>> => {
 	const response = await fetch(API_BASE_URL, {
 		headers: {
-			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
 			// 'Authorization': `Bearer ${token}`,
 		},
@@ -34,10 +37,9 @@ export const getAllAlerts = async (): Promise<Alert[]> => {
  * Fetch a single alert by ID.
  * @param id - The ID of the alert.
  */
-export const getAlertById = async (id: string): Promise<Alert> => {
+export const getAlertById = async (id: string): Promise<HTTPResponse<Alert>> => {
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		headers: {
-			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
 			// 'Authorization': `Bearer ${token}`,
 		},
@@ -50,7 +52,7 @@ export const getAlertById = async (id: string): Promise<Alert> => {
  * Create a new alert.
  * @param alertData - The data for the new alert.
  */
-export const createAlert = async (alertData: Partial<Alert>): Promise<Alert> => {
+export const createAlert = async (alertData: CreateAlertDto): Promise<HTTPResponse<InsertOneResult<Alert>>> => {
 	const response = await fetch(API_BASE_URL, {
 		body: JSON.stringify(alertData),
 		headers: {
@@ -60,7 +62,7 @@ export const createAlert = async (alertData: Partial<Alert>): Promise<Alert> => 
 		},
 		method: 'POST',
 	});
-	return handleResponse<Alert>(response);
+	return handleResponse<InsertOneResult<Alert>>(response);
 };
 
 /**
@@ -68,7 +70,7 @@ export const createAlert = async (alertData: Partial<Alert>): Promise<Alert> => 
  * @param id - The ID of the alert to update.
  * @param alertData - The updated data for the alert.
  */
-export const updateAlert = async (id: string, alertData: Partial<Alert>): Promise<Alert> => {
+export const updateAlert = async (id: string, alertData: UpdateAlertDto): Promise<HTTPResponse<UpdateResult>> => {
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		body: JSON.stringify(alertData),
 		headers: {
@@ -78,17 +80,16 @@ export const updateAlert = async (id: string, alertData: Partial<Alert>): Promis
 		},
 		method: 'PUT',
 	});
-	return handleResponse<Alert>(response);
+	return handleResponse<UpdateResult>(response);
 };
 
 /**
  * Delete an alert by ID.
  * @param id - The ID of the alert to delete.
  */
-export const deleteAlert = async (id: string): Promise<{ message: string }> => {
+export const deleteAlert = async (id: string): Promise<HTTPResponse<{ message: string }>> => {
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		headers: {
-			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
 			// 'Authorization': `Bearer ${token}`,
 		},

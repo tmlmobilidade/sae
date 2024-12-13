@@ -1,6 +1,4 @@
 /* * */
-
-/* * */
-export function DashboardProviders({ children }) {
-	return children;
+export function DashboardProviders({ children }: { children: React.ReactNode }) {
+	return <>{children}</>;
 }

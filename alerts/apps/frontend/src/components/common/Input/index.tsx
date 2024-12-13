@@ -54,7 +54,7 @@ export default function Component({ error, validation, value, ...props }: InputP
 	return (
 		<TextInput
 			classNames={styles}
-			error={isValid ? '' : error}
+			error={error ? error : isValid ? '' : error}
 			rightSection={props.tooltip && renderTooltip(props.tooltip)}
 			value={value}
 			{...props}

@@ -4,6 +4,7 @@ import { AlertDetailContextProvider } from '@/components/context/AlertDetail.con
 import { useAlertsListContext } from '@/components/context/AlertList.context';
 import React from 'react';
 
+import AlertHeader from '../AlertHeader';
 import AlertCauseEffect from '../form/AlertCauseEffect';
 import AlertInfo from '../form/AlertInfo';
 import AlertReferences from '../form/AlertReferences';
@@ -15,12 +16,13 @@ export default function AlertDetail() {
 	const alertListContext = useAlertsListContext();
 
 	if (!alertListContext.data.selected) {
-		return null;
+		return <div className={styles.noAlert}>Escolha um alerta</div>;
 	}
 
 	return (
 		<AlertDetailContextProvider alert={alertListContext.data.selected}>
 			<div className={styles.container}>
+				<AlertHeader />
 				<AlertInfo />
 				<AlertPublicationSchedule />
 				<AlertActiveSchedule />
