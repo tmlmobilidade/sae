@@ -1,0 +1,55 @@
+/* * */
+/* CONTAINER */
+
+.container {
+	display: grid;
+	gap: 15px;
+	align-items: stretch;
+	justify-content: stretch;
+	padding: 15px;
+	overflow: hidden;
+}
+
+.cell {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.cell:nth-child(1) {
+	grid-area: one;
+}
+
+.cell:nth-child(2) {
+	grid-area: two;
+}
+
+.cell:nth-child(3) {
+	grid-area: three;
+}
+
+.cell:nth-child(4) {
+	grid-area: four;
+}
+
+.cell:nth-child(5) {
+	grid-area: five;
+}
+
+
+/* * */
+/* LAYOUTS */
+
+.primaryWithFourDetails {
+	grid-template:
+		"one one" 1fr
+		"two three" 1fr
+		"four five" 1fr / 1fr 1fr;
+}
+
+.twoDetailsWithPrimary {
+	grid-template:
+		"one two" 1fr
+		"three four" 1fr
+		"five five" 1fr / 1fr 1fr;
+}

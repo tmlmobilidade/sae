@@ -1,0 +1,11 @@
+/* * */
+/* CONTAINER */
+
+.container {
+  display: grid;
+  grid-template-rows: repeat(2, 540px);
+  grid-template-columns: repeat(2, 960px);
+  width: 1920px;
+  height: 1080px;
+  background-color: black;
+}

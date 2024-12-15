@@ -3,16 +3,16 @@
 
 :root {
 	--palette-blue-500: rgb(0, 150, 255);
-	--palette-blue-300: rgb(0, 35, 80);
+	--palette-blue-300: rgb(27, 82, 154);
 	--palette-blue-100: rgb(0, 35, 80);
 
 	--palette-green-500: rgb(0, 175, 60);
-	--palette-green-300: rgb(35, 50, 35);
+	--palette-green-300: rgb(11, 105, 11);
 	--palette-green-100: rgb(35, 50, 35);
 
 	--palette-yellow-500: rgb(0, 91, 170);
-	--palette-yellow-300: rgba(255, 232, 0, 0.05);
-	--palette-yellow-100: rgba(255, 232, 0, 0.05);
+	--palette-yellow-300: rgb(146, 135, 12);
+	--palette-yellow-100: rgb(62, 58, 11);
 
 	--palette-orange-500: rgb(255, 95, 20);
 	--palette-orange-300: rgb(169, 90, 15);

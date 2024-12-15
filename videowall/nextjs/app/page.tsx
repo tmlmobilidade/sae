@@ -1,6 +1,6 @@
 /* * */
 
-import { AllScreens } from '@/components/screens/AllScreens';
+import { AllScreens } from '@/screens/AllScreens';
 
 /* * */
 

@@ -15,8 +15,8 @@ interface Props {
 	size?: 'lg' | 'md' | 'sm'
 	timestamp?: number
 	title?: string
-	valuePrimary?: number
-	valueSecondary?: number
+	valuePrimary?: number | string
+	valueSecondary?: number | string
 }
 
 /* * */
@@ -45,7 +45,7 @@ export function DefaultCard({ icon, isLoading = false, isValidating = false, sen
 
 			<div className={styles.footerWrapper}>
 				<TimestampDisplay timestamp={timestamp} />
-				{(isLoading || isValidating) && <Loader color="white" opacity={0.5} size={18} />}
+				{isValidating && <Loader color="white" opacity={0.5} size={10} />}
 			</div>
 
 		</div>
