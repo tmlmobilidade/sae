@@ -15,7 +15,7 @@ export function AppError() {
 	//
 	// A. Setup variables
 
-	const [reloadInSeconds, setReloadInSeconds] = useState(500000000);
+	const [reloadInSeconds, setReloadInSeconds] = useState(60);
 
 	//
 	// B. Transform data
@@ -32,7 +32,7 @@ export function AppError() {
 	// C. Handle actions
 
 	const handleGoToHomepage = () => {
-		window.location = '/';
+		window.location.replace('/');
 	};
 
 	//

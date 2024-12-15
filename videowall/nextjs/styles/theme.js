@@ -3,9 +3,7 @@
 /* * */
 
 import '@/styles/reset.css';
-import '@/styles/globals.css';
 import '@/styles/variables.css';
-import '@/styles/widths.css';
 
 /* * */
 

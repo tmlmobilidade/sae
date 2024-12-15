@@ -2,7 +2,7 @@
 
 /* * */
 
-import { AppVersion } from '@/components/common/AppVersion';
+import { AppVersion } from '@/components/AppVersion';
 import { theme } from '@/styles/theme';
 import { MantineProvider } from '@mantine/core';
 import { SWRConfig, SWRConfiguration } from 'swr';
@@ -30,7 +30,7 @@ export default function Providers({ children }) {
 			}
 			return res.json();
 		},
-		refreshInterval: 900000, // 15 minutes
+		refreshInterval: 30000, // 30 seconds
 		revalidateOnFocus: true,
 		revalidateOnMount: true,
 	};

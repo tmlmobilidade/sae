@@ -26,7 +26,7 @@ export function TimestampDisplay({ timestamp = 0 }: Props) {
 
 	useEffect(() => {
 		if (!timestamp) return;
-		const interval = setInterval(() => {
+		const updateTimestamp = () => {
 			const now = DateTime.now();
 			const date = DateTime.fromMillis(timestamp);
 			const diff = now.diff(date, ['minutes', 'seconds', 'milliseconds']);
@@ -43,7 +43,9 @@ export function TimestampDisplay({ timestamp = 0 }: Props) {
 			}
 			const diffStr = `Atualizado há ${diffObj.minutes} minutos e ${diffObj.seconds} segundos`;
 			setTimestampLabel(diffStr);
-		}, 1000);
+		};
+		updateTimestamp();
+		const interval = setInterval(updateTimestamp, 1000);
 		return () => clearInterval(interval);
 	}, [timestamp]);
 

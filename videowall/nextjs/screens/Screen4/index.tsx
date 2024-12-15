@@ -2,8 +2,8 @@
 
 /* * */
 
-import { DefaultCard } from '@/components/cards/DefaultCard';
-import { GridSystem } from '@/components/common/GridSystem';
+import { CardDefault } from '@/components/CardDefault';
+import { Grid } from '@/components/Grid';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -27,7 +27,7 @@ export function Screen4() {
 			primary_value: emptyRidesData.data._cm_empty_rides_count,
 			primary_value_string: Intl.NumberFormat('pt-PT').format(emptyRidesData.data._cm_empty_rides_count),
 			secondary_value: emptyRidesData.data._cm_empty_rides_vkm,
-			secondary_value_string: `${Intl.NumberFormat('pt-PT', { maximumSignificantDigits: 1 }).format(emptyRidesData.data._cm_empty_rides_vkm / 1000)} vkm`,
+			secondary_value_string: `${Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 }).format(emptyRidesData.data._cm_empty_rides_vkm / 1000)} vkm`,
 		};
 	}, [emptyRidesData]);
 
@@ -35,10 +35,10 @@ export function Screen4() {
 	// C. Render components
 
 	return (
-		<GridSystem
+		<Grid
 			layout="twoDetailsWithPrimary"
 			cells={[
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={emptyRidesLoading}
 					isValidating={emptyRidesValidating}

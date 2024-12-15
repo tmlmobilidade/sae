@@ -2,8 +2,8 @@
 
 /* * */
 
-import { DefaultCard } from '@/components/cards/DefaultCard';
-import { GridSystem } from '@/components/common/GridSystem';
+import { CardDefault } from '@/components/CardDefault';
+import { Grid } from '@/components/Grid';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -75,10 +75,10 @@ export function Screen3() {
 	// C. Render components
 
 	return (
-		<GridSystem
+		<Grid
 			layout="primaryWithFourDetails"
 			cells={[
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
@@ -88,7 +88,7 @@ export function Screen3() {
 					valuePrimary={delaysCmParsed.primary_value_string}
 					valueSecondary={delaysCmParsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
@@ -98,7 +98,7 @@ export function Screen3() {
 					valuePrimary={delays41Parsed.primary_value_string}
 					valueSecondary={delays41Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
@@ -108,7 +108,7 @@ export function Screen3() {
 					valuePrimary={delays42Parsed.primary_value_string}
 					valueSecondary={delays42Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
@@ -118,7 +118,7 @@ export function Screen3() {
 					valuePrimary={delays43Parsed.primary_value_string}
 					valueSecondary={delays43Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}

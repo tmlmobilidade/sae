@@ -2,8 +2,8 @@
 
 /* * */
 
-import { DefaultCard } from '@/components/cards/DefaultCard';
-import { GridSystem } from '@/components/common/GridSystem';
+import { CardDefault } from '@/components/CardDefault';
+import { Grid } from '@/components/Grid';
 import { IconCreditCardPay } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -75,10 +75,10 @@ export function Screen1() {
 	// C. Render components
 
 	return (
-		<GridSystem
+		<Grid
 			layout="primaryWithFourDetails"
 			cells={[
-				<DefaultCard
+				<CardDefault
 					icon={<IconCreditCardPay />}
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
@@ -88,7 +88,7 @@ export function Screen1() {
 					valuePrimary={validationsCmParsed.primary_value_string}
 					valueSecondary={validationsCmParsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCreditCardPay />}
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
@@ -98,7 +98,7 @@ export function Screen1() {
 					valuePrimary={validations41Parsed.primary_value_string}
 					valueSecondary={validations41Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCreditCardPay />}
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
@@ -108,7 +108,7 @@ export function Screen1() {
 					valuePrimary={validations42Parsed.primary_value_string}
 					valueSecondary={validations42Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCreditCardPay />}
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
@@ -118,7 +118,7 @@ export function Screen1() {
 					valuePrimary={validations43Parsed.primary_value_string}
 					valueSecondary={validations43Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCreditCardPay />}
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}

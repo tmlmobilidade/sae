@@ -2,7 +2,7 @@
 
 /* * */
 
-import { AppError } from '@/components/common/AppError';
+import { AppError } from '@/components/AppError';
 
 /* * */
 

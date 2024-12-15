@@ -2,8 +2,8 @@
 
 /* * */
 
-import { DefaultCard } from '@/components/cards/DefaultCard';
-import { GridSystem } from '@/components/common/GridSystem';
+import { CardDefault } from '@/components/CardDefault';
+import { Grid } from '@/components/Grid';
 import { IconCircleCheckFilled } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -75,10 +75,10 @@ export function Screen2() {
 	// C. Render components
 
 	return (
-		<GridSystem
+		<Grid
 			layout="primaryWithFourDetails"
 			cells={[
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={slaLoading}
 					isValidating={slaValidating}
@@ -88,7 +88,7 @@ export function Screen2() {
 					valuePrimary={slaCmParsed.primary_value_string}
 					valueSecondary={slaCmParsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={slaLoading}
 					isValidating={slaValidating}
@@ -98,7 +98,7 @@ export function Screen2() {
 					valuePrimary={sla41Parsed.primary_value_string}
 					valueSecondary={sla41Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={slaLoading}
 					isValidating={slaValidating}
@@ -108,7 +108,7 @@ export function Screen2() {
 					valuePrimary={sla42Parsed.primary_value_string}
 					valueSecondary={sla42Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={slaLoading}
 					isValidating={slaValidating}
@@ -118,7 +118,7 @@ export function Screen2() {
 					valuePrimary={sla43Parsed.primary_value_string}
 					valueSecondary={sla43Parsed.secondary_value_string}
 				/>,
-				<DefaultCard
+				<CardDefault
 					icon={<IconCircleCheckFilled />}
 					isLoading={slaLoading}
 					isValidating={slaValidating}

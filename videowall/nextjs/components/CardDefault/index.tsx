@@ -1,6 +1,6 @@
 /* * */
 
-import { TimestampDisplay } from '@/components/common/TimestampDisplay';
+import { TimestampDisplay } from '@/components/TimestampDisplay';
 import { Loader, Skeleton } from '@mantine/core';
 
 import styles from './styles.module.css';
@@ -21,7 +21,7 @@ interface Props {
 
 /* * */
 
-export function DefaultCard({ icon, isLoading = false, isValidating = false, sentiment = 'normal', size = 'md', timestamp = 0, title = '', valuePrimary = 1, valueSecondary = 1 }: Props) {
+export function CardDefault({ icon, isLoading = false, isValidating = false, sentiment = 'normal', size = 'md', timestamp = 0, title = '', valuePrimary = 1, valueSecondary = 1 }: Props) {
 	//
 
 	if (isLoading) {

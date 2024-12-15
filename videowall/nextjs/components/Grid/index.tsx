@@ -11,7 +11,7 @@ interface Props {
 
 /* * */
 
-export function GridSystem({ cells, layout }: Props) {
+export function Grid({ cells, layout }: Props) {
 	//
 
 	return (
