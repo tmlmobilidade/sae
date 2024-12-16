@@ -1,13 +1,14 @@
 {
   "name": "@tmlmobilidade/sae-sla-explorer-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+	"build": "next build",
+	"dev": "next dev -p 3004",
+	"lint": "eslint .",
+	"lint:fix": "eslint . --fix",
+	"start": "next start"
+},
   "dependencies": {
     "react": "19.0.0",
     "react-dom": "19.0.0",
