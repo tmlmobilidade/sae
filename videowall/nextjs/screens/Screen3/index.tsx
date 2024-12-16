@@ -83,7 +83,7 @@ export function Screen3() {
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
 					sentiment={delaysCmParsed.secondary_value > 5 ? 'bad' : 'good'}
-					timestamp={delaysData?.timestamp}
+					timestamp={delaysData?.timestamp_resource}
 					title="CM / Viagens atrasadas > 5 min"
 					valuePrimary={delaysCmParsed.primary_value_string}
 					valueSecondary={delaysCmParsed.secondary_value_string}
@@ -93,7 +93,7 @@ export function Screen3() {
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
 					sentiment={delays41Parsed.secondary_value > 5 ? 'bad' : 'good'}
-					timestamp={delaysData?.timestamp}
+					timestamp={delaysData?.timestamp_resource}
 					title="41 / Viagens atrasadas > 5 min"
 					valuePrimary={delays41Parsed.primary_value_string}
 					valueSecondary={delays41Parsed.secondary_value_string}
@@ -103,7 +103,7 @@ export function Screen3() {
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
 					sentiment={delays42Parsed.secondary_value > 5 ? 'bad' : 'good'}
-					timestamp={delaysData?.timestamp}
+					timestamp={delaysData?.timestamp_resource}
 					title="42 / Viagens atrasadas > 5 min"
 					valuePrimary={delays42Parsed.primary_value_string}
 					valueSecondary={delays42Parsed.secondary_value_string}
@@ -113,7 +113,7 @@ export function Screen3() {
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
 					sentiment={delays43Parsed.secondary_value > 5 ? 'bad' : 'good'}
-					timestamp={delaysData?.timestamp}
+					timestamp={delaysData?.timestamp_resource}
 					title="43 / Viagens atrasadas > 5 min"
 					valuePrimary={delays43Parsed.primary_value_string}
 					valueSecondary={delays43Parsed.secondary_value_string}
@@ -123,7 +123,7 @@ export function Screen3() {
 					isLoading={delaysLoading}
 					isValidating={delaysValidating}
 					sentiment={delays44Parsed.secondary_value > 5 ? 'bad' : 'good'}
-					timestamp={delaysData?.timestamp}
+					timestamp={delaysData?.timestamp_resource}
 					title="44 / Viagens atrasadas > 5 min"
 					valuePrimary={delays44Parsed.primary_value_string}
 					valueSecondary={delays44Parsed.secondary_value_string}

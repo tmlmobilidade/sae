@@ -83,7 +83,7 @@ export function Screen1() {
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
 					sentiment={validationsCmParsed.secondary_value < 1 ? 'normal' : 'good'}
-					timestamp={validationsData?.timestamp}
+					timestamp={validationsData?.timestamp_resource_resource}
 					title="CM / Passageiros transportados hoje, até agora"
 					valuePrimary={validationsCmParsed.primary_value_string}
 					valueSecondary={validationsCmParsed.secondary_value_string}
@@ -93,7 +93,7 @@ export function Screen1() {
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
 					sentiment={validations41Parsed.secondary_value < 1 ? 'normal' : 'good'}
-					timestamp={validationsData?.timestamp}
+					timestamp={validationsData?.timestamp_resource_resource}
 					title="41 / Passageiros transportados hoje, até agora"
 					valuePrimary={validations41Parsed.primary_value_string}
 					valueSecondary={validations41Parsed.secondary_value_string}
@@ -103,7 +103,7 @@ export function Screen1() {
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
 					sentiment={validations42Parsed.secondary_value < 1 ? 'normal' : 'good'}
-					timestamp={validationsData?.timestamp}
+					timestamp={validationsData?.timestamp_resource_resource}
 					title="42 / Passageiros transportados hoje, até agora"
 					valuePrimary={validations42Parsed.primary_value_string}
 					valueSecondary={validations42Parsed.secondary_value_string}
@@ -113,7 +113,7 @@ export function Screen1() {
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
 					sentiment={validations43Parsed.secondary_value < 1 ? 'normal' : 'good'}
-					timestamp={validationsData?.timestamp}
+					timestamp={validationsData?.timestamp_resource_resource}
 					title="43 / Passageiros transportados hoje, até agora"
 					valuePrimary={validations43Parsed.primary_value_string}
 					valueSecondary={validations43Parsed.secondary_value_string}
@@ -123,7 +123,7 @@ export function Screen1() {
 					isLoading={validationsLoading}
 					isValidating={validationsValidating}
 					sentiment={validations44Parsed.secondary_value < 1 ? 'normal' : 'good'}
-					timestamp={validationsData?.timestamp}
+					timestamp={validationsData?.timestamp_resource_resource}
 					title="44 / Passageiros transportados hoje, até agora"
 					valuePrimary={validations44Parsed.primary_value_string}
 					valueSecondary={validations44Parsed.secondary_value_string}
