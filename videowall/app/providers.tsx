@@ -2,7 +2,7 @@
 
 /* * */
 
-import { AppVersion } from '@/components/AppVersion';
+import { AppReload } from '@/components/AppReload';
 import { theme } from '@/styles/theme';
 import { MantineProvider } from '@mantine/core';
 import { SWRConfig, SWRConfiguration } from 'swr';
@@ -41,7 +41,7 @@ export default function Providers({ children }) {
 	return (
 		<SWRConfig value={swrSettings}>
 			<MantineProvider defaultColorScheme="auto" theme={theme}>
-				<AppVersion />
+				<AppReload />
 				{children}
 			</MantineProvider>
 		</SWRConfig>

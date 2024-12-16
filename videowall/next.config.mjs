@@ -2,7 +2,8 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  basePath: '/2048-in-react',
+  output: 'export',
   reactStrictMode: true,
 }
 
