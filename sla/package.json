@@ -2,17 +2,19 @@
 	"name": "@tmlmobilidade/sae-sla",
 	"private": true,
 	"scripts": {
-		"bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
 		"build": "turbo build",
 		"dev": "turbo dev",
-		"feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
-		"lint": "turbo lint",
-		"monitor-coordinator": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-coordinator",
-		"monitor-worker": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-worker",
-		"stream": "turbo dev --filter=@tmlmobilidade/sae-sla-stream",
-		"sync-apex-t11": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-apex-t11",
-		"sync-apex-t19": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-apex-t19",
-		"sync-vehicle-events": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-vehicle-events"
+		"dev:bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
+		"dev:explorer-api": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-api",
+		"dev:explorer-frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-frontend",
+		"dev:feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
+		"dev:monitor-coordinator": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-coordinator",
+		"dev:monitor-worker": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-worker",
+		"dev:stream": "turbo dev --filter=@tmlmobilidade/sae-sla-stream",
+		"dev:sync-apex-t11": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-apex-t11",
+		"dev:sync-apex-t19": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-apex-t19",
+		"dev:sync-vehicle-events": "turbo dev --filter=@tmlmobilidade/sae-sla-sync-vehicle-events",
+		"lint": "turbo lint"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241024.1600.5",
