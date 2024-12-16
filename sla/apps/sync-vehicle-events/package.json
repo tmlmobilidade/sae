@@ -21,9 +21,9 @@
 		"@tmlmobilidade/sae-sla-pckg-constants": "*",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
 		"@tmlmobilidade/sae-sla-pckg-sync": "*",
-		"@tmlmobilidade/services": "20241211.1134.16",
+		"@tmlmobilidade/services": "20241215.1140.27",
 		"luxon": "3.5.0",
-		"tunnel-ssh": "5.1.2"
+		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20241024.1600.5",
