@@ -1,9 +1,9 @@
 /* * */
 
-import { next } from '@carrismetropolitana/eslint'
+import { node } from '@carrismetropolitana/eslint'
 
 /* * */
 
 export default [
-  ...next,
+  ...node,
 ]
