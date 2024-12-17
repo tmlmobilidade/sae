@@ -4,8 +4,7 @@ import { ThemeSwitch } from '@/components/layout/ThemeSwitch';
 /* * */
 
 import { ActionIcon, Tooltip } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { IconCircleDotted } from '@tabler/icons-react';
+import { IconCircleDotted, IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 
 /* * */

@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/alerts-api",
+	"name": "@tmlmobilidade/sae-alerts-api",
 	"version": "1.0.0",
 	"description": "",
 	"author": "",
@@ -7,6 +7,8 @@
 	"keywords": [],
 	"main": "index.js",
 	"scripts": {
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
 		"dev": "dotenv-run -- tsx watch src/index.ts",
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix ."
@@ -17,6 +19,7 @@
 		"@tmlmobilidade/services": "^20241213.1806.26",
 		"fastify": "^5.1.0",
 		"pino-pretty": "^13.0.0",
+		"resolve-tspaths": "^0.8.23",
 		"tsx": "^4.19.2",
 		"zustand": "^5.0.2"
 	},

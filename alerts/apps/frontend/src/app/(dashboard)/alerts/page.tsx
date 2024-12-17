@@ -15,7 +15,7 @@ export default async function Page() {
 	const alertsData = await getAllAlerts();
 
 	return (
-		<AlertsListContextProvider alertsData={alertsData}>
+		<AlertsListContextProvider alertsData={alertsData.data}>
 			<PageWrapper>
 				<Grid className={styles.grid} columns="abb" withGap>
 					<AlertList />

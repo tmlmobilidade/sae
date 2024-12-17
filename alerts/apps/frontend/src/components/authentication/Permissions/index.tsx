@@ -1,6 +1,5 @@
 'use client';
 
-import { Permission } from '@tmlmobilidade/services/types';
 import { useEffect, useState } from 'react';
 
 import { getPermissions } from '../actions/authentication';
@@ -21,6 +20,7 @@ export function Permissions({ action, children, scope }: PermissionsProps) {
 				setHasPermission(true);
 			}
 			catch (error) {
+				console.error(error);
 				setHasPermission(false);
 			}
 		}

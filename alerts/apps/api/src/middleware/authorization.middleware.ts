@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@tmlmobilidade/services/lib';
-import { AuthProvider } from '@tmlmobilidade/services/providers';
+import { authProvider } from '@tmlmobilidade/services/providers';
 import { Permission } from '@tmlmobilidade/services/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -28,7 +28,7 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 			);
 		}
 		try {
-			const permissions = await AuthProvider.getPermissions<T>(
+			const permissions = await authProvider.getPermissions<T>(
 				token,
 				scope,
 				action,
