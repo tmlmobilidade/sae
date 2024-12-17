@@ -20,7 +20,7 @@
 		"@mantine/modals": "7.15.1",
 		"@mantine/notifications": "7.15.1",
 		"@tabler/icons-react": "3.26.0",
-		"@tmlmobilidade/services": "20241215.1140.27",
+		"@tmlmobilidade/services": "20241217.1608.4",
 		"@turf/turf": "7.1.0",
 		"luxon": "3.5.0",
 		"mantine-datatable": "7.14.5",
