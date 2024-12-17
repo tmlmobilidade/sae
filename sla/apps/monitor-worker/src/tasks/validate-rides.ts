@@ -140,7 +140,7 @@ export async function validateRides() {
 				const hashedTripPromise = hashedTrips.findById(rideData.hashed_trip_id);
 				const apexT11Promise = apexT11.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
 				const apexT19Promise = apexT19.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
-				const vehicleEventsPromise = vehicleEvents.findMany({ operational_date: rideData.operational_date, trip_id: rideData.trip_id });
+				const vehicleEventsPromise = vehicleEvents.findMany({ extra_trip_id: null, operational_date: rideData.operational_date, trip_id: rideData.trip_id });
 
 				const [hashedShapeData, hashedTripData, apexT11Data, apexT19Data, vehicleEventsData] = await Promise.all([hashedShapePromise, hashedTripPromise, apexT11Promise, apexT19Promise, vehicleEventsPromise]);
 
