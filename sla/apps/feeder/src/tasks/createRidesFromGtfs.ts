@@ -578,14 +578,14 @@ export async function createRidesFromGtfs() {
 							//
 							const endTimeScheduledString = hashedTripData.path[hashedTripData.path.length - 1].arrival_time;
 							const endTimeScheduledDate = convertOperationTimeStringAndOperationalDateToJsDate(endTimeScheduledString, calendarDate);
-							const runtimeScheduledMillis = DateTime.fromJSDate(endTimeScheduledDate).toMillis() - DateTime.fromJSDate(startTimeScheduledDate).toMillis();
-							const runtimeScheduled = Math.trunc(runtimeScheduledMillis / 1000 / 60);
 							//
 							const rideData: CreateRideDto = {
 								_id: `${planData._id}-${routeData.agency_id}-${calendarDate}-${tripData.trip_id}`,
 								agency_id: routeData.agency_id,
 								analysis: [],
 								driver_ids: [],
+								end_time_observed: null,
+								end_time_scheduled: endTimeScheduledDate,
 								extension_observed: null,
 								extension_scheduled: extensionScheduledInMeters,
 								hashed_shape_id: hashedShapeData._id,
@@ -597,8 +597,8 @@ export async function createRidesFromGtfs() {
 								pattern_id: tripData.pattern_id,
 								plan_id: planData._id,
 								route_id: routeData.route_id,
-								runtime_observed: null,
-								runtime_scheduled: runtimeScheduled,
+								seen_first_at: null,
+								seen_last_at: null,
 								start_time_observed: null,
 								start_time_scheduled: startTimeScheduledDate,
 								status: 'pending',

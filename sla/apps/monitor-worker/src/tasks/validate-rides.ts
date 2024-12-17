@@ -1,10 +1,14 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysis-data.type.js';
+import { detectEndEvent } from '@/utils/detect-end-event.util.js';
+import { detectStartEvent } from '@/utils/detect-start-event.util.js';
+import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
+import { sortByDate } from '@/utils/sort-by-date.util.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
-import { RideAnalysis, ValidationStatus } from '@tmlmobilidade/services/types';
+import { ALLOWED_VALIDATION_STATUSES, RideAnalysis } from '@tmlmobilidade/services/types';
 
 /* * */
 
@@ -122,7 +126,9 @@ export async function validateRides() {
 				const rideAnalysisTimer = new TIMETRACKER();
 
 				//
-				// Await all promises
+				// For this ride, fetch all the necessary data for analysis.
+				// This includes static data, like hashed shapes and trips, and dynamic data,
+				// like vehicle events and apex transactions. Request all data in parallel.
 
 				const fetchAnalysisDataTimer = new TIMETRACKER();
 
@@ -157,40 +163,53 @@ export async function validateRides() {
 				// const fetchVehicleEventsDataTime = fetchVehicleEventsDataTimer.get();
 
 				//
-				// Prepare the data for analysis
+				// Prepare the necessary objects from all the data fetched.
+				// These will be used by the analyzers to perform their checks
+				// as well as to augment the current Ride with additional information.
 
-				const analysisData: AnalysisData = {
-					apex_t11: apexT11Data,
-					apex_t19: apexT19Data,
+				const sortedApexT11 = sortByDate(apexT11Data, 'created_at', 'asc');
+				const sortedApexT19 = sortByDate(apexT19Data, 'created_at', 'asc');
+				const sortedVehicleEvents = sortByDate(vehicleEventsData, 'created_at', 'asc');
+
+				//
+				// Augment the current Ride with additional information retrieved
+				// from the fetched dynamic data. Some of this data will be used by the analyzers.
+
+				const detectedStartEvent = detectStartEvent(hashedTripData.path, sortedVehicleEvents);
+				const detectedEndEvent = detectEndEvent(hashedTripData.path, sortedVehicleEvents);
+
+				rideData.start_time_observed = detectedStartEvent?.created_at || null;
+				rideData.end_time_observed = detectedEndEvent?.created_at || null;
+
+				rideData.extension_observed = getObservedExtension(detectedStartEvent, detectedEndEvent);
+
+				rideData.seen_first_at = sortedVehicleEvents[0].created_at;
+				rideData.seen_last_at = sortedVehicleEvents[sortedVehicleEvents.length - 1].created_at;
+
+				rideData.driver_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.driver_id)));
+				rideData.vehicle_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.vehicle_id)));
+				rideData.validations_count = sortedApexT11.filter(item => ALLOWED_VALIDATION_STATUSES.includes(item.validation_status)).length;
+
+				//
+				// Run the analyzers and count how many passed,
+				// how many failed and how many errored.
+
+				const analysisResult = runAnalyzers({
+					apex_t11: sortedApexT11,
+					apex_t19: sortedApexT19,
 					hashed_shape: hashedShapeData,
 					hashed_trip: hashedTripData,
 					ride: rideData,
-					vehicle_events: vehicleEventsData,
-				};
-
-				//
-				// Run the analyzers
-
-				const analysisResult = runAnalyzers(analysisData);
-
-				//
-				// Count how many analysis passed and how many failed
+					vehicle_events: sortedVehicleEvents,
+				});
 
 				const passAnalysisCount = analysisResult.filter(item => item.grade === 'pass');
-
 				const failAnalysisCount = analysisResult.filter(item => item.grade === 'fail');
-
 				const errorAnalysisCount = analysisResult.filter(item => item.grade === 'error').map(item => item._id);
 
 				//
-				// Populate Ride with additional data
-
-				rideData.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id)));
-				rideData.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id)));
-				rideData.validations_count = apexT11Data.filter(item => item.validation_status === ValidationStatus._0_ContractValid || item.validation_status === ValidationStatus._4_CardInWhiteList || item.validation_status === ValidationStatus._5_ProfileInWhiteList || item.validation_status === ValidationStatus._6_Interchange).length;
-
-				//
-				// Update trip with analysis result and status
+				// Update the current Ride with the analysis result
+				// and 'complete' status to indicate that the ride has been processed.
 
 				await rides.updateById(rideData._id, { analysis: analysisResult, status: 'complete' });
 
