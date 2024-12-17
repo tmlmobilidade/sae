@@ -19,7 +19,7 @@ export function parseVehicleEvent(pcgiDoc: any): VehicleEvent {
 		_id: pcgiDoc._id,
 		agency_id: pcgiDoc.content.entity[0].vehicle.agencyId,
 		created_at: vehicleTimestamp.toJSDate(),
-		driver_id: pcgiDoc.content.entity[0].vehicle.driverId,
+		driver_id: pcgiDoc.content.entity[0].vehicle.vehicle.driverId,
 		event_id: pcgiDoc.content.entity[0]._id,
 		extra_trip_id: pcgiDoc.content.entity[0].vehicle.trip?.extraTripId,
 		latitude: pcgiDoc.content.entity[0].vehicle.position.latitude,
