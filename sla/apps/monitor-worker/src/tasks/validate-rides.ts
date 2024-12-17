@@ -186,15 +186,15 @@ export async function validateRides() {
 				rideData.seen_first_at = sortedVehicleEvents[0].created_at;
 				rideData.seen_last_at = sortedVehicleEvents[sortedVehicleEvents.length - 1].created_at;
 
-				rideData.driver_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.driver_id)));
-				rideData.vehicle_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.vehicle_id)));
+				rideData.driver_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.driver_id).filter(Boolean)));
+				rideData.vehicle_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.vehicle_id).filter(Boolean)));
 				rideData.validations_count = sortedApexT11.filter(item => ALLOWED_VALIDATION_STATUSES.includes(item.validation_status)).length;
 
 				//
 				// Run the analyzers and count how many passed,
 				// how many failed and how many errored.
 
-				const analysisResult = runAnalyzers({
+				rideData.analysis = runAnalyzers({
 					apex_t11: sortedApexT11,
 					apex_t19: sortedApexT19,
 					hashed_shape: hashedShapeData,
@@ -203,15 +203,29 @@ export async function validateRides() {
 					vehicle_events: sortedVehicleEvents,
 				});
 
-				const passAnalysisCount = analysisResult.filter(item => item.grade === 'pass');
-				const failAnalysisCount = analysisResult.filter(item => item.grade === 'fail');
-				const errorAnalysisCount = analysisResult.filter(item => item.grade === 'error').map(item => item._id);
+				const passAnalysisCount = rideData.analysis.filter(item => item.grade === 'pass');
+				const failAnalysisCount = rideData.analysis.filter(item => item.grade === 'fail');
+				const errorAnalysisCount = rideData.analysis.filter(item => item.grade === 'error').map(item => item._id);
 
 				//
 				// Update the current Ride with the analysis result
 				// and 'complete' status to indicate that the ride has been processed.
 
-				await rides.updateById(rideData._id, { analysis: analysisResult, status: 'complete' });
+				await rides.updateById(
+					rideData._id,
+					{
+						analysis: rideData.analysis,
+						driver_ids: rideData.driver_ids,
+						end_time_observed: rideData.end_time_observed,
+						extension_observed: rideData.extension_observed,
+						seen_first_at: rideData.seen_first_at,
+						seen_last_at: rideData.seen_last_at,
+						start_time_observed: rideData.start_time_observed,
+						status: 'complete',
+						validations_count: rideData.validations_count,
+						vehicle_ids: rideData.vehicle_ids,
+					},
+				);
 
 				LOGGER.success(`[${rideIndex + 1}/${ridesBatch.length}] ${rideData._id} (fetch: ${fetchAnalysisDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
 				// LOGGER.success(`[${counter}] | ${rideData._id} (fetchHashedShape: ${fetchHashedShapeDataTime} | fetchHashedTrip: ${fetchHashedTripDataTime} | fetchApexT11: ${fetchApexT11DataTime} | fetchApexT19: ${fetchApexT19DataTime} | fetchVehicleEvents: ${fetchVehicleEventsDataTime} | total: ${rideAnalysisTimer.get()}) | PASS: ${passAnalysisCount.length} | FAIL: ${failAnalysisCount.length} | ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]`);
