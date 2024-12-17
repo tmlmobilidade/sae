@@ -1,14 +1,18 @@
 /* * */
 
-import { AnalysisData } from '@/types/analysis-data.type.js';
-import { detectEndEvent } from '@/utils/detect-end-event.util.js';
-import { detectStartEvent } from '@/utils/detect-start-event.util.js';
-import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
-import { sortByDate } from '@/utils/sort-by-date.util.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
 import { ALLOWED_VALIDATION_STATUSES, RideAnalysis } from '@tmlmobilidade/services/types';
+
+/* * */
+
+import { AnalysisData } from '@/types/analysis-data.type.js';
+import { detectEndEvent } from '@/utils/detect-end-event.util.js';
+import { detectFirstEvent } from '@/utils/detect-first-event.util.js';
+import { detectLastEvent } from '@/utils/detect-last-event.util.js';
+import { detectStartEvent } from '@/utils/detect-start-event.util.js';
+import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
 
 /* * */
 
@@ -163,44 +167,38 @@ export async function validateRides() {
 				// const fetchVehicleEventsDataTime = fetchVehicleEventsDataTimer.get();
 
 				//
-				// Prepare the necessary objects from all the data fetched.
-				// These will be used by the analyzers to perform their checks
-				// as well as to augment the current Ride with additional information.
-
-				const sortedApexT11 = sortByDate(apexT11Data, 'created_at', 'asc');
-				const sortedApexT19 = sortByDate(apexT19Data, 'created_at', 'asc');
-				const sortedVehicleEvents = sortByDate(vehicleEventsData, 'created_at', 'asc');
-
-				//
 				// Augment the current Ride with additional information retrieved
 				// from the fetched dynamic data. Some of this data will be used by the analyzers.
 
-				const detectedStartEvent = detectStartEvent(hashedTripData.path, sortedVehicleEvents);
-				const detectedEndEvent = detectEndEvent(hashedTripData.path, sortedVehicleEvents);
+				const detectedStartEvent = detectStartEvent(hashedTripData.path, vehicleEventsData);
+				const detectedEndEvent = detectEndEvent(hashedTripData.path, vehicleEventsData);
 
 				rideData.start_time_observed = detectedStartEvent?.created_at || null;
 				rideData.end_time_observed = detectedEndEvent?.created_at || null;
 
 				rideData.extension_observed = getObservedExtension(detectedStartEvent, detectedEndEvent);
 
-				rideData.seen_first_at = sortedVehicleEvents[0]?.created_at || null;
-				rideData.seen_last_at = sortedVehicleEvents[sortedVehicleEvents.length - 1]?.created_at || null;
+				const detectedFirstEvent = detectFirstEvent(vehicleEventsData);
+				const detectedLastEvent = detectLastEvent(vehicleEventsData);
 
-				rideData.driver_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.driver_id).filter(Boolean)));
-				rideData.vehicle_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.vehicle_id).filter(Boolean)));
-				rideData.validations_count = sortedApexT11.filter(item => ALLOWED_VALIDATION_STATUSES.includes(item.validation_status)).length;
+				rideData.seen_first_at = detectedFirstEvent?.created_at || null;
+				rideData.seen_last_at = detectedLastEvent?.created_at || null;
+
+				rideData.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id).filter(Boolean)));
+				rideData.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id).filter(Boolean)));
+				rideData.validations_count = apexT11Data.filter(item => ALLOWED_VALIDATION_STATUSES.includes(item.validation_status)).length;
 
 				//
 				// Run the analyzers and count how many passed,
 				// how many failed and how many errored.
 
 				rideData.analysis = runAnalyzers({
-					apex_t11: sortedApexT11,
-					apex_t19: sortedApexT19,
+					apex_t11: apexT11Data,
+					apex_t19: apexT19Data,
 					hashed_shape: hashedShapeData,
 					hashed_trip: hashedTripData,
 					ride: rideData,
-					vehicle_events: sortedVehicleEvents,
+					vehicle_events: vehicleEventsData,
 				});
 
 				const passAnalysisCount = rideData.analysis.filter(item => item.grade === 'pass');
