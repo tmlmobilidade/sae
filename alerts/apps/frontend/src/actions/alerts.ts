@@ -2,8 +2,9 @@
 
 import { getSessionCookie } from '@/components/authentication/actions/authentication';
 import { Alert, CreateAlertDto, InsertOneResult, UpdateAlertDto, UpdateResult } from '@tmlmobilidade/services/types';
+import { Routes } from '@/utils/routes';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_ALERTS_URL + '/alerts';
+const API_BASE_URL = Routes.API.ALERTS + '/alerts';
 
 /**
  * Fetch all alerts.

@@ -1,6 +1,7 @@
 import { Municipality } from '@tmlmobilidade/services/types';
+import { Routes } from '@/utils/routes';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_CMET_API_URL + '/locations/municipalities';
+const API_BASE_URL = Routes.API.CMET + '/locations/municipalities';
 
 /**
  * Helper function to handle HTTP responses.

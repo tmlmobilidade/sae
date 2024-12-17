@@ -11,6 +11,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import useSWR from 'swr';
 
 import { useAlertsListContext } from './AlertList.context';
+import { Routes } from '@/utils/routes';
 
 interface AlertDetailContextState {
 	actions: {
@@ -55,10 +56,9 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 	const [agencies] = useState<unknown[]>(['Carris Metropolitana']);
 	const [routes, setRoutes] = useState<Route[]>([]);
 
-	const { data: municipalitiesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/locations/municipalities');
-	const { data: stopsData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/stops');
-	// const { data: linesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/lines');
-	const { data: routesData } = useSWR(process.env.NEXT_PUBLIC_CMET_API_URL + '/routes');
+	const { data: municipalitiesData } = useSWR(Routes.API.CMET + '/locations/municipalities');
+	const { data: stopsData } = useSWR(Routes.API.CMET + '/stops');
+	const { data: routesData } = useSWR(Routes.API.CMET + '/routes');
 
 	//
 	// B. Define form

@@ -1,6 +1,7 @@
 'use client';
 
 import { getAllAlerts } from '@/actions/alerts';
+import { Routes } from '@/utils/routes';
 import { Alert } from '@tmlmobilidade/services/types';
 /* * */
 
@@ -68,7 +69,7 @@ export const AlertsListContextProvider = ({ children }: { children: React.ReactN
 
 	const [isLoading] = useState(false);
 
-	const { data: alertsData } = useSWR(process.env.NEXT_PUBLIC_API_ALERTS_URL + '/alerts', getAllAlerts);
+	const { data: alertsData } = useSWR(Routes.API.ALERTS + '/alerts', getAllAlerts);
 
 	//
 	// B. Fetch data
