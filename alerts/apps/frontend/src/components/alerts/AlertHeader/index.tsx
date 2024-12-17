@@ -8,20 +8,18 @@ import { useAlertDetailContext } from '@/context/AlertDetail.context';
 import { useAlertsListContext } from '@/context/AlertList.context';
 import { Surface } from '@/components/layout/Surface';
 import toast from '@/utils/toast';
-import { useRouter } from 'next/navigation';
 
 import styles from './styles.module.css';
 
 export default function AlertHeader() {
 	const alertDetailContext = useAlertDetailContext();
 	const alertsListContext = useAlertsListContext();
-	const router = useRouter();
 
 	async function handleDelete() {
 		try {
 			await deleteAlert(alertDetailContext.data.id);
 			toast.success({ message: 'Alerta apagado com sucesso' });
-			router.refresh();
+			alertsListContext.actions.refresh();
 		}
 		catch (error) {
 			console.error(error);

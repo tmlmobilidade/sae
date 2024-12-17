@@ -1,15 +1,18 @@
 'use client';
 
+import { getAllAlerts } from '@/actions/alerts';
 import { Alert } from '@tmlmobilidade/services/types';
 /* * */
 
 import { useQueryState } from 'nuqs';
 import { createContext, useContext, useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 /* * */
 
 interface AlertsListContextState {
 	actions: {
+		refresh: () => void
 		addAlert: () => void
 		setSelected: (alert: Alert | null) => void
 		setSelectedId: (id: string) => void
@@ -49,7 +52,7 @@ export function useAlertsListContext() {
 
 /* * */
 
-export const AlertsListContextProvider = ({ alertsData, children }: { alertsData: Alert[], children: React.ReactNode }) => {
+export const AlertsListContextProvider = ({ children }: { children: React.ReactNode }) => {
 	//
 	// A. Setup variables
 
@@ -64,6 +67,8 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 	const [filterByStopIdState, setFilterByStopIdState] = useQueryState('stop_id');
 
 	const [isLoading] = useState(false);
+
+	const { data: alertsData } = useSWR(process.env.NEXT_PUBLIC_API_ALERTS_URL + '/alerts', getAllAlerts);
 
 	//
 	// B. Fetch data
@@ -166,11 +171,17 @@ export const AlertsListContextProvider = ({ alertsData, children }: { alertsData
 		setDataRawState(dataRawState.map(a => a._id === alert._id ? alert : a));
 	};
 
+	const refresh = async () => {
+		const alertsData = await getAllAlerts();
+		setDataRawState(alertsData);
+	};
+
 	//
 	// E. Define context value
 
 	const contextValue: AlertsListContextState = {
 		actions: {
+			refresh,
 			addAlert,
 			setSelected,
 			setSelectedId,

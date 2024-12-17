@@ -52,6 +52,13 @@ export async function getSession() {
 	}
 };
 
+export const getSessionCookie = async () => {
+	const cookieStore = await cookies();
+	const cookie = cookieStore.get('session');
+
+	return cookie;
+};
+
 export const getPermissions = async (scope: string, action: string) => {
 	const cookieStore = await cookies();
 	const cookie = cookieStore.get('session');

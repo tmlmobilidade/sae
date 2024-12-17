@@ -42,7 +42,7 @@ export class AlertsController {
 			  | Permission<Alert>
 			  | undefined;
 
-			reply.send(await alerts.all());
+			reply.send(await alerts.findMany({}, undefined, undefined, { created_at: -1 }));
 		}
 		catch (error) {
 			reply
