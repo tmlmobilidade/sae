@@ -4,8 +4,12 @@
 	"scripts": {
 		"build": "turbo build",
 		"dev": "turbo dev",
-		"docker:local:down": "docker compose -f docker/local/compose.local.yaml down",
-		"docker:local:up": "docker compose -f docker/local/compose.local.yaml up -d --build",
+		"docker:dev:down": "docker compose -f docker/compose.dev.yml down",
+		"docker:dev:restart": "docker compose -f docker/compose.dev.yml restart",
+		"docker:dev:up": "docker compose -f docker/compose.dev.yml up -d --build",
+		"docker:local:down": "docker compose -f docker/compose.local.yml down",
+		"docker:local:restart": "docker compose -f docker/compose.local.yml restart",
+		"docker:local:up": "docker compose -f docker/compose.local.yml up -d --build",
 		"lint": "turbo lint"
 	},
 	"devDependencies": {

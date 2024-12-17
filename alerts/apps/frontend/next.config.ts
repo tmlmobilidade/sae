@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
 	output: 'standalone',
 	env: {
 		API_ALERTS_URL: process.env.API_ALERTS_URL,
+		NEXT_PUBLIC_CMET_API_URL: process.env.NEXT_PUBLIC_CMET_API_URL,
 	},
 };
 
