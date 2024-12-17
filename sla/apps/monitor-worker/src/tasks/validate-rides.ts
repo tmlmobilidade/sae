@@ -183,7 +183,7 @@ export async function validateRides() {
 
 				rideData.extension_observed = getObservedExtension(detectedStartEvent, detectedEndEvent);
 
-				rideData.seen_first_at = sortedVehicleEvents[0].created_at || null;
+				rideData.seen_first_at = sortedVehicleEvents[0]?.created_at || null;
 				rideData.seen_last_at = sortedVehicleEvents[sortedVehicleEvents.length - 1]?.created_at || null;
 
 				rideData.driver_ids = Array.from(new Set(sortedVehicleEvents.map(item => item.driver_id).filter(Boolean)));
