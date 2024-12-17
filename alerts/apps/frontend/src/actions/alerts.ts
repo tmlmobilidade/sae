@@ -1,68 +1,60 @@
+'use client';
+
+import { getSessionCookie } from '@/components/authentication/actions/authentication';
 import { Alert, CreateAlertDto, InsertOneResult, UpdateAlertDto, UpdateResult } from '@tmlmobilidade/services/types';
 
-const API_BASE_URL = process.env.API_ALERTS_URL + '/alerts';
-
-interface HTTPResponse<T> {
-	data: T
-	message: string
-}
-
-/**
- * Helper function to handle HTTP responses.
- * @param response - The fetch response object.
- */
-const handleResponse = async <T>(response: Response): Promise<HTTPResponse<T>> => {
-	if (!response.ok) {
-		const errorData = await response.json();
-		throw new Error(errorData.message || 'An error occurred');
-	}
-	return response.json();
-};
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_ALERTS_URL + '/alerts';
 
 /**
  * Fetch all alerts.
  */
-export const getAllAlerts = async (): Promise<HTTPResponse<Alert[]>> => {
+export const getAllAlerts = async (): Promise<Alert[]> => {
+	const cookie = await getSessionCookie();
+
 	const response = await fetch(API_BASE_URL, {
 		headers: {
 			// Include authentication tokens if necessary
-			// 'Authorization': `Bearer ${token}`,
+			'Authorization': `Bearer ${cookie?.value}`,
 		},
 		method: 'GET',
 	});
-	return handleResponse<Alert[]>(response);
+	return response.json();
 };
 
 /**
  * Fetch a single alert by ID.
  * @param id - The ID of the alert.
  */
-export const getAlertById = async (id: string): Promise<HTTPResponse<Alert>> => {
+export const getAlertById = async (id: string): Promise<Alert> => {
+	const cookie = await getSessionCookie();
+
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		headers: {
 			// Include authentication tokens if necessary
-			// 'Authorization': `Bearer ${token}`,
+			'Authorization': `Bearer ${cookie?.value}`,
 		},
 		method: 'GET',
 	});
-	return handleResponse<Alert>(response);
+	return response.json();
 };
 
 /**
  * Create a new alert.
  * @param alertData - The data for the new alert.
  */
-export const createAlert = async (alertData: CreateAlertDto): Promise<HTTPResponse<InsertOneResult<Alert>>> => {
+export const createAlert = async (alertData: CreateAlertDto): Promise<InsertOneResult<Alert>> => {
+	const cookie = await getSessionCookie();
+
 	const response = await fetch(API_BASE_URL, {
 		body: JSON.stringify(alertData),
 		headers: {
 			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
-			// 'Authorization': `Bearer ${token}`,
+			'Authorization': `Bearer ${cookie?.value}`,
 		},
 		method: 'POST',
 	});
-	return handleResponse<InsertOneResult<Alert>>(response);
+	return response.json();
 };
 
 /**
@@ -70,30 +62,34 @@ export const createAlert = async (alertData: CreateAlertDto): Promise<HTTPRespon
  * @param id - The ID of the alert to update.
  * @param alertData - The updated data for the alert.
  */
-export const updateAlert = async (id: string, alertData: UpdateAlertDto): Promise<HTTPResponse<UpdateResult>> => {
+export const updateAlert = async (id: string, alertData: UpdateAlertDto): Promise<UpdateResult> => {
+	const cookie = await getSessionCookie();
+
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		body: JSON.stringify(alertData),
 		headers: {
 			'Content-Type': 'application/json',
 			// Include authentication tokens if necessary
-			// 'Authorization': `Bearer ${token}`,
+			'Authorization': `Bearer ${cookie?.value}`,
 		},
 		method: 'PUT',
 	});
-	return handleResponse<UpdateResult>(response);
+	return response.json();
 };
 
 /**
  * Delete an alert by ID.
  * @param id - The ID of the alert to delete.
  */
-export const deleteAlert = async (id: string): Promise<HTTPResponse<{ message: string }>> => {
+export const deleteAlert = async (id: string): Promise<{ message: string }> => {
+	const cookie = await getSessionCookie();
+
 	const response = await fetch(`${API_BASE_URL}/${id}`, {
 		headers: {
 			// Include authentication tokens if necessary
-			// 'Authorization': `Bearer ${token}`,
+			'Authorization': `Bearer ${cookie?.value}`,
 		},
 		method: 'DELETE',
 	});
-	return handleResponse<{ message: string }>(response);
+	return response.json();
 };

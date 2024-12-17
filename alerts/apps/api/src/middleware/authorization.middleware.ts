@@ -17,9 +17,10 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 		request: FastifyRequest,
 		reply: FastifyReply,
 	): Promise<void> => {
-		return;
 
 		const token = request.headers.authorization?.split(' ')[1];
+
+		console.log(request.headers);
 
 		if (!token) {
 			throw new HttpException(

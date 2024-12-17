@@ -1,6 +1,5 @@
 /* * */
 
-import { getAllAlerts } from '@/actions/alerts';
 import AlertDetail from '@/components/alerts/AlertDetail';
 import AlertList from '@/components/alerts/AlertList';
 import { AlertsListContextProvider } from '@/context/AlertList.context';
@@ -11,11 +10,9 @@ import styles from './styles.module.css';
 
 /* * */
 
-export default async function Page() {
-	const alertsData = await getAllAlerts();
-
+export default function Page() {
 	return (
-		<AlertsListContextProvider alertsData={alertsData.data}>
+		<AlertsListContextProvider>
 			<PageWrapper>
 				<Grid className={styles.grid} columns="abb" withGap>
 					<AlertList />

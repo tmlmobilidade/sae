@@ -126,6 +126,8 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert: Alert, 
 				const newAlert = await createAlert(createAlertDto);
 				toast.success({ message: 'Aviso criado com sucesso' });
 				console.log('newAlert', newAlert);
+				alertsListContext.actions.refresh();
+				//@ts-ignore TODO: Fix this
 				alertsListContext.actions.setSelectedId(newAlert.data.insertedId.toString());
 			}
 			else {
