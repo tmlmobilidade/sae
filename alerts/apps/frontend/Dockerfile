@@ -1,67 +1,70 @@
-# # # # # # # # #
+# # #
+# DEFINE THE BASE IMAGE
 
-FROM node:22.6-alpine3.20 AS base
+FROM node:alpine AS base
 
-# # # # # # # # #
+ENV SCOPE=alerts
+ENV PROJECT=frontend
+
+# setup pnpm
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+RUN pnpm install -g turbo@^2
 
 
-# PHASE 1
-# Install dependencies only when needed.
+# # #
+# PRUNER STAGE
 
-FROM base AS dependencies
+FROM base AS pruner
 
 RUN apk add --no-cache libc6-compat
+RUN apk update
 
 WORKDIR /app
 
 COPY package.json ./
+COPY . .
 
-RUN npm install --omit-dev --legacy-peer-deps \
-    && npm cache clean --force
-
-
-# # # # # # # # #
+RUN turbo prune --scope=@tmlmobilidade/sae-${SCOPE}-${PROJECT} --docker
 
 
-# PHASE 2
-# Rebuild the source code only when needed.
+# # #
+# BUILDER STAGE
 
 FROM base AS builder
 
+RUN apk add --no-cache libc6-compat
+RUN apk update
+
 WORKDIR /app
 
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY . .
+# First install the dependencies (as they change less often)
+COPY --from=pruner /app/out/json/ .
+COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=pruner /app/out/pnpm-workspace.yaml ./pnpm-workspace.yaml
+RUN pnpm install
 
-RUN npx @helperkits/bumper bump
-
-RUN npm run build
-
-
-# # # # # # # # #
+# Build the project
+COPY --from=pruner /app/out/full/ .
+RUN turbo run build --filter=@tmlmobilidade/sae-${SCOPE}-${PROJECT}
 
 
-# PHASE 3
-# Setup the final Docker image with only the required files.
+# # #
+# RUNNER STAGE
 
 FROM base AS runner
 
 WORKDIR /app
 
-ENV NODE_ENV=production
-
+# Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-
-COPY --from=builder /app/public ./public
-
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
 USER nextjs
 
-EXPOSE 3000
-ENV PORT=3000
-ENV HOSTNAME=0.0.0.0
+COPY --from=builder --chown=nextjs:nodejs /app/apps/$PROJECT/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/$PROJECT/.next/static ./apps/$PROJECT/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/$PROJECT/public ./apps/$PROJECT/public
 
-CMD ["node", "server.js"]
+CMD node apps/$PROJECT/server.js
