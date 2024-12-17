@@ -73,7 +73,7 @@ export function geoDelayedStartFirstOutAnalyzer(analysisData: AnalysisData): Exp
 		// For each point, check if they are inside the geofence or not
 		// Record the last event that is inside the geofence
 
-		let atLeastOneEventWasFoundInsideGeofense = false;
+		let atLeastOneEventWasFoundInsideGeofence = false;
 
 		let lastEventInsideGeofenceIndex = -1;
 
@@ -84,10 +84,10 @@ export function geoDelayedStartFirstOutAnalyzer(analysisData: AnalysisData): Exp
 			const vehicleEventIsInsideGefense = turf.booleanPointInPolygon(vehicleEventTurfPoint, firstStopTurfBuffer);
 			//
 			if (vehicleEventIsInsideGefense) {
-				atLeastOneEventWasFoundInsideGeofense = true;
+				atLeastOneEventWasFoundInsideGeofence = true;
 			}
 			//
-			if (atLeastOneEventWasFoundInsideGeofense && !vehicleEventIsInsideGefense) {
+			if (atLeastOneEventWasFoundInsideGeofence && !vehicleEventIsInsideGefense) {
 				lastEventInsideGeofenceIndex = vehicleEventIndex;
 				break;
 			}

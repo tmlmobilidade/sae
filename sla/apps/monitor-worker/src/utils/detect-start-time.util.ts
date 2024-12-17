@@ -1,6 +1,6 @@
 /* * */
 
-import { getGeofence } from '@/utils/get-geofence.util.js';
+import { createGeofence } from '@/utils/create-geofence.util.js';
 import { isInsideGeofence } from '@/utils/is-inside-geofence.util.js';
 import { sortByDate } from '@/utils/sort-by-date.util.js';
 import { HashedTripWaypoint, VehicleEvent } from '@tmlmobilidade/services/types';
@@ -22,9 +22,9 @@ export function detectStartTime(hashedTripWaypointsData: HashedTripWaypoint[], v
 		throw new Error('Hashed Trip must have at least three stops.');
 	}
 
-	const firstStopGeofense = getGeofence(Number(sortedWaypoints[0].stop_lon), Number(sortedWaypoints[0].stop_lat));
-	const secondStopGeofense = getGeofence(Number(sortedWaypoints[1].stop_lon), Number(sortedWaypoints[1].stop_lat));
-	const thirdStopGeofense = getGeofence(Number(sortedWaypoints[2].stop_lon), Number(sortedWaypoints[2].stop_lat));
+	const firstStopGeofence = createGeofence(Number(sortedWaypoints[0].stop_lon), Number(sortedWaypoints[0].stop_lat));
+	const secondStopGeofence = createGeofence(Number(sortedWaypoints[1].stop_lon), Number(sortedWaypoints[1].stop_lat));
+	const thirdStopGeofence = createGeofence(Number(sortedWaypoints[2].stop_lon), Number(sortedWaypoints[2].stop_lat));
 
 	//
 	// Sort vehicle events by vehicle timestamp
@@ -41,13 +41,13 @@ export function detectStartTime(hashedTripWaypointsData: HashedTripWaypoint[], v
 	let firstEventInsideThirdStop: null | VehicleEvent = null;
 
 	for (const vehicleEventData of sortedVehicleEvents) {
-		const vehicleEventIsInsideGeofenseOfSecondStop = isInsideGeofence(vehicleEventData.longitude, vehicleEventData.latitude, secondStopGeofense);
-		if (vehicleEventIsInsideGeofenseOfSecondStop) {
+		const vehicleEventIsInsideGeofenceOfSecondStop = isInsideGeofence(vehicleEventData.longitude, vehicleEventData.latitude, secondStopGeofence);
+		if (vehicleEventIsInsideGeofenceOfSecondStop) {
 			firstEventInsideSecondStop = vehicleEventData;
 			break;
 		}
-		const vehicleEventIsInsideGeofenseOfThirdStop = isInsideGeofence(vehicleEventData.longitude, vehicleEventData.latitude, thirdStopGeofense);
-		if (vehicleEventIsInsideGeofenseOfThirdStop) {
+		const vehicleEventIsInsideGeofenceOfThirdStop = isInsideGeofence(vehicleEventData.longitude, vehicleEventData.latitude, thirdStopGeofence);
+		if (vehicleEventIsInsideGeofenceOfThirdStop) {
 			firstEventInsideThirdStop = vehicleEventData;
 			break;
 		}
@@ -64,8 +64,8 @@ export function detectStartTime(hashedTripWaypointsData: HashedTripWaypoint[], v
 	let lastEventInsideFirstStop: null | VehicleEvent = null;
 
 	for (const vehicleEventData of sortedVehicleEvents) {
-		const vehicleEventIsInsideGeofenseOfFirstStop = isInsideGeofence(vehicleEventData.longitude, vehicleEventData.latitude, firstStopGeofense);
-		if (vehicleEventIsInsideGeofenseOfFirstStop) {
+		const vehicleEventIsInsideGeofenceOfFirstStop = isInsideGeofence(vehicleEventData.longitude, vehicleEventData.latitude, firstStopGeofence);
+		if (vehicleEventIsInsideGeofenceOfFirstStop) {
 			// Check if the event is before the first event found inside the geofence of the second stop
 			if (firstEventInsideSecondStop !== null) {
 				if (vehicleEventData.created_at < firstEventInsideSecondStop.created_at) {
