@@ -1,6 +1,6 @@
 'use client';
 
-import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
+import { useAlertDetailContext } from '@/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
 import { MultiSelect, SegmentedControl, Title } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';

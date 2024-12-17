@@ -1,4 +1,4 @@
-import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
+import { useAlertDetailContext } from '@/context/AlertDetail.context';
 import { Grid } from '@/components/layout/Grid';
 import { Surface } from '@/components/layout/Surface';
 import { Select, Title } from '@mantine/core';

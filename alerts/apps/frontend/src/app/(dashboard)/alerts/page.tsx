@@ -3,7 +3,7 @@
 import { getAllAlerts } from '@/actions/alerts';
 import AlertDetail from '@/components/alerts/AlertDetail';
 import AlertList from '@/components/alerts/AlertList';
-import { AlertsListContextProvider } from '@/components/context/AlertList.context';
+import { AlertsListContextProvider } from '@/context/AlertList.context';
 import { Grid } from '@/components/layout/Grid';
 import { PageWrapper } from '@/components/layout/PageWrapper';
 

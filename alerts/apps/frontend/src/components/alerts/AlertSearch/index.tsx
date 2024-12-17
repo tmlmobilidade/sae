@@ -4,7 +4,7 @@
 
 import CreateButton from '@/components/common/CreateButton';
 import Input from '@/components/common/Input';
-import { useAlertsListContext } from '@/components/context/AlertList.context';
+import { useAlertsListContext } from '@/context/AlertList.context';
 
 import styles from './styles.module.css';
 

@@ -2,7 +2,7 @@
 
 import Button from '@/components/common/Button';
 import DeleteButton from '@/components/common/DeleteButton';
-import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
+import { useAlertDetailContext } from '@/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
 import { MultiSelect, Select } from '@mantine/core';
 import { useEffect, useMemo } from 'react';

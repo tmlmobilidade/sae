@@ -1,6 +1,6 @@
 'use client';
 
-import { useAlertsListContext } from '@/components/context/AlertList.context';
+import { useAlertsListContext } from '@/context/AlertList.context';
 import { Surface } from '@/components/layout/Surface';
 
 import AlertListCard from '../AlertListCard';

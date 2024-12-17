@@ -1,7 +1,7 @@
 'use client';
 
-import { AlertDetailContextProvider } from '@/components/context/AlertDetail.context';
-import { useAlertsListContext } from '@/components/context/AlertList.context';
+import { AlertDetailContextProvider } from '@/context/AlertDetail.context';
+import { useAlertsListContext } from '@/context/AlertList.context';
 import React from 'react';
 
 import AlertHeader from '../AlertHeader';

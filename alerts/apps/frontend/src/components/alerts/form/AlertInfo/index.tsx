@@ -1,5 +1,5 @@
 import Input from '@/components/common/Input';
-import { useAlertDetailContext } from '@/components/context/AlertDetail.context';
+import { useAlertDetailContext } from '@/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
 import { Title } from '@mantine/core';
 

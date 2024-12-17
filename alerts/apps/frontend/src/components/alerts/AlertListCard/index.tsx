@@ -1,6 +1,6 @@
 'use client';
 
-import { useAlertsListContext } from '@/components/context/AlertList.context';
+import { useAlertsListContext } from '@/context/AlertList.context';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Alert } from '@tmlmobilidade/services/types';
 
