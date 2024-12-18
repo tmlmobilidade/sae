@@ -650,7 +650,17 @@ export async function createRidesFromGtfs() {
 				// Remove rides that were previously parsed from this plan but which should not be included anymore.
 				// Delete all rides for this plan_id that fall outside the current Plan valid range.
 
-				const deleteStaleRidesResult = await rides.deleteMany({ _id: { $nin: Array.from(savedRideIds) }, plan_id: planData._id });
+				const existingRidesStream = ridesCollection.find({ plan_id: planData._id }).stream();
+				const staleRideIds = new Set<string>();
+
+				for await (const existingRide of existingRidesStream) {
+					// Skip if this ride was saved in the current run
+					if (savedRideIds.has(existingRide._id)) continue;
+					// Mark it as stale otherwise
+					staleRideIds.add(existingRide._id);
+				}
+
+				const deleteStaleRidesResult = await rides.deleteMany({ _id: { $in: Array.from(staleRideIds) } });
 				LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plan ${planData._id}`);
 
 				// const staleRidesTimer = new TIMETRACKER();
