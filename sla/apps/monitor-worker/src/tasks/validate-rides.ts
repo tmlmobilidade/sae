@@ -16,20 +16,13 @@ import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
 
 /* * */
 
-import { atMostTwoDriverIdsAnalyzer } from '@/analyzers/atMostTwoDriverIds.analyzer.js';
-import { atMostTwoVehicleIdsAnalyzer } from '@/analyzers/atMostTwoVehicleIds.analyzer.js';
+import { atMostTwoDriverIdsAnalyzer } from '@/analyzers/at-most-two-driver-ids.analyzer.js';
+import { atMostTwoVehicleIdsAnalyzer } from '@/analyzers/at-most-two-vehicle-ids.analyzer.js';
 import { excessiveVehicleEventDelayAnalyzer } from '@/analyzers/excessiveVehicleEventDelay.analyzer.js';
-import { geoDelayedStartFirstOutAnalyzer } from '@/analyzers/geoDelayedStartFirstOut.analyzer.js';
-import { geoDelayedStartLastInAnalyzer } from '@/analyzers/geoDelayedStartLastIn.analyzer.js';
-import { geoEarlyStartFirstOutAnalyzer } from '@/analyzers/geoEarlyStartFirstOut.analyzer.js';
-import { geoEarlyStartLastInAnalyzer } from '@/analyzers/geoEarlyStartLastIn.analyzer.js';
 import { highestVehicleEventDelayAnalyzer } from '@/analyzers/highestVehicleEventDelay.analyzer.js';
 import { lessThanTenVehicleEventsAnalyzer } from '@/analyzers/lessThanTenVehicleEvents.analyzer.js';
 import { matchingLocationTransactionsAnalyzer } from '@/analyzers/matchingLocationTransactions.analyzer.js';
-import { simpleDelayedStartFirstForNextStopAnalyzer } from '@/analyzers/simpleDelayedStartFirstForNextStop.analyzer.js';
-import { simpleDelayedStartLastForFirstStopAnalyzer } from '@/analyzers/simpleDelayedStartLastForFirstStop.analyzer.js';
-import { simpleEarlyStartFirstForNextStopAnalyzer } from '@/analyzers/simpleEarlyStartFirstForNextStop.analyzer.js';
-import { simpleEarlyStartLastForFirstStopAnalyzer } from '@/analyzers/simpleEarlyStartLastForFirstStop.analyzer.js';
+import { ontimeStartAnalyzer } from '@/analyzers/ontime-start.analyzer.js';
 import { simpleOneValidationTransactionAnalyzer } from '@/analyzers/simpleOneValidationTransaction.analyzer.js';
 import { simpleOneVehicleEventOrValidationTransactionAnalyzer } from '@/analyzers/simpleOneVehicleEventOrValidationTransaction.analyzer.js';
 import { simpleThreeVehicleEventsAnalyzer } from '@/analyzers/simpleThreeVehicleEvents.analyzer.js';
@@ -59,23 +52,7 @@ function runAnalyzers(analysisData: AnalysisData): RideAnalysis[] {
 
 		//
 
-		geoDelayedStartLastInAnalyzer(analysisData),
-
-		geoDelayedStartFirstOutAnalyzer(analysisData),
-
-		geoEarlyStartLastInAnalyzer(analysisData),
-
-		geoEarlyStartFirstOutAnalyzer(analysisData),
-
-		//
-
-		simpleDelayedStartLastForFirstStopAnalyzer(analysisData),
-
-		simpleDelayedStartFirstForNextStopAnalyzer(analysisData),
-
-		simpleEarlyStartFirstForNextStopAnalyzer(analysisData),
-
-		simpleEarlyStartLastForFirstStopAnalyzer(analysisData),
+		ontimeStartAnalyzer(analysisData),
 
 		//
 

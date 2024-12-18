@@ -22,19 +22,7 @@ export function atMostTwoVehicleIdsAnalyzer(analysisData: AnalysisData): Explici
 	try {
 		//
 
-		// 1.
-		// Initiate a Set
-
-		const foundVehicleIds = new Set();
-
-		// 2.
-		// Test for how many driver IDs are found
-
-		for (const event of analysisData.vehicle_events) {
-			foundVehicleIds.add(event.vehicle_id);
-		}
-
-		if (foundVehicleIds.size === 0) {
+		if (analysisData.ride.vehicle_ids.length === 0) {
 			return {
 				_id: 'AT_MOST_TWO_VEHICLE_IDS',
 				grade: 'fail',
@@ -45,24 +33,24 @@ export function atMostTwoVehicleIdsAnalyzer(analysisData: AnalysisData): Explici
 			};
 		}
 
-		if (foundVehicleIds.size > 2) {
+		if (analysisData.ride.vehicle_ids.length > 2) {
 			return {
 				_id: 'AT_MOST_TWO_VEHICLE_IDS',
 				grade: 'fail',
-				message: `Found ${foundVehicleIds.size} Vehicle IDs for this trip.`,
+				message: `Found ${analysisData.ride.vehicle_ids.length} Vehicle IDs for this trip.`,
 				reason: 'FOUND_MORE_THAN_2_VEHICLE_IDS',
 				unit: 'UNIQUE_VEHICLE_IDS',
-				value: foundVehicleIds.size,
+				value: analysisData.ride.vehicle_ids.length,
 			};
 		}
 
 		return {
 			_id: 'AT_MOST_TWO_VEHICLE_IDS',
 			grade: 'pass',
-			message: `Found ${foundVehicleIds.size} Vehicle IDs for this trip.`,
+			message: `Found ${analysisData.ride.vehicle_ids.length} Vehicle IDs for this trip.`,
 			reason: 'FOUND_ONE_OR_TWO_VEHICLE_IDS',
 			unit: 'UNIQUE_VEHICLE_IDS',
-			value: foundVehicleIds.size,
+			value: analysisData.ride.vehicle_ids.length,
 		};
 
 		//

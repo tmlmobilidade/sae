@@ -22,19 +22,7 @@ export function atMostTwoDriverIdsAnalyzer(analysisData: AnalysisData): Explicit
 	try {
 		//
 
-		// 1.
-		// Initiate a Set
-
-		const foundDriverIds = new Set();
-
-		// 2.
-		// Test for how many driver IDs are found
-
-		for (const event of analysisData.vehicle_events) {
-			foundDriverIds.add(event.driver_id);
-		}
-
-		if (foundDriverIds.size === 0) {
+		if (analysisData.ride.driver_ids.length === 0) {
 			return {
 				_id: 'AT_MOST_TWO_DRIVER_IDS',
 				grade: 'fail',
@@ -45,24 +33,24 @@ export function atMostTwoDriverIdsAnalyzer(analysisData: AnalysisData): Explicit
 			};
 		}
 
-		if (foundDriverIds.size > 2) {
+		if (analysisData.ride.driver_ids.length > 2) {
 			return {
 				_id: 'AT_MOST_TWO_DRIVER_IDS',
 				grade: 'fail',
-				message: `Found ${foundDriverIds.size} Driver IDs for this trip.`,
+				message: `Found ${analysisData.ride.driver_ids.length} Driver IDs for this trip.`,
 				reason: 'FOUND_MORE_THAN_2_DRIVER_IDS',
 				unit: 'UNIQUE_DRIVER_IDS',
-				value: foundDriverIds.size,
+				value: analysisData.ride.driver_ids.length,
 			};
 		}
 
 		return {
 			_id: 'AT_MOST_TWO_DRIVER_IDS',
 			grade: 'pass',
-			message: `Found ${foundDriverIds.size} Driver IDs for this trip.`,
+			message: `Found ${analysisData.ride.driver_ids.length} Driver IDs for this trip.`,
 			reason: 'FOUND_ONE_OR_TWO_DRIVER_IDS',
 			unit: 'UNIQUE_DRIVER_IDS',
-			value: foundDriverIds.size,
+			value: analysisData.ride.driver_ids.length,
 		};
 
 		//
