@@ -649,6 +649,7 @@ export async function createRidesFromGtfs() {
 				//
 				// Remove rides that were previously parsed from this plan but which should not be included anymore.
 				// Delete all rides for this plan_id that fall outside the current Plan valid range.
+				// Because the amount of rides can be very large, we need to divide the deleteMany operation in chunks.
 
 				const existingRidesStream = ridesCollection.find({ plan_id: planData._id }).stream();
 				const staleRideIds = new Set<string>();
@@ -660,8 +661,20 @@ export async function createRidesFromGtfs() {
 					staleRideIds.add(existingRide._id);
 				}
 
-				const deleteStaleRidesResult = await rides.deleteMany({ _id: { $in: Array.from(staleRideIds) } });
-				LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plan ${planData._id}`);
+				const staleRideIdsArray = Array.from(staleRideIds);
+				const staleRideIdsChunks = [];
+				const chunkSize = 5000;
+
+				for (let i = 0; i < staleRideIdsArray.length; i += chunkSize) {
+					staleRideIdsChunks.push(staleRideIdsArray.slice(i, i + chunkSize));
+				}
+
+				for (const staleRideIdsChunk of staleRideIdsChunks) {
+					const deleteStaleRidesResult = await rides.deleteMany({ _id: { $in: staleRideIdsChunk } });
+					LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides for plan ${planData._id}`);
+				}
+
+				LOGGER.info(`Completed delete stale rides for plan ${planData._id}`);
 
 				// const staleRidesTimer = new TIMETRACKER();
 
