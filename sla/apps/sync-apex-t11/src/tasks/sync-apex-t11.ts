@@ -57,7 +57,7 @@ export async function syncApexT11() {
 			const chunkTimer = new TIMETRACKER();
 
 			LOGGER.spacer(1);
-			LOGGER.divider(`[${chunkIndex + 1}/${allTimestampChunks.length}] - ${chunkData.end.toFormat(CHUNK_LOG_DATE_FORMAT)} › ${chunkData.start.toFormat(CHUNK_LOG_DATE_FORMAT)}`, 100);
+			LOGGER.divider(`[${allTimestampChunks.length - chunkIndex}/${allTimestampChunks.length}] - ${chunkData.end.toFormat(CHUNK_LOG_DATE_FORMAT)} › ${chunkData.start.toFormat(CHUNK_LOG_DATE_FORMAT)}`, 100);
 
 			//
 			// Setup the callback function that will be called on the DB Writer flush operation
