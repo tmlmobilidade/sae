@@ -28,16 +28,9 @@ export async function createRidesFromGtfs() {
 		const hashedTripsCollection = await hashedTrips.getCollection();
 		const ridesCollection = await rides.getCollection();
 
-		const hashedShapesDbWritter = new MongoDbWriter('hashed_shapes', hashedShapesCollection);
-		const hashedTripsDbWritter = new MongoDbWriter('hashed_trips', hashedTripsCollection);
-		const ridesDbWritter = new MongoDbWriter('rides', ridesCollection);
-
-		//
-		// Setup variables to keep track of created IDs
-
-		const parsedPlanIds = new Set<string>();
-		const savedHashedTripIds = new Set<string>();
-		const savedHashedShapeIds = new Set<string>();
+		const hashedShapesDbWritter = new MongoDbWriter('hashed_shapes', hashedShapesCollection, { batch_size: 1000 });
+		const hashedTripsDbWritter = new MongoDbWriter('hashed_trips', hashedTripsCollection, { batch_size: 1000 });
+		const ridesDbWritter = new MongoDbWriter('rides', ridesCollection, { batch_size: 10000 });
 
 		//
 		// Get all Plans and iterate on each one
@@ -534,8 +527,6 @@ export async function createRidesFromGtfs() {
 							await hashedTripsDbWritter.write(hashedTripData, { filter: { _id: hashedTripData._id }, upsert: true });
 						}
 
-						savedHashedTripIds.add(hashedTripData._id);
-
 						//
 						// Setup the hashed shape data
 
@@ -558,8 +549,6 @@ export async function createRidesFromGtfs() {
 						if (!currentHashedShapeAlreadyExists) {
 							await hashedShapesDbWritter.write(hashedShapeData, { filter: { _id: hashedShapeData._id }, upsert: true });
 						}
-
-						savedHashedShapeIds.add(hashedShapeData._id);
 
 						//
 						// Create a trip analysis document for each day this trip is scheduled to run
@@ -676,30 +665,17 @@ export async function createRidesFromGtfs() {
 
 				LOGGER.info(`Completed delete stale rides for plan ${planData._id}`);
 
-				// const staleRidesTimer = new TIMETRACKER();
-
-				// const planRideIds = await ridesCollection.aggregate([{ plan_id: planData._id }, { $group: { _id: '$_id' } }]).toArray();
-				// const planRideIdsUnique = new Set(planRideIds.map(doc => doc._id));
-
-				// savedRideIds.forEach(rideId => planRideIdsUnique.delete(rideId));
-
-				// if (planRideIdsUnique.size > 0) {
-				// 	const deleteUnusedRidesResult = await hashedTrips.deleteMany({ _id: { $in: Array.from(planRideIdsUnique) } });
-				// 	LOGGER.info(`Deleted ${deleteUnusedRidesResult.deletedCount} unused Rides.`);
-				// }
-
-				// LOGGER.info(`Found ${planRideIdsUnique.size} unused Rides. (${staleRidesTimer.get()})`);
-
 				//
 				// Mark this plan as 'success' to indicate that it was processed successfully
 
 				await plans.updateById(planData._id, { feeder_status: 'success' });
 
-				parsedPlanIds.add(planData._id);
-
 				//
 
 				LOGGER.success(`Finished processing plan ${planData._id}`);
+
+				LOGGER.info(`Restarting feeder to fetch latest plan data...`);
+				return;
 
 				//
 			}
