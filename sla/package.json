@@ -8,6 +8,7 @@
 		"dev:explorer-api": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-api",
 		"dev:explorer-frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-frontend",
 		"dev:feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
+		"dev:monitor": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-coordinator --filter=@tmlmobilidade/sae-sla-monitor-worker",
 		"dev:monitor-coordinator": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-coordinator",
 		"dev:monitor-worker": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-worker",
 		"dev:stream": "turbo dev --filter=@tmlmobilidade/sae-sla-stream",
