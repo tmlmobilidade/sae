@@ -13,7 +13,7 @@
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "^20241024.1600.5",
+		"@carrismetropolitana/eslint": "20250103.1610.23",
 		"prettier": "^3.2.5",
 		"turbo": "^2.3.0",
 		"typescript": "5.5.4"

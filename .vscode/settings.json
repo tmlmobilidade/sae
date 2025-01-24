@@ -1,34 +1,27 @@
 {
 
-	"editor.tabSize": 4,
+	"[css]": {
+		"editor.codeActionsOnSave": {
+			"source.fixAll.stylelint": "explicit"
+		},
+		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+	},
 
-	"files.eol": "\n",
-
-	"eslint.workingDirectories": ["auto"],
-
-	// Disable the default formatter, use eslint instead
-	"prettier.enable": false,
-	"editor.formatOnSave": false,
-	"eslint.format.enable": true,
-	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
-
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
 	// Disable the default CSS formatter, use stylelint instead
 	"css.validate": false,
-	"less.validate": false,
-	"scss.validate": false,
 
 	// Auto fix
 	"editor.codeActionsOnSave": {
-		"source.fixAll.eslint": "explicit",
+		"source.fixAll.eslint": "explicit"
 	},
+	"editor.defaultFormatter": "dbaeumer.vscode-eslint",
+	"editor.formatOnSave": false,
+	"editor.tabSize": 4,
 
-	"[css]": {
-		"editor.defaultFormatter": "stylelint.vscode-stylelint",
-		"editor.codeActionsOnSave": {
-			"source.fixAll.stylelint": "explicit"
-		}
-	},
-
+	"eslint.format.enable": true,
 	// Enable eslint for all supported languages
 	"eslint.validate": [
 		"javascript",
@@ -44,17 +37,22 @@
 		"toml",
 		"astro"
 	],
+	"eslint.workingDirectories": ["auto"],
+	"files.eol": "\n",
 
+	"less.validate": false,
+	// Disable the default formatter, use eslint instead
+	"prettier.enable": false,
+	"scss.validate": false,
+
+	"svg.preview.background": "custom",
+	"typescript.tsdk": "./frontend/node_modules/typescript/lib",
 	"workbench.editor.customLabels.enabled": true,
 
 	"workbench.editor.customLabels.patterns": {
+		"**/components/**/*.css": "${dirname} (${extname})",
 		"**/components/**/*.js": "${dirname} (${extname})",
-		"**/components/**/*.ts": "${dirname} (${extname})",
-		"**/components/**/*.tsx": "${dirname} (${extname})",
-		"**/components/**/*.css": "${dirname} (${extname})"
-	},
-
-	"typescript.tsdk": "./frontend/node_modules/typescript/lib",
-	"svg.preview.background": "custom"
+		"**/components/**/*.tsx": "${dirname} (${extname})"
+	}
 
 }

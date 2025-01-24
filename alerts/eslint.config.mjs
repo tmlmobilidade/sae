@@ -1,16 +1,17 @@
 /* * */
 
-import { node } from '@carrismetropolitana/eslint'
+import { next } from '@carrismetropolitana/eslint'
 
 /* * */
 
 export default [
-  ...node,
+  ...next,
   {
-    rules: {
-      '@stylistic/indent': 'warn',
-      '@stylistic/jsx-indent-props': 'off',
-      '@typescript-eslint/no-extraneous-class': 'off',
-    },
+    ignores: [
+      '.next/',
+      'public/',
+      'assets/',
+      'public/',
+    ],
   },
 ]
