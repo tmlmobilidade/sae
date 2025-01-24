@@ -1,45 +1,26 @@
 {
 	"name": "@tmlmobilidade/sae-alerts-frontend",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"dev": "next dev --turbopack",
 		"build": "next build",
-		"dev": "next dev -p 3002",
-		"lint": "next lint",
-		"lint:fix": "next lint --fix",
-		"start": "next start"
+		"start": "next start",
+		"lint": "next lint"
 	},
 	"dependencies": {
-		"@carrismetropolitana/api-types": "^20241212.1002.20",
-		"@mantine/core": "^7.15.1",
-		"@mantine/dates": "^7.15.1",
-		"@mantine/form": "^7.15.1",
-		"@mantine/hooks": "^7.15.1",
-		"@mantine/modals": "^7.15.1",
-		"@mantine/notifications": "^7.15.1",
-		"@tabler/core": "1.0.0-beta21",
-		"@tabler/icons-react": "^3.24.0",
-		"@tmlmobilidade/services": "^20241213.1806.26",
-		"class-variance-authority": "^0.7.1",
+		"@tabler/icons-react": "^3.29.0",
+		"@tmlmobilidade/core-types": "^20250122.1750.21",
+		"@tmlmobilidade/ui": "^20250124.1545.56",
 		"clsx": "^2.1.1",
-		"luxon": "^3.5.0",
-		"next": "15.1.0",
-		"nuqs": "^2.2.3",
-		"react": "19.0.0",
-		"react-dom": "19.0.0",
-		"server-only": "^0.0.1",
-		"swr": "^2.2.5",
-		"ukkonen": "^2.1.0"
+		"next": "15.1.6",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
 	},
 	"devDependencies": {
-		"@tmlmobilidade/tsconfig": "^20241031.1431.3",
-		"@types/luxon": "^3.4.2",
-		"@types/node": "^22.10.2",
-		"@types/react": "^19.0.1",
-		"@types/react-dom": "^19.0.2",
-		"postcss": "^8.4.49",
-		"postcss-preset-mantine": "^1.17.0",
-		"postcss-simple-vars": "^7.0.1",
-		"typescript": "^5.7.2"
+		"@types/node": "^20",
+		"@types/react": "^19",
+		"@types/react-dom": "^19",
+		"typescript": "^5"
 	}
 }
