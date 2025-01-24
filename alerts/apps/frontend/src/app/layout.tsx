@@ -1,7 +1,7 @@
 /* * */
 
 import '@tmlmobilidade/ui/dist/styles.css';
-import './reset.css';
+// import './reset.css';
 import { ThemeProvider } from '@tmlmobilidade/ui';
 import { Inter } from 'next/font/google';
 import { cookies as nextCookies } from 'next/headers';
