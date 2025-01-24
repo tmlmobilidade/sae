@@ -75,9 +75,12 @@ importers:
       '@tmlmobilidade/core-types':
         specifier: ^20250122.1750.21
         version: 20250122.1750.21
+      '@tmlmobilidade/tsconfig':
+        specifier: ^20241031.1431.3
+        version: 20241031.1431.3
       '@tmlmobilidade/ui':
-        specifier: ^20250124.1744.33
-        version: 20250124.1744.33(@types/react@19.0.1)(dayjs@1.11.13)(react-dom@19.0.0)(react@19.0.0)(rollup@4.32.0)
+        specifier: ^20250124.1755.29
+        version: 20250124.1755.29(@types/react@19.0.1)(dayjs@1.11.13)(react-dom@19.0.0)(react@19.0.0)(rollup@4.32.0)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -2986,10 +2989,9 @@ packages:
 
   /@tmlmobilidade/tsconfig@20241031.1431.3:
     resolution: {integrity: sha512-Ifo+LEFQZnW2MKXGY6zRBpgZplUdpmItzv2sxu+mhD9TU+4a7K0zQrF3cd3gHCcr/78QcDD8VBwFHNp0HBt2uQ==}
-    dev: true
 
-  /@tmlmobilidade/ui@20250124.1744.33(@types/react@19.0.1)(dayjs@1.11.13)(react-dom@19.0.0)(react@19.0.0)(rollup@4.32.0):
-    resolution: {integrity: sha512-ickO/db9T2J5GKVjBHnGbMvEFfRwbdXCKYQ9C91XsyyAwzfD6Vqon0T+LQeoR46dUpL+gbtkT8Nt26bh9NOfvw==}
+  /@tmlmobilidade/ui@20250124.1755.29(@types/react@19.0.1)(dayjs@1.11.13)(react-dom@19.0.0)(react@19.0.0)(rollup@4.32.0):
+    resolution: {integrity: sha512-BByI/IZwex+QF7ukOJeFat3Qc3XF3c7g7vip8KUq1fZqnBRYPlQAWCl1kT0aqC9/gK2mASmoV72zOi8V/wPf6A==}
     peerDependencies:
       react: ^18.x || ^19.x
       react-dom: ^18.x || ^19.x
