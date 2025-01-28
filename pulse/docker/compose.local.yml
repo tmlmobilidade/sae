@@ -1,0 +1,30 @@
+# # #
+
+name: sae-pulse-local
+
+volumes:
+  pulsedb:
+
+services:
+
+  # # # # # # # # # # # # # # # # # # # # #
+  # # # # # # # # # # # # # # # # # # # # #
+
+  pulsedb:
+    image: redis:alpine
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: '1m'
+        max-file: '1'
+    volumes:
+      - pulsedb:/data
+    environment:
+      - REDIS_ARGS=--save 5 1
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
