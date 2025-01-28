@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/sae-sla-frontend",
+	"name": "@tmlmobilidade/sae-sla-explorer-frontend",
 	"version": "1.0.0",
 	"private": true,
 	"scripts": {
@@ -21,6 +21,7 @@
 		"@mantine/notifications": "7.16.2",
 		"@tabler/icons-react": "3.29.0",
 		"@tmlmobilidade/services": "20241219.1640.28",
+		"@tmlmobilidade/ui": "20250128.1229.58",
 		"@turf/turf": "7.2.0",
 		"luxon": "3.5.0",
 		"mantine-datatable": "7.15.1",
