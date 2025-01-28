@@ -1,8 +1,26 @@
+'use client';
+
 import Image from 'next/image';
 
 import styles from './page.module.css';
 
 export default function Home() {
+	//
+
+	const socket = new WebSocket('ws://localhost:5050');
+
+	// Connection opened
+	socket.addEventListener('open', (event) => {
+		socket.send('Connection established');
+	});
+
+	// Listen for messages
+	socket.addEventListener('message', (event) => {
+		console.log('Message from server ', event.data);
+	});
+
+	//
+
 	return (
 		<div className={styles.page}>
 			<main className={styles.main}>
