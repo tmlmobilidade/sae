@@ -17,7 +17,6 @@
 		"luxon": "3.5.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20250103.1610.23",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.12.0",
 		"resolve-tspaths": "0.8.23",

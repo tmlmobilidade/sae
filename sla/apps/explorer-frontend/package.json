@@ -36,7 +36,6 @@
 		"swr": "2.3.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20250103.1610.23",
 		"@types/node": "22.12.0",
 		"@types/react": "19.0.8",
 		"@types/react-dom": "19.0.3",

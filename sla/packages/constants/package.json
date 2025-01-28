@@ -10,7 +10,6 @@
 		"clean": "rm -rf dist"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20250103.1610.23",
 		"@types/node": "22.12.0",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.7.3"

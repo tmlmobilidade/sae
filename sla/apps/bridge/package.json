@@ -23,7 +23,6 @@
 		"pg": "8.13.1"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20250103.1610.23",
 		"@types/luxon": "3.4.2",
 		"@types/node": "22.12.0",
 		"@types/pg": "8.11.11",

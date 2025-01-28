@@ -1,39 +1,27 @@
-/* * */
-
-import 'dotenv/config';
+'use strict';
 
 /* * */
 
-import '@/endpoints/status/time.endpoint.js';
-import '@/endpoints/status/message.endpoint.js';
+import fastifyWs from '@fastify/websocket';
+import fastifyModule from 'fastify';
 
-/* * */
+const FastifyInstance = fastifyModule();
 
-import '@/endpoints/locations/districts.endpoint.js';
-import '@/endpoints/locations/municipalities.endpoint.js';
-import '@/endpoints/locations/parishes.endpoint.js';
-import '@/endpoints/locations/localities.endpoint.js';
+FastifyInstance.register(fastifyWs);
 
-/* * */
+FastifyInstance.register(async function (fastify) {
+	fastify.get('/', { websocket: true }, (socket /* WebSocket */, req /* FastifyRequest */) => {
+		socket.on('message', (message) => {
+			// message.toString() === 'hi from client'
+			socket.send('hi from server');
+		});
+	});
+});
 
-import '@/endpoints/facilities/facilities.endpoint.js';
-import '@/endpoints/facilities/schools.endpoint.js';
-import '@/endpoints/facilities/stores.endpoint.js';
-
-/* * */
-
-import '@/endpoints/metrics/metrics.endpoint.js';
-
-/* * */
-
-import '@/endpoints/network/network.endpoint.js';
-import '@/endpoints/network/alerts.endpoint.js';
-import '@/endpoints/network/patterns.endpoint.js';
-import '@/endpoints/network/shapes.endpoint.js';
-import '@/endpoints/network/vehicles.endpoint.js';
-import '@/endpoints/network/arrivals.endpoint.js';
-
-/* * */
-
-import '@/endpoints/pips/estimates.endpoint.js';
-import '@/endpoints/pips/message.endpoint.js';
+FastifyInstance.listen({ host: process.env.FASTIFY_HOST || '0.0.0.0', port: Number(process.env.FASTIFY_PORT) || 5050 }, (err) => {
+	console.log('hey!');
+	if (err) {
+		FastifyInstance.log.error(err);
+		process.exit(1);
+	}
+});

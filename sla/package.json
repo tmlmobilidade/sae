@@ -5,7 +5,8 @@
 		"build": "turbo build",
 		"dev": "turbo dev",
 		"dev:bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
-		"dev:frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-frontend",
+		"dev:explorer-frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-frontend",
+		"dev:explorer-server": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-server",
 		"dev:feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
 		"dev:monitor": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-coordinator --filter=@tmlmobilidade/sae-sla-monitor-worker",
 		"dev:monitor-coordinator": "turbo dev --filter=@tmlmobilidade/sae-sla-monitor-coordinator",
@@ -17,7 +18,7 @@
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20250103.1610.23",
+		"@carrismetropolitana/eslint": "20250128.1601.13",
 		"@tmlmobilidade/tsconfig": "20241213.1919.54",
 		"turbo": "2.3.4",
 		"typescript": "5.7.3"
