@@ -1,0 +1,44 @@
+.root {
+    width: 100%;
+}
+
+.surface {
+    background-color: var(--color-system-background-200)
+}
+
+.childrenWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--size-spacing-md);
+    width: 100%;
+}
+
+.comboboxWrapper {
+    width: 100%;
+}
+
+.icon {
+    color: var(--color-system-text-200);
+    transition: color 0.3s ease;
+}
+
+.icon:hover {
+    color: var(--color-system-text-100);
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--size-spacing-md);
+    width: 100%;
+
+    @media (max-width: 768px) {
+        > * {
+            width: 100%;
+        }
+    }
+}

@@ -12,7 +12,7 @@
 		"@tabler/icons-react": "^3.29.0",
 		"@tmlmobilidade/core-types": "^20250122.1750.21",
 		"@tmlmobilidade/tsconfig": "^20241031.1431.3",
-		"@tmlmobilidade/ui": "^20250124.2154.52",
+		"@tmlmobilidade/ui": "^20250128.1225.12",
 		"clsx": "^2.1.1",
 		"next": "15.1.6",
 		"react": "^19.0.0",
