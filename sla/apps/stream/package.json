@@ -19,14 +19,14 @@
 		"@helperkits/timer": "20240627.34.23",
 		"@helperkits/writer": "20241204.1537.50",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
-		"@tmlmobilidade/services": "20241217.1608.4",
+		"@tmlmobilidade/services": "20241219.1640.28",
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
-		"@carrismetropolitana/eslint": "20241024.1600.5",
+		"@carrismetropolitana/eslint": "20250103.1610.23",
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.10.2",
+		"@types/node": "22.12.0",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.7.2"
+		"typescript": "5.7.3"
 	}
 }

@@ -18,14 +18,14 @@
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
 		"@tmlmobilidade/sae-sla-pckg-constants": "*",
-		"@tmlmobilidade/services": "20241217.1608.4",
-		"fastify": "5.2.0",
+		"@tmlmobilidade/services": "20241219.1640.28",
+		"fastify": "5.2.1",
 		"luxon": "3.5.0"
 	},
 	"devDependencies": {
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.10.2",
+		"@types/node": "22.12.0",
 		"resolve-tspaths": "0.8.23",
-		"typescript": "5.7.2"
+		"typescript": "5.7.3"
 	}
 }
