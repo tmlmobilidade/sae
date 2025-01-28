@@ -1,0 +1,32 @@
+{
+	"name": "@tmlmobilidade/sae-sla-explorer-server",
+	"version": "1.0.0",
+	"type": "module",
+	"files": ["dist"],
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"scripts": {
+		"build": "npm run clean && tsc && resolve-tspaths",
+		"clean": "rm -rf dist",
+		"dev": "dotenv-run -f ../secrets/development/.env.development -- tsx watch ./src/index.ts",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"start": "node dist/index.js"
+	},
+	"dependencies": {
+		"@helperkits/logger": "20240703.1726.24",
+		"@helperkits/timer": "20240627.34.23",
+		"fastify": "5.2.1",
+		"@fastify/websocket": "11.0.2",
+		"luxon": "3.5.0"
+	},
+	"devDependencies": {
+		"@carrismetropolitana/eslint": "20250103.1610.23",
+		"@types/luxon": "3.4.2",
+		"@types/ws": "8.5.14",
+		"@types/node": "22.12.0",
+		"resolve-tspaths": "0.8.23",
+		"tsx": "4.19.2",
+		"typescript": "5.7.3"
+	}
+}
