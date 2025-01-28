@@ -10,7 +10,8 @@
 		"docker:local:down": "docker compose -f docker/compose.local.yml down",
 		"docker:local:restart": "docker compose -f docker/compose.local.yml restart",
 		"docker:local:up": "docker compose -f docker/compose.local.yml up -d --build",
-		"lint": "turbo lint"
+		"lint": "turbo lint",
+		"clean": "turbo clean"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250103.1610.23",

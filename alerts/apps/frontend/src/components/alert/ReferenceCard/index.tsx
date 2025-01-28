@@ -9,13 +9,13 @@ interface ReferenceCardProps {
 export default function ReferenceCard({ onDelete }: ReferenceCardProps) {
 	return (
 		<Surface padding="sm" gap="md" borderRadius="sm" classNames={styles}>
-				<Combobox
-					label="Linha Afetada"
-					data={['1701_0_1', '1701_0_2', '1701_0_3']}
-					searchable
-					aria-label="Linha Afetada"
-                    fullWidth
-				/>
+			<Combobox
+				label="Linha Afetada"
+				data={['1701_0_1', '1701_0_2', '1701_0_3']}
+				searchable
+				aria-label="Linha Afetada"
+				fullWidth
+			/>
 			<div className={styles.childrenWrapper}>
 				<IconCornerDownRight size={28} className={styles.icon} />
 				<div className={styles.comboboxWrapper}>
