@@ -3,26 +3,28 @@
 /* * */
 
 import {
-	Button,
 	Combobox,
 	Section,
 	SegmentedControl,
 	Surface,
-	Text,
+	openConfirmModal,
 } from '@tmlmobilidade/ui';
-import styles from './styles.module.css';
-import ReferenceCardLines from '../ReferenceCardLines';
 import { useMemo } from 'react';
 import { useLocationsContext } from '@/contexts/Locations.context';
 import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
-import { IconPlus } from '@tabler/icons-react';
+import { Alert, AlertSchema } from '@tmlmobilidade/core-types';
+import AlertReferencesRoutes from '../AlertReferencesRoutes';
+import AlertReferencesStops from '../AlertReferencesStops';
+import AlertReferencesAgencies from '../AlertReferencesAgencies';
 
 export default function AlertSectionReferences() {
 	//
 	// A. Setup variables
 	const { data: locationsData } = useLocationsContext();
-	const { data: alertDetailData, actions } = useAlertDetailContext();
+	const { data: alertDetailData } = useAlertDetailContext();
 
+	//
+	// B. Transform data
 	const municipalitiesOptions = useMemo(() => {
 		if (!locationsData.municipalities) return [];
 
@@ -37,7 +39,43 @@ export default function AlertSectionReferences() {
 	]);
 
 	//
-	// B. Render components
+	// C. Handle Actions
+	const parseOptionsLabel = (value: Alert['reference_type']) => {
+		switch (value) {
+			case 'route':
+				return { label: 'Linhas', value };
+			case 'stop':
+				return { label: 'Paragens', value };
+			case 'agency':
+				return { label: 'Agências', value };
+		}
+	}
+
+	const handleSegmentedControlChange = (value: Alert['reference_type']) => {
+		if (references.length > 0) {
+			openConfirmModal({
+				centered: true,
+				children: (
+					<>
+						<div>Você está prestes a perder as referências que já foram adicionadas.</div>
+					</>
+				),
+				closeOnClickOutside: true,
+				labels: { cancel: 'Cancelar', confirm: 'Continuar' },
+				onConfirm: () => {
+					alertDetailData.form.setFieldValue('reference_type', value);
+					alertDetailData.form.setFieldValue('references', []);
+				},
+				title: 'Tem certeza que deseja mudar a referência?',
+			});
+		}
+		else {
+			alertDetailData.form.setFieldValue('reference_type', value);
+		}
+	};
+
+	//
+	// D. Render components
 
 	return (
 		<Section
@@ -56,33 +94,18 @@ export default function AlertSectionReferences() {
 					key={alertDetailData.form.key('municipality_ids')}
 					{...alertDetailData.form.getInputProps('municipality_ids')}
 				/>
+
 				<SegmentedControl
-					data={[
-						{ label: 'Selecionar Linhas', value: 'lines' },
-						{ label: 'Selecionar Paragens', value: 'stops' },
-						{ label: 'Selecionar Agências', value: 'agencies' },
-					]}
+					value={alertDetailData.form.values.reference_type}
+					onChange={handleSegmentedControlChange as any}
+					data={AlertSchema.shape.reference_type.options.map(parseOptionsLabel)}
 					fullWidth
 				/>
-				<div className={styles.referenceCardContainer}>
-					{references.length === 0 ? (
-						<Surface className={styles.empty} padding="md" borderRadius="sm">
-							<Text>Não há referências disponíveis.</Text>	
-						</Surface>
-					) : (
-						references.map((_, index) => (
-							<ReferenceCardLines index={index} key={index} />
-						))
-					)}
-					<Button
-						className={styles.addButton}
-						onClick={actions.addReference}
-						variant="secondary"
-					>
-						<IconPlus size={18} />
-						<div>Adicionar Linha</div>
-					</Button>
-				</div>
+				
+				{alertDetailData.form.values.reference_type === 'route' && <AlertReferencesRoutes />}
+				{alertDetailData.form.values.reference_type === 'stop' && <AlertReferencesStops />}
+				{alertDetailData.form.values.reference_type === 'agency' && <AlertReferencesAgencies />}
+
 			</Surface>
 		</Section>
 	);
