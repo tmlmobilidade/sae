@@ -3,7 +3,7 @@
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { CHUNK_LOG_DATE_FORMAT } from '@tmlmobilidade/sae-sla-pckg-constants';
-import { rides } from '@tmlmobilidade/services/interfaces';
+import { rides } from '@tmlmobilidade/core/interfaces';
 import Fastify from 'fastify';
 import { DateTime } from 'luxon';
 

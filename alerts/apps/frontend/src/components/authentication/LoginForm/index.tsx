@@ -8,7 +8,7 @@ import { Surface } from '@/components/layout/Surface';
 import toast from '@/utils/toast';
 import { PasswordInput, SimpleGrid, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
-import { LoginDto, LoginDtoSchema } from '@tmlmobilidade/services/types';
+import { LoginDto, LoginDtoSchema } from '@tmlmobilidade/core/types';
 import { useState } from 'react';
 
 import { login } from '../actions/authentication';

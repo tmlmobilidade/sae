@@ -1,8 +1,8 @@
 /* * */
 
-import type { VehicleEvent } from '@tmlmobilidade/services/types';
+import type { VehicleEvent } from '@tmlmobilidade/core/types';
 
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { DateTime } from 'luxon';
 
 /* * */

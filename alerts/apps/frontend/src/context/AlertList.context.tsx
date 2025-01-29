@@ -2,7 +2,7 @@
 
 import { getAllAlerts } from '@/actions/alerts';
 import { Routes } from '@/utils/routes';
-import { Alert } from '@tmlmobilidade/services/types';
+import { Alert } from '@tmlmobilidade/core/types';
 /* * */
 
 import { useQueryState } from 'nuqs';

@@ -3,7 +3,7 @@ import { Grid } from '@/components/layout/Grid';
 import { Surface } from '@/components/layout/Surface';
 import { Select, Title } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { publishStatusSchema } from '@tmlmobilidade/services/types';
+import { publishStatusSchema } from '@tmlmobilidade/core/types';
 
 import styles from './styles.module.css';
 

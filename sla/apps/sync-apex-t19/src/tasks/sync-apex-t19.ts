@@ -7,8 +7,8 @@ import { MongoDbWriter } from '@helperkits/writer';
 import { CHUNK_LOG_DATE_FORMAT } from '@tmlmobilidade/sae-sla-pckg-constants';
 import { parseApexT19 } from '@tmlmobilidade/sae-sla-pckg-parse';
 import { syncDocuments } from '@tmlmobilidade/sae-sla-pckg-sync';
-import { apexT19, rides } from '@tmlmobilidade/services/interfaces';
-import { OperationalDate } from '@tmlmobilidade/services/types';
+import { apexT19, rides } from '@tmlmobilidade/core/interfaces';
+import { OperationalDate } from '@tmlmobilidade/core/types';
 import { DateTime, Interval } from 'luxon';
 
 /* * */

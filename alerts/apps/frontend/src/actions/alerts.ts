@@ -1,7 +1,7 @@
 'use client';
 
 import { getSessionCookie } from '@/components/authentication/actions/authentication';
-import { Alert, CreateAlertDto, InsertOneResult, UpdateAlertDto, UpdateResult } from '@tmlmobilidade/services/types';
+import { Alert, CreateAlertDto, InsertOneResult, UpdateAlertDto, UpdateResult } from '@tmlmobilidade/core/types';
 import { Routes } from '@/utils/routes';
 
 const API_BASE_URL = Routes.API.ALERTS + '/alerts';

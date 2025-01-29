@@ -1,8 +1,8 @@
 'use server';
 'server-only';
 
-import { authProvider } from '@tmlmobilidade/services/providers';
-import { LoginDto } from '@tmlmobilidade/services/types';
+import { authProvider } from '@tmlmobilidade/core/providers';
+import { LoginDto } from '@tmlmobilidade/core/types';
 import { cookies } from 'next/headers';
 
 /**

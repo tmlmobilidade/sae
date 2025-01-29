@@ -3,9 +3,9 @@
 import BRIDGEDB from '@/services/BRIDGEDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { rides } from '@tmlmobilidade/services/interfaces';
-import { Ride } from '@tmlmobilidade/services/types';
-import { getOperationalDate } from '@tmlmobilidade/services/utils';
+import { rides } from '@tmlmobilidade/core/interfaces';
+import { Ride } from '@tmlmobilidade/core/types';
+import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { DateTime } from 'luxon';
 import util from 'util';
 

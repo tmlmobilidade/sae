@@ -1,4 +1,4 @@
-import { Municipality } from '@tmlmobilidade/services/types';
+import { Municipality } from '@tmlmobilidade/core/types';
 import { Routes } from '@/utils/routes';
 
 const API_BASE_URL = Routes.API.CMET + '/locations/municipalities';

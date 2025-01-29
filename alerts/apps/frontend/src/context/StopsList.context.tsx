@@ -1,6 +1,6 @@
 'use client';
 
-import { Stop } from '@tmlmobilidade/services/types';
+import { Stop } from '@tmlmobilidade/core/types';
 
 /* * */
 

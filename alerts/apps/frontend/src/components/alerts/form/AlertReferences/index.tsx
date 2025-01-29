@@ -4,7 +4,7 @@ import { useAlertDetailContext } from '@/context/AlertDetail.context';
 import { Surface } from '@/components/layout/Surface';
 import { MultiSelect, SegmentedControl, Title } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
-import { Alert, AlertSchema } from '@tmlmobilidade/services/types';
+import { Alert, AlertSchema } from '@tmlmobilidade/core/types';
 import { useMemo } from 'react';
 
 import AlertReferencesAgency from '../AlertReferencesAgency';
@@ -26,7 +26,7 @@ export default function AlertReferences() {
 			label: municipality.name,
 
 			// @ts-expect-error - This id is currently coming from the CMET API
-			// should be fixed in the future to "_id" whenever it comes from @tmlmobilidade/services
+			// should be fixed in the future to "_id" whenever it comes from @tmlmobilidade/core
 			value: municipality.id,
 		}));
 	},

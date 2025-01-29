@@ -5,8 +5,8 @@ import type { Route, Stop } from '@carrismetropolitana/api-types/network';
 import { createAlert, updateAlert } from '@/actions/alerts';
 import toast from '@/utils/toast';
 import { useForm, UseFormReturnType, zodResolver } from '@mantine/form';
-import { Alert, AlertSchema, CreateAlertSchema, Municipality, UpdateAlertSchema } from '@tmlmobilidade/services/types';
-import { convertObject } from '@tmlmobilidade/services/utils';
+import { Alert, AlertSchema, CreateAlertSchema, Municipality, UpdateAlertSchema } from '@tmlmobilidade/core/types';
+import { convertObject } from '@tmlmobilidade/core/utils';
 import { createContext, useContext, useEffect, useState } from 'react';
 import useSWR from 'swr';
 

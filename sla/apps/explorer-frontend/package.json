@@ -20,9 +20,10 @@
 		"@mantine/modals": "7.16.2",
 		"@mantine/notifications": "7.16.2",
 		"@tabler/icons-react": "3.29.0",
-		"@tmlmobilidade/services": "20241219.1640.28",
-		"@tmlmobilidade/ui": "20250128.1229.58",
+		"@tmlmobilidade/core": "20250129.1810.27",
+		"@tmlmobilidade/ui": "20250129.1710.49",
 		"@turf/turf": "7.2.0",
+		"lodash": "4.17.21",
 		"luxon": "3.5.0",
 		"mantine-datatable": "7.15.1",
 		"maplibre-gl": "5.1.0",
@@ -36,6 +37,7 @@
 		"swr": "2.3.0"
 	},
 	"devDependencies": {
+		"@types/lodash": "4.17.15",
 		"@types/node": "22.12.0",
 		"@types/react": "19.0.8",
 		"@types/react-dom": "19.0.3",

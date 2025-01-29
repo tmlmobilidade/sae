@@ -3,8 +3,8 @@
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
-import { hashedShapes, hashedTrips, plans, rides } from '@tmlmobilidade/services/interfaces';
-import { CreateHashedShapeDto, CreateHashedTripDto, createOperationalDate, CreateRideDto, HashedShapePoint, HashedTripWaypoint, OPERATIONAL_DATE_FORMAT, OperationalDate } from '@tmlmobilidade/services/types';
+import { hashedShapes, hashedTrips, plans, rides } from '@tmlmobilidade/core/interfaces';
+import { CreateHashedShapeDto, CreateHashedTripDto, createOperationalDate, CreateRideDto, HashedShapePoint, HashedTripWaypoint, OPERATIONAL_DATE_FORMAT, OperationalDate } from '@tmlmobilidade/core/types';
 import crypto from 'crypto';
 import { parse as csvParser } from 'csv-parse';
 import extract from 'extract-zip';

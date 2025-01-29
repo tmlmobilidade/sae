@@ -2,8 +2,8 @@
 
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
-import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/services/interfaces';
-import { ALLOWED_VALIDATION_STATUSES, RideAnalysis } from '@tmlmobilidade/services/types';
+import { apexT11, apexT19, hashedShapes, hashedTrips, rides, vehicleEvents } from '@tmlmobilidade/core/interfaces';
+import { ALLOWED_VALIDATION_STATUSES, RideAnalysis } from '@tmlmobilidade/core/types';
 
 /* * */
 

@@ -1,7 +1,7 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysis-data.type.js';
-import { RideAnalysis } from '@tmlmobilidade/services/types';
+import { RideAnalysis } from '@tmlmobilidade/core/types';
 
 /* * */
 

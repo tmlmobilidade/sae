@@ -1,7 +1,7 @@
 /* * */
 
 import { sortByDate } from '@/utils/sort-by-date.util.js';
-import { VehicleEvent } from '@tmlmobilidade/services/types';
+import { VehicleEvent } from '@tmlmobilidade/core/types';
 
 /**
  * Detect the first event in the vehicle events data.

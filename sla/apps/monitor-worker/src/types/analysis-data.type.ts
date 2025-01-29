@@ -1,6 +1,6 @@
 /* * */
 
-import type { ApexT11, ApexT19, HashedShape, HashedTrip, Ride, VehicleEvent } from '@tmlmobilidade/services/types';
+import type { ApexT11, ApexT19, HashedShape, HashedTrip, Ride, VehicleEvent } from '@tmlmobilidade/core/types';
 
 /* * */
 

@@ -1,114 +1,70 @@
 'use client';
 
-import Image from 'next/image';
+import { Ride, type WebSocketMessage } from '@tmlmobilidade/core/types';
+import { throttle } from 'lodash';
+import { useEffect, useRef, useState } from 'react';
 
 import styles from './page.module.css';
 
 export default function Home() {
-	//
+	const dataRef = useRef(new Map<string, Ride>());
+	const [, forceRender] = useState(0);
+	const socketRef = useRef<null | WebSocket>(null);
 
-	const socket = new WebSocket('ws://localhost:5050');
+	// Throttled function for re-rendering
+	const throttledRender = useRef(throttle(() => forceRender(n => n + 1), 100)).current;
 
-	// Connection opened
-	socket.addEventListener('open', (event) => {
-		socket.send('Connection established');
-	});
+	useEffect(() => {
+		// Initialize WebSocket connection
+		const socket = new WebSocket('ws://localhost:5050');
+		socketRef.current = socket;
 
-	// Listen for messages
-	socket.addEventListener('message', (event) => {
-		console.log('Message from server ', event.data);
-	});
+		// Handle connection open
+		socket.addEventListener('open', () => {
+			const message: WebSocketMessage = {
+				action: 'init',
+				module: 'sla-explorer',
+				status: 'request',
+			};
+			socket.send(JSON.stringify(message));
+		});
 
-	//
+		// Handle incoming messages
+		const handleMessage = (event: MessageEvent) => {
+			const messageData: WebSocketMessage = JSON.parse(event.data);
+
+			if (messageData.action === 'init' && messageData.status === 'response' && messageData.data) {
+				const rideDocuments: Ride[] = JSON.parse(messageData.data);
+				rideDocuments.forEach((ride) => {
+					dataRef.current.set(ride._id, ride);
+				});
+				throttledRender();
+				return;
+			}
+
+			if (messageData.action === 'change' && messageData.status === 'response' && messageData.data) {
+				const rideDocument: Ride = JSON.parse(messageData.data);
+				dataRef.current.set(rideDocument._id, rideDocument);
+				throttledRender();
+				return;
+			}
+
+			console.log('Unknown message:', messageData);
+		};
+
+		socket.addEventListener('message', handleMessage);
+
+		// Cleanup WebSocket on unmount
+		return () => {
+			socket.removeEventListener('message', handleMessage);
+			socket.close();
+			throttledRender.cancel(); // Clean up throttling
+		};
+	}, [throttledRender]);
 
 	return (
 		<div className={styles.page}>
-			<main className={styles.main}>
-				<Image
-					alt="Next.js logo"
-					className={styles.logo}
-					height={38}
-					src="/next.svg"
-					width={180}
-					priority
-				/>
-				<ol>
-					<li>
-						Get started by editing <code>src/app/page.tsx</code>.
-					</li>
-					<li>Save and see your changes instantly.</li>
-				</ol>
-
-				<div className={styles.ctas}>
-					<a
-						className={styles.primary}
-						href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						<Image
-							alt="Vercel logomark"
-							className={styles.logo}
-							height={20}
-							src="/vercel.svg"
-							width={20}
-						/>
-						Deploy now
-					</a>
-					<a
-						className={styles.secondary}
-						href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						Read our docs
-					</a>
-				</div>
-			</main>
-			<footer className={styles.footer}>
-				<a
-					href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					<Image
-						alt="File icon"
-						height={16}
-						src="/file.svg"
-						width={16}
-						aria-hidden
-					/>
-					Learn
-				</a>
-				<a
-					href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					<Image
-						alt="Window icon"
-						height={16}
-						src="/window.svg"
-						width={16}
-						aria-hidden
-					/>
-					Examples
-				</a>
-				<a
-					href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					<Image
-						alt="Globe icon"
-						height={16}
-						src="/globe.svg"
-						width={16}
-						aria-hidden
-					/>
-					Go to nextjs.org →
-				</a>
-			</footer>
+			Total Rides: {dataRef.current.size}
 		</div>
 	);
 }

@@ -2,7 +2,7 @@
 
 import { useAlertsListContext } from '@/context/AlertList.context';
 import { IconChevronRight } from '@tabler/icons-react';
-import { Alert } from '@tmlmobilidade/services/types';
+import { Alert } from '@tmlmobilidade/core/types';
 
 import styles from './styles.module.css';
 

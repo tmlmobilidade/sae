@@ -3,10 +3,10 @@
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { apexT11, rides } from '@tmlmobilidade/core/interfaces';
+import { emailProvider } from '@tmlmobilidade/core/providers';
+import { OperationalDate } from '@tmlmobilidade/core/types';
 import { parseApexT11 } from '@tmlmobilidade/sae-sla-pckg-parse';
-import { apexT11, rides } from '@tmlmobilidade/services/interfaces';
-import { emailProvider } from '@tmlmobilidade/services/providers';
-import { OperationalDate } from '@tmlmobilidade/services/types';
 
 /* * */
 

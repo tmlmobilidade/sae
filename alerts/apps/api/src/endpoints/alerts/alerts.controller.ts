@@ -1,6 +1,6 @@
-import { alerts } from '@tmlmobilidade/services/interfaces';
-import { HttpStatus } from '@tmlmobilidade/services/lib';
-import { Alert, Permission } from '@tmlmobilidade/services/types';
+import { alerts } from '@tmlmobilidade/core/interfaces';
+import { HttpStatus } from '@tmlmobilidade/core/lib';
+import { Alert, Permission } from '@tmlmobilidade/core/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export class AlertsController {
