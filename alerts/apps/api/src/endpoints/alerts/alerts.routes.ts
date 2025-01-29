@@ -2,8 +2,8 @@
 
 import authorizationMiddleware from '@/middleware/authorization.middleware';
 import FastifyService from '@/services/fastify.service';
-import { Permissions } from '@tmlmobilidade/services/lib';
-import { Alert } from '@tmlmobilidade/services/types';
+import { Permissions } from '@tmlmobilidade/core/lib';
+import { Alert } from '@tmlmobilidade/core/types';
 import { FastifyInstance } from 'fastify';
 
 import { AlertsController } from './alerts.controller';
