@@ -210,6 +210,4 @@ class IXAPIService {
 	//
 }
 
-/* * */
-
-export const IXAPI = new IXAPIService();
+export default new IXAPIService();
