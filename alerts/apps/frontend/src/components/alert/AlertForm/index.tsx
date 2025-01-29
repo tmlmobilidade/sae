@@ -19,7 +19,7 @@ export default function AlertForm() {
                     </Button>
                     <Button variant="danger">
                         <IconTrash size={28} />
-                        <div>Publicar</div>
+                        <div>Apagar</div>
                     </Button>
                 </div>
             </Surface>
