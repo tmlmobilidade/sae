@@ -55,6 +55,9 @@
 	},
 
 	"typescript.tsdk": "./frontend/node_modules/typescript/lib",
-	"svg.preview.background": "custom"
+	"svg.preview.background": "custom",
+	"[typescript]": {
+		"editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+	}
 
 }
