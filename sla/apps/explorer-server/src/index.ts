@@ -5,6 +5,8 @@
 import fastifyWs from '@fastify/websocket';
 import fastifyModule from 'fastify';
 
+import { watchDb } from './watchDb.js';
+
 const FastifyInstance = fastifyModule();
 
 FastifyInstance.register(fastifyWs);
@@ -12,8 +14,10 @@ FastifyInstance.register(fastifyWs);
 FastifyInstance.register(async function (fastify) {
 	fastify.get('/', { websocket: true }, (socket /* WebSocket */, req /* FastifyRequest */) => {
 		socket.on('message', (message) => {
-			// message.toString() === 'hi from client'
+			console.log('Message from client ', message);
+			watchDb(socket);
 			socket.send('hi from server');
+			socket.send('hi from server again');
 		});
 	});
 });
