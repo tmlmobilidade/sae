@@ -3,6 +3,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
+		"clean": "turbo clean",
 		"dev": "turbo dev",
 		"docker:dev:down": "docker compose -f docker/compose.dev.yml down",
 		"docker:dev:restart": "docker compose -f docker/compose.dev.yml restart",
@@ -10,8 +11,7 @@
 		"docker:local:down": "docker compose -f docker/compose.local.yml down",
 		"docker:local:restart": "docker compose -f docker/compose.local.yml restart",
 		"docker:local:up": "docker compose -f docker/compose.local.yml up -d --build",
-		"lint": "turbo lint",
-		"clean": "turbo clean"
+		"lint": "turbo lint"
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250103.1610.23",
