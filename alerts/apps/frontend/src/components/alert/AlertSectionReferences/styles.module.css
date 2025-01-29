@@ -8,3 +8,7 @@
     gap: var(--size-spacing-md);
     width: 100%;
 }
+
+.addButton {
+    width: fit-content;
+}

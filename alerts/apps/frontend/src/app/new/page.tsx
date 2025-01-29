@@ -1,5 +1,10 @@
 import AlertForm from "@/components/alert/AlertForm";
+import { AlertDetailContextProvider } from "@/contexts/AlertDetail.context";
 
 export default function Page() {
-	return <AlertForm />;
+	return (
+		<AlertDetailContextProvider>
+			<AlertForm />
+		</AlertDetailContextProvider>
+	);
 }
