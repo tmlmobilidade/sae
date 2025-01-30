@@ -50,10 +50,10 @@ export const LinesContextProvider = ({ children }: { children: React.ReactNode }
 	//
 	// A. Fetch data
 
-	const { data: allLinesData, isLoading: allLinesLoading } = useSWR<Line[], Error>(`${Routes.API}/lines`);
-	const { data: allRoutesData, isLoading: allRoutesLoading } = useSWR<Route[], Error>(`${Routes.API}/routes`);
-	const { data: demandByLineData, isLoading: demandByLineDataLoading } = useSWR<DemandMetricsByLine[], Error>(`${Routes.API}/metrics/demand/by_line`, { refreshInterval: 300000 });
-	const { data: serviceMetricsData, isLoading: serviceMetricsLoading } = useSWR<CachedResource<ServiceMetrics[]>, Error>(`${Routes.API}/metrics/service/all`);
+	const { data: allLinesData, isLoading: allLinesLoading } = useSWR<Line[], Error>(`${Routes.CMET_API}/lines`);
+	const { data: allRoutesData, isLoading: allRoutesLoading } = useSWR<Route[], Error>(`${Routes.CMET_API}/routes`);
+	const { data: demandByLineData, isLoading: demandByLineDataLoading } = useSWR<DemandMetricsByLine[], Error>(`${Routes.CMET_API}/metrics/demand/by_line`, { refreshInterval: 300000 });
+	const { data: serviceMetricsData, isLoading: serviceMetricsLoading } = useSWR<CachedResource<ServiceMetrics[]>, Error>(`${Routes.CMET_API}/metrics/service/all`);
 
 	//
 	// B. Handle actions

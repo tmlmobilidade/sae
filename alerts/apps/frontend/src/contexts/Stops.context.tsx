@@ -42,7 +42,7 @@ export const StopsContextProvider = ({ children }: { children: React.ReactNode }
 	//
 	// A. Fetch data
 
-	const { data: allStopsData, isLoading: allStopsLoading } = useSWR<Stop[], Error>(`${Routes.API}/stops`);
+	const { data: allStopsData, isLoading: allStopsLoading } = useSWR<Stop[], Error>(`${Routes.CMET_API}/stops`);
 
 	//
 	// B. Handle actions
