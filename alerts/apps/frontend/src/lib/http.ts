@@ -52,3 +52,5 @@ export async function fetchData<T>(
 		};
 	}
 }
+
+export const swrFetcher = (url: string) => fetch(url, { credentials: 'include' }).then(res => res.json());
