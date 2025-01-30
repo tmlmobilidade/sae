@@ -17,13 +17,13 @@ export default function AlertSectionVisibility() {
 					className={styles.datePicker}
 					label="Data de Início"
 					description="Data de início do alerta"
-					{...alertDetailData.form.getInputProps('startDate')}
+					{...alertDetailData.form.getInputProps('publish_start_date')}
 				/>
 				<DateTimePicker
 					className={styles.datePicker}
 					label="Data de Fim"
 					description="Data de fim do alerta"
-					{...alertDetailData.form.getInputProps('endDate')}
+					{...alertDetailData.form.getInputProps('publish_end_date')}
 				/>
 			</Surface>
 		</Section>

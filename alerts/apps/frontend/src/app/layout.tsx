@@ -10,6 +10,7 @@ import { LinesContextProvider } from '@/contexts/Lines.context';
 import { StopsContextProvider } from '@/contexts/Stops.context';
 import { DataProviders } from '@/components/providers/data-providers';
 import { ConfigProviders } from '@/components/providers/config-providers';
+import { Routes } from '@/lib/routes';
 
 /* * */
 
@@ -29,7 +30,7 @@ export default async function Layout({
 
 	if (!sessionToken) {
 		redirect(
-			`http://localhost:3000/login?redirect=http%3A%2F%2Flocalhost%3A3001`,
+			`${Routes.AUTH_API}/login?redirect=${encodeURI(Routes.URL)}`,
 			RedirectType.replace
 		);
 	}

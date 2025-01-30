@@ -1,3 +1,5 @@
+// "use client";
+
 // Define the HttpResponse type
 export type HttpResponse<T> = {
 	data: T | null;
@@ -10,22 +12,26 @@ export async function fetchData<T>(
 	url: string,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
 	body?: any,
-	headers: HeadersInit = {}
+	headers: HeadersInit = {},
+	options: Omit<RequestInit, 'method' | 'body' | 'headers'> = {}
 ): Promise<HttpResponse<T>> {
+
 	try {
 		const response = await fetch(url, {
 			method,
 			headers: {
-				'Content-Type': 'application/json',
+				...(method === 'GET' ? {} : { 'Content-Type': 'application/json' }),
 				...headers,
 			},
 			credentials: 'include',
 			body: body ? JSON.stringify(body) : undefined,
+			...options,
 		});
 
 		const data = await response.json();
 
 		if (!response.ok) {
+			console.log("data", data);
 			return {
 				data: null,
 				error: data.message || 'An error occurred',

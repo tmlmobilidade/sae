@@ -4,7 +4,7 @@
 	"scripts": {
 		"build": "turbo build",
 		"clean": "turbo clean",
-		"dev": "turbo dev",
+		"dev": "dotenv -v NODE_ENV=development -- turbo dev",
 		"docker:dev:down": "docker compose -f docker/compose.dev.yml down",
 		"docker:dev:restart": "docker compose -f docker/compose.dev.yml restart",
 		"docker:dev:up": "docker compose -f docker/compose.dev.yml up -d --build",
@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250103.1610.23",
+		"dotenv-cli": "^8.0.0",
 		"prettier": "^3.2.5",
 		"turbo": "^2.3.0",
 		"typescript": "5.5.4"

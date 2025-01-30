@@ -1,7 +1,9 @@
 "use client"
 
-import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
-import { useForm, UseFormReturnType, zodResolver } from "@tmlmobilidade/ui";
+import { fetchData } from "@/lib/http";
+import { Routes } from "@/lib/routes";
+import { Alert, AlertSchema, CreateAlertDto } from "@tmlmobilidade/core-types";
+import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidade/ui";
 import { createContext, useContext, useEffect, useState } from "react";
 
 interface AlertDetailContextState {
@@ -15,6 +17,7 @@ interface AlertDetailContextState {
 		id: string | undefined
 	}
 	flags: {
+		canSave: boolean
 		isReadOnly: boolean
 		isSaving: boolean
 		loading: boolean
@@ -22,23 +25,21 @@ interface AlertDetailContextState {
 }
 
 const emptyAlert: Alert = {
-	_id: 'NEW_ALERT',
+	_id: '',
 	active_period_end_date: new Date(),
 	active_period_start_date: new Date(),
 	cause: 'ACCIDENT',
-	created_at: new Date(),
 	description: '',
 	effect: 'ACCESSIBILITY_ISSUE',
 	municipality_ids: [],
 	publish_end_date: new Date(),
 	publish_start_date: new Date(),
-	publish_status: 'UNPUBLISHED',
+	publish_status: 'DRAFT',
 	reference_type: 'stop',
 	references: [],
 	title: '',
-	updated_at: new Date(),
-	created_by: "",
-	modified_by: "",
+	created_by: "temp",
+	modified_by: "temp",
 };
 
 const AlertDetailContext = createContext<AlertDetailContextState | undefined>(undefined);
@@ -57,6 +58,7 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert,
 	const [loading, setLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [isReadOnly, setIsReadOnly] = useState(false);
+	const [canSave, setCanSave] = useState(false);
 
 	//
 	// B. Define form
@@ -88,6 +90,12 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert,
 		setLoading(false);
 	}, [alert]);
 
+	// Validate form on change
+	useEffect(() => {
+		form.validate();
+		setCanSave(form.isValid());
+	}, [form.values]);
+
 	//
 	// D. Define actions
 	const addReference = () => {
@@ -101,8 +109,23 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert,
 		form.setFieldValue('references', currentReferences.filter((_, i) => i !== index));
 	};
 
-	const saveAlert = () => {
-		throw new Error('Not implemented');
+	const saveAlert = async () => {
+		const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' }
+		const response = await fetchData<Alert>(Routes.ALERTS_API + '/alerts', 'POST', alert);
+		if (response.error) {
+			const errors = JSON.parse(response.error);
+			for (const error of errors) {
+				useToast.error({
+					title: 'Erro ao salvar alerta',
+					message: error.message,
+				});
+			}
+		} else {
+			useToast.success({
+				title: 'Sucesso',
+				message: 'Alerta salvo com sucesso',
+			});
+		}
 	};
 
 	//
@@ -118,7 +141,8 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert,
 			id: alert?._id,
 		},
 		flags: {
-			isReadOnly: false,
+			canSave,
+			isReadOnly,
 			isSaving,
 			loading,
 		},

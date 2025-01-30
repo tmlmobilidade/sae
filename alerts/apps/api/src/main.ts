@@ -25,8 +25,16 @@ async function main() {
 	// Start Fastify server
 	const fastifyService = FastifyService.getInstance(options);
 	await fastifyService.server.register(cookie);
+
+	// Setup CORS
+	const origin =
+		process.env.NODE_ENV === 'development'
+			? true
+			: `https://*.${process.env.COOKIE_DOMAIN}`;
+
 	await fastifyService.server.register(cors, {
-		origin: true, // Allow all origins
+		origin,
+		credentials: true,
 	});
 	await fastifyService.start();
 }
