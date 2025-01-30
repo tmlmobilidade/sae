@@ -1,7 +1,8 @@
 /* * */
 
 import { rides } from '@tmlmobilidade/core/interfaces';
-import { createOperationalDate, WebSocketMessage } from '@tmlmobilidade/core/types';
+import { createOperationalDate, OPERATIONAL_DATE_FORMAT, WebSocketMessage } from '@tmlmobilidade/core/types';
+import { DateTime } from 'luxon';
 import { WebSocket } from 'ws';
 
 /* * */
@@ -15,7 +16,7 @@ export const sendInitalRidesDataset = async (socket: WebSocket) => {
 	const ridesCollection = await rides.getCollection();
 
 	const allRidesToday = ridesCollection
-		.find({ operational_date: createOperationalDate('20250129') })
+		.find({ operational_date: createOperationalDate(DateTime.now().toFormat(OPERATIONAL_DATE_FORMAT)) })
 		.stream();
 
 	for await (const ride of allRidesToday) {
@@ -28,15 +29,6 @@ export const sendInitalRidesDataset = async (socket: WebSocket) => {
 
 		socket.send(JSON.stringify(message));
 	}
-
-	// const message: WebSocketMessage = {
-	// 	action: 'init',
-	// 	data: JSON.stringify(latest1000Rides),
-	// 	module: 'sla-explorer',
-	// 	status: 'response',
-	// };
-
-	// socket.send(JSON.stringify(message));
 
 	//
 };
