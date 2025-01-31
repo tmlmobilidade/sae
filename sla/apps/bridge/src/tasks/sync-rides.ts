@@ -84,8 +84,10 @@ export async function syncRides() {
 
 		const todaysOperationalDate = getOperationalDate();
 
+		const todayMinusOneMonthOperationalDate = getOperationalDate(DateTime.now().minus({ months: 1 }));
+
 		const allRidesStream = ridesCollection
-			.find({ operational_date: { $lte: todaysOperationalDate } })
+			.find({ operational_date: { $gte: todayMinusOneMonthOperationalDate, $lte: todaysOperationalDate } })
 			.sort({ operational_date: -1 })
 			.stream();
 
@@ -98,10 +100,11 @@ export async function syncRides() {
 					VALUES (${Object.values(parsedRide).map(value => `'${value}'`).join(',')})
 					ON CONFLICT (_id) DO UPDATE SET ${Object.keys(parsedRide).map(key => `${key} = EXCLUDED.${key}`).join(',')};
 					`);
-					} catch (error) {
-						console.log(parsedRide)
-					throw new Error(`Error writing ride "${rideData._id}": ${error.message}`);
-					}
+			}
+			catch (error) {
+				console.log(parsedRide);
+				throw new Error(`Error writing ride "${rideData._id}": ${error.message}`);
+			}
 		}
 
 		LOGGER.terminate(`Run took ${globalTimer.get()}.`);
