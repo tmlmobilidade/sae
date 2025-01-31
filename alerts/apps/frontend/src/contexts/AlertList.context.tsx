@@ -9,6 +9,8 @@ import useSWR from "swr";
 import { useLocationsContext } from "./Locations.context";
 import { useLinesContext } from "./Lines.context";
 import { useStopsContext } from "./Stops.context";
+import { getAvailableLines, getAvailableStops } from "@/lib/alert-utils";
+import { DateTime } from "luxon";
 
 interface AlertListContextState {
     data: {
@@ -76,11 +78,11 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 	const [filterMunicipality, setFilterMunicipality] = useState<string[]>([]);
 	const [filterLine, setFilterLine] = useState<string[]>([]);
 	const [filterStop, setFilterStop] = useState<string[]>([]);
-
 	const [filterValidityDateStart, setFilterValidityDateStart] = useState<Date | null>(null);
 	const [filterValidityDateEnd, setFilterValidityDateEnd] = useState<Date | null>(null);
 	const [filterPublishDateStart, setFilterPublishDateStart] = useState<Date | null>(null);
 	const [filterPublishDateEnd, setFilterPublishDateEnd] = useState<Date | null>(null);
+	
 	//
 	// B. Transform data
 	const municipalityOptions = useMemo(() => {
@@ -99,8 +101,9 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 	const lineOptions = useMemo(() => {
 		const options = new Set<string>();
+
 		rawAlerts.forEach((alert) => {
-			alert.metadata?.line_ids.forEach((route_id) =>{
+			getAvailableLines(alert).forEach((route_id) =>{
 				const route = routes.find((r) => r.id === route_id);
 				if (route) {
 					options.add(route.id);
@@ -114,8 +117,9 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 	const stopOptions = useMemo(() => {
 		const options = new Set<string>();
+
 		rawAlerts.forEach((alert) => {
-			alert.metadata?.stop_ids.forEach((stop_id) => {
+			getAvailableStops(alert).forEach((stop_id) => {
 				const stop = stops.find((s) => s.id === stop_id);
 				if (stop) {
 					options.add(stop.id);
@@ -127,6 +131,67 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		return Array.from(options);
 	}, [rawAlerts]);
 
+
+	const filteredAlerts = useMemo(() => {
+		let filtered = rawAlerts;
+
+		// 1. Filter by publish status
+		filtered = filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status));
+
+		// 2. Filter by cause
+		filtered = filtered.filter((alert) => filterCause.includes(alert.cause));
+
+		// 3. Filter by effect
+		filtered = filtered.filter((alert) => filterEffect.includes(alert.effect));
+
+		// 4. Filter by municipality
+		filtered = filtered.filter((alert) => filterMunicipality.some((municipality) => alert.municipality_ids.includes(municipality)));
+
+		// 5. Filter by line
+		filtered = filtered.filter((alert) => filterLine.some((line) => getAvailableLines(alert).includes(line)));
+
+		// 6. Filter by stop
+		filtered = filtered.filter((alert) => filterStop.some((stop) => getAvailableStops(alert).includes(stop)));
+
+		// 7. Filter by publish date
+		filtered = filtered.filter((alert) => {
+			const alertPublishStartDate = DateTime.fromISO(alert.publish_start_date.toString()).toMillis();
+			const alertPublishEndDate = DateTime.fromISO(alert.publish_end_date.toString()).toMillis();
+			const filterPublishStartDate = filterPublishDateStart ? DateTime.fromJSDate(filterPublishDateStart).toMillis() : null;
+			const filterPublishEndDate = filterPublishDateEnd ? DateTime.fromJSDate(filterPublishDateEnd).toMillis() : null;	
+
+			if (filterPublishStartDate && filterPublishEndDate) {
+				return alertPublishStartDate >= filterPublishStartDate && alertPublishEndDate <= filterPublishEndDate;
+			} else if (filterPublishStartDate) {
+				return alertPublishStartDate >= filterPublishStartDate;
+			} else if (filterPublishEndDate) {
+				return alertPublishEndDate <= filterPublishEndDate;
+			}
+			
+			return true;
+		});
+		
+		// 8. Filter by validity date
+		filtered = filtered.filter((alert) => {
+			const alertValidityStartDate = DateTime.fromISO(alert.active_period_start_date.toString()).toMillis();
+			const alertValidityEndDate = DateTime.fromISO(alert.active_period_end_date.toString()).toMillis();
+			const filterValidityStartDate = filterValidityDateStart ? DateTime.fromJSDate(filterValidityDateStart).toMillis() : null;
+			const filterValidityEndDate = filterValidityDateEnd ? DateTime.fromJSDate(filterValidityDateEnd).toMillis() : null;	
+
+			if (filterValidityStartDate && filterValidityEndDate) {
+				return alertValidityStartDate >= filterValidityStartDate && alertValidityEndDate <= filterValidityEndDate;
+			} else if (filterValidityStartDate) {
+				return alertValidityStartDate >= filterValidityStartDate;
+			} else if (filterValidityEndDate) {
+				return alertValidityEndDate <= filterValidityEndDate;
+			}
+			
+			return true;
+		});
+
+		return filtered;
+
+	}, [rawAlerts, filterPublishStatus, filterCause, filterEffect, filterMunicipality, filterLine, filterStop, filterValidityDateStart, filterValidityDateEnd, filterPublishDateStart, filterPublishDateEnd]);
 	
 	//
 	// C. Handle Actions
@@ -177,7 +242,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 	const contextValue: AlertListContextState = useMemo(() => ({
 		data: {
 			raw: rawAlerts || [],
-			filtered: rawAlerts || [],
+			filtered: filteredAlerts || [],
 		},
 		flags: {
 			isLoading: allAlertsLoading,
@@ -212,6 +277,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		},
 	}), [
         rawAlerts,
+        filteredAlerts,
         allAlertsData,
         allAlertsLoading,
         allAlertsError,

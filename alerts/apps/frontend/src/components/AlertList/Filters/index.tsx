@@ -32,7 +32,7 @@ function StateFilter() {
     return (
         <Menu withArrow trigger='click-hover'>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p='xs' type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Estado</Text>
                 </Badge>
             </Menu.Target>
@@ -58,7 +58,7 @@ function CauseFilter() {
     return (
         <Menu withArrow trigger='click-hover'>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p='xs' type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Causa</Text>
                 </Badge>
             </Menu.Target>
@@ -84,7 +84,7 @@ function EffectFilter() {
     return (
         <Menu withArrow trigger='click-hover'>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p='xs' type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Efeito</Text>
                 </Badge>
             </Menu.Target>
@@ -119,7 +119,7 @@ function MunicipalityFilter() {
     return (
         <Menu withArrow trigger='click-hover'>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p='xs' type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Municípios</Text>
                 </Badge>
             </Menu.Target>
@@ -154,7 +154,7 @@ function LineFilter() {
     return (
         <Menu withArrow trigger='click-hover'>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p='xs' type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Linhas</Text>
                 </Badge>
             </Menu.Target>
@@ -189,7 +189,7 @@ function StopFilter() {
     return (
         <Menu withArrow trigger='click-hover'>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p="sm" type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Paragens</Text>
                 </Badge>
             </Menu.Target>
@@ -214,20 +214,20 @@ function PublishDateFilter() {
     const {filters, actions} = useAlertListContext();
 
     
-    const hasChanged = filters.validityDateStart || filters.validityDateEnd;
+    const hasChanged = filters.publishDateStart || filters.publishDateEnd;
 
     return (
         <Menu withArrow trigger='click-hover' closeOnClickOutside={false}>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p="sm" type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Visibilidade</Text>
                 </Badge>
             </Menu.Target>
             <Menu.Dropdown classNames={{dropdown: styles.dropdown}}>
                 <Text size='sm' weight='medium' className={styles.filterDescription}>Datas em que o alerta é visível nos canais digitais, não necessariamente a data de que é valido (Periodo de vigência)</Text>
                 <div className={styles.filterItem}>
-                    <DateTimePicker clearable value={filters.validityDateStart} label='Data de início' flex={1} description='Data de início da visibilidade do alerta' onChange={actions.changeValidityDateStart}/>
-                    <DateTimePicker clearable value={filters.validityDateEnd} label='Data de fim' flex={1} description='Data de fim da visibilidade do alerta' onChange={actions.changeValidityDateEnd}/>
+                    <DateTimePicker clearable value={filters.publishDateStart} label='Data de início' flex={1} description='Data de início da visibilidade do alerta' onChange={actions.changePublishDateStart}/>
+                    <DateTimePicker clearable value={filters.publishDateEnd} label='Data de fim' flex={1} description='Data de fim da visibilidade do alerta' onChange={actions.changePublishDateEnd}/>
                 </div>
             </Menu.Dropdown>
         </Menu>
@@ -244,7 +244,7 @@ function ValidityDateFilter() {
     return (
         <Menu withArrow trigger='click-hover' closeOnClickOutside={false}>
             <Menu.Target>
-                <Badge type='pill' variant={hasChanged ? 'primary' : 'muted'}>
+                <Badge p="sm" type='pill' variant={hasChanged ? 'primary' : 'muted'}>
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Vigência</Text>
                 </Badge>
             </Menu.Target>

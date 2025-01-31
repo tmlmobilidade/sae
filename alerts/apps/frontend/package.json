@@ -15,6 +15,7 @@
 		"@tmlmobilidade/tsconfig": "^20241031.1431.3",
 		"@tmlmobilidade/ui": "^20250130.2005.29",
 		"clsx": "^2.1.1",
+		"luxon": "^3.5.0",
 		"next": "15.1.6",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
@@ -22,6 +23,7 @@
 	},
 	"devDependencies": {
 		"@carrismetropolitana/api-types": "^20250125.142.37",
+		"@types/luxon": "^3.4.2",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",

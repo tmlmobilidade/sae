@@ -8,6 +8,7 @@ import StopCell from './StopCell';
 import LineCell from './LineCell';
 import MunicipalityCell from './MunicipalityCell';
 import Filters from './Filters';
+import { getAvailableLines, getAvailableStops } from '@/lib/alert-utils';
 
 export default function AlertList() {
 	//
@@ -33,16 +34,16 @@ export default function AlertList() {
 		{
 			accessor: 'lines',
 			title: 'Linhas',
-			render: ({ metadata }) => (
-				<LineCell line_ids={metadata?.line_ids ?? []} />
-			),
+			render: (alert) => {
+				return <LineCell line_ids={getAvailableLines(alert)} />
+			},
 		},
 		{
 			accessor: 'stops',
 			title: 'Paragens',
-			render: ({ metadata }) => (
-				<StopCell stop_ids={metadata?.stop_ids ?? []} />
-			),
+			render: (alert) => {
+				return <StopCell stop_ids={getAvailableStops(alert)} />
+			},
 		},
 	];
 
