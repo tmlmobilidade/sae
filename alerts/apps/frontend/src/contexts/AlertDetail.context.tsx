@@ -2,7 +2,7 @@
 
 import { fetchData } from "@/lib/http";
 import { Routes } from "@/lib/routes";
-import { Alert, AlertSchema, CreateAlertDto } from "@tmlmobilidade/core-types";
+import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
 import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidade/ui";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -110,23 +110,22 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert,
 	};
 
 	const saveAlert = async () => {
-		console.log(form.values);
-		// const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' }
-		// const response = await fetchData<Alert>(Routes.ALERTS_API + '/alerts', 'POST', alert);
-		// if (response.error) {
-		// 	const errors = JSON.parse(response.error);
-		// 	for (const error of errors) {
-		// 		useToast.error({
-		// 			title: 'Erro ao salvar alerta',
-		// 			message: error.message,
-		// 		});
-		// 	}
-		// } else {
-		// 	useToast.success({
-		// 		title: 'Sucesso',
-		// 		message: 'Alerta salvo com sucesso',
-		// 	});
-		// }
+		const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' }
+		const response = await fetchData<Alert>(Routes.ALERTS_API + '/alerts', 'POST', alert);
+		if (response.error) {
+			const errors = JSON.parse(response.error);
+			for (const error of errors) {
+				useToast.error({
+					title: 'Erro ao salvar alerta',
+					message: error.message,
+				});
+			}
+		} else {
+			useToast.success({
+				title: 'Sucesso',
+				message: 'Alerta salvo com sucesso',
+			});
+		}
 	};
 
 	//

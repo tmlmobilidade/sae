@@ -1,21 +1,20 @@
 'use client';
 
 import { useAlertListContext } from '@/contexts/AlertList.context';
-import { useLocationsContext } from '@/contexts/Locations.context';
 import { Alert } from '@tmlmobilidade/core-types';
 import { Badge, DataTable, DataTableColumn } from '@tmlmobilidade/ui';
 
-export default function AlertList() {
-	const { data, flags, actions } = useAlertListContext();
-	const {
-		data: { municipalities },
-	} = useLocationsContext();
+import StopCell from './StopCell';
+import LineCell from './LineCell';
+import MunicipalityCell from './MunicipalityCell';
+import Filters from './Filters';
 
-	if (flags.isLoading) {
-		return <div>Loading...</div>;
-	} else if (flags.error) {
-		return <div>Error: {flags.error.message}</div>;
-	}
+export default function AlertList() {
+	//
+
+	//
+	// A. Setup Variables
+	const { data, flags } = useAlertListContext();
 
 	const columns: DataTableColumn<Alert>[] = [
 		{
@@ -31,10 +30,33 @@ export default function AlertList() {
 				<MunicipalityCell municipality_ids={municipality_ids} />
 			),
 		},
+		{
+			accessor: 'lines',
+			title: 'Linhas',
+			render: ({ metadata }) => (
+				<LineCell line_ids={metadata?.line_ids ?? []} />
+			),
+		},
+		{
+			accessor: 'stops',
+			title: 'Paragens',
+			render: ({ metadata }) => (
+				<StopCell stop_ids={metadata?.stop_ids ?? []} />
+			),
+		},
 	];
+
+	// 
+	// B. Render
+	if (flags.isLoading) {
+		return <div>Loading...</div>;
+	} else if (flags.error) {
+		return <div>Error: {flags.error.message}</div>;
+	}
 
 	return (
 		<div>
+			<Filters />
 			<DataTable
 				maxHeight={500}
 				records={data.filtered}
@@ -44,45 +66,5 @@ export default function AlertList() {
 	);
 }
 
-function MunicipalityCell({
-	municipality_ids,
-}: {
-	municipality_ids: string[];
-}) {
-	const {
-		data: { municipalities },
-	} = useLocationsContext();
 
-	if (municipality_ids.length === 0)
-		return <div style={{ margin: '0 auto', width: 'fit-content' }}>N/A</div>;
 
-	return (
-		<div
-			style={{
-				display: 'flex',
-				alignItems: 'center',
-				gap: 'var(--size-spacing-md)',
-			}}
-		>
-			<div
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					gap: 'var(--size-spacing-xs)',
-				}}
-			>
-				{municipality_ids.slice(0, 2).map((municipality) => (
-					<Badge key={municipality} variant="muted">
-						{
-							municipalities.find((m) => m.id === municipality)
-								?.name
-						}
-					</Badge>
-				))}
-			</div>
-			{municipality_ids.length > 2 && (
-				<span>+{municipality_ids.length - 2}</span>
-			)}
-		</div>
-	);
-}

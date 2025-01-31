@@ -2,9 +2,13 @@
 
 import { swrFetcher } from "@/lib/http";
 import { Routes } from "@/lib/routes";
-import { Alert } from "@tmlmobilidade/core-types";
-import { createContext, useContext, useMemo } from "react";
+import { toggleArray } from "@/lib/utils";
+import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
+import { createContext, useContext, useMemo, useState } from "react";
 import useSWR from "swr";
+import { useLocationsContext } from "./Locations.context";
+import { useLinesContext } from "./Lines.context";
+import { useStopsContext } from "./Stops.context";
 
 interface AlertListContextState {
     data: {
@@ -15,8 +19,32 @@ interface AlertListContextState {
         isLoading: boolean;
         error: Error | undefined;
     }
-    actions: {
-        filterAlerts: (filter: string) => void;
+	actions: {
+		togglePublishStatus: (status: string) => void;
+		toggleCause: (cause: string) => void;
+		toggleEffect: (effect: string) => void;
+		toggleMunicipality: (municipality: string) => void;
+		toggleLine: (line: string) => void;
+		toggleStop: (stop: string) => void;
+		changeValidityDateStart: (date: Date | null) => void;
+		changeValidityDateEnd: (date: Date | null) => void;
+		changePublishDateStart: (date: Date | null) => void;
+		changePublishDateEnd: (date: Date | null) => void;
+	}
+    filters: {
+        publish_status: string[];
+		cause: string[];
+		effect: string[];
+		municipality: string[];
+		municipalityOptions: string[];
+		line: string[];
+		lineOptions: string[];
+		stop: string[];
+		stopOptions: string[];
+		validityDateStart: Date | null;
+		validityDateEnd: Date | null;
+		publishDateStart: Date | null;
+		publishDateEnd: Date | null;
     }
 }
 
@@ -35,37 +63,175 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 	//
 	// A. Fetch data
+	const { data : {municipalities} } = useLocationsContext();
+	const { data : { routes } } = useLinesContext();
+	const { data : { stops } } = useStopsContext();
+	
 	const { data: allAlertsData, isLoading: allAlertsLoading, error: allAlertsError } = useSWR<Alert[], Error>(`${Routes.ALERTS_API}/alerts`, swrFetcher);
-    
     const rawAlerts = useMemo(() => allAlertsData || [], [allAlertsData]);
 
+	const [filterPublishStatus, setFilterPublishStatus] = useState<string[]>(AlertSchema.shape.publish_status.options);
+	const [filterCause, setFilterCause] = useState<string[]>(AlertSchema.shape.cause.options);
+	const [filterEffect, setFilterEffect] = useState<string[]>(AlertSchema.shape.effect.options);
+	const [filterMunicipality, setFilterMunicipality] = useState<string[]>([]);
+	const [filterLine, setFilterLine] = useState<string[]>([]);
+	const [filterStop, setFilterStop] = useState<string[]>([]);
+
+	const [filterValidityDateStart, setFilterValidityDateStart] = useState<Date | null>(null);
+	const [filterValidityDateEnd, setFilterValidityDateEnd] = useState<Date | null>(null);
+	const [filterPublishDateStart, setFilterPublishDateStart] = useState<Date | null>(null);
+	const [filterPublishDateEnd, setFilterPublishDateEnd] = useState<Date | null>(null);
+	//
+	// B. Transform data
+	const municipalityOptions = useMemo(() => {
+		const options = new Set<string>();
+		rawAlerts.forEach((alert) => {
+			alert.municipality_ids.forEach((id) => {
+					const municipality = municipalities.find((m) => m.id === id);
+				if (municipality) {
+					options.add(municipality.id);
+				}
+			});
+		});
+		setFilterMunicipality(Array.from(options));
+		return Array.from(options);
+	}, [rawAlerts]);
+
+	const lineOptions = useMemo(() => {
+		const options = new Set<string>();
+		rawAlerts.forEach((alert) => {
+			alert.metadata?.line_ids.forEach((route_id) =>{
+				const route = routes.find((r) => r.id === route_id);
+				if (route) {
+					options.add(route.id);
+				}
+			});
+		});
+
+		setFilterLine(Array.from(options));
+		return Array.from(options);
+	}, [rawAlerts]);
+
+	const stopOptions = useMemo(() => {
+		const options = new Set<string>();
+		rawAlerts.forEach((alert) => {
+			alert.metadata?.stop_ids.forEach((stop_id) => {
+				const stop = stops.find((s) => s.id === stop_id);
+				if (stop) {
+					options.add(stop.id);
+				}
+			});
+		});
+
+		setFilterStop(Array.from(options));
+		return Array.from(options);
+	}, [rawAlerts]);
+
+	
+	//
+	// C. Handle Actions
+
+	function handleTogglePublishStatus(status: string) {
+		setFilterPublishStatus(toggleArray(filterPublishStatus, status));
+	}
+
+	function handleToggleCause(cause: string) {
+		setFilterCause(toggleArray(filterCause, cause));
+	}
+
+	function handleToggleEffect(effect: string) {
+		setFilterEffect(toggleArray(filterEffect, effect));
+	}
+
+	function handleToggleMunicipality(municipality: string) {
+		setFilterMunicipality(toggleArray(filterMunicipality, municipality));
+	}
+
+	function handleToggleLine(route_id: string) {
+		setFilterLine(toggleArray(filterLine, route_id));
+	}
+
+	function handleToggleStop(stop_id: string) {
+		setFilterStop(toggleArray(filterStop, stop_id));
+	}
+
+	function handleChangeValidityDateStart(date: Date | null) {
+		setFilterValidityDateStart(date);
+	}
+
+	function handleChangeValidityDateEnd(date: Date | null) {
+		setFilterValidityDateEnd(date);
+	}
+
+	function handleChangePublishDateStart(date: Date | null) {
+		setFilterPublishDateStart(date);
+	}
+
+	function handleChangePublishDateEnd(date: Date | null) {
+		setFilterPublishDateEnd(date);
+	}
 
 	//
-	// C. Define context value
+	// D. Define context value
 
 	const contextValue: AlertListContextState = useMemo(() => ({
 		data: {
 			raw: rawAlerts || [],
 			filtered: rawAlerts || [],
 		},
-		actions: {
-			filterAlerts: (filter: string) => {
-				// TODO: Implement filter
-			}
-		},
 		flags: {
 			isLoading: allAlertsLoading,
 			error: allAlertsError,
+		},
+		actions: {
+			togglePublishStatus: handleTogglePublishStatus,
+			toggleCause: handleToggleCause,
+			toggleEffect: handleToggleEffect,
+			toggleMunicipality: handleToggleMunicipality,
+			toggleLine: handleToggleLine,
+			toggleStop: handleToggleStop,
+			changeValidityDateStart: handleChangeValidityDateStart,
+			changeValidityDateEnd: handleChangeValidityDateEnd,
+			changePublishDateStart: handleChangePublishDateStart,
+			changePublishDateEnd: handleChangePublishDateEnd,
+		},
+		filters: {
+			publish_status: filterPublishStatus,
+			cause: filterCause,
+			effect: filterEffect,
+			municipality: filterMunicipality,
+			municipalityOptions: municipalityOptions,
+			line: filterLine,
+			lineOptions: lineOptions,
+			stop: filterStop,
+			stopOptions: stopOptions,
+			validityDateStart: filterValidityDateStart,
+			validityDateEnd: filterValidityDateEnd,
+			publishDateStart: filterPublishDateStart,
+			publishDateEnd: filterPublishDateEnd,
 		},
 	}), [
         rawAlerts,
         allAlertsData,
         allAlertsLoading,
         allAlertsError,
+		filterPublishStatus,
+		filterCause,
+		filterEffect,
+		filterMunicipality,
+		municipalityOptions,
+		filterLine,
+		lineOptions,
+		filterStop,
+		stopOptions,
+		filterValidityDateStart,
+		filterValidityDateEnd,
+		filterPublishDateStart,
+		filterPublishDateEnd,
     ]);
     
 	//
-	// D. Render components
+	// E. Render components
 
 	return (
 		<AlertListContext.Provider value={contextValue}>
