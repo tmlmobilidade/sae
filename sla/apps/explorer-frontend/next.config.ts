@@ -1,8 +1,15 @@
-import type { NextConfig } from "next";
+/* * */
+
+import { type NextConfig } from 'next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+/* * */
 
 const nextConfig: NextConfig = {
-  output:'standalone',
-  reactStrictMode: true,
+	output: 'standalone',
+	reactStrictMode: true,
 };
 
-export default nextConfig;
+/* * */
+
+export default createNextIntlPlugin()(nextConfig);
