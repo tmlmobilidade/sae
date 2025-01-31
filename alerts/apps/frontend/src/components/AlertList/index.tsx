@@ -9,6 +9,7 @@ import LineCell from './LineCell';
 import MunicipalityCell from './MunicipalityCell';
 import Filters from './Filters';
 import { getAvailableLines, getAvailableStops } from '@/lib/alert-utils';
+import Header from './Header';
 
 export default function AlertList() {
 	//
@@ -57,6 +58,7 @@ export default function AlertList() {
 
 	return (
 		<div>
+			<Header />
 			<Filters />
 			<DataTable
 				maxHeight={500}
