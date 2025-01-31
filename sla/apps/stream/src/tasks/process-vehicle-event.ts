@@ -67,4 +67,12 @@ export async function processVehicleEvent(databaseOperation) {
 	await vehicleEventsDbWritter.write(newVehicleEventDocument, { filter: { _id: newVehicleEventDocument._id }, upsert: true }, () => null, flushCallback);
 
 	//
+	// Publish the heartbeats for each agency
+
+	if (newVehicleEventDocument.agency_id === '41') fetch('https://uptime.betterstack.com/api/v1/heartbeat/XWJPZ4936tiS6DT891Eu1fx7');
+	if (newVehicleEventDocument.agency_id === '42') fetch('https://uptime.betterstack.com/api/v1/heartbeat/rprW3kJ8pauTM6Hr96917s8r');
+	if (newVehicleEventDocument.agency_id === '43') fetch('https://uptime.betterstack.com/api/v1/heartbeat/C3zX4LwfF5LFsTWhPycvBPGV');
+	if (newVehicleEventDocument.agency_id === '44') fetch('https://uptime.betterstack.com/api/v1/heartbeat/iXjWdHfxYP2gU4Hne3SSy3Dx');
+
+	//
 };
