@@ -2,6 +2,9 @@
 	"name": "@tmlmobilidade/alerts",
 	"private": true,
 	"scripts": {
+		"api:add": "pnpm add --filter=@tmlmobilidade/sae-alerts-api",
+		"api:dev": "cd apps/api && dotenv -v NODE_ENV=development -- turbo dev",
+		"api:up": "pnpm up --filter=@tmlmobilidade/sae-alerts-api",
 		"build": "turbo build",
 		"clean": "turbo clean",
 		"dev": "dotenv -v NODE_ENV=development -- turbo dev",
@@ -11,6 +14,9 @@
 		"docker:local:down": "docker compose -f docker/compose.local.yml down",
 		"docker:local:restart": "docker compose -f docker/compose.local.yml restart",
 		"docker:local:up": "docker compose -f docker/compose.local.yml up -d --build",
+		"frontend:add": "pnpm add --filter=@tmlmobilidade/sae-alerts-frontend",
+		"frontend:dev": "cd apps/frontend && dotenv -v NODE_ENV=development -- turbo dev",
+		"frontend:up": "pnpm up --filter=@tmlmobilidade/sae-alerts-frontend",
 		"lint": "turbo lint"
 	},
 	"devDependencies": {
