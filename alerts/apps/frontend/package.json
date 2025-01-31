@@ -13,7 +13,7 @@
 		"@tabler/icons-react": "^3.29.0",
 		"@tmlmobilidade/core-types": "^20250131.1206.9",
 		"@tmlmobilidade/tsconfig": "^20241031.1431.3",
-		"@tmlmobilidade/ui": "^20250130.2005.29",
+		"@tmlmobilidade/ui": "^20250131.2255.24",
 		"clsx": "^2.1.1",
 		"luxon": "^3.5.0",
 		"next": "15.1.6",

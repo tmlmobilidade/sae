@@ -11,6 +11,7 @@ import { useLinesContext } from "./Lines.context";
 import { useStopsContext } from "./Stops.context";
 import { getAvailableLines, getAvailableStops } from "@/lib/alert-utils";
 import { DateTime } from "luxon";
+import { useSearchQuery } from "@tmlmobilidade/ui";
 
 interface AlertListContextState {
     data: {
@@ -32,8 +33,10 @@ interface AlertListContextState {
 		changeValidityDateEnd: (date: Date | null) => void;
 		changePublishDateStart: (date: Date | null) => void;
 		changePublishDateEnd: (date: Date | null) => void;
+		changeSearchQuery: (query: string) => void;
 	}
     filters: {
+		searchQuery: string;
         publish_status: string[];
 		cause: string[];
 		effect: string[];
@@ -131,9 +134,45 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		return Array.from(options);
 	}, [rawAlerts]);
 
+	// Use the useSearchQuery hook
+	const { filteredData: searchFilteredAlerts, searchQuery, setSearchQuery } = useSearchQuery(rawAlerts, {
+		accessors: ['title', 'description', 'cause', 'effect', 'municipality_ids'],
+		customSearch: (alert, query) => {
+			// Check if any municipality name matches the query
+			const municipalityMatch = alert.municipality_ids.some((id) => {
+				const municipality = municipalities.find((m) => m.id === id);
+				return municipality?.name.toLowerCase().includes(query);
+			});
+
+			// Check if any stop name matches the query
+			const stopMatch = getAvailableStops(alert).some((stop_id) => {
+				const stop = stops.find((s) => s.id === stop_id);
+				return stop?.long_name.toLowerCase().includes(query);
+			});
+
+			const stopIdMatch = getAvailableStops(alert).some((stop_id) => {
+				const stop = stops.find((s) => s.id === stop_id);
+				return stop?.id.toLowerCase().includes(query);
+			});
+
+			// Check if any line name matches the query
+			const lineMatch = getAvailableLines(alert).some((route_id) => {
+				const route = routes.find((r) => r.id === route_id);
+				return route?.long_name.toLowerCase().includes(query);
+			});
+
+			const lineIdMatch = getAvailableLines(alert).some((route_id) => {
+				const route = routes.find((r) => r.id === route_id);
+				return route?.id.toLowerCase().includes(query);
+			});
+
+			return municipalityMatch || stopMatch || stopIdMatch || lineMatch || lineIdMatch;
+		},
+	});
+
 
 	const filteredAlerts = useMemo(() => {
-		let filtered = rawAlerts;
+		let filtered = searchFilteredAlerts;
 
 		// 1. Filter by publish status
 		filtered = filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status));
@@ -191,7 +230,19 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 		return filtered;
 
-	}, [rawAlerts, filterPublishStatus, filterCause, filterEffect, filterMunicipality, filterLine, filterStop, filterValidityDateStart, filterValidityDateEnd, filterPublishDateStart, filterPublishDateEnd]);
+	}, [
+		searchFilteredAlerts,
+		filterPublishStatus,
+		filterCause,
+		filterEffect,
+		filterMunicipality,
+		filterLine,
+		filterStop,
+		filterValidityDateStart,
+		filterValidityDateEnd,
+		filterPublishDateStart,
+		filterPublishDateEnd,
+	]);
 	
 	//
 	// C. Handle Actions
@@ -259,8 +310,10 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 			changeValidityDateEnd: handleChangeValidityDateEnd,
 			changePublishDateStart: handleChangePublishDateStart,
 			changePublishDateEnd: handleChangePublishDateEnd,
+			changeSearchQuery: setSearchQuery,
 		},
 		filters: {
+			searchQuery: searchQuery || "",
 			publish_status: filterPublishStatus,
 			cause: filterCause,
 			effect: filterEffect,
@@ -276,11 +329,11 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 			publishDateEnd: filterPublishDateEnd,
 		},
 	}), [
-        rawAlerts,
-        filteredAlerts,
-        allAlertsData,
-        allAlertsLoading,
-        allAlertsError,
+		rawAlerts,
+		filteredAlerts,
+		allAlertsData,
+		allAlertsLoading,
+		allAlertsError,
 		filterPublishStatus,
 		filterCause,
 		filterEffect,
@@ -294,7 +347,8 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		filterValidityDateEnd,
 		filterPublishDateStart,
 		filterPublishDateEnd,
-    ]);
+		searchQuery,
+	]);
     
 	//
 	// E. Render components

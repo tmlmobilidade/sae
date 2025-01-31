@@ -1,8 +1,11 @@
-import { Button, SegmentedControl, Surface, Text, TextInput } from '@tmlmobilidade/ui';
+import { Button, SegmentedControl, Surface, TextInput } from '@tmlmobilidade/ui';
 import styles from './styles.module.css';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { useAlertListContext } from '@/contexts/AlertList.context';
 
 export default function Header() {
+	const { filters: { searchQuery }, actions: { changeSearchQuery } } = useAlertListContext();
+
 	return (
 		<Surface
 			padding="sm"
@@ -18,6 +21,8 @@ export default function Header() {
 				<TextInput
 					miw={400}
 					placeholder="Pesquisar alerta"
+					value={searchQuery}
+					onChange={(e) => changeSearchQuery(e.target.value)}
 					leftSection={<IconSearch size={20} />}
                 />
 				<Button>
