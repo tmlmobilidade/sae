@@ -92,7 +92,7 @@ export async function validateRides() {
 
 		const fetchRideDocumentsTimer = new TIMETRACKER();
 
-		const ridesBatch = await rides.findMany({ _id: { $in: rideIdsBatch } });
+		const ridesBatch = await rides.findMany({ _id: { $in: rideIdsBatch || [] } });
 
 		LOGGER.info(`Processing ${ridesBatch.length} rides... (coordinator: ${fetchCoordinatorTimerResult} | interface: ${fetchRideDocumentsTimer.get()})`);
 		LOGGER.spacer(1);
