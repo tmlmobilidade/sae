@@ -2,8 +2,8 @@
 
 /* * */
 
-import type { Ride, WebSocketMessage } from '@tmlmobilidade/core/types';
-
+import { type RideDisplay } from '@/types/ride-display.type';
+import { type Ride, type WebSocketMessage } from '@tmlmobilidade/core/types';
 import { throttle } from 'lodash';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -14,8 +14,8 @@ interface RidesContextState {
 		getRideById: (rideId: string) => Ride | undefined
 	}
 	data: {
-		rides: Ride[]
-		rides_map: Map<string, Ride>
+		rides_display: RideDisplay[]
+		rides_store: Map<string, Ride>
 	}
 	flags: {
 		is_loading: boolean
@@ -44,8 +44,8 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 
 	const webSocketRef = useRef<null | WebSocket>(null);
 
-	const allRidesRef = useRef(new Map<string, Ride>());
-	const [allRidesRefVersion, setAllRidesRefVersion] = useState(0);
+	const [dataRidesDisplayState, setDataRidesDisplayState] = useState<RideDisplay[]>([]);
+	const dataRidesStoreState = useRef<Map<string, Ride>>(new Map());
 
 	//
 	// B. Fetch data
@@ -66,19 +66,17 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 		});
 		// Handle incoming messages
 		webSocketRef.current.addEventListener('message', handleIncomingMessage);
+
+		return () => {
+			if (!webSocketRef.current) return;
+			webSocketRef.current.removeEventListener('message', handleIncomingMessage);
+			webSocketRef.current.close();
+		};
 		//
 	}, []);
 
 	//
-	// C. Transform data
-
-	const allRidesData = useMemo(throttle(() => {
-		console.log('ran allRidesData');
-		return Array.from(allRidesRef.current.values());
-	}, 1000), [allRidesRefVersion]);
-
-	//
-	// D. Handle actions
+	// C. Handle actions
 
 	const handleSendMessage = (message: WebSocketMessage) => {
 		if (!webSocketRef.current) return;
@@ -91,35 +89,51 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 		// Handle new change message
 		if (messageData.action === 'change' && messageData.status === 'response' && messageData.data) {
 			const rideDocument: Ride = JSON.parse(messageData.data);
-			allRidesRef.current.set(rideDocument._id, rideDocument);
-			setAllRidesRefVersion(prev => prev++);
+			dataRidesStoreState.current.set(rideDocument._id, rideDocument);
+			console.log('Received ride');
+			updateRidesDisplayState();
 			return;
 		}
 		console.log('Unknown message:', messageData);
 	};
 
+	const updateRidesDisplayState = throttle(() => {
+		console.log('ran allRidesData');
+		const allRidesDisplay: Ride[] = Array.from(dataRidesStoreState.current.values());
+		const allRidesParsed: RideDisplay[] = allRidesDisplay
+			.map(item => ({
+				ride: item,
+
+			}));
+			// .sort((a, b) => {
+			// 	return 1;
+			// 	// return String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled));
+			// });
+		setDataRidesDisplayState(allRidesParsed);
+	}, 1000);
+
 	const getRideById = (rideId: string): Ride | undefined => {
-		return allRidesRef.current?.get(rideId);
+		return dataRidesStoreState.current?.get(rideId);
 	};
 
 	//
-	// E. Define context value
+	// D. Define context value
 
-	const contextValue: RidesContextState = {
+	const contextValue: RidesContextState = useMemo(() => ({
 		actions: {
 			getRideById,
 		},
 		data: {
-			rides: allRidesData || [],
-			rides_map: allRidesRef.current,
+			rides_display: dataRidesDisplayState || [],
+			rides_store: dataRidesStoreState.current,
 		},
 		flags: {
 			is_loading: false,
 		},
-	};
+	}), [dataRidesDisplayState]);
 
 	//
-	// D. Render components
+	// E. Render components
 
 	return (
 		<RidesContext.Provider value={contextValue}>
