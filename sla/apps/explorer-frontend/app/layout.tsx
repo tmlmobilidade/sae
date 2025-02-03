@@ -1,5 +1,6 @@
 /* * */
 
+import Providers from '@/app/providers';
 import { availableFormats } from '@/i18n/config';
 import { type Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
@@ -10,7 +11,7 @@ import { type PropsWithChildren } from 'react';
 
 /* * */
 
-import '@/themes/_reset/reset.css';
+import '@tmlmobilidade/ui/dist/styles.css';
 
 /* * */
 
@@ -55,7 +56,9 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 					messages={messages}
 				>
 					<NuqsAdapter>
-						{children}
+						<Providers>
+							{children}
+						</Providers>
 					</NuqsAdapter>
 				</NextIntlClientProvider>
 			</body>

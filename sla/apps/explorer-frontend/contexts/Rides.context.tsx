@@ -4,9 +4,8 @@
 
 import type { Ride, WebSocketMessage } from '@tmlmobilidade/core/types';
 
-import { DateTime } from 'luxon';
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef } from 'react';
-import useSWR from 'swr';
+import { throttle } from 'lodash';
+import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 /* * */
 
@@ -16,6 +15,7 @@ interface RidesContextState {
 	}
 	data: {
 		rides: Ride[]
+		rides_map: Map<string, Ride>
 	}
 	flags: {
 		is_loading: boolean
@@ -42,119 +42,79 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 	//
 	// A. Setup variables
 
-	const allRidesRef = useRef(new Map<string, Ride>());
 	const webSocketRef = useRef<null | WebSocket>(null);
+
+	const allRidesRef = useRef(new Map<string, Ride>());
+	const [allRidesRefVersion, setAllRidesRefVersion] = useState(0);
 
 	//
 	// B. Fetch data
 
 	useEffect(() => {
+		//
 		// Initialize WebSocket connection
-		webSocketRef.current = new WebSocket('ws://localhost:5050');
-		// Handle connection open
+		if (!webSocketRef.current) {
+			webSocketRef.current = new WebSocket('ws://localhost:5050');
+		}
+		// Request initial data
 		webSocketRef.current.addEventListener('open', () => {
-			const message: WebSocketMessage = {
+			handleSendMessage({
 				action: 'init',
 				module: 'sla-explorer',
 				status: 'request',
-			};
-			webSocketRef.current.send(JSON.stringify(message));
+			});
 		});
-
 		// Handle incoming messages
-		const handleMessage = async (event: MessageEvent) => {
-			const messageData: WebSocketMessage = JSON.parse(event.data);
-
-			if (messageData.action === 'change' && messageData.status === 'response' && messageData.data) {
-				const rideDocument: Ride = JSON.parse(messageData.data);
-				dataRef.current.set(rideDocument._id, rideDocument);
-				throttledRender();
-				return;
-			}
-
-			console.log('Unknown message:', messageData);
-		};
-
-		socket.addEventListener('message', handleMessage);
-
-		// Cleanup WebSocket on unmount
-		// return () => {
-		// 	socket.removeEventListener('message', handleMessage);
-		// 	socket.close();
-		// 	throttledRender.cancel(); // Clean up throttling
-		// };
-	}, [throttledRender]);
+		webSocketRef.current.addEventListener('message', handleIncomingMessage);
+		//
+	}, []);
 
 	//
-	// B. Handle actions
+	// C. Transform data
+
+	const allRidesData = useMemo(throttle(() => {
+		console.log('ran allRidesData');
+		return Array.from(allRidesRef.current.values());
+	}, 1000), [allRidesRefVersion]);
+
+	//
+	// D. Handle actions
+
+	const handleSendMessage = (message: WebSocketMessage) => {
+		if (!webSocketRef.current) return;
+		webSocketRef.current.send(JSON.stringify(message));
+	};
+
+	const handleIncomingMessage = async (event: MessageEvent) => {
+		// Parse incoming message
+		const messageData: WebSocketMessage = JSON.parse(event.data);
+		// Handle new change message
+		if (messageData.action === 'change' && messageData.status === 'response' && messageData.data) {
+			const rideDocument: Ride = JSON.parse(messageData.data);
+			allRidesRef.current.set(rideDocument._id, rideDocument);
+			setAllRidesRefVersion(prev => prev++);
+			return;
+		}
+		console.log('Unknown message:', messageData);
+	};
 
 	const getRideById = (rideId: string): Ride | undefined => {
-		return allRidesData?.find(ride => ride.id === rideId);
-	};
-
-	const getRideByIdGeoJsonFC = (rideId: string): GeoJSON.FeatureCollection | undefined => {
-		const ride = getRideById(rideId);
-		if (!ride) return;
-		const collection = getBaseGeoJsonFeatureCollection();
-		collection.features.push(transformRideDataIntoGeoJsonFeature(ride));
-		return collection;
-	};
-
-	const getRidesByLineId = (lineId: string): Ride[] => {
-		return allRidesData?.filter(ride => ride.line_id === lineId) || [];
-	};
-
-	const getRidesByLineIdGeoJsonFC = (lineId: string): GeoJSON.FeatureCollection | undefined => {
-		const rides = getRidesByLineId(lineId);
-		if (!rides) return;
-		const collection = getBaseGeoJsonFeatureCollection();
-		rides.forEach(ride => collection.features.push(transformRideDataIntoGeoJsonFeature(ride)));
-		return collection;
-	};
-
-	const getRidesByPatternId = (patternId: string): Ride[] => {
-		return allRidesData?.filter(ride => ride.pattern_id === patternId) || [];
-	};
-
-	const getRidesByPatternIdGeoJsonFC = (patternId: string): GeoJSON.FeatureCollection | undefined => {
-		const rides = getRidesByPatternId(patternId);
-		if (!rides) return;
-		const collection = getBaseGeoJsonFeatureCollection();
-		rides.forEach(ride => collection.features.push(transformRideDataIntoGeoJsonFeature(ride)));
-		return collection;
-	};
-
-	const getRidesByTripId = (tripId: string): Ride[] => {
-		return allRidesData?.filter(ride => ride.trip_id === tripId) || [];
-	};
-
-	const getRidesByTripIdGeoJsonFC = (tripId: string): GeoJSON.FeatureCollection | undefined => {
-		const rides = getRidesByTripId(tripId);
-		if (!rides) return;
-		const collection = getBaseGeoJsonFeatureCollection();
-		rides.forEach(ride => collection.features.push(transformRideDataIntoGeoJsonFeature(ride)));
-		return collection;
+		return allRidesRef.current?.get(rideId);
 	};
 
 	//
-	// C. Define context value
+	// E. Define context value
 
 	const contextValue: RidesContextState = {
 		actions: {
 			getRideById,
-			getRideByIdGeoJsonFC,
-			getRidesByLineId,
-			getRidesByLineIdGeoJsonFC,
-			getRidesByPatternId,
-			getRidesByPatternIdGeoJsonFC,
-			getRidesByTripId,
-			getRidesByTripIdGeoJsonFC,
 		},
 		data: {
 			rides: allRidesData || [],
+			rides_map: allRidesRef.current,
 		},
 		flags: {
-			is_loading: allRidesLoading,
+			is_loading: false,
 		},
 	};
 
@@ -169,32 +129,3 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 
 	//
 };
-
-/* * */
-
-function transformRideDataIntoGeoJsonFeature(rideData: Ride): GeoJSON.Feature<GeoJSON.Point> {
-	return {
-		geometry: {
-			coordinates: [rideData.lon, rideData.lat],
-			type: 'Point',
-		},
-		properties: {
-			bearing: rideData.bearing,
-			block_id: rideData.block_id,
-			current_status: rideData.current_status,
-			delay: Math.floor(Date.now() / 1000) - rideData.timestamp,
-			id: rideData.id,
-			line_id: rideData.line_id,
-			pattern_id: rideData.id,
-			route_id: rideData.route_id,
-			schedule_relationship: rideData.schedule_relationship,
-			shift_id: rideData.shift_id,
-			speed: rideData.speed,
-			stop_id: rideData.stop_id,
-			timestamp: rideData.timestamp,
-			timeString: new Date(rideData.timestamp * 1000).toLocaleString(),
-			trip_id: rideData.trip_id,
-		},
-		type: 'Feature',
-	};
-}
