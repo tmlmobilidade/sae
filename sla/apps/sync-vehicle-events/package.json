@@ -21,13 +21,13 @@
 		"@tmlmobilidade/sae-sla-pckg-constants": "*",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
 		"@tmlmobilidade/sae-sla-pckg-sync": "*",
-		"@tmlmobilidade/core": "20250131.1207.22",
+		"@tmlmobilidade/core": "20250131.1825.59",
 		"luxon": "3.5.0",
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.12.0",
+		"@types/node": "22.13.0",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.7.3"
 	}
