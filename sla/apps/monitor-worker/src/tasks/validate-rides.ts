@@ -18,6 +18,7 @@ import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
 
 import { atMostTwoDriverIdsAnalyzer } from '@/analyzers/at-most-two-driver-ids.analyzer.js';
 import { atMostTwoVehicleIdsAnalyzer } from '@/analyzers/at-most-two-vehicle-ids.analyzer.js';
+import { avgIntervalVehicleEvents } from '@/analyzers/avg-interval-vehicle-events.analyzer.js';
 import { excessiveVehicleEventDelayAnalyzer } from '@/analyzers/excessiveVehicleEventDelay.analyzer.js';
 import { highestVehicleEventDelayAnalyzer } from '@/analyzers/highestVehicleEventDelay.analyzer.js';
 import { lessThanTenVehicleEventsAnalyzer } from '@/analyzers/lessThanTenVehicleEvents.analyzer.js';
@@ -45,6 +46,8 @@ function runAnalyzers(analysisData: AnalysisData): RideAnalysis[] {
 		highestVehicleEventDelayAnalyzer(analysisData),
 
 		lessThanTenVehicleEventsAnalyzer(analysisData),
+
+		avgIntervalVehicleEvents(analysisData),
 
 		//
 
