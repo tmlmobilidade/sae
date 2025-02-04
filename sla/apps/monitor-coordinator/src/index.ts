@@ -55,14 +55,14 @@ import { DateTime } from 'luxon';
 
 		// const latestPendingRides = await ridesCollection
 		// 	.aggregate([
-		// 		{ $match: { start_time_scheduled: { $lte: currentTime.toJSDate() }, status: 'pending' } },
+		// 		{ $match: { start_time_scheduled: { $lte: currentTime.toJSDate() }, system_status: 'pending' } },
 		// 		{ $sort: { start_time_scheduled: -1, trip_id: -1 } },
 		// 		{ $limit: batchSize },
 		// 	])
 		// 	.toArray();
 
 		const latestPendingRides = await ridesCollection
-			.find({ start_time_scheduled: { $lte: currentTime.toJSDate() }, status: 'pending' })
+			.find({ start_time_scheduled: { $lte: currentTime.toJSDate() }, system_status: 'pending' })
 			.sort({ start_time_scheduled: -1 })
 			.limit(batchSize)
 			.toArray();
@@ -83,7 +83,7 @@ import { DateTime } from 'luxon';
 
 		const markTimer = new TIMETRACKER();
 
-		await ridesCollection.updateMany({ _id: { $in: latestPendingRidesIds } }, { $set: { status: 'processing' } });
+		await ridesCollection.updateMany({ _id: { $in: latestPendingRidesIds } }, { $set: { system_status: 'processing' } });
 
 		LOGGER.info(`New batch: Qty ${latestPendingRidesIds.length} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})`);
 

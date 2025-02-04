@@ -4,11 +4,11 @@ import PCGIDB from '@/services/PCGIDB.js';
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { MongoDbWriter } from '@helperkits/writer';
+import { apexT11, rides } from '@tmlmobilidade/core/interfaces';
+import { OperationalDate } from '@tmlmobilidade/core/types';
 import { CHUNK_LOG_DATE_FORMAT } from '@tmlmobilidade/sae-sla-pckg-constants';
 import { parseApexT11 } from '@tmlmobilidade/sae-sla-pckg-parse';
 import { syncDocuments } from '@tmlmobilidade/sae-sla-pckg-sync';
-import { apexT11, rides } from '@tmlmobilidade/core/interfaces';
-import { OperationalDate } from '@tmlmobilidade/core/types';
 import { DateTime, Interval } from 'luxon';
 
 /* * */
@@ -71,7 +71,7 @@ export async function syncApexT11() {
 					const uniqueOperationalDates: OperationalDate[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.operational_date)));
 					// Invalidate all rides with new data
 					const ridesCollection = await rides.getCollection();
-					const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
+					const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { system_status: 'pending' } });
 					LOGGER.info(`Flush: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t11 data (${invalidationTimer.get()})`);
 				}
 				catch (error) {

@@ -3,8 +3,10 @@
 /* * */
 
 import { type RideDisplay } from '@/types/ride-display.type';
+import { getSeenStatus } from '@/utils/get-seen-status';
 import { type Ride, type WebSocketMessage } from '@tmlmobilidade/core/types';
 import { throttle } from 'lodash';
+import { DateTime } from 'luxon';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 /* * */
@@ -90,7 +92,6 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 		if (messageData.action === 'change' && messageData.status === 'response' && messageData.data) {
 			const rideDocument: Ride = JSON.parse(messageData.data);
 			dataRidesStoreState.current.set(rideDocument._id, rideDocument);
-			console.log('Received ride');
 			updateRidesDisplayState();
 			return;
 		}
@@ -98,18 +99,19 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 	};
 
 	const updateRidesDisplayState = throttle(() => {
-		console.log('ran allRidesData');
+		console.log('Starting allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);
 		const allRidesDisplay: Ride[] = Array.from(dataRidesStoreState.current.values());
 		const allRidesParsed: RideDisplay[] = allRidesDisplay
+			.sort((a, b) => {
+				return String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled));
+			})
 			.map(item => ({
-				ride: item,
-
+				_ride: item,
+				seen_status: getSeenStatus(item.seen_last_at),
 			}));
-			// .sort((a, b) => {
-			// 	return 1;
-			// 	// return String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled));
-			// });
 		setDataRidesDisplayState(allRidesParsed);
+		console.log('Finished allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);
+		console.log('----------------------------------------');
 	}, 1000);
 
 	const getRideById = (rideId: string): Ride | undefined => {

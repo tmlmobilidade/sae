@@ -52,7 +52,7 @@ export async function processApexT11(databaseOperation) {
 			const uniqueOperationalDates: OperationalDate[] = Array.from(new Set(flushedData.map(writeOp => writeOp.data.operational_date)));
 			// Invalidate all rides with new data
 			const ridesCollection = await rides.getCollection();
-			const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { status: 'pending' } });
+			const invalidationResult = await ridesCollection.updateMany({ operational_date: { $in: uniqueOperationalDates }, trip_id: { $in: uniqueTripIds } }, { $set: { system_status: 'pending' } });
 			LOGGER.info(`SYNC LATEST [apex_t11]: Marked ${invalidationResult.modifiedCount} Rides as 'pending' due to new apex_t11 data (${invalidationTimer.get()})`);
 			LOGGER.divider();
 		}

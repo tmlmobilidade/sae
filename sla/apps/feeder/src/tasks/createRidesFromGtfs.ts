@@ -575,6 +575,7 @@ export async function createRidesFromGtfs() {
 								driver_ids: [],
 								end_time_observed: null,
 								end_time_scheduled: endTimeScheduledDate,
+								execution_status: null,
 								extension_observed: null,
 								extension_scheduled: extensionScheduledInMeters,
 								hashed_shape_id: hashedShapeData._id,
@@ -582,6 +583,7 @@ export async function createRidesFromGtfs() {
 								headsign: tripData.trip_headsign,
 								line_id: routeData.line_id,
 								operational_date: calendarDate,
+								operational_status: null,
 								passengers_estimated: null,
 								pattern_id: tripData.pattern_id,
 								plan_id: planData._id,
@@ -590,23 +592,18 @@ export async function createRidesFromGtfs() {
 								seen_last_at: null,
 								start_time_observed: null,
 								start_time_scheduled: startTimeScheduledDate,
-								status: 'pending',
+								system_status: 'pending',
 								trip_id: tripData.trip_id,
 								validations_count: null,
 								vehicle_ids: [],
 							};
 							//
 							const ridesOptions = {
-								//
 								filter: {
 									_id: rideData._id,
-									// status: 'pending',
 								},
-								//
 								upsert: true,
-								//
 								write_mode: 'replace',
-								//
 							};
 							//
 							await ridesDbWritter.write(rideData, ridesOptions);

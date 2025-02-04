@@ -48,11 +48,8 @@ function parseRide(rideData: Ride) {
 	};
 
 	rideData.analysis.forEach((item) => {
-		// parsed[`${item._id}_status`] = item.status;
 		parsed[`${item._id}_grade`] = item.grade;
 		parsed[`${item._id}_reason`] = item.reason;
-		// parsed[`${item._id}_message`] = item.message;
-		// parsed[`${item._id}_unit`] = item.unit;
 		parsed[`${item._id}_value`] = item.value;
 	});
 
@@ -72,7 +69,7 @@ export async function syncRides() {
 		LOGGER.divider();
 		LOGGER.info('Creating ride table...');
 
-		const exampleRide = await rides.findOne({ status: 'complete' });
+		const exampleRide = await rides.findOne({ system_status: 'complete' });
 		if (!exampleRide) {
 			throw new Error('No example ride found.');
 		}
