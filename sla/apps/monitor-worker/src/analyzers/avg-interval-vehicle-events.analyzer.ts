@@ -1,6 +1,7 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysis-data.type.js';
+import { sortByDate } from '@/utils/sort-by-date.util.js';
 import { RideAnalysis } from '@tmlmobilidade/core/types';
 import { DateTime } from 'luxon';
 
@@ -23,10 +24,10 @@ export function avgIntervalVehicleEvents(analysisData: AnalysisData): ExplicitRi
 	try {
 		//
 
-		// 1.
+		//
 		// Return a fail grade if there are no vehicle events
 
-		if (!analysisData.vehicle_events.length) {
+		if (analysisData.vehicle_events.length === 0) {
 			return {
 				_id: 'AVG_INTERVAL_VEHICLE_EVENTS',
 				grade: 'fail',
@@ -37,14 +38,19 @@ export function avgIntervalVehicleEvents(analysisData: AnalysisData): ExplicitRi
 			};
 		}
 
-		// 2.
+		//
+		// Sort vehicle events by created_at timestamp
+
+		const sortedVehicleEvents = sortByDate(analysisData.vehicle_events, 'created_at', 'asc');
+
+		//
 		// Evaluate each vehicle event
 
 		let totalIntervalBetweenEvents = 0;
 
-		let previousEventTimestamp = DateTime.fromJSDate(analysisData.vehicle_events[0].created_at);
+		let previousEventTimestamp = DateTime.fromJSDate(sortedVehicleEvents[0].created_at);
 
-		for (const vehicleEvent of analysisData.vehicle_events) {
+		for (const vehicleEvent of sortedVehicleEvents) {
 			//
 			const vehicleTimestamp = DateTime.fromJSDate(vehicleEvent.created_at);
 			//
@@ -56,7 +62,7 @@ export function avgIntervalVehicleEvents(analysisData: AnalysisData): ExplicitRi
 			//
 		}
 
-		// 3.
+		//
 		// Calculate the average interval between vehicle events
 
 		const avgIntervalBetweenEvents = totalIntervalBetweenEvents / analysisData.vehicle_events.length;

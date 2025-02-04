@@ -19,9 +19,12 @@ export function getSeenStatus(value?: Ride['seen_last_at']): RideDisplay['seen_s
 		return 'unseen';
 	}
 
-	const difference = DateTime.now().toMillis() - DateTime.fromISO(String(value)).toMillis();
+	const nowInUnixSeconds = DateTime.now().toUnixInteger();
+	const lastSeenAtInUnixSeconds = DateTime.fromJSDate(value).toUnixInteger();
 
-	if (difference <= 30000) { // 30 seconds
+	const secondsFromLastSeenToNow = nowInUnixSeconds - lastSeenAtInUnixSeconds;
+
+	if (secondsFromLastSeenToNow <= 30) {
 		return 'seen';
 	}
 

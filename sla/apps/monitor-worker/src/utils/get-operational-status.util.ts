@@ -22,8 +22,8 @@ export function getOperationalStatus(rideData: Ride, vehicleEventsData: VehicleE
 	//
 	// Check if the ride start time is in the future.
 
-	const nowInUnixSeconds = DateTime.now().toSeconds();
-	const rideStartTimeInUnixSeconds = DateTime.fromISO(String(rideData.start_time_scheduled)).toSeconds();
+	const nowInUnixSeconds = DateTime.now().toUnixInteger();
+	const rideStartTimeInUnixSeconds = DateTime.fromJSDate(rideData.start_time_scheduled).toUnixInteger();
 
 	const secondsFromRideStartToNow = nowInUnixSeconds - rideStartTimeInUnixSeconds;
 
@@ -31,7 +31,7 @@ export function getOperationalStatus(rideData: Ride, vehicleEventsData: VehicleE
 	// If the ride start time is less than or equal to 10 minutes ago, or in the future,
 	// and there are no VehicleEvents for it, then the ride is considered 'scheduled'.
 
-	if (secondsFromRideStartToNow <= 600 && vehicleEventsData.length === 0) {
+	if (secondsFromRideStartToNow <= 600 && !vehicleEventsData.length) {
 		return 'scheduled';
 	}
 
@@ -39,7 +39,7 @@ export function getOperationalStatus(rideData: Ride, vehicleEventsData: VehicleE
 	// If the ride start time is at least 10 minutes ago, and there are no VehicleEvents for it,
 	// then the ride is considered 'missed' and no further analysis is needed.
 
-	if (secondsFromRideStartToNow > 600 && vehicleEventsData.length === 0) {
+	if (secondsFromRideStartToNow > 600 && !vehicleEventsData.length) {
 		return 'missed';
 	}
 
@@ -48,8 +48,8 @@ export function getOperationalStatus(rideData: Ride, vehicleEventsData: VehicleE
 	// then the ride is considered 'running'. Else it is considered 'ended'.
 
 	const mostRecentVehicleEvent = sortByDate(vehicleEventsData, 'created_at', 'desc')[0];
-	const mostRecentVehicleEventInUnixSeconds = DateTime.fromISO(String(mostRecentVehicleEvent.created_at)).toSeconds();
 
+	const mostRecentVehicleEventInUnixSeconds = DateTime.fromJSDate(mostRecentVehicleEvent.created_at).toUnixInteger();
 	const secondsFromMostRecentVehicleEventToNow = nowInUnixSeconds - mostRecentVehicleEventInUnixSeconds;
 
 	if (secondsFromMostRecentVehicleEventToNow <= 600) {
