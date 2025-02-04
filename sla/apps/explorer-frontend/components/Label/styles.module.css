@@ -1,0 +1,32 @@
+/* * */
+/* TEXT */
+
+.text {
+	font-family: var(--font-work-sans);
+	color: var(--color-system-text-300);
+}
+
+/* * */
+/* TEXT / CAPS */
+
+.text[data-caps="true"] {
+	text-transform: uppercase;
+}
+
+/* * */
+/* TEXT / SIZE */
+
+.text[data-size='sm'] {
+	font-size: 12px;
+	font-weight: var(--font-weight-semibold);
+}
+
+.text[data-size='md'] {
+	font-size: 12px;
+	font-weight: var(--font-weight-semibold);
+}
+
+.text[data-size='lg'] {
+	font-size: 12px;
+	font-weight: var(--font-weight-bold);
+}

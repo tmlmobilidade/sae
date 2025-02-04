@@ -5,21 +5,22 @@ import { availableFormats } from '@/i18n/config';
 import { type Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
-import { Inter } from 'next/font/google';
+import { Work_Sans } from 'next/font/google';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { type PropsWithChildren } from 'react';
 
 /* * */
 
 import '@tmlmobilidade/ui/dist/styles.css';
+import '@/styles/default.css';
 
 /* * */
 
-const inter = Inter({
+const workSans = Work_Sans({
 	display: 'swap',
 	subsets: ['latin'],
-	variable: '--font-inter',
-	weight: ['500', '600', '700', '800'],
+	variable: '--font-work-sans',
+	weight: ['600', '700'],
 });
 
 /* * */
@@ -45,7 +46,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 	// B. Render components
 
 	return (
-		<html className={inter.variable} lang={locale}>
+		<html className={workSans.variable} lang={locale}>
 			<head>
 				<meta content="transparent" name="theme-color" />
 			</head>

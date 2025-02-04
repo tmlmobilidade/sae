@@ -1,0 +1,51 @@
+/* * */
+
+:root {
+
+
+	/* TEXT */
+
+	--font-weight-semibold: 600;
+	--font-weight-bold: 700;
+
+
+	/* COLOR / THEME */
+
+	--color-theme-contrast: #FFF;
+	--color-theme-background: #E6F0FF;
+	--color-theme-primary: #005ADC;
+	--color-theme-secondary: #0041A0;
+	--color-theme-shadow: #000a5040;
+
+
+	/* COLOR / SYSTEM / BACKGROUND */
+
+	--color-system-background-100: #FFF;
+	--color-system-background-200: #F6F8FA;
+	--color-system-background-300: #F0F0F0;
+
+
+	/* COLOR / SYSTEM / BORDER */
+
+	--color-system-border-100: #E1E1E6;
+
+
+	/* COLOR / SYSTEM / TEXT */
+
+	--color-system-text-100: #000;
+	--color-system-text-200: #646482;
+	--color-system-text-300: #BEBEC8;
+
+
+	/* * */
+}
+
+html,
+body {
+	background-color: #fff;
+}
+
+p {
+	padding: 0;
+	margin: 0;
+}

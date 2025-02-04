@@ -1,0 +1,43 @@
+/* * */
+/* COMMON */
+
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+}
+
+.indicator {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 8px;
+	height: 8px;
+	background-color: red;
+	border-radius: 999px;
+}
+
+
+/* * */
+/* UNSEEN */
+
+.container[data-status="unseen"] .indicator {
+	background-color: transparent;
+	border: 2px solid var(--color-system-border-100);
+}
+
+/* * */
+/* SEEN */
+
+.container[data-status="seen"] .indicator {
+	background-color: var(--color-theme-primary);
+}
+
+/* * */
+/* GONE */
+
+.container[data-status="gone"] .indicator {
+	background-color: var(--color-system-text-300);
+}

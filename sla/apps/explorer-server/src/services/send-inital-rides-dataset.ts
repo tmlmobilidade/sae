@@ -16,6 +16,7 @@ export const sendInitalRidesDataset = async (socket: WebSocket) => {
 	const ridesCollection = await rides.getCollection();
 
 	const allRidesToday = ridesCollection
+		// .find({ operational_date: createOperationalDate(DateTime.now().toFormat(OPERATIONAL_DATE_FORMAT)), start_time_scheduled: { $gte: DateTime.now().minus({ hour: 1 }).toJSDate() } })
 		.find({ operational_date: createOperationalDate(DateTime.now().toFormat(OPERATIONAL_DATE_FORMAT)) })
 		.stream();
 
