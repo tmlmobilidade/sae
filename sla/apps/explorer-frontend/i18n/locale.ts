@@ -11,7 +11,7 @@ const COOKIE_NAME = 'NEXT_LOCALE';
 
 /* * */
 
-export async function setUserLocale(locale) {
+export async function setUserLocale(locale: string) {
 	const cookieStore = await cookies();
 	cookieStore.set(COOKIE_NAME, locale);
 }
