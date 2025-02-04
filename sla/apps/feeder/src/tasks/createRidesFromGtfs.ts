@@ -583,7 +583,7 @@ export async function createRidesFromGtfs() {
 								headsign: tripData.trip_headsign,
 								line_id: routeData.line_id,
 								operational_date: calendarDate,
-								operational_status: null,
+								operational_status: 'scheduled',
 								passengers_estimated: null,
 								pattern_id: tripData.pattern_id,
 								plan_id: planData._id,
