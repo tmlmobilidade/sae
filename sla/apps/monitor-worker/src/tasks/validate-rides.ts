@@ -13,6 +13,7 @@ import { detectFirstEvent } from '@/utils/detect-first-event.util.js';
 import { detectLastEvent } from '@/utils/detect-last-event.util.js';
 import { detectStartEvent } from '@/utils/detect-start-event.util.js';
 import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
+import { getOperationalStatus } from '@/utils/get-operational-status.util.js';
 
 /* * */
 
@@ -150,6 +151,12 @@ export async function validateRides() {
 				// Augment the current Ride with additional information retrieved
 				// from the fetched dynamic data. Some of this data will be used by the analyzers.
 
+				const detectedFirstEvent = detectFirstEvent(vehicleEventsData);
+				const detectedLastEvent = detectLastEvent(vehicleEventsData);
+
+				rideData.seen_first_at = detectedFirstEvent?.created_at || null;
+				rideData.seen_last_at = detectedLastEvent?.created_at || null;
+
 				const detectedStartEvent = detectStartEvent(hashedTripData.path, vehicleEventsData);
 				const detectedEndEvent = detectEndEvent(hashedTripData.path, vehicleEventsData);
 
@@ -158,11 +165,7 @@ export async function validateRides() {
 
 				rideData.extension_observed = getObservedExtension(detectedStartEvent, detectedEndEvent);
 
-				const detectedFirstEvent = detectFirstEvent(vehicleEventsData);
-				const detectedLastEvent = detectLastEvent(vehicleEventsData);
-
-				rideData.seen_first_at = detectedFirstEvent?.created_at || null;
-				rideData.seen_last_at = detectedLastEvent?.created_at || null;
+				rideData.operational_status = getOperationalStatus(rideData, vehicleEventsData);
 
 				rideData.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id).filter(Boolean)));
 				rideData.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id).filter(Boolean)));
@@ -196,10 +199,11 @@ export async function validateRides() {
 						driver_ids: rideData.driver_ids,
 						end_time_observed: rideData.end_time_observed,
 						extension_observed: rideData.extension_observed,
+						operational_status: rideData.operational_status,
 						seen_first_at: rideData.seen_first_at,
 						seen_last_at: rideData.seen_last_at,
 						start_time_observed: rideData.start_time_observed,
-						status: 'complete',
+						system_status: 'complete',
 						validations_count: rideData.validations_count,
 						vehicle_ids: rideData.vehicle_ids,
 					},
@@ -211,7 +215,7 @@ export async function validateRides() {
 				//
 			}
 			catch (error) {
-				await rides.updateById(rideData._id, { status: 'error' });
+				await rides.updateById(rideData._id, { system_status: 'error' });
 				LOGGER.error('An error occurred while processing a ride.', error);
 			}
 		}
