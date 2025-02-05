@@ -1,13 +1,11 @@
 /* * */
 
 import '@tmlmobilidade/ui/dist/styles.css';
-// import './reset.css';
+
 import { ThemeProvider } from '@tmlmobilidade/ui';
 import { Inter } from 'next/font/google';
 import { cookies as nextCookies } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
-import { LinesContextProvider } from '@/contexts/Lines.context';
-import { StopsContextProvider } from '@/contexts/Stops.context';
 import { DataProviders } from '@/components/providers/data-providers';
 import { ConfigProviders } from '@/components/providers/config-providers';
 import { Routes } from '@/lib/routes';
