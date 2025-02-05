@@ -2,6 +2,8 @@ import { Button, SegmentedControl, Surface, TextInput } from '@tmlmobilidade/ui'
 import styles from './styles.module.css';
 import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { useAlertListContext } from '@/contexts/AlertList.context';
+import Link from 'next/link';
+import { Routes } from '@/lib/routes';
 
 export default function Header() {
 	const { filters: { searchQuery }, actions: { changeSearchQuery } } = useAlertListContext();
@@ -25,10 +27,12 @@ export default function Header() {
 					onChange={(e) => changeSearchQuery(e.target.value)}
 					leftSection={<IconSearch size={20} />}
                 />
-				<Button>
-					<IconPlus size={20} />
-					<span>Novo alerta</span>
-				</Button>
+				<Link href={Routes.ALERT_DETAIL('new')}>
+					<Button>
+						<IconPlus size={20} />
+						<span>Novo alerta</span>
+					</Button>
+				</Link>
 
                 <SegmentedControl size='md' data={['Planeados', 'Tempo Real']} />
 			</div>
