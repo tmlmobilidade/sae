@@ -10,12 +10,15 @@ import MunicipalityCell from './MunicipalityCell';
 import Filters from './Filters';
 import { getAvailableLines, getAvailableStops } from '@/lib/alert-utils';
 import Header from './Header';
+import { useRouter } from 'next/navigation';
+import { Routes } from '@/lib/routes';
 
 export default function AlertList() {
 	//
 
 	//
 	// A. Setup Variables
+	const router = useRouter();
 	const { data, flags } = useAlertListContext();
 
 	const columns: DataTableColumn<Alert>[] = [
@@ -61,6 +64,9 @@ export default function AlertList() {
 			<Header />
 			<Filters />
 			<DataTable
+				onRowClick={(alert) => {
+					router.push(Routes.ALERT_DETAIL(alert._id));
+				}}
 				maxHeight={500}
 				records={data.filtered}
 				columns={columns}
