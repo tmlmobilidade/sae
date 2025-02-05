@@ -1,6 +1,6 @@
 /* * */
 
-import { type RideDisplay } from '@/types/ride-display.type';
+import { type RideDisplay } from '@tmlmobilidade/core/types';
 import { Ride } from '@tmlmobilidade/core/types';
 import { DateTime } from 'luxon';
 
@@ -9,18 +9,18 @@ import { DateTime } from 'luxon';
  * A ride is considered 'seen' if its most recent event is less than 30 seconds old;
  * 'gone' if its most recent event is more than 30 seconds old;
  * and 'unseen' if the ride has no events.
- * @param value
+ * @param seenLastAt
  * @returns
  */
-export function getSeenStatus(value?: Ride['seen_last_at']): RideDisplay['seen_status'] {
+export function getSeenStatus(seenLastAt?: Ride['seen_last_at']): RideDisplay['seen_status'] {
 	//
 
-	if (!value) {
+	if (!seenLastAt) {
 		return 'unseen';
 	}
 
 	const nowInUnixSeconds = DateTime.now().toUnixInteger();
-	const lastSeenAtInUnixSeconds = DateTime.fromJSDate(new Date(value)).toUnixInteger();
+	const lastSeenAtInUnixSeconds = DateTime.fromJSDate(new Date(seenLastAt)).toUnixInteger();
 
 	const secondsFromLastSeenToNow = nowInUnixSeconds - lastSeenAtInUnixSeconds;
 

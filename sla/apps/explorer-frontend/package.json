@@ -11,7 +11,7 @@
 	},
 	"dependencies": {
 		"@tabler/icons-react": "3.29.0",
-		"@tmlmobilidade/core": "20250205.1601.1",
+		"@tmlmobilidade/core": "20250205.1923.17",
 		"@tmlmobilidade/ui": "20250205.1339.11",
 		"@turf/turf": "7.2.0",
 		"lodash": "4.17.21",
@@ -26,7 +26,7 @@
 		"react-viewport-list": "7.1.2",
 		"recharts": "2.15.1",
 		"sharp": "0.33.5",
-		"swr": "2.3.1"
+		"swr": "2.3.2"
 	},
 	"devDependencies": {
 		"@types/lodash": "4.17.15",

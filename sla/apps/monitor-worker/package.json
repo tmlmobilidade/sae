@@ -17,7 +17,7 @@
 		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"@tmlmobilidade/core": "20250205.1601.1",
+		"@tmlmobilidade/core": "20250205.1923.17",
 		"@turf/turf": "7.2.0",
 		"luxon": "3.5.0"
 	},

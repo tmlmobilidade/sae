@@ -56,7 +56,7 @@ export function DataTable() {
 							</div>
 							<div className={styles.cell}>
 								<Badge size="sm" variant="secondary">
-									{item._ride.operational_status}
+									{item.operational_status}
 								</Badge>
 							</div>
 							<div className={styles.cell}>

@@ -2,9 +2,9 @@
 
 /* * */
 
-import { type RideDisplay } from '@/types/ride-display.type';
+import { getOperationalStatus } from '@/utils/get-operational-status';
 import { getSeenStatus } from '@/utils/get-seen-status';
-import { type Ride, type WebSocketMessage } from '@tmlmobilidade/core/types';
+import { type Ride, type RideDisplay, type WebSocketMessage } from '@tmlmobilidade/core/types';
 import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { throttle } from 'lodash';
 import { DateTime } from 'luxon';
@@ -106,12 +106,10 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 		console.log('Starting allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);
 		const allRidesDisplay: Ride[] = Array.from(dataRidesStoreState.current.values());
 		const allRidesParsed: RideDisplay[] = allRidesDisplay
-			.sort((a, b) => {
-				return String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled));
-			})
-			// .filter(item => item.operational_status === 'missed')
+			.sort((a, b) => String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled)))
 			.map(item => ({
-				_ride: item,
+				...item,
+				operational_status: getOperationalStatus(item.start_time_scheduled, item.seen_last_at),
 				seen_status: getSeenStatus(item.seen_last_at),
 			}));
 		setDataRidesDisplayState(allRidesParsed);
