@@ -7,11 +7,17 @@ import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidad
 import { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
 
+export enum AlertDetailMode {
+	CREATE = 'create',
+	EDIT = 'edit',
+}
+
 interface AlertDetailContextState {
 	actions: {
 		addReference: () => void
 		removeReference: (index: number) => void
 		saveAlert: () => void
+		deleteAlert: () => void
 	}
 	data: {
 		form: UseFormReturnType<Alert>
@@ -22,6 +28,7 @@ interface AlertDetailContextState {
 		isReadOnly: boolean
 		isSaving: boolean
 		loading: boolean
+		mode: AlertDetailMode
 	}
 }
 
@@ -113,8 +120,14 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 	};
 
 	const saveAlert = async () => {
-		const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' }
-		const response = await fetchData<Alert>(Routes.ALERTS_API + '/alerts', 'POST', alert);
+		setIsSaving(true);
+
+		const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' };
+		
+		const method = alertId === 'new' ? 'POST' : 'PUT';
+		const url = alertId === 'new' ? Routes.ALERTS_API + Routes.ALERT_LIST : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId);
+		const response = await fetchData<Alert>(url, method, alert);
+		
 		if (response.error) {
 			const errors = JSON.parse(response.error);
 			for (const error of errors) {
@@ -129,6 +142,20 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 				message: 'Alerta salvo com sucesso',
 			});
 		}
+
+		setIsSaving(false);
+	};
+
+	const deleteAlert = async () => {
+		if (alertId === 'new') return;
+
+		const response = await fetchData<Alert>(Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), 'DELETE', alert);
+		if (response.error) {
+			useToast.error({
+				title: 'Erro ao apagar alerta',
+				message: response.error,
+			});
+		}
 	};
 
 	//
@@ -138,6 +165,7 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			addReference,
 			removeReference,
 			saveAlert,
+			deleteAlert,
 		},
 		data: {
 			form,
@@ -148,6 +176,7 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			isReadOnly,
 			isSaving,
 			loading: isLoading || loading,
+			mode: alertId === 'new' ? AlertDetailMode.CREATE : AlertDetailMode.EDIT,
 		},
 	};
 
