@@ -62,7 +62,19 @@ export class AlertsController {
 			  | Permission<Alert>
 			  | undefined;
 
-			reply.send(await alerts.findById(id));
+			if (!permissions) {
+				reply.status(HttpStatus.FORBIDDEN).send({ message: 'Forbidden' });
+				return;
+			}
+			
+			const alert = await alerts.findById(id);
+
+			if (!alert) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
+				return;
+			}
+
+			reply.send(alert);
 		}
 		catch (error) {
 			reply

@@ -6,6 +6,7 @@ import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
 import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidade/ui";
 import { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
+import { useRouter } from "next/navigation";
 
 export enum AlertDetailMode {
 	CREATE = 'create',
@@ -61,14 +62,16 @@ export function useAlertDetailContext() {
 }
 
 export const AlertDetailContextProvider = ({ alertId, children }: { alertId: string, children: React.ReactNode }) => {
+	
 	//
-	// A. Define state
+	// A. Setup variables
+	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [isReadOnly, setIsReadOnly] = useState(false);
 	const [canSave, setCanSave] = useState(false);
 
-	const {data: alert, isLoading} = useSWR<Alert>(alertId === 'new' ? null : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), swrFetcher);
+	const {data: alert, isLoading, error } = useSWR<Alert>(alertId === 'new' ? null : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), swrFetcher);
 
 	//
 	// B. Define form
@@ -99,6 +102,16 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 
 		setLoading(false);
 	}, [alert]);
+
+	useEffect(() => {
+		if (error) {
+			useToast.error({
+				title: 'Erro ao carregar alerta',
+				message: error.message,
+			});
+			router.replace(Routes.ALERT_LIST);
+		}
+	}, [error]);	
 
 	// Validate form on change
 	useEffect(() => {
@@ -146,6 +159,8 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			message: 'Alerta salvo com sucesso',
 		});
 
+		router.replace(Routes.ALERT_LIST);
+
 		setIsSaving(false);
 	};
 
@@ -168,6 +183,8 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			title: 'Sucesso',
 			message: 'Alerta apagado com sucesso',
 		});
+
+		router.replace(Routes.ALERT_LIST);
 	};
 
 	//

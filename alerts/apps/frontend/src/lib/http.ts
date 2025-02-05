@@ -53,4 +53,13 @@ export async function fetchData<T>(
 	}
 }
 
-export const swrFetcher = (url: string) => fetch(url, { credentials: 'include' }).then(res => res.json());
+export const swrFetcher = async (url: string) => {
+	const res = await fetch(url, { credentials: 'include' });
+	const data = await res.json();
+	
+	if (!res.ok) {
+		throw new Error(data.message);
+	}
+
+	return data;
+};
