@@ -175,25 +175,25 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		let filtered = searchFilteredAlerts;
 
 		// 1. Filter by publish status
-		filtered = filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status));
+		filtered = filterPublishStatus.length > 0 ? filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status)) : filtered;
 
 		// 2. Filter by cause
-		filtered = filtered.filter((alert) => filterCause.includes(alert.cause));
+		filtered = filterCause.length > 0 ? filtered.filter((alert) => filterCause.includes(alert.cause)) : filtered;
 
 		// 3. Filter by effect
-		filtered = filtered.filter((alert) => filterEffect.includes(alert.effect));
+		filtered = filterEffect.length > 0 ? filtered.filter((alert) => filterEffect.includes(alert.effect)) : filtered;
 
 		// 4. Filter by municipality
-		filtered = filtered.filter((alert) => filterMunicipality.some((municipality) => alert.municipality_ids.includes(municipality)));
+		filtered = filterMunicipality.length > 0 ? filtered.filter((alert) => filterMunicipality.some((municipality) => alert.municipality_ids.includes(municipality))) : filtered;
 
-		// 5. Filter by line
-		filtered = filtered.filter((alert) => filterLine.some((line) => getAvailableLines(alert).includes(line)));
+		// // 5. Filter by line
+		filtered = filterLine.length > 0 ? filtered.filter((alert) => filterLine.some((line) => getAvailableLines(alert).includes(line))) : filtered;
 
-		// 6. Filter by stop
-		filtered = filtered.filter((alert) => filterStop.some((stop) => getAvailableStops(alert).includes(stop)));
+		// // 6. Filter by stop
+		filtered = filterStop.length > 0 ? filtered.filter((alert) => filterStop.some((stop) => getAvailableStops(alert).includes(stop))) : filtered;
 
 		// 7. Filter by publish date
-		filtered = filtered.filter((alert) => {
+		filtered = filterPublishDateStart || filterPublishDateEnd ? filtered.filter((alert) => {
 			const alertPublishStartDate = DateTime.fromISO(alert.publish_start_date.toString()).toMillis();
 			const alertPublishEndDate = DateTime.fromISO(alert.publish_end_date.toString()).toMillis();
 			const filterPublishStartDate = filterPublishDateStart ? DateTime.fromJSDate(filterPublishDateStart).toMillis() : null;
@@ -208,10 +208,10 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 			}
 			
 			return true;
-		});
+		}) : filtered;
 		
 		// 8. Filter by validity date
-		filtered = filtered.filter((alert) => {
+		filtered = filterValidityDateStart || filterValidityDateEnd ? filtered.filter((alert) => {
 			const alertValidityStartDate = DateTime.fromISO(alert.active_period_start_date.toString()).toMillis();
 			const alertValidityEndDate = DateTime.fromISO(alert.active_period_end_date.toString()).toMillis();
 			const filterValidityStartDate = filterValidityDateStart ? DateTime.fromJSDate(filterValidityDateStart).toMillis() : null;
@@ -226,7 +226,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 			}
 			
 			return true;
-		});
+		}) : filtered;
 
 		return filtered;
 
