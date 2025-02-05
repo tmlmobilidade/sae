@@ -51,6 +51,7 @@ import { DateTime } from 'luxon';
 
 		const batchSize = 1000;
 		const currentTime = DateTime.now().setZone('Europe/Lisbon');
+		const currentOperationalDate = getOperationalDate();
 
 		const fetchTimer = new TIMETRACKER();
 
@@ -63,7 +64,7 @@ import { DateTime } from 'luxon';
 		// 	.toArray();
 
 		const latestPendingRides = await ridesCollection
-			.find({ operational_date: { $lte: getOperationalDate() }, system_status: 'pending' })
+			.find({ operational_date: { $lte: currentOperationalDate }, system_status: 'pending' })
 			.sort({ start_time_scheduled: -1 })
 			.limit(batchSize)
 			.toArray();
@@ -73,7 +74,7 @@ import { DateTime } from 'luxon';
 		const fetchTimerResult = fetchTimer.get();
 
 		if (latestPendingRidesIds.length === 0) {
-			LOGGER.info(`No rides to process | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult})`);
+			LOGGER.info(`No rides to process | operational_date: ${currentOperationalDate} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult})`);
 			isBusy = false;
 			return [];
 		}
@@ -86,7 +87,7 @@ import { DateTime } from 'luxon';
 
 		await ridesCollection.updateMany({ _id: { $in: latestPendingRidesIds } }, { $set: { system_status: 'processing' } });
 
-		LOGGER.info(`New batch: Qty ${latestPendingRidesIds.length} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})`);
+		LOGGER.info(`New batch: Qty ${latestPendingRidesIds.length} | operational_date: ${currentOperationalDate} | start_time_scheduled: ${currentTime.toFormat(CHUNK_LOG_DATE_FORMAT)} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})`);
 
 		isBusy = false;
 
