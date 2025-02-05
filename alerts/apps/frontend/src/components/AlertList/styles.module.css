@@ -1,0 +1,11 @@
+.container {
+    height: calc(100vh - calc(var(--size-spacing-xs) * 26));
+}
+
+.table {
+    height: 100%;
+}
+
+.row {
+    cursor: pointer;
+}

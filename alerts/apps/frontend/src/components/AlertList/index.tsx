@@ -13,6 +13,8 @@ import Header from './Header';
 import { useRouter } from 'next/navigation';
 import { Routes } from '@/lib/routes';
 
+import styles from './styles.module.css';
+
 export default function AlertList() {
 	//
 
@@ -60,14 +62,14 @@ export default function AlertList() {
 	}
 
 	return (
-		<div>
+		<div className={styles.container}>
 			<Header />
 			<Filters />
 			<DataTable
+				classnames={{root: styles.table, row: styles.row}}
 				onRowClick={(alert) => {
 					router.push(Routes.ALERT_DETAIL(alert._id));
 				}}
-				maxHeight={500}
 				records={data.filtered}
 				columns={columns}
 			/>
