@@ -1,0 +1,12 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    background-color: var(--color-system-background-300);
+}
+
+.children {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--size-spacing-xs);
+}

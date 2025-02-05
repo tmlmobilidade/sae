@@ -9,6 +9,7 @@ import { redirect, RedirectType } from 'next/navigation';
 import { DataProviders } from '@/components/providers/data-providers';
 import { ConfigProviders } from '@/components/providers/config-providers';
 import { Routes } from '@/lib/routes';
+import AppWrapper from '@/components/AppWrapper';
 
 /* * */
 
@@ -38,7 +39,11 @@ export default async function Layout({
 			<body>
 				<ThemeProvider initialTheme="ocean">
 					<ConfigProviders>
-						<DataProviders>{children}</DataProviders>
+						<DataProviders>
+							<AppWrapper>
+								{children}
+							</AppWrapper>
+						</DataProviders>
 					</ConfigProviders>
 				</ThemeProvider>
 			</body>
