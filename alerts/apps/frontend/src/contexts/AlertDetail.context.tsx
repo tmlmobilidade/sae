@@ -1,10 +1,11 @@
 "use client"
 
-import { fetchData } from "@/lib/http";
+import { fetchData, swrFetcher } from "@/lib/http";
 import { Routes } from "@/lib/routes";
 import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
 import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidade/ui";
 import { createContext, useContext, useEffect, useState } from "react";
+import useSWR from "swr";
 
 interface AlertDetailContextState {
 	actions: {
@@ -52,13 +53,15 @@ export function useAlertDetailContext() {
 	return context;
 }
 
-export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert, children: React.ReactNode }) => {
+export const AlertDetailContextProvider = ({ alertId, children }: { alertId: string, children: React.ReactNode }) => {
 	//
 	// A. Define state
 	const [loading, setLoading] = useState(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const [isReadOnly, setIsReadOnly] = useState(false);
 	const [canSave, setCanSave] = useState(false);
+
+	const {data: alert, isLoading} = useSWR<Alert>(alertId === 'new' ? null : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), swrFetcher);
 
 	//
 	// B. Define form
@@ -144,7 +147,7 @@ export const AlertDetailContextProvider = ({ alert, children }: { alert?: Alert,
 			canSave,
 			isReadOnly,
 			isSaving,
-			loading,
+			loading: isLoading || loading,
 		},
 	};
 
