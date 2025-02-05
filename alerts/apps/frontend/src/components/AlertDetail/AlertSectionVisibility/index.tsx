@@ -7,6 +7,9 @@ import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
 export default function AlertSectionVisibility() {
 	const { data: alertDetailData } = useAlertDetailContext();
 
+	const startDate = new Date(alertDetailData.form.getValues().publish_start_date);
+	const endDate = new Date(alertDetailData.form.getValues().publish_end_date);
+
 	return (
 		<Section
 			title="Visibilidade e Agendamento"
@@ -18,12 +21,14 @@ export default function AlertSectionVisibility() {
 					label="Data de Início"
 					description="Data de início do alerta"
 					{...alertDetailData.form.getInputProps('publish_start_date')}
+					value={startDate}
 				/>
 				<DateTimePicker
 					className={styles.datePicker}
 					label="Data de Fim"
 					description="Data de fim do alerta"
 					{...alertDetailData.form.getInputProps('publish_end_date')}
+					value={endDate}
 				/>
 			</Surface>
 		</Section>
