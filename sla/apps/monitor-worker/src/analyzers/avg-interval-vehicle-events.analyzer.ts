@@ -1,8 +1,8 @@
 /* * */
 
 import { AnalysisData } from '@/types/analysis-data.type.js';
-import { sortByDate } from '@/utils/sort-by-date.util.js';
 import { RideAnalysis } from '@tmlmobilidade/core/types';
+import { sortByDate } from '@tmlmobilidade/core/utils';
 import { DateTime } from 'luxon';
 
 /* * */

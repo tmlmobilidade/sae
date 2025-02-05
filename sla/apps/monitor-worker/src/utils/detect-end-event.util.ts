@@ -2,7 +2,7 @@
 
 import { createGeofence } from '@/utils/create-geofence.util.js';
 import { isInsideGeofence } from '@/utils/is-inside-geofence.util.js';
-import { sortByDate } from '@/utils/sort-by-date.util.js';
+import { sortByDate } from '@tmlmobilidade/core/utils';
 import { HashedTripWaypoint, VehicleEvent } from '@tmlmobilidade/core/types';
 
 /**

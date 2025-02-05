@@ -1,6 +1,6 @@
 /* * */
 
-import { sortByDate } from '@/utils/sort-by-date.util.js';
+import { sortByDate } from '@tmlmobilidade/core/utils';
 import { VehicleEvent } from '@tmlmobilidade/core/types';
 
 /**

@@ -13,7 +13,6 @@ import { detectFirstEvent } from '@/utils/detect-first-event.util.js';
 import { detectLastEvent } from '@/utils/detect-last-event.util.js';
 import { detectStartEvent } from '@/utils/detect-start-event.util.js';
 import { getObservedExtension } from '@/utils/get-observed-extension.util.js';
-import { getOperationalStatus } from '@/utils/get-operational-status.util.js';
 
 /* * */
 
@@ -165,8 +164,6 @@ export async function validateRides() {
 
 				rideData.extension_observed = getObservedExtension(detectedStartEvent, detectedEndEvent);
 
-				rideData.operational_status = getOperationalStatus(rideData, vehicleEventsData);
-
 				rideData.driver_ids = Array.from(new Set(vehicleEventsData.map(item => item.driver_id).filter(Boolean)));
 				rideData.vehicle_ids = Array.from(new Set(vehicleEventsData.map(item => item.vehicle_id).filter(Boolean)));
 				rideData.validations_count = apexT11Data.filter(item => ALLOWED_VALIDATION_STATUSES.includes(item.validation_status)).length;
@@ -199,7 +196,6 @@ export async function validateRides() {
 						driver_ids: rideData.driver_ids,
 						end_time_observed: rideData.end_time_observed,
 						extension_observed: rideData.extension_observed,
-						operational_status: rideData.operational_status,
 						seen_first_at: rideData.seen_first_at,
 						seen_last_at: rideData.seen_last_at,
 						start_time_observed: rideData.start_time_observed,
