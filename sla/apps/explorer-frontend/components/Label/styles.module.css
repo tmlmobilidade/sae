@@ -3,7 +3,6 @@
 
 .text {
 	font-family: var(--font-work-sans);
-	color: var(--color-system-text-300);
 }
 
 /* * */
@@ -14,19 +13,32 @@
 }
 
 /* * */
+/* TEXT / LINES */
+
+.text[data-lines="1"] {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-clamp: 1;
+	white-space: nowrap;
+}
+
+/* * */
 /* TEXT / SIZE */
 
 .text[data-size='sm'] {
 	font-size: 12px;
 	font-weight: var(--font-weight-semibold);
+	color: var(--color-system-text-300);
 }
 
 .text[data-size='md'] {
-	font-size: 12px;
+	font-size: 16px;
 	font-weight: var(--font-weight-semibold);
+	color: var(--color-system-text-100);
 }
 
 .text[data-size='lg'] {
-	font-size: 12px;
+	font-size: 22px;
 	font-weight: var(--font-weight-bold);
+	color: var(--color-system-text-100);
 }

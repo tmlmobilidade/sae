@@ -12,7 +12,7 @@ interface Props {
 
 /* * */
 
-export function SeenStatus({ value }: Props) {
+export function SeenStatusBadge({ value }: Props) {
 	return (
 		<div className={styles.container} data-status={value}>
 			<div className={styles.indicator} />

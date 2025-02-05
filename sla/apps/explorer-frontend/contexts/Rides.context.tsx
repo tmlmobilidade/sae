@@ -5,6 +5,7 @@
 import { type RideDisplay } from '@/types/ride-display.type';
 import { getSeenStatus } from '@/utils/get-seen-status';
 import { type Ride, type WebSocketMessage } from '@tmlmobilidade/core/types';
+import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { throttle } from 'lodash';
 import { DateTime } from 'luxon';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -49,6 +50,8 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 	const [dataRidesDisplayState, setDataRidesDisplayState] = useState<RideDisplay[]>([]);
 	const dataRidesStoreState = useRef<Map<string, Ride>>(new Map());
 
+	const currentOperationalDate = getOperationalDate();
+
 	//
 	// B. Fetch data
 
@@ -91,6 +94,7 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 		// Handle new change message
 		if (messageData.action === 'change' && messageData.status === 'response' && messageData.data) {
 			const rideDocument: Ride = JSON.parse(messageData.data);
+			if (rideDocument.operational_date !== currentOperationalDate) return;
 			dataRidesStoreState.current.set(rideDocument._id, rideDocument);
 			updateRidesDisplayState();
 			return;

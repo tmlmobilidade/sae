@@ -1,8 +1,8 @@
 /* * */
 
 import { rides } from '@tmlmobilidade/core/interfaces';
-import { createOperationalDate, OPERATIONAL_DATE_FORMAT, WebSocketMessage } from '@tmlmobilidade/core/types';
-import { DateTime } from 'luxon';
+import { type WebSocketMessage } from '@tmlmobilidade/core/types';
+import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { WebSocket } from 'ws';
 
 /* * */
@@ -16,8 +16,8 @@ export const sendInitalRidesDataset = async (socket: WebSocket) => {
 	const ridesCollection = await rides.getCollection();
 
 	const allRidesToday = ridesCollection
-		// .find({ operational_date: createOperationalDate(DateTime.now().toFormat(OPERATIONAL_DATE_FORMAT)), start_time_scheduled: { $gte: DateTime.now().minus({ hour: 1 }).toJSDate() } })
-		.find({ operational_date: createOperationalDate(DateTime.now().toFormat(OPERATIONAL_DATE_FORMAT)) })
+		// .find({ operational_date: getOperationalDate(), start_time_scheduled: { $gte: DateTime.now().minus({ hour: 1 }).toJSDate() } })
+		.find({ operational_date: getOperationalDate() })
 		.stream();
 
 	for await (const ride of allRidesToday) {

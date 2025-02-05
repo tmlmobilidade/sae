@@ -34,10 +34,28 @@
 
 .row {
 	display: grid;
-	grid-template-columns: repeat(10, 1fr);
+	grid-template-columns: 24px 150px 1fr 250px 150px;
 	gap: 15px;
 	align-items: center;
 	justify-content: flex-start;
 	width: 100%;
 	padding: 10px 15px;
+	border-bottom: 1px solid var(--color-system-border-100);
+}
+
+.row:last-child {
+	border-bottom: none;
+}
+
+.body .row:hover {
+	background-color: var(--color-system-background-300);
+}
+
+/* * */
+/* CELL */
+
+.cell {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
 }
