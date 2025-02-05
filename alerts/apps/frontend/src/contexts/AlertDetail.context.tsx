@@ -136,12 +136,15 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 					message: error.message,
 				});
 			}
-		} else {
-			useToast.success({
-				title: 'Sucesso',
-				message: 'Alerta salvo com sucesso',
-			});
+
+			return;
 		}
+
+
+		useToast.success({
+			title: 'Sucesso',
+			message: 'Alerta salvo com sucesso',
+		});
 
 		setIsSaving(false);
 	};
@@ -151,11 +154,20 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 
 		const response = await fetchData<Alert>(Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), 'DELETE', alert);
 		if (response.error) {
-			useToast.error({
-				title: 'Erro ao apagar alerta',
-				message: response.error,
-			});
+			const errors = JSON.parse(response.error);
+			for (const error of errors) {
+				useToast.error({
+					title: 'Erro ao salvar alerta',
+					message: error.message,
+				});
+			}
+			return;
 		}
+
+		useToast.success({
+			title: 'Sucesso',
+			message: 'Alerta apagado com sucesso',
+		});
 	};
 
 	//
