@@ -3,6 +3,7 @@
 	"private": true,
 	"scripts": {
 		"build": "turbo build",
+		"clean": "sh cleanup.sh",
 		"dev": "turbo dev",
 		"dev:bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
 		"dev:explorer-frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-frontend",
