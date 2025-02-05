@@ -109,6 +109,7 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 			.sort((a, b) => {
 				return String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled));
 			})
+			// .filter(item => item.operational_status === 'missed')
 			.map(item => ({
 				_ride: item,
 				seen_status: getSeenStatus(item.seen_last_at),

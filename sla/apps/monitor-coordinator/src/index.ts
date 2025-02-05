@@ -3,6 +3,7 @@
 import LOGGER from '@helperkits/logger';
 import TIMETRACKER from '@helperkits/timer';
 import { rides } from '@tmlmobilidade/core/interfaces';
+import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { CHUNK_LOG_DATE_FORMAT } from '@tmlmobilidade/sae-sla-pckg-constants';
 import Fastify from 'fastify';
 import { DateTime } from 'luxon';
@@ -62,7 +63,7 @@ import { DateTime } from 'luxon';
 		// 	.toArray();
 
 		const latestPendingRides = await ridesCollection
-			.find({ start_time_scheduled: { $lte: currentTime.toJSDate() }, system_status: 'pending' })
+			.find({ operational_date: { $lte: getOperationalDate() }, system_status: 'pending' })
 			.sort({ start_time_scheduled: -1 })
 			.limit(batchSize)
 			.toArray();

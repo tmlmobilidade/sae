@@ -36,6 +36,9 @@ export function DataTable() {
 						<Label size="sm" caps>Pattern</Label>
 					</div>
 					<div className={styles.cell}>
+						<Label size="sm" caps>Ride ID</Label>
+					</div>
+					<div className={styles.cell}>
 						<Label size="sm" caps>Partida</Label>
 					</div>
 					<div className={styles.cell}>
@@ -58,6 +61,9 @@ export function DataTable() {
 							</div>
 							<div className={styles.cell}>
 								<Label lines={1} size="md">{item._ride.pattern_id}{item._ride.headsign}</Label>
+							</div>
+							<div className={styles.cell}>
+								<Label lines={1} size="md">{item._ride._id}</Label>
 							</div>
 							<div className={styles.cell}>
 								<Label lines={1} size="md">{String(item._ride.start_time_scheduled).substring(0, 19)}</Label>
