@@ -29,7 +29,7 @@ export default function AlertList() {
 			title: 'Estado',
 			render: ({ publish_status }) => <Badge>{publish_status}</Badge>,
 		},
-		{ accessor: 'title', title: 'Título' },
+		{ accessor: 'title', title: 'Título', width: 400 },
 		{
 			accessor: 'municipality',
 			title: 'Municípios',

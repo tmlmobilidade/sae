@@ -7,6 +7,7 @@ import { useLocationsContext } from '@/contexts/Locations.context';
 import { useMemo } from 'react';
 import { useLinesContext } from '@/contexts/Lines.context';
 import { useStopsContext } from '@/contexts/Stops.context';
+import { ViewportList } from 'react-viewport-list';
 
 export default function Filters() {
 	return <Surface padding="sm" classNames={styles} flexDirection='row' gap='lg' alignItems='center'>
@@ -158,17 +159,19 @@ function LineFilter() {
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Linhas</Text>
                 </Badge>
             </Menu.Target>
-            <Menu.Dropdown classNames={{dropdown: styles.dropdown}}>
-               {filters.lineOptions.map((route_id) => (
-                    <div key={route_id} onClick={() => actions.toggleLine(route_id)}>
-                        <Menu.Item p='sm' closeMenuOnClick={false}>
-                            <div className={styles.filterItem}>
-                                <Checkbox checked={filters.line.includes(route_id)} onChange={() => {}}/>
-                                <Text size='sm' weight='medium' className={styles.filterTitle}>{parseLine(route_id)}</Text>
-                            </div>
-                        </Menu.Item>
-                    </div>
-               ))}
+            <Menu.Dropdown classNames={{dropdown: styles.lineDropdown}}>
+               <ViewportList items={filters.lineOptions}>
+                   {(route_id) => (
+                       <div key={route_id} onClick={() => actions.toggleLine(route_id)}>
+                           <Menu.Item p='sm' closeMenuOnClick={false}>
+                               <div className={styles.filterItem}>
+                                   <Checkbox checked={filters.line.includes(route_id)} onChange={() => {}}/>
+                                   <Text size='sm' weight='medium' className={styles.filterTitle}>{parseLine(route_id)}</Text>
+                               </div>
+                           </Menu.Item>
+                       </div>
+                   )}
+               </ViewportList>
             </Menu.Dropdown>
         </Menu>
     )
@@ -193,17 +196,19 @@ function StopFilter() {
                     <Text size='sm' weight='medium' className={styles.filterTitle}>Paragens</Text>
                 </Badge>
             </Menu.Target>
-            <Menu.Dropdown classNames={{dropdown: styles.dropdown}}>
-               {filters.stopOptions.map((stop_id) => (
-                    <div key={stop_id} onClick={() => actions.toggleStop(stop_id)}>
-                        <Menu.Item p='sm' closeMenuOnClick={false}>
-                            <div className={styles.filterItem}>
-                                <Checkbox checked={filters.stop.includes(stop_id)} onChange={() => {}}/>
-                                <Text size='sm' weight='medium' className={styles.filterTitle}>{parseStop(stop_id)}</Text>
-                            </div>
-                        </Menu.Item>
-                    </div>
-               ))}
+            <Menu.Dropdown classNames={{dropdown: styles.stopDropdown}}>
+               <ViewportList items={filters.stopOptions}>
+                   {(stop_id) => (
+                       <div key={stop_id} onClick={() => actions.toggleStop(stop_id)}>
+                           <Menu.Item p='sm' closeMenuOnClick={false}>
+                               <div className={styles.filterItem}>
+                                   <Checkbox checked={filters.stop.includes(stop_id)} onChange={() => {}}/>
+                                   <Text size='sm' weight='medium' className={styles.filterTitle}>{parseStop(stop_id)}</Text>
+                               </div>
+                           </Menu.Item>
+                       </div>
+                   )}
+               </ViewportList>
             </Menu.Dropdown>
         </Menu>
     )

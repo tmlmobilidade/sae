@@ -2,7 +2,7 @@
 
 import { fetchData, swrFetcher } from "@/lib/http";
 import { Routes } from "@/lib/routes";
-import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
+import { Alert, AlertSchema, convertObject, UpdateAlertSchema } from "@tmlmobilidade/core-types";
 import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidade/ui";
 import { createContext, useContext, useEffect, useState } from "react";
 import useSWR from "swr";
@@ -116,6 +116,9 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 	// Validate form on change
 	useEffect(() => {
 		form.validate();
+		console.log('isValid', form.isValid());
+		console.log('errors', form.errors);
+		
 		setCanSave(form.isValid());
 	}, [form.values]);
 
@@ -137,9 +140,12 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 
 		const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' };
 		
+		
 		const method = alertId === 'new' ? 'POST' : 'PUT';
 		const url = alertId === 'new' ? Routes.ALERTS_API + Routes.ALERT_LIST : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId);
-		const response = await fetchData<Alert>(url, method, alert);
+		const body = alertId === 'new' ? alert : convertObject(alert, UpdateAlertSchema);
+
+		const response = await fetchData<Alert>(url, method, body);
 		
 		if (response.error) {
 			const errors = JSON.parse(response.error);

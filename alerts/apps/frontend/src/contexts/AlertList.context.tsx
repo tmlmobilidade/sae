@@ -173,6 +173,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 	const filteredAlerts = useMemo(() => {
 		let filtered = searchFilteredAlerts;
+		return filtered;
 
 		// 1. Filter by publish status
 		filtered = filterPublishStatus.length > 0 ? filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status)) : filtered;
