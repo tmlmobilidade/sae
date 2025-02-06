@@ -13,6 +13,7 @@ export default function AlertImage() {
 	// A. Setup Variables
 	const { data } = useAlertDetailContext();
 	const [imageUrl, setImageUrl] = useState<string | null>(null);
+	const [isLoading, setIsLoading] = useState(false);
 
 	//
 	// B. Modify Data
@@ -30,6 +31,7 @@ export default function AlertImage() {
 	//
 	// C. Handle Actions
 	async function handleFileChange(file: File) {
+		setIsLoading(true);
 		//1. Upload File
 		const response = await uploadFile(Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id!), file);
 		
@@ -45,6 +47,9 @@ export default function AlertImage() {
 			title: "Imagem carregada com sucesso",
 			message: "A imagem foi carregada com sucesso",
 		});
+
+		setImageUrl(URL.createObjectURL(file));
+		setIsLoading(false);
 	}
 
 
@@ -58,7 +63,7 @@ export default function AlertImage() {
 					<img src={imageUrl} alt="Imagem da alerta"/>
 				</div> 
 			)}
-			<FileButton accept="image/*" label={"Carregar imagem"} onFileChange={handleFileChange}/>
+			<FileButton accept="image/*" label={"Carregar imagem"} onFileChange={handleFileChange} loading={isLoading}/>
 		</>
 	);
 }
