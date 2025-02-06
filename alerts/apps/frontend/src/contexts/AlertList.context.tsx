@@ -173,25 +173,24 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 	const filteredAlerts = useMemo(() => {
 		let filtered = searchFilteredAlerts;
-		return filtered;
 
 		// 1. Filter by publish status
-		filtered = filterPublishStatus.length > 0 ? filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status)) : filtered;
+		filtered = filterPublishStatus.length !== AlertSchema.shape.publish_status.options.length ? filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status)) : filtered;
 
 		// 2. Filter by cause
-		filtered = filterCause.length > 0 ? filtered.filter((alert) => filterCause.includes(alert.cause)) : filtered;
+		filtered = filterCause.length !== AlertSchema.shape.cause.options.length ? filtered.filter((alert) => filterCause.includes(alert.cause)) : filtered;
 
 		// 3. Filter by effect
-		filtered = filterEffect.length > 0 ? filtered.filter((alert) => filterEffect.includes(alert.effect)) : filtered;
+		filtered = filterEffect.length !== AlertSchema.shape.effect.options.length ? filtered.filter((alert) => filterEffect.includes(alert.effect)) : filtered;
 
 		// 4. Filter by municipality
-		filtered = filterMunicipality.length > 0 ? filtered.filter((alert) => filterMunicipality.some((municipality) => alert.municipality_ids.includes(municipality))) : filtered;
+		filtered = filterMunicipality.length !== municipalityOptions.length ? filtered.filter((alert) => filterMunicipality.some((municipality) => alert.municipality_ids.includes(municipality))) : filtered;
 
 		// // 5. Filter by line
-		filtered = filterLine.length > 0 ? filtered.filter((alert) => filterLine.some((line) => getAvailableLines(alert).includes(line))) : filtered;
+		filtered = filterLine.length !== lineOptions.length ? filtered.filter((alert) => filterLine.some((line) => getAvailableLines(alert).includes(line))) : filtered;
 
 		// // 6. Filter by stop
-		filtered = filterStop.length > 0 ? filtered.filter((alert) => filterStop.some((stop) => getAvailableStops(alert).includes(stop))) : filtered;
+			filtered = filterStop.length !== stopOptions.length ? filtered.filter((alert) => filterStop.some((stop) => getAvailableStops(alert).includes(stop))) : filtered;
 
 		// 7. Filter by publish date
 		filtered = filterPublishDateStart || filterPublishDateEnd ? filtered.filter((alert) => {
