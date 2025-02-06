@@ -41,7 +41,7 @@ server.register(
 			AlertsController.getById,
 		);
 
-		// GET /alerts/:id/publish
+		// GET /alerts/:id/image
 		instance.get(
 			'/:id/image',
 			{

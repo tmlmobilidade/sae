@@ -107,14 +107,7 @@ export class AlertsController {
 				return;
 			}
 			
-			const file = await files.findById(alert.file_id);
-
-			if (!file) {
-				reply.status(HttpStatus.NOT_FOUND).send({ message: 'File not found' });
-				return;
-			}
-			
-			const url = await files.getFileUrl({key: file.key});
+			const url = await files.getFileUrl({file_id: alert.file_id});
 
 			reply.send({
 				data: url,
@@ -125,6 +118,43 @@ export class AlertsController {
 			reply
 				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
 				.send(error);
+		}
+	}
+	
+	static async uploadImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+		try {
+			const { id } = request.params;
+
+			const alert = await alerts.findById(id);
+
+			if (!alert) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
+				return;
+			}
+
+			const file = request.body as File;
+			const arrayBuffer = await file.arrayBuffer();
+			const buffer = Buffer.from(arrayBuffer);
+
+			const result = await files.upload(buffer, {
+				scope: 'alerts',
+				type: file.type,
+				name: file.name,
+				key: id,
+				size: file.size,
+				created_by: 'system', // TODO: Change to user id
+				updated_by: 'system', // TODO: Change to user id
+			});
+
+			reply.send({
+				data: result,
+				message: 'Image uploaded',
+			});
+		}
+		catch (error) {
+			reply
+				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
+				.send(error);	
 		}
 	}
 }
