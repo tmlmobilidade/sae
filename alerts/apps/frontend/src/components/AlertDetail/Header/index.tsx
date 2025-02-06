@@ -18,7 +18,7 @@ export default function Header() {
 				<Text size="xl" weight="bold">{data.form.getValues()._id}</Text>
 			</div>
 			<div className={styles.headerContainer}>
-				<Button variant="primary" disabled={!flags.canSave} onClick={actions.saveAlert}>
+				<Button variant="primary" disabled={!flags.canSave} onClick={actions.saveAlert} loading={flags.isSaving}>
 					<IconUpload size={28} />
 					<div>{flags.mode === AlertDetailMode.CREATE ? 'Publicar' : 'Salvar'}</div>
 				</Button>

@@ -3,6 +3,7 @@
 import { IconLink } from '@tabler/icons-react';
 import { Section, Surface, TextArea, TextInput } from '@tmlmobilidade/ui';
 import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import AlertImage from '../AlertImage';
 
 export default function AlertSectionTitle() {
 	const { data: alertDetailData } = useAlertDetailContext();
@@ -28,6 +29,7 @@ export default function AlertSectionTitle() {
 					label="Descrição"
 					{...alertDetailData.form.getInputProps('description')}
 				/>
+				<AlertImage />
 				<TextInput
 					leftSection={<IconLink size={18} />}
 					placeholder="https://www.cm-setubal.com/..."

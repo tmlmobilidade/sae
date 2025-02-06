@@ -1,6 +1,7 @@
 export const PageRoutes = Object.freeze({
 	ALERT_LIST: '/alerts',
 	ALERT_DETAIL: (id: string) => `/alerts/${id}`,
+	ALERT_IMAGE: (id: string) => `/alerts/${id}/image`,
 });
 
 export const ApiRoutes = Object.freeze({

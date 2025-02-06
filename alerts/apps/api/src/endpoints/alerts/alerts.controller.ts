@@ -131,17 +131,17 @@ export class AlertsController {
 				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
 				return;
 			}
-
-			const file = request.body as File;
-			const arrayBuffer = await file.arrayBuffer();
-			const buffer = Buffer.from(arrayBuffer);
+			// Parse the file from the request
+			const data = await request.file();
+			const buffer = await data.toBuffer();
+			const size = buffer.buffer.byteLength;
 
 			const result = await files.upload(buffer, {
 				scope: 'alerts',
-				type: file.type,
-				name: file.name,
+				type: data.mimetype,
+				name: data.filename,
 				key: id,
-				size: file.size,
+				size: size,
 				created_by: 'system', // TODO: Change to user id
 				updated_by: 'system', // TODO: Change to user id
 			});

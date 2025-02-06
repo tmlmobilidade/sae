@@ -89,6 +89,18 @@ server.register(
 			AlertsController.delete,
 		);
 
+		// POST /alerts/:id/image
+		instance.post(
+			'/:id/image',
+			{
+				preHandler: authorizationMiddleware<Alert>(
+					Permissions.alerts.scope,
+					Permissions.alerts.actions.create,
+				),
+			},
+			AlertsController.uploadImage,
+		);
+
 		next();
 	},
 	{ prefix: namespace },

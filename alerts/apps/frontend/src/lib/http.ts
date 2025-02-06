@@ -20,12 +20,47 @@ export async function fetchData<T>(
 		const response = await fetch(url, {
 			method,
 			headers: {
-				...(method === 'GET' ? {} : { 'Content-Type': 'application/json' }),
+				...(method === 'GET' || method === 'DELETE' || 'Content-Type' in headers ? {} : { 'Content-Type': 'application/json' }),
 				...headers,
 			},
 			credentials: 'include',
 			body: body ? JSON.stringify(body) : undefined,
 			...options,
+		});
+		
+		const data = await response.json();
+		
+		if (!response.ok) {
+			return {
+				data: null,
+				error: data.message || 'An error occurred',
+				status: response.status,
+			};
+		}
+		
+		return {
+			data,
+			error: null,
+			status: response.status,
+		};
+	} catch (error) {
+		return {
+			data: null,
+			error: error instanceof Error ? error.message : 'Network error',
+			status: 500,
+		};
+	}
+}
+
+export async function uploadFile(url: string, file: File) {
+	try {
+		const formData = new FormData();
+		formData.append('file', file, file.name);
+
+		const response = await fetch(url, {
+			method: 'POST',
+			credentials: 'include',
+			body: formData,
 		});
 
 		const data = await response.json();

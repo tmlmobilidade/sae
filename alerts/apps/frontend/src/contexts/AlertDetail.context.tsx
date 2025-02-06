@@ -134,13 +134,13 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 
 	const saveAlert = async () => {
 		setIsSaving(true);
-
-		const alert: Alert = { ...form.values, publish_status: 'PUBLISHED' };
 		
+		// Handle Image Upload
+		const saveAlert: Alert = { ...form.values, publish_status: 'PUBLISHED' };
 		
 		const method = alertId === 'new' ? 'POST' : 'PUT';
 		const url = alertId === 'new' ? Routes.ALERTS_API + Routes.ALERT_LIST : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId);
-		const body = alertId === 'new' ? alert : convertObject(alert, UpdateAlertSchema);
+		const body = alertId === 'new' ? saveAlert : convertObject(saveAlert, UpdateAlertSchema);
 
 		const response = await fetchData<Alert>(url, method, body);
 		
@@ -201,7 +201,7 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 		},
 		data: {
 			form,
-			id: alert?._id,
+			id: alertId,
 		},
 		flags: {
 			canSave,

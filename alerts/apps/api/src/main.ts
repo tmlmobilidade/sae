@@ -5,6 +5,7 @@ import cors from '@fastify/cors';
 import { FastifyServerOptions } from 'fastify';
 
 import FastifyService from './services/fastify.service';
+import fastifyMultipart from '@fastify/multipart';
 
 /* * */
 
@@ -24,6 +25,11 @@ const options: FastifyServerOptions = {
 async function main() {
 	// Start Fastify server
 	const fastifyService = FastifyService.getInstance(options);
+	await fastifyService.server.register(fastifyMultipart,{
+		limits: {
+			fileSize: 1024 * 1024 * 10, // 10MB
+		}
+	});
 	await fastifyService.server.register(cookie);
 
 	// Setup CORS
@@ -36,6 +42,7 @@ async function main() {
 		origin,
 		credentials: true,
 	});
+
 	await fastifyService.start();
 }
 

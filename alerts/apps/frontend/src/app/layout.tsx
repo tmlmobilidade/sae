@@ -3,7 +3,7 @@
 import '@tmlmobilidade/ui/dist/styles.css';
 
 import { ThemeProvider } from '@tmlmobilidade/ui';
-import { Inter } from 'next/font/google';
+import { Inter, Work_Sans } from 'next/font/google';
 import { cookies as nextCookies } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
 import { DataProviders } from '@/components/providers/data-providers';
@@ -13,7 +13,7 @@ import AppWrapper from '@/components/AppWrapper';
 
 /* * */
 
-const inter = Inter({
+const workSans = Work_Sans({
 	subsets: ['latin'],
 });
 
@@ -35,9 +35,9 @@ export default async function Layout({
 	}
 
 	return (
-		<html className={inter.className} lang="en" suppressHydrationWarning>
+		<html lang="en" suppressHydrationWarning>
 			<body>
-				<ThemeProvider initialTheme="ocean">
+				<ThemeProvider initialTheme="ocean" fontFamilyStyle={workSans.style.fontFamily}>
 					<ConfigProviders>
 						<DataProviders>
 							<AppWrapper>
