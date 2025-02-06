@@ -2,7 +2,7 @@
 
 import { fetchData, uploadFile } from "@/lib/http";
 import { Routes } from "@/lib/routes";
-import { FileButton, Label } from "@tmlmobilidade/ui";
+import { FileButton, Label, useToast } from "@tmlmobilidade/ui";
 import { useAlertDetailContext } from "@/contexts/AlertDetail.context";
 import { useEffect, useState } from "react";
 
@@ -32,7 +32,19 @@ export default function AlertImage() {
 	async function handleFileChange(file: File) {
 		//1. Upload File
 		const response = await uploadFile(Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id!), file);
-		console.log(response);
+		
+		if (response.error) {
+			useToast.error({
+				title: "Erro ao carregar imagem",
+				message: response.error,
+			});
+			return;
+		}
+		
+		useToast.success({
+			title: "Imagem carregada com sucesso",
+			message: "A imagem foi carregada com sucesso",
+		});
 	}
 
 
