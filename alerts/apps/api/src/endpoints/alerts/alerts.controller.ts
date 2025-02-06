@@ -1,4 +1,4 @@
-import { alerts } from '@tmlmobilidade/core/interfaces';
+import { alerts, files } from '@tmlmobilidade/core/interfaces';
 import { HttpStatus } from '@tmlmobilidade/core/lib';
 import { Alert, Permission } from '@tmlmobilidade/core/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -57,15 +57,6 @@ export class AlertsController {
 	) {
 		try {
 			const { id } = request.params;
-
-			const permissions = request.permissions as
-			  | Permission<Alert>
-			  | undefined;
-
-			if (!permissions) {
-				reply.status(HttpStatus.FORBIDDEN).send({ message: 'Forbidden' });
-				return;
-			}
 			
 			const alert = await alerts.findById(id);
 
@@ -96,6 +87,38 @@ export class AlertsController {
 			reply.send({
 				data: alertData,
 				message: `Alert with id: ${id} updated`,
+			});
+		}
+		catch (error) {
+			reply
+				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
+				.send(error);
+		}
+	}
+	
+	static async getImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+		try {
+			const { id } = request.params;
+
+			const alert = await alerts.findById(id);
+
+			if (!alert) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
+				return;
+			}
+			
+			const file = await files.findById(alert.file_id);
+
+			if (!file) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'File not found' });
+				return;
+			}
+			
+			const url = await files.getFileUrl({key: file.key});
+
+			reply.send({
+				data: url,
+				message: 'Image retrieved',
 			});
 		}
 		catch (error) {

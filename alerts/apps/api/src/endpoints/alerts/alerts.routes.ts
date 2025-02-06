@@ -41,6 +41,18 @@ server.register(
 			AlertsController.getById,
 		);
 
+		// GET /alerts/:id/publish
+		instance.get(
+			'/:id/image',
+			{
+				preHandler: authorizationMiddleware<Alert>(
+					Permissions.alerts.scope,
+					Permissions.alerts.actions.read,
+				),
+			},
+			AlertsController.getImage,
+		);
+
 		// POST /alerts
 		instance.post(
 			'/',
