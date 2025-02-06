@@ -116,9 +116,6 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 	// Validate form on change
 	useEffect(() => {
 		form.validate();
-		console.log('isValid', form.isValid());
-		console.log('errors', form.errors);
-		
 		setCanSave(form.isValid());
 	}, [form.values]);
 
