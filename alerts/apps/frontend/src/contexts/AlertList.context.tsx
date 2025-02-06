@@ -14,14 +14,14 @@ import { DateTime } from "luxon";
 import { useSearchQuery } from "@tmlmobilidade/ui";
 
 interface AlertListContextState {
-    data: {
-        raw: Alert[];
-        filtered: Alert[];
-    }
-    flags: {
-        isLoading: boolean;
-        error: Error | undefined;
-    }
+	data: {
+		raw: Alert[];
+		filtered: Alert[];
+	}
+	flags: {
+		isLoading: boolean;
+		error: Error | undefined;
+	}
 	actions: {
 		togglePublishStatus: (status: string) => void;
 		toggleCause: (cause: string) => void;
@@ -35,9 +35,9 @@ interface AlertListContextState {
 		changePublishDateEnd: (date: Date | null) => void;
 		changeSearchQuery: (query: string) => void;
 	}
-    filters: {
+	filters: {
 		searchQuery: string;
-        publish_status: string[];
+		publish_status: string[];
 		cause: string[];
 		effect: string[];
 		municipality: string[];
@@ -50,17 +50,17 @@ interface AlertListContextState {
 		validityDateEnd: Date | null;
 		publishDateStart: Date | null;
 		publishDateEnd: Date | null;
-    }
+	}
 }
 
 const AlertListContext = createContext<AlertListContextState | undefined>(undefined);
 
 export const useAlertListContext = () => {
-    const context = useContext(AlertListContext);
-    if (!context) {
-        throw new Error("useAlertListContext must be used within an AlertListContextProvider");
-    }
-    return context;
+	const context = useContext(AlertListContext);
+	if (!context) {
+		throw new Error("useAlertListContext must be used within an AlertListContextProvider");
+	}
+	return context;
 }
 
 export const AlertListContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -73,7 +73,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 	const { data : { stops } } = useStopsContext();
 	
 	const { data: allAlertsData, isLoading: allAlertsLoading, error: allAlertsError } = useSWR<Alert[], Error>(`${Routes.ALERTS_API}/alerts`, swrFetcher);
-    const rawAlerts = useMemo(() => allAlertsData || [], [allAlertsData]);
+	const rawAlerts = useMemo(() => allAlertsData || [], [allAlertsData]);
 
 	const [filterPublishStatus, setFilterPublishStatus] = useState<string[]>(AlertSchema.shape.publish_status.options);
 	const [filterCause, setFilterCause] = useState<string[]>(AlertSchema.shape.cause.options);
@@ -349,7 +349,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		filterPublishDateEnd,
 		searchQuery,
 	]);
-    
+	
 	//
 	// E. Render components
 
