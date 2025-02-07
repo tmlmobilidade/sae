@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import { Button, Combobox, Surface } from '@tmlmobilidade/ui';
-import styles from './styles.module.css';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
-import { useMemo } from 'react';
 import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { Button, Combobox, Surface } from '@tmlmobilidade/ui';
+import { useMemo } from 'react';
+
+import styles from './styles.module.css';
 
 export default function AlertReferencesAgencies() {
 	//
@@ -21,7 +22,7 @@ export default function AlertReferencesAgencies() {
 				<Surface padding="md">Não há referências disponíveis.</Surface>
 			) : (
 				references.map((reference, index) => (
-					<AlertReferencesAgenciesItem index={index} key={index} />
+					<AlertReferencesAgenciesItem key={index} index={index} />
 				))
 			)}
 			<Button className={styles.button} onClick={alertDetailContext.actions.addReference} variant="primary">
@@ -32,34 +33,32 @@ export default function AlertReferencesAgencies() {
 	);
 }
 
-
 function AlertReferencesAgenciesItem({ index }: { index: number }) {
 	//
 	// A. Setup variables
-	const { data: alertDetailsData, actions } = useAlertDetailContext();
+	const { actions, data: alertDetailsData } = useAlertDetailContext();
 
 	const availableAgencies = useMemo(() => {
 		return [{ label: 'Carris Metropolitana', value: 'CM' }];
 	}, []);
 
-
 	return (
-		<Surface padding="sm" gap="md" borderRadius="sm" classNames={styles}>
+		<Surface borderRadius="sm" classNames={styles} gap="md" padding="sm">
 			<Combobox
-				label="Agência Afetada"
-				data={availableAgencies}
 				aria-label="Agência Afetada"
+				data={availableAgencies}
+				label="Agência Afetada"
+				clearable
 				fullWidth
 				searchable
-				clearable
 
 				{...alertDetailsData.form.getInputProps(`references.${index}.parent_id`)}
 			/>
 			<div className={styles.deleteButtonWrapper}>
 				<Button
-					variant="danger"
 					className={styles.button}
 					onClick={() => actions.removeReference(index)}
+					variant="danger"
 				>
 					<IconTrash size={18} />
 					<div>Eliminar</div>

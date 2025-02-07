@@ -3,11 +3,11 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack",
-		"clean": "rm -rf dist",
 		"build": "next build",
-		"start": "next start",
-		"lint": "next lint"
+		"clean": "rm -rf dist",
+		"dev": "next dev --turbopack",
+		"lint": "next lint",
+		"start": "next start"
 	},
 	"dependencies": {
 		"@tabler/icons-react": "^3.29.0",

@@ -1,13 +1,13 @@
 export const PageRoutes = Object.freeze({
-	ALERT_LIST: '/alerts',
 	ALERT_DETAIL: (id: string) => `/alerts/${id}`,
 	ALERT_IMAGE: (id: string) => `/alerts/${id}/image`,
+	ALERT_LIST: '/alerts',
 });
 
 export const ApiRoutes = Object.freeze({
-	CMET_API: process.env.NEXT_PUBLIC_CMET_API_URL ?? 'https://api.carrismetropolitana.pt/v2',
-	ALERTS_API:  process.env.NEXT_PUBLIC_ALERTS_API_URL ?? 'http://localhost:5052',
+	ALERTS_API: process.env.NEXT_PUBLIC_ALERTS_API_URL ?? 'http://localhost:5052',
 	AUTH_API: process.env.NEXT_PUBLIC_AUTH_API_URL ?? 'http://localhost:3001',
+	CMET_API: process.env.NEXT_PUBLIC_CMET_API_URL ?? 'https://api.carrismetropolitana.pt/v2',
 });
 
 export const Routes = Object.freeze({

@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export function toggleArray<T>(array: T[], value: T) {
 	if (array.includes(value)) {
-		return array.filter((v) => v !== value);
+		return array.filter(v => v !== value);
 	}
 	return [...array, value];
 }

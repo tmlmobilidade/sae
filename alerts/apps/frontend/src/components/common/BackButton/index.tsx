@@ -1,33 +1,34 @@
-"use client";
+'use client';
 
-import { ActionIcon } from "@tmlmobilidade/ui";
-import { IconChevronLeft } from "@tabler/icons-react";
-import { useRouter } from "next/navigation";
+import { IconChevronLeft } from '@tabler/icons-react';
+import { ActionIcon } from '@tmlmobilidade/ui';
+import { useRouter } from 'next/navigation';
 
 interface BackButtonProps {
-	href?: string;
+	href?: string
 }
 
 export default function BackButton({ href }: BackButtonProps) {
 	//
 	// A. Setup Variables
 	const router = useRouter();
-	
+
 	//
 	// B. Handle Events
 	const handleClick = () => {
 		if (href) {
 			router.replace(href);
-		} else {
+		}
+		else {
 			router.back();
 		}
-	}
+	};
 
 	//
-	// C. Render 
+	// C. Render
 	return (
-		<ActionIcon variant='muted' onClick={handleClick}>
-			<IconChevronLeft/>
+		<ActionIcon onClick={handleClick} variant="muted">
+			<IconChevronLeft />
 		</ActionIcon>
 	);
 }

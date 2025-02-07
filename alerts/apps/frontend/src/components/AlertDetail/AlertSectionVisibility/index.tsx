@@ -1,8 +1,9 @@
 'use client';
 
-import { DateTimePicker, Section, Surface } from '@tmlmobilidade/ui';
-import styles from './styles.module.css';
 import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import { DateTimePicker, Section, Surface } from '@tmlmobilidade/ui';
+
+import styles from './styles.module.css';
 
 export default function AlertSectionVisibility() {
 	const { data: alertDetailData } = useAlertDetailContext();
@@ -12,21 +13,21 @@ export default function AlertSectionVisibility() {
 
 	return (
 		<Section
-			title="Visibilidade e Agendamento"
 			description="É possível agendar a permanência do alerta nos canais digitais. A visibilidade do alerta é diferente do seu período de vigência."
+			title="Visibilidade e Agendamento"
 		>
-			<Surface flexDirection="row" padding="sm" gap="md">
+			<Surface flexDirection="row" gap="md" padding="sm">
 				<DateTimePicker
 					className={styles.datePicker}
-					label="Data de Início"
 					description="Data de início do alerta"
+					label="Data de Início"
 					{...alertDetailData.form.getInputProps('publish_start_date')}
 					value={startDate}
 				/>
 				<DateTimePicker
 					className={styles.datePicker}
-					label="Data de Fim"
 					description="Data de fim do alerta"
+					label="Data de Fim"
 					{...alertDetailData.form.getInputProps('publish_end_date')}
 					value={endDate}
 				/>

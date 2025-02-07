@@ -1,12 +1,12 @@
-"use client"
+'use client';
 
-import { fetchData, swrFetcher } from "@/lib/http";
-import { Routes } from "@/lib/routes";
-import { Alert, AlertSchema, convertObject, UpdateAlertSchema } from "@tmlmobilidade/core-types";
-import { useForm, UseFormReturnType, useToast, zodResolver } from "@tmlmobilidade/ui";
-import { createContext, useContext, useEffect, useState } from "react";
-import useSWR from "swr";
-import { useRouter } from "next/navigation";
+import { fetchData, swrFetcher } from '@/lib/http';
+import { Routes } from '@/lib/routes';
+import { Alert, AlertSchema, convertObject, UpdateAlertSchema } from '@tmlmobilidade/core-types';
+import { useForm, UseFormReturnType, useToast, zodResolver } from '@tmlmobilidade/ui';
+import { useRouter } from 'next/navigation';
+import { createContext, useContext, useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 export enum AlertDetailMode {
 	CREATE = 'create',
@@ -16,9 +16,9 @@ export enum AlertDetailMode {
 interface AlertDetailContextState {
 	actions: {
 		addReference: () => void
+		deleteAlert: () => void
 		removeReference: (index: number) => void
 		saveAlert: () => void
-		deleteAlert: () => void
 	}
 	data: {
 		form: UseFormReturnType<Alert>
@@ -38,8 +38,10 @@ const emptyAlert: Alert = {
 	active_period_end_date: new Date(),
 	active_period_start_date: new Date(),
 	cause: 'ACCIDENT',
+	created_by: 'temp',
 	description: '',
 	effect: 'ACCESSIBILITY_ISSUE',
+	modified_by: 'temp',
 	municipality_ids: [],
 	publish_end_date: new Date(),
 	publish_start_date: new Date(),
@@ -47,8 +49,6 @@ const emptyAlert: Alert = {
 	reference_type: 'stop',
 	references: [],
 	title: '',
-	created_by: "temp",
-	modified_by: "temp",
 };
 
 const AlertDetailContext = createContext<AlertDetailContextState | undefined>(undefined);
@@ -62,7 +62,6 @@ export function useAlertDetailContext() {
 }
 
 export const AlertDetailContextProvider = ({ alertId, children }: { alertId: string, children: React.ReactNode }) => {
-	
 	//
 	// A. Setup variables
 	const router = useRouter();
@@ -71,7 +70,7 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 	const [isReadOnly, setIsReadOnly] = useState(false);
 	const [canSave, setCanSave] = useState(false);
 
-	const {data: alert, isLoading, error } = useSWR<Alert>(alertId === 'new' ? null : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), swrFetcher);
+	const { data: alert, error, isLoading } = useSWR<Alert>(alertId === 'new' ? null : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId), swrFetcher);
 
 	//
 	// B. Define form
@@ -106,12 +105,12 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 	useEffect(() => {
 		if (error) {
 			useToast.error({
-				title: 'Erro ao carregar alerta',
 				message: error.message,
+				title: 'Erro ao carregar alerta',
 			});
 			router.replace(Routes.ALERT_LIST);
 		}
-	}, [error]);	
+	}, [error]);
 
 	// Validate form on change
 	useEffect(() => {
@@ -134,32 +133,31 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 
 	const saveAlert = async () => {
 		setIsSaving(true);
-		
+
 		// Handle Image Upload
 		const saveAlert: Alert = { ...form.values, publish_status: 'PUBLISHED' };
-		
+
 		const method = alertId === 'new' ? 'POST' : 'PUT';
 		const url = alertId === 'new' ? Routes.ALERTS_API + Routes.ALERT_LIST : Routes.ALERTS_API + Routes.ALERT_DETAIL(alertId);
 		const body = alertId === 'new' ? saveAlert : convertObject(saveAlert, UpdateAlertSchema);
 
 		const response = await fetchData<Alert>(url, method, body);
-		
+
 		if (response.error) {
 			const errors = JSON.parse(response.error);
 			for (const error of errors) {
 				useToast.error({
-					title: 'Erro ao salvar alerta',
 					message: error.message,
+					title: 'Erro ao salvar alerta',
 				});
 			}
 
 			return;
 		}
 
-
 		useToast.success({
-			title: 'Sucesso',
 			message: 'Alerta salvo com sucesso',
+			title: 'Sucesso',
 		});
 
 		router.replace(Routes.ALERT_LIST);
@@ -175,16 +173,16 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			const errors = JSON.parse(response.error);
 			for (const error of errors) {
 				useToast.error({
-					title: 'Erro ao salvar alerta',
 					message: error.message,
+					title: 'Erro ao salvar alerta',
 				});
 			}
 			return;
 		}
 
 		useToast.success({
-			title: 'Sucesso',
 			message: 'Alerta apagado com sucesso',
+			title: 'Sucesso',
 		});
 
 		router.replace(Routes.ALERT_LIST);
@@ -195,9 +193,9 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 	const contextValue: AlertDetailContextState = {
 		actions: {
 			addReference,
+			deleteAlert,
 			removeReference,
 			saveAlert,
-			deleteAlert,
 		},
 		data: {
 			form,
@@ -219,4 +217,4 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			{children}
 		</AlertDetailContext.Provider>
 	);
-}
+};

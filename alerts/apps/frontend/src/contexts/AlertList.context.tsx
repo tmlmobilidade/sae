@@ -1,55 +1,56 @@
-"use client"
+'use client';
 
-import { swrFetcher } from "@/lib/http";
-import { Routes } from "@/lib/routes";
-import { toggleArray } from "@/lib/utils";
-import { Alert, AlertSchema } from "@tmlmobilidade/core-types";
-import { createContext, useContext, useMemo, useState } from "react";
-import useSWR from "swr";
-import { useLocationsContext } from "./Locations.context";
-import { useLinesContext } from "./Lines.context";
-import { useStopsContext } from "./Stops.context";
-import { getAvailableLines, getAvailableStops } from "@/lib/alert-utils";
-import { DateTime } from "luxon";
-import { useSearchQuery } from "@tmlmobilidade/ui";
+import { getAvailableLines, getAvailableStops } from '@/lib/alert-utils';
+import { swrFetcher } from '@/lib/http';
+import { Routes } from '@/lib/routes';
+import { toggleArray } from '@/lib/utils';
+import { Alert, AlertSchema } from '@tmlmobilidade/core-types';
+import { useSearchQuery } from '@tmlmobilidade/ui';
+import { DateTime } from 'luxon';
+import { createContext, useContext, useMemo, useState } from 'react';
+import useSWR from 'swr';
+
+import { useLinesContext } from './Lines.context';
+import { useLocationsContext } from './Locations.context';
+import { useStopsContext } from './Stops.context';
 
 interface AlertListContextState {
-	data: {
-		raw: Alert[];
-		filtered: Alert[];
-	}
-	flags: {
-		isLoading: boolean;
-		error: Error | undefined;
-	}
 	actions: {
-		togglePublishStatus: (status: string) => void;
-		toggleCause: (cause: string) => void;
-		toggleEffect: (effect: string) => void;
-		toggleMunicipality: (municipality: string) => void;
-		toggleLine: (line: string) => void;
-		toggleStop: (stop: string) => void;
-		changeValidityDateStart: (date: Date | null) => void;
-		changeValidityDateEnd: (date: Date | null) => void;
-		changePublishDateStart: (date: Date | null) => void;
-		changePublishDateEnd: (date: Date | null) => void;
-		changeSearchQuery: (query: string) => void;
+		changePublishDateEnd: (date: Date | null) => void
+		changePublishDateStart: (date: Date | null) => void
+		changeSearchQuery: (query: string) => void
+		changeValidityDateEnd: (date: Date | null) => void
+		changeValidityDateStart: (date: Date | null) => void
+		toggleCause: (cause: string) => void
+		toggleEffect: (effect: string) => void
+		toggleLine: (line: string) => void
+		toggleMunicipality: (municipality: string) => void
+		togglePublishStatus: (status: string) => void
+		toggleStop: (stop: string) => void
+	}
+	data: {
+		filtered: Alert[]
+		raw: Alert[]
 	}
 	filters: {
-		searchQuery: string;
-		publish_status: string[];
-		cause: string[];
-		effect: string[];
-		municipality: string[];
-		municipalityOptions: string[];
-		line: string[];
-		lineOptions: string[];
-		stop: string[];
-		stopOptions: string[];
-		validityDateStart: Date | null;
-		validityDateEnd: Date | null;
-		publishDateStart: Date | null;
-		publishDateEnd: Date | null;
+		cause: string[]
+		effect: string[]
+		line: string[]
+		lineOptions: string[]
+		municipality: string[]
+		municipalityOptions: string[]
+		publish_status: string[]
+		publishDateEnd: Date | null
+		publishDateStart: Date | null
+		searchQuery: string
+		stop: string[]
+		stopOptions: string[]
+		validityDateEnd: Date | null
+		validityDateStart: Date | null
+	}
+	flags: {
+		error: Error | undefined
+		isLoading: boolean
 	}
 }
 
@@ -58,21 +59,21 @@ const AlertListContext = createContext<AlertListContextState | undefined>(undefi
 export const useAlertListContext = () => {
 	const context = useContext(AlertListContext);
 	if (!context) {
-		throw new Error("useAlertListContext must be used within an AlertListContextProvider");
+		throw new Error('useAlertListContext must be used within an AlertListContextProvider');
 	}
 	return context;
-}
+};
 
 export const AlertListContextProvider = ({ children }: { children: React.ReactNode }) => {
 	//
 
 	//
 	// A. Fetch data
-	const { data : {municipalities} } = useLocationsContext();
-	const { data : { routes } } = useLinesContext();
-	const { data : { stops } } = useStopsContext();
-	
-	const { data: allAlertsData, isLoading: allAlertsLoading, error: allAlertsError } = useSWR<Alert[], Error>(`${Routes.ALERTS_API}/alerts`, swrFetcher);
+	const { data: { municipalities } } = useLocationsContext();
+	const { data: { routes } } = useLinesContext();
+	const { data: { stops } } = useStopsContext();
+
+	const { data: allAlertsData, error: allAlertsError, isLoading: allAlertsLoading } = useSWR<Alert[], Error>(`${Routes.ALERTS_API}/alerts`, swrFetcher);
 	const rawAlerts = useMemo(() => allAlertsData || [], [allAlertsData]);
 
 	const [filterPublishStatus, setFilterPublishStatus] = useState<string[]>(AlertSchema.shape.publish_status.options);
@@ -85,14 +86,14 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 	const [filterValidityDateEnd, setFilterValidityDateEnd] = useState<Date | null>(null);
 	const [filterPublishDateStart, setFilterPublishDateStart] = useState<Date | null>(null);
 	const [filterPublishDateEnd, setFilterPublishDateEnd] = useState<Date | null>(null);
-	
+
 	//
 	// B. Transform data
 	const municipalityOptions = useMemo(() => {
 		const options = new Set<string>();
 		rawAlerts.forEach((alert) => {
 			alert.municipality_ids.forEach((id) => {
-					const municipality = municipalities.find((m) => m.id === id);
+				const municipality = municipalities.find(m => m.id === id);
 				if (municipality) {
 					options.add(municipality.id);
 				}
@@ -106,8 +107,8 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		const options = new Set<string>();
 
 		rawAlerts.forEach((alert) => {
-			getAvailableLines(alert).forEach((route_id) =>{
-				const route = routes.find((r) => r.id === route_id);
+			getAvailableLines(alert).forEach((route_id) => {
+				const route = routes.find(r => r.id === route_id);
 				if (route) {
 					options.add(route.id);
 				}
@@ -123,7 +124,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 
 		rawAlerts.forEach((alert) => {
 			getAvailableStops(alert).forEach((stop_id) => {
-				const stop = stops.find((s) => s.id === stop_id);
+				const stop = stops.find(s => s.id === stop_id);
 				if (stop) {
 					options.add(stop.id);
 				}
@@ -140,29 +141,29 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		customSearch: (alert, query) => {
 			// Check if any municipality name matches the query
 			const municipalityMatch = alert.municipality_ids.some((id) => {
-				const municipality = municipalities.find((m) => m.id === id);
+				const municipality = municipalities.find(m => m.id === id);
 				return municipality?.name.toLowerCase().includes(query);
 			});
 
 			// Check if any stop name matches the query
 			const stopMatch = getAvailableStops(alert).some((stop_id) => {
-				const stop = stops.find((s) => s.id === stop_id);
+				const stop = stops.find(s => s.id === stop_id);
 				return stop?.long_name.toLowerCase().includes(query);
 			});
 
 			const stopIdMatch = getAvailableStops(alert).some((stop_id) => {
-				const stop = stops.find((s) => s.id === stop_id);
+				const stop = stops.find(s => s.id === stop_id);
 				return stop?.id.toLowerCase().includes(query);
 			});
 
 			// Check if any line name matches the query
 			const lineMatch = getAvailableLines(alert).some((route_id) => {
-				const route = routes.find((r) => r.id === route_id);
+				const route = routes.find(r => r.id === route_id);
 				return route?.long_name.toLowerCase().includes(query);
 			});
 
 			const lineIdMatch = getAvailableLines(alert).some((route_id) => {
-				const route = routes.find((r) => r.id === route_id);
+				const route = routes.find(r => r.id === route_id);
 				return route?.id.toLowerCase().includes(query);
 			});
 
@@ -170,66 +171,68 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		},
 	});
 
-
 	const filteredAlerts = useMemo(() => {
 		let filtered = searchFilteredAlerts;
 
 		// 1. Filter by publish status
-		filtered = filterPublishStatus.length !== AlertSchema.shape.publish_status.options.length ? filtered.filter((alert) => filterPublishStatus.includes(alert.publish_status)) : filtered;
+		filtered = filterPublishStatus.length !== AlertSchema.shape.publish_status.options.length ? filtered.filter(alert => filterPublishStatus.includes(alert.publish_status)) : filtered;
 
 		// 2. Filter by cause
-		filtered = filterCause.length !== AlertSchema.shape.cause.options.length ? filtered.filter((alert) => filterCause.includes(alert.cause)) : filtered;
+		filtered = filterCause.length !== AlertSchema.shape.cause.options.length ? filtered.filter(alert => filterCause.includes(alert.cause)) : filtered;
 
 		// 3. Filter by effect
-		filtered = filterEffect.length !== AlertSchema.shape.effect.options.length ? filtered.filter((alert) => filterEffect.includes(alert.effect)) : filtered;
+		filtered = filterEffect.length !== AlertSchema.shape.effect.options.length ? filtered.filter(alert => filterEffect.includes(alert.effect)) : filtered;
 
 		// 4. Filter by municipality
-		filtered = filterMunicipality.length !== municipalityOptions.length ? filtered.filter((alert) => filterMunicipality.some((municipality) => alert.municipality_ids.includes(municipality))) : filtered;
+		filtered = filterMunicipality.length !== municipalityOptions.length ? filtered.filter(alert => filterMunicipality.some(municipality => alert.municipality_ids.includes(municipality))) : filtered;
 
 		// // 5. Filter by line
-		filtered = filterLine.length !== lineOptions.length ? filtered.filter((alert) => filterLine.some((line) => getAvailableLines(alert).includes(line))) : filtered;
+		filtered = filterLine.length !== lineOptions.length ? filtered.filter(alert => filterLine.some(line => getAvailableLines(alert).includes(line))) : filtered;
 
 		// // 6. Filter by stop
-			filtered = filterStop.length !== stopOptions.length ? filtered.filter((alert) => filterStop.some((stop) => getAvailableStops(alert).includes(stop))) : filtered;
+		filtered = filterStop.length !== stopOptions.length ? filtered.filter(alert => filterStop.some(stop => getAvailableStops(alert).includes(stop))) : filtered;
 
 		// 7. Filter by publish date
 		filtered = filterPublishDateStart || filterPublishDateEnd ? filtered.filter((alert) => {
 			const alertPublishStartDate = DateTime.fromISO(alert.publish_start_date.toString()).toMillis();
 			const alertPublishEndDate = DateTime.fromISO(alert.publish_end_date.toString()).toMillis();
 			const filterPublishStartDate = filterPublishDateStart ? DateTime.fromJSDate(filterPublishDateStart).toMillis() : null;
-			const filterPublishEndDate = filterPublishDateEnd ? DateTime.fromJSDate(filterPublishDateEnd).toMillis() : null;	
+			const filterPublishEndDate = filterPublishDateEnd ? DateTime.fromJSDate(filterPublishDateEnd).toMillis() : null;
 
 			if (filterPublishStartDate && filterPublishEndDate) {
 				return alertPublishStartDate >= filterPublishStartDate && alertPublishEndDate <= filterPublishEndDate;
-			} else if (filterPublishStartDate) {
+			}
+			else if (filterPublishStartDate) {
 				return alertPublishStartDate >= filterPublishStartDate;
-			} else if (filterPublishEndDate) {
+			}
+			else if (filterPublishEndDate) {
 				return alertPublishEndDate <= filterPublishEndDate;
 			}
-			
+
 			return true;
 		}) : filtered;
-		
+
 		// 8. Filter by validity date
 		filtered = filterValidityDateStart || filterValidityDateEnd ? filtered.filter((alert) => {
 			const alertValidityStartDate = DateTime.fromISO(alert.active_period_start_date.toString()).toMillis();
 			const alertValidityEndDate = DateTime.fromISO(alert.active_period_end_date.toString()).toMillis();
 			const filterValidityStartDate = filterValidityDateStart ? DateTime.fromJSDate(filterValidityDateStart).toMillis() : null;
-			const filterValidityEndDate = filterValidityDateEnd ? DateTime.fromJSDate(filterValidityDateEnd).toMillis() : null;	
+			const filterValidityEndDate = filterValidityDateEnd ? DateTime.fromJSDate(filterValidityDateEnd).toMillis() : null;
 
 			if (filterValidityStartDate && filterValidityEndDate) {
 				return alertValidityStartDate >= filterValidityStartDate && alertValidityEndDate <= filterValidityEndDate;
-			} else if (filterValidityStartDate) {
+			}
+			else if (filterValidityStartDate) {
 				return alertValidityStartDate >= filterValidityStartDate;
-			} else if (filterValidityEndDate) {
+			}
+			else if (filterValidityEndDate) {
 				return alertValidityEndDate <= filterValidityEndDate;
 			}
-			
+
 			return true;
 		}) : filtered;
 
 		return filtered;
-
 	}, [
 		searchFilteredAlerts,
 		filterPublishStatus,
@@ -243,7 +246,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		filterPublishDateStart,
 		filterPublishDateEnd,
 	]);
-	
+
 	//
 	// C. Handle Actions
 
@@ -291,42 +294,42 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 	// D. Define context value
 
 	const contextValue: AlertListContextState = useMemo(() => ({
-		data: {
-			raw: rawAlerts || [],
-			filtered: filteredAlerts || [],
-		},
-		flags: {
-			isLoading: allAlertsLoading,
-			error: allAlertsError,
-		},
 		actions: {
-			togglePublishStatus: handleTogglePublishStatus,
+			changePublishDateEnd: handleChangePublishDateEnd,
+			changePublishDateStart: handleChangePublishDateStart,
+			changeSearchQuery: setSearchQuery,
+			changeValidityDateEnd: handleChangeValidityDateEnd,
+			changeValidityDateStart: handleChangeValidityDateStart,
 			toggleCause: handleToggleCause,
 			toggleEffect: handleToggleEffect,
-			toggleMunicipality: handleToggleMunicipality,
 			toggleLine: handleToggleLine,
+			toggleMunicipality: handleToggleMunicipality,
+			togglePublishStatus: handleTogglePublishStatus,
 			toggleStop: handleToggleStop,
-			changeValidityDateStart: handleChangeValidityDateStart,
-			changeValidityDateEnd: handleChangeValidityDateEnd,
-			changePublishDateStart: handleChangePublishDateStart,
-			changePublishDateEnd: handleChangePublishDateEnd,
-			changeSearchQuery: setSearchQuery,
+		},
+		data: {
+			filtered: filteredAlerts || [],
+			raw: rawAlerts || [],
 		},
 		filters: {
-			searchQuery: searchQuery || "",
-			publish_status: filterPublishStatus,
 			cause: filterCause,
 			effect: filterEffect,
-			municipality: filterMunicipality,
-			municipalityOptions: municipalityOptions,
 			line: filterLine,
 			lineOptions: lineOptions,
+			municipality: filterMunicipality,
+			municipalityOptions: municipalityOptions,
+			publish_status: filterPublishStatus,
+			publishDateEnd: filterPublishDateEnd,
+			publishDateStart: filterPublishDateStart,
+			searchQuery: searchQuery || '',
 			stop: filterStop,
 			stopOptions: stopOptions,
-			validityDateStart: filterValidityDateStart,
 			validityDateEnd: filterValidityDateEnd,
-			publishDateStart: filterPublishDateStart,
-			publishDateEnd: filterPublishDateEnd,
+			validityDateStart: filterValidityDateStart,
+		},
+		flags: {
+			error: allAlertsError,
+			isLoading: allAlertsLoading,
 		},
 	}), [
 		rawAlerts,
@@ -349,7 +352,7 @@ export const AlertListContextProvider = ({ children }: { children: React.ReactNo
 		filterPublishDateEnd,
 		searchQuery,
 	]);
-	
+
 	//
 	// E. Render components
 

@@ -1,14 +1,15 @@
 'use client';
 
+import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
 import { fetchData, uploadFile } from '@/lib/http';
 import { Routes } from '@/lib/routes';
 import {
+	DeleteActionIcon,
 	FileButton,
 	Label,
 	useToast,
-	DeleteActionIcon,
 } from '@tmlmobilidade/ui';
-import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import styles from './styles.module.css';
@@ -17,14 +18,18 @@ export default function AlertImage() {
 	//
 	// A. Setup Variables
 	const { data } = useAlertDetailContext();
-	const [imageUrl, setImageUrl] = useState<string | null>(null);
+	const [imageUrl, setImageUrl] = useState<null | string>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	//
 	// B. Modify Data
 	const fetchImageUrl = async () => {
-		const res = await fetchData<{ data: string; message: string }>(
-			Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id!)
+		if (!data.id) {
+			throw new Error('Data ID is missing');
+		}
+
+		const res = await fetchData<{ data: string, message: string }>(
+			Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id),
 		);
 		setImageUrl(res.data?.data ?? null);
 	};
@@ -36,24 +41,28 @@ export default function AlertImage() {
 	//
 	// C. Handle Actions
 	async function handleFileChange(file: File) {
+		if (!data.id) {
+			throw new Error('Data ID is missing');
+		}
+
 		setIsLoading(true);
-		//1. Upload File
+		// 1. Upload File
 		const response = await uploadFile(
-			Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id!),
-			file
+			Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id),
+			file,
 		);
 
 		if (response.error) {
 			useToast.error({
-				title: 'Erro ao carregar imagem',
 				message: response.error,
+				title: 'Erro ao carregar imagem',
 			});
 			return;
 		}
 
 		useToast.success({
-			title: 'Imagem carregada com sucesso',
 			message: 'A imagem foi carregada com sucesso',
+			title: 'Imagem carregada com sucesso',
 		});
 
 		setImageUrl(URL.createObjectURL(file));
@@ -61,23 +70,27 @@ export default function AlertImage() {
 	}
 
 	async function handleDelete() {
-		//1. Upload File
+		if (!data.id) {
+			throw new Error('Data ID is missing');
+		}
+
+		// 1. Upload File
 		const response = await fetchData(
-			Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id!),
-			'DELETE'
+			Routes.ALERTS_API + Routes.ALERT_IMAGE(data.id),
+			'DELETE',
 		);
 
 		if (response.error) {
 			useToast.error({
-				title: 'Erro ao apagar imagem',
 				message: response.error,
+				title: 'Erro ao apagar imagem',
 			});
 			return;
 		}
 
 		useToast.success({
-			title: 'Imagem apagada com sucesso',
 			message: 'A imagem foi apagada com sucesso',
+			title: 'Imagem apagada com sucesso',
 		});
 
 		setImageUrl(null);
@@ -91,23 +104,23 @@ export default function AlertImage() {
 			<Label>Imagem</Label>
 			{imageUrl && (
 				<div className={styles.container}>
-					<img src={imageUrl} alt="Imagem da alerta" />
+					<Image alt="Imagem da alerta" layout="fill" objectFit="cover" src={imageUrl} />
 					<div className={styles.deleteContainer}>
 						<DeleteActionIcon
-							showConfirmation
-							onConfirm={handleDelete}
 							confirmMessage="Tem certeza que deseja apagar a imagem?"
 							confirmTitle="Apagar imagem"
+							onConfirm={handleDelete}
+							showConfirmation
 						/>
 					</div>
 				</div>
 			)}
 			<FileButton
 				accept="image/*"
-				label={'Carregar imagem'}
-				onFileChange={handleFileChange}
-				loading={isLoading}
 				disabled={!data.id}
+				label="Carregar imagem"
+				loading={isLoading}
+				onFileChange={handleFileChange}
 			/>
 		</>
 	);

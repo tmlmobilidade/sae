@@ -1,5 +1,5 @@
-import AlertList from "@/components/AlertList";
-import { AlertListContextProvider } from "@/contexts/AlertList.context";
+import AlertList from '@/components/AlertList';
+import { AlertListContextProvider } from '@/contexts/AlertList.context';
 
 export default function Page() {
 	return (

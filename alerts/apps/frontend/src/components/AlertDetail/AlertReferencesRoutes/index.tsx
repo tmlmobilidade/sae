@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { Button, Combobox, Surface } from '@tmlmobilidade/ui';
-import styles from './styles.module.css';
-import { IconCornerDownRight, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useLinesContext } from '@/contexts/Lines.context';
-import { useMemo } from 'react';
-import { useStopsContext } from '@/contexts/Stops.context';
 import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import { useLinesContext } from '@/contexts/Lines.context';
+import { useStopsContext } from '@/contexts/Stops.context';
+import { IconCornerDownRight, IconPlus, IconTrash } from '@tabler/icons-react';
+import { Button, Combobox, Surface } from '@tmlmobilidade/ui';
+import { useMemo } from 'react';
+
+import styles from './styles.module.css';
 
 export default function AlertReferencesRoutes() {
 	//
@@ -23,7 +24,7 @@ export default function AlertReferencesRoutes() {
 				<Surface padding="md">Não há referências disponíveis.</Surface>
 			) : (
 				references.map((reference, index) => (
-					<AlertReferencesRoutesItem index={index} key={index} />
+					<AlertReferencesRoutesItem key={index} index={index} />
 				))
 			)}
 			<Button className={styles.button} onClick={alertDetailContext.actions.addReference} variant="primary">
@@ -34,17 +35,15 @@ export default function AlertReferencesRoutes() {
 	);
 }
 
-
 function AlertReferencesRoutesItem({ index }: { index: number }) {
 	//
 	// A. Setup variables
 	const { data: linesData } = useLinesContext();
 	const { data: stopsData } = useStopsContext();
-	const { data: alertDetailsData, actions } = useAlertDetailContext();
+	const { actions, data: alertDetailsData } = useAlertDetailContext();
 
 	const availableRoutes = useMemo(() => {
 		if (!linesData.routes) return [];
-
 
 		if (alertDetailsData.form.values.municipality_ids.length === 0) return linesData.routes.map(route => ({
 			label: `[${route.id}] ${route.long_name}`,
@@ -67,38 +66,37 @@ function AlertReferencesRoutesItem({ index }: { index: number }) {
 		}));
 	}, [stopsData.stops, alertDetailsData.form.values.references[index].parent_id]);
 
-
 	return (
-		<Surface padding="sm" gap="md" borderRadius="sm" classNames={styles}>
+		<Surface borderRadius="sm" classNames={styles} gap="md" padding="sm">
 			<Combobox
-				label="Linha Afetada"
-				data={availableRoutes}
 				aria-label="Linha Afetada"
+				data={availableRoutes}
+				label="Linha Afetada"
+				clearable
 				fullWidth
 				searchable
-				clearable
 
 				{...alertDetailsData.form.getInputProps(`references.${index}.parent_id`)}
 			/>
 			<div className={styles.childrenWrapper}>
-				<IconCornerDownRight size={28} className={styles.icon} />
+				<IconCornerDownRight className={styles.icon} size={28} />
 				<Combobox
-					label="Paragens Afetadas"
-					description="Selecione as paragens que serão afetadas pelo alerta"
+					aria-label="Paragens Afetadas"
 					data={availableStops}
-					multiple
-					searchable
+					description="Selecione as paragens que serão afetadas pelo alerta"
+					label="Paragens Afetadas"
 					clearable
 					fullWidth
-					aria-label="Paragens Afetadas"
+					multiple
+					searchable
 					{...alertDetailsData.form.getInputProps(`references.${index}.child_ids`)}
 				/>
 			</div>
 			<div className={styles.deleteButtonWrapper}>
 				<Button
-					variant="danger"
 					className={styles.button}
 					onClick={() => actions.removeReference(index)}
+					variant="danger"
 				>
 					<IconTrash size={18} />
 					<div>Eliminar</div>

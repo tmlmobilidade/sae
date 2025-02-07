@@ -1,14 +1,13 @@
-"use client";
+'use client';
 
-import AlertSectionTitle from "../AlertSectionTitle";
-import AlertSectionVisibility from "../AlertSectionVisibility";
-import AlertSectionValidity from "../AlertSectionValidity";
-import AlertSectionCauseEffect from "../AlertSectionCauseEffect";
-import AlertSectionReferences from "../AlertSectionReferences";
-import Header from "../Header";
+import AlertSectionCauseEffect from '../AlertSectionCauseEffect';
+import AlertSectionReferences from '../AlertSectionReferences';
+import AlertSectionTitle from '../AlertSectionTitle';
+import AlertSectionValidity from '../AlertSectionValidity';
+import AlertSectionVisibility from '../AlertSectionVisibility';
+import Header from '../Header';
 
 export default function AlertForm() {
-
 	return (
 		<>
 			{/* Header */}
@@ -25,5 +24,4 @@ export default function AlertForm() {
 			<AlertSectionReferences />
 		</>
 	);
-
 }

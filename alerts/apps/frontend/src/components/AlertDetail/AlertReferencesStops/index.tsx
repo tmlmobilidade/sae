@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { Button, Combobox, Surface } from '@tmlmobilidade/ui';
-import styles from './styles.module.css';
-import { IconCornerDownRight, IconPlus, IconTrash } from '@tabler/icons-react';
-import { useLinesContext } from '@/contexts/Lines.context';
-import { useMemo } from 'react';
-import { useStopsContext } from '@/contexts/Stops.context';
 import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import { useLinesContext } from '@/contexts/Lines.context';
+import { useStopsContext } from '@/contexts/Stops.context';
+import { IconCornerDownRight, IconPlus, IconTrash } from '@tabler/icons-react';
+import { Button, Combobox, Surface } from '@tmlmobilidade/ui';
+import { useMemo } from 'react';
+
+import styles from './styles.module.css';
 
 export default function AlertReferencesStops() {
 	//
@@ -23,7 +24,7 @@ export default function AlertReferencesStops() {
 				<Surface className={styles.empty} padding="md">Não há referências disponíveis.</Surface>
 			) : (
 				references.map((reference, index) => (
-					<AlertReferencesStopsItem index={index} key={index} />
+					<AlertReferencesStopsItem key={index} index={index} />
 				))
 			)}
 			<Button className={styles.button} onClick={alertDetailContext.actions.addReference} variant="primary">
@@ -34,13 +35,12 @@ export default function AlertReferencesStops() {
 	);
 }
 
-
 function AlertReferencesStopsItem({ index }: { index: number }) {
 	//
 	// A. Setup variables
 	const { data: linesData } = useLinesContext();
 	const { data: stopsData } = useStopsContext();
-	const { data: alertDetailsData, actions } = useAlertDetailContext();
+	const { actions, data: alertDetailsData } = useAlertDetailContext();
 
 	const availableStops = useMemo(() => {
 		if (!stopsData.stops) return [];
@@ -63,40 +63,39 @@ function AlertReferencesStopsItem({ index }: { index: number }) {
 		})) || [];
 	}, [linesData.routes, alertDetailsData.form.values.municipality_ids, alertDetailsData.form.values.references[index].parent_id]);
 
-
 	return (
-		<Surface padding="sm" gap="md" borderRadius="sm" classNames={styles}>
+		<Surface borderRadius="sm" classNames={styles} gap="md" padding="sm">
 			<Combobox
-				label="Paragem Afetada"
-				data={availableStops}
 				aria-label="Paragem Afetada"
+				data={availableStops}
+				label="Paragem Afetada"
+				clearable
 				fullWidth
 				searchable
-				clearable
 
 				{...alertDetailsData.form.getInputProps(`references.${index}.parent_id`)}
 			/>
 			<div className={styles.childrenWrapper}>
-				<IconCornerDownRight size={28} className={styles.icon} />
+				<IconCornerDownRight className={styles.icon} size={28} />
 				<div className={styles.comboboxWrapper}>
 					<Combobox
-						label="Rotas Afetadas"
-						description="Selecione as linhas que serão afetadas pelo alerta"
+						aria-label="Linhas Afetadas"
 						data={availableRoutes}
-						multiple
-						searchable
+						description="Selecione as linhas que serão afetadas pelo alerta"
+						label="Rotas Afetadas"
 						clearable
 						fullWidth
-						aria-label="Linhas Afetadas"
+						multiple
+						searchable
 						{...alertDetailsData.form.getInputProps(`references.${index}.child_ids`)}
 					/>
 				</div>
 			</div>
 			<div className={styles.buttonContainer}>
 				<Button
-					variant="danger"
 					className={styles.button}
 					onClick={() => actions.removeReference(index)}
+					variant="danger"
 				>
 					<IconTrash size={18} />
 					<div>Eliminar</div>

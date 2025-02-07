@@ -2,20 +2,21 @@
 
 /* * */
 
+import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import { useLocationsContext } from '@/contexts/Locations.context';
+import { Alert, AlertSchema } from '@tmlmobilidade/core-types';
 import {
 	Combobox,
+	openConfirmModal,
 	Section,
 	SegmentedControl,
 	Surface,
-	openConfirmModal,
 } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
-import { useLocationsContext } from '@/contexts/Locations.context';
-import { useAlertDetailContext } from '@/contexts/AlertDetail.context';
-import { Alert, AlertSchema } from '@tmlmobilidade/core-types';
+
+import AlertReferencesAgencies from '../AlertReferencesAgencies';
 import AlertReferencesRoutes from '../AlertReferencesRoutes';
 import AlertReferencesStops from '../AlertReferencesStops';
-import AlertReferencesAgencies from '../AlertReferencesAgencies';
 
 export default function AlertSectionReferences() {
 	//
@@ -28,7 +29,7 @@ export default function AlertSectionReferences() {
 	const municipalitiesOptions = useMemo(() => {
 		if (!locationsData.municipalities) return [];
 
-		return locationsData.municipalities.map((municipality) => ({
+		return locationsData.municipalities.map(municipality => ({
 			label: municipality.name,
 			value: municipality.id,
 		}));
@@ -42,14 +43,14 @@ export default function AlertSectionReferences() {
 	// C. Handle Actions
 	const parseOptionsLabel = (value: Alert['reference_type']) => {
 		switch (value) {
+			case 'agency':
+				return { label: 'Agências', value };
 			case 'route':
 				return { label: 'Linhas', value };
 			case 'stop':
 				return { label: 'Paragens', value };
-			case 'agency':
-				return { label: 'Agências', value };
 		}
-	}
+	};
 
 	const handleSegmentedControlChange = (value: Alert['reference_type']) => {
 		if (references.length > 0) {
@@ -79,29 +80,29 @@ export default function AlertSectionReferences() {
 
 	return (
 		<Section
-			title="Referências"
 			description="As referências (Linhas, Paragens, Municípios, Etc...) afetadas deste alerta."
+			title="Referências"
 		>
-			<Surface padding="sm" gap="md">
+			<Surface gap="md" padding="sm">
 				<Combobox
-					label="Municípios Afetados"
-					description="Selecione os munícios que serão afetados pelo alerta"
+					key={alertDetailData.form.key('municipality_ids')}
 					data={municipalitiesOptions}
-					searchable
-					multiple
+					description="Selecione os munícios que serão afetados pelo alerta"
+					label="Municípios Afetados"
 					clearable
 					fullWidth
-					key={alertDetailData.form.key('municipality_ids')}
+					multiple
+					searchable
 					{...alertDetailData.form.getInputProps('municipality_ids')}
 				/>
 
 				<SegmentedControl
-					value={alertDetailData.form.values.reference_type}
-					onChange={handleSegmentedControlChange as any}
 					data={AlertSchema.shape.reference_type.options.map(parseOptionsLabel)}
+					onChange={(value: string) => handleSegmentedControlChange(value as Alert['reference_type'])}
+					value={alertDetailData.form.values.reference_type}
 					fullWidth
 				/>
-				
+
 				{alertDetailData.form.values.reference_type === 'route' && <AlertReferencesRoutes />}
 				{alertDetailData.form.values.reference_type === 'stop' && <AlertReferencesStops />}
 				{alertDetailData.form.values.reference_type === 'agency' && <AlertReferencesAgencies />}

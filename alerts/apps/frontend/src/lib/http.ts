@@ -1,35 +1,34 @@
 // "use client";
 
 // Define the HttpResponse type
-export type HttpResponse<T> = {
-	data: T | null;
-	error: string | null;
-	status: number;
-};
+export interface HttpResponse<T> {
+	data: null | T
+	error: null | string
+	status: number
+}
 
 // Create the fetchData function
 export async function fetchData<T>(
 	url: string,
-	method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-	body?: any,
+	method: 'DELETE' | 'GET' | 'POST' | 'PUT' = 'GET',
+	body?: unknown,
 	headers: HeadersInit = {},
-	options: Omit<RequestInit, 'method' | 'body' | 'headers'> = {}
+	options: Omit<RequestInit, 'body' | 'headers' | 'method'> = {},
 ): Promise<HttpResponse<T>> {
-
 	try {
 		const response = await fetch(url, {
-			method,
+			body: body ? JSON.stringify(body) : undefined,
+			credentials: 'include',
 			headers: {
 				...(method === 'GET' || method === 'DELETE' || 'Content-Type' in headers ? {} : { 'Content-Type': 'application/json' }),
 				...headers,
 			},
-			credentials: 'include',
-			body: body ? JSON.stringify(body) : undefined,
+			method,
 			...options,
 		});
-		
+
 		const data = await response.json();
-		
+
 		if (!response.ok) {
 			return {
 				data: null,
@@ -37,13 +36,14 @@ export async function fetchData<T>(
 				status: response.status,
 			};
 		}
-		
+
 		return {
 			data,
 			error: null,
 			status: response.status,
 		};
-	} catch (error) {
+	}
+	catch (error) {
 		return {
 			data: null,
 			error: error instanceof Error ? error.message : 'Network error',
@@ -58,9 +58,9 @@ export async function uploadFile(url: string, file: File) {
 		formData.append('file', file, file.name);
 
 		const response = await fetch(url, {
-			method: 'POST',
-			credentials: 'include',
 			body: formData,
+			credentials: 'include',
+			method: 'POST',
 		});
 
 		const data = await response.json();
@@ -78,7 +78,8 @@ export async function uploadFile(url: string, file: File) {
 			error: null,
 			status: response.status,
 		};
-	} catch (error) {
+	}
+	catch (error) {
 		return {
 			data: null,
 			error: error instanceof Error ? error.message : 'Network error',
@@ -90,7 +91,7 @@ export async function uploadFile(url: string, file: File) {
 export const swrFetcher = async (url: string) => {
 	const res = await fetch(url, { credentials: 'include' });
 	const data = await res.json();
-	
+
 	if (!res.ok) {
 		throw new Error(data.message);
 	}

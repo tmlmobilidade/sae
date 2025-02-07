@@ -1,29 +1,29 @@
-"use client";
+'use client';
 
-import { AlertDetailMode, useAlertDetailContext } from "@/contexts/AlertDetail.context";
-import { IconUpload, IconTrash } from "@tabler/icons-react";
-import { Surface, Badge, Button, Text } from "@tmlmobilidade/ui";
+import BackButton from '@/components/common/BackButton';
+import { AlertDetailMode, useAlertDetailContext } from '@/contexts/AlertDetail.context';
+import { IconTrash, IconUpload } from '@tabler/icons-react';
+import { Badge, Button, Surface, Text } from '@tmlmobilidade/ui';
 
 import styles from './styles.module.css';
-import BackButton from "@/components/common/BackButton";
 
 export default function Header() {
-	const { data, flags, actions } = useAlertDetailContext();
+	const { actions, data, flags } = useAlertDetailContext();
 
 	return (
-		<Surface padding="sm" flexDirection="row" alignItems="center" justifyContent="space-between">
+		<Surface alignItems="center" flexDirection="row" justifyContent="space-between" padding="sm">
 			<div className={styles.headerContainer}>
 				<BackButton />
 				<Badge variant="muted">{data.form.getValues().publish_status}</Badge>
 				<Text size="xl" weight="bold">{data.form.getValues()._id}</Text>
 			</div>
 			<div className={styles.headerContainer}>
-				<Button variant="primary" disabled={!flags.canSave} onClick={actions.saveAlert} loading={flags.isSaving}>
+				<Button disabled={!flags.canSave} loading={flags.isSaving} onClick={actions.saveAlert} variant="primary">
 					<IconUpload size={28} />
 					<div>{flags.mode === AlertDetailMode.CREATE ? 'Publicar' : 'Salvar'}</div>
 				</Button>
 				{flags.mode === AlertDetailMode.EDIT && (
-					<Button variant="danger" onClick={actions.deleteAlert}>
+					<Button onClick={actions.deleteAlert} variant="danger">
 						<IconTrash size={28} />
 						<div>Apagar</div>
 					</Button>

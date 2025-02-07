@@ -1,5 +1,5 @@
-import { useLinesContext } from "@/contexts/Lines.context";
-import { Badge } from "@tmlmobilidade/ui";
+import { useLinesContext } from '@/contexts/Lines.context';
+import { Badge } from '@tmlmobilidade/ui';
 
 import styles from './styles.module.css';
 
@@ -15,9 +15,9 @@ export default function LineCell({ line_ids }: { line_ids: string[] }) {
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.badges}>
-				{line_ids.slice(0, 2).map((line) => (
+				{line_ids.slice(0, 2).map(line => (
 					<Badge key={line} variant="muted">
-						{routes.find((r) => r.id === line)?.line_id}
+						{routes.find(r => r.id === line)?.line_id}
 					</Badge>
 				))}
 			</div>

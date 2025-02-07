@@ -1,5 +1,5 @@
-import { useStopsContext } from "@/contexts/Stops.context";
-import { Badge } from "@tmlmobilidade/ui";
+import { useStopsContext } from '@/contexts/Stops.context';
+import { Badge } from '@tmlmobilidade/ui';
 
 import styles from './styles.module.css';
 
@@ -15,9 +15,9 @@ export default function StopCell({ stop_ids }: { stop_ids: string[] }) {
 	return (
 		<div className={styles.wrapper}>
 			<div className={styles.badges}>
-				{stop_ids.slice(0, 2).map((stop) => (
+				{stop_ids.slice(0, 2).map(stop => (
 					<Badge key={stop} variant="muted">
-						{stops.find((s) => s.id === stop)?.long_name}
+						{stops.find(s => s.id === stop)?.long_name}
 					</Badge>
 				))}
 			</div>
