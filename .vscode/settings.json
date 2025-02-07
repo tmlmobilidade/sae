@@ -37,7 +37,7 @@
 		"toml",
 		"astro"
 	],
-	"eslint.workingDirectories": ["auto"],
+	"eslint.workingDirectories": [{ "mode": "auto" }],
 	"files.eol": "\n",
 
 	"less.validate": false,
