@@ -201,7 +201,7 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 		},
 		data: {
 			form,
-			id: alertId,
+			id: alertId === 'new' ? undefined : alertId,
 		},
 		flags: {
 			canSave,

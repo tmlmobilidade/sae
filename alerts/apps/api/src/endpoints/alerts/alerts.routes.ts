@@ -95,10 +95,22 @@ server.register(
 			{
 				preHandler: authorizationMiddleware<Alert>(
 					Permissions.alerts.scope,
-					Permissions.alerts.actions.create,
+					Permissions.alerts.actions.update,
 				),
 			},
 			AlertsController.uploadImage,
+		);
+
+		// DELETE /alerts/:id/image
+		instance.delete(
+			'/:id/image',
+			{
+				preHandler: authorizationMiddleware<Alert>(
+					Permissions.alerts.scope,
+					Permissions.alerts.actions.update,
+				),
+			},
+			AlertsController.deleteImage,
 		);
 
 		next();
