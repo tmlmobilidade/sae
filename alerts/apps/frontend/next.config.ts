@@ -7,19 +7,22 @@ const nextConfig: NextConfig = {
 		remotePatterns: [
 			{
 				hostname: '*.carrismetropolitana.pt',
+				port: '',
+				protocol: 'https',
 			},
 			{
 				hostname: '*.cloudflarestorage.com',
+				port: '',
+				protocol: 'https',
 			},
 		],
 	},
+	output: 'standalone',
+	reactStrictMode: true,
 	async redirects() {
 		return [
-			{
-				destination: Routes.ALERT_LIST,
-				permanent: true,
-				source: '/',
-			},
+			//
+			{ destination: Routes.ALERT_LIST, permanent: true, source: '/' },
 		];
 	},
 };
