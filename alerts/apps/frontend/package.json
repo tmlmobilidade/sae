@@ -11,7 +11,7 @@
 	},
 	"dependencies": {
 		"@tabler/icons-react": "^3.29.0",
-		"@tmlmobilidade/core-types": "^20250206.1625.18",
+		"@tmlmobilidade/core-types": "^20250206.1928.49",
 		"@tmlmobilidade/tsconfig": "^20241031.1431.3",
 		"@tmlmobilidade/ui": "^20250206.1514.26",
 		"clsx": "^2.1.1",

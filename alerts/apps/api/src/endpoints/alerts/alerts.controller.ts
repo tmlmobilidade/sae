@@ -140,11 +140,13 @@ export class AlertsController {
 				scope: 'alerts',
 				type: data.mimetype,
 				name: data.filename,
-				key: id,
+				resource_id: id,
 				size: size,
 				created_by: 'system', // TODO: Change to user id
 				updated_by: 'system', // TODO: Change to user id
 			});
+			
+			await alerts.updateById(id, { file_id: result.insertedId.toString() });
 
 			reply.send({
 				data: result,

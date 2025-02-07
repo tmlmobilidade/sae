@@ -36,8 +36,8 @@ importers:
         specifier: ^9.0.3
         version: 9.0.3
       '@tmlmobilidade/core':
-        specifier: ^20250206.1747.18
-        version: 20250206.1747.18
+        specifier: ^20250206.1929.54
+        version: 20250206.1929.54
       fastify:
         specifier: ^5.1.0
         version: 5.2.1
@@ -82,8 +82,8 @@ importers:
         specifier: ^3.29.0
         version: 3.29.0(react@19.0.0)
       '@tmlmobilidade/core-types':
-        specifier: ^20250206.1625.18
-        version: 20250206.1625.18
+        specifier: ^20250206.1928.49
+        version: 20250206.1928.49
       '@tmlmobilidade/tsconfig':
         specifier: ^20241031.1431.3
         version: 20241031.1431.3
@@ -4029,8 +4029,8 @@ packages:
       - socks
     dev: false
 
-  /@tmlmobilidade/core-types@20250206.1625.18:
-    resolution: {integrity: sha512-D32Qi02nmokVhCU2yeWm9edJKbnhoP3YeMawWkL2yaNSg6Xda5vkBBWFU1xSgaHZ1gqMnWZLwnjvCTPYXHkT7A==}
+  /@tmlmobilidade/core-types@20250206.1928.49:
+    resolution: {integrity: sha512-ixE8WAnbWtuuEaqdqvucbrAFdauoRPlwcqOtmeA+KXHeKKTAdFQCVUhqGRbfmLzTXwooF4QP6CurFJXDxCrDLQ==}
     dependencies:
       '@aws-sdk/client-s3': 3.741.0
       '@aws-sdk/s3-request-presigner': 3.741.0
@@ -4059,8 +4059,8 @@ packages:
       - socks
     dev: false
 
-  /@tmlmobilidade/core@20250206.1747.18:
-    resolution: {integrity: sha512-VT4hKaL5UoI5jbu7xy/UG7KYM+th1ePp6SlxiHETrELEgiN0vBlZ1EpqI0jDs/8HVNrBzaxJe35efISKUfkKsA==}
+  /@tmlmobilidade/core@20250206.1929.54:
+    resolution: {integrity: sha512-0o/xTLZAxFPWsAN1RbqpfZNdUYFytM2j898jZ0SaBZjTrvblK06PhJV2g7dho2crdwp73IuEHxZADlEDg8M9jQ==}
     dependencies:
       '@aws-sdk/client-s3': 3.741.0
       '@aws-sdk/s3-request-presigner': 3.741.0
