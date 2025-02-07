@@ -24,3 +24,12 @@ services:
         volumes:
             - ./data/auth.dump:/dump/db.dump
             - ./local-setup.sh:/docker-entrypoint-initdb.d/setup.sh
+
+    files-db:
+        image: mongo:latest
+        ports:
+            - 37006:27017
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root
+            MONGO_INITDB_DATABASE: production

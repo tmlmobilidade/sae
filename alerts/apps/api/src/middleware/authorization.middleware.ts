@@ -17,10 +17,7 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 		request: FastifyRequest,
 		reply: FastifyReply,
 	): Promise<void> => {
-
-		const token = request.headers.authorization?.split(' ')[1];
-
-		console.log(request.headers);
+		const token = request.cookies.session_token;
 
 		if (!token) {
 			throw new HttpException(
@@ -28,6 +25,7 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 				'Invalid authorization token',
 			);
 		}
+
 		try {
 			const permissions = await authProvider.getPermissions<T>(
 				token,
@@ -35,8 +33,7 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 				action,
 			);
 			request.permissions = permissions;
-		}
-		catch (error) {
+		} catch (error) {
 			reply
 				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
 				.send({

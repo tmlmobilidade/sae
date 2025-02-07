@@ -1,44 +1,33 @@
-'use client';
+"use client";
 
-/* * */
-
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { IconChevronLeft } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-
-/* * */
+import { ActionIcon } from "@tmlmobilidade/ui";
+import { IconChevronLeft } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 interface BackButtonProps {
-	href?: string
-	onClick?: () => void
+	href?: string;
 }
 
-export default function BackButton({ href = '', onClick = () => null }: BackButtonProps) {
+export default function BackButton({ href }: BackButtonProps) {
 	//
-
-	//
-	// A. Setup variables
-
+	// A. Setup Variables
 	const router = useRouter();
-
+	
 	//
-	// B. Handle actions
-
+	// B. Handle Events
 	const handleClick = () => {
-		if (!href) onClick();
-		else if (href) router.push(href);
-	};
+		if (href) {
+			router.replace(href);
+		} else {
+			router.back();
+		}
+	}
 
 	//
-	// C. Render components
-
+	// C. Render 
 	return (
-		<Tooltip color="gray" label="Voltar" position="bottom" withArrow>
-			<ActionIcon color="gray" onClick={handleClick} size="lg" variant="subtle">
-				<IconChevronLeft size={20} />
-			</ActionIcon>
-		</Tooltip>
+		<ActionIcon variant='muted' onClick={handleClick}>
+			<IconChevronLeft/>
+		</ActionIcon>
 	);
-
-	//
 }

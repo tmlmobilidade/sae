@@ -1,8 +1,16 @@
-import type { NextConfig } from 'next';
+import { Routes } from "@/lib/routes";
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-	/* config options here */
-	output: 'standalone',
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: Routes.ALERT_LIST,
+        permanent: true,
+      },
+    ]
+  },
 };
 
 export default nextConfig;

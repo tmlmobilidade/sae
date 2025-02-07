@@ -1,0 +1,22 @@
+.surface {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-width: 1px;
+}
+
+.title {
+    font-weight: bold;
+    font-size: var(--font-size-2xl);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--size-spacing-sm);
+}
+
+
+.segmentedControl {
+    height: 100%;
+}

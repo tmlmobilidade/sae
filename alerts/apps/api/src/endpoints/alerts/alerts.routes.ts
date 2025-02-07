@@ -41,6 +41,18 @@ server.register(
 			AlertsController.getById,
 		);
 
+		// GET /alerts/:id/image
+		instance.get(
+			'/:id/image',
+			{
+				preHandler: authorizationMiddleware<Alert>(
+					Permissions.alerts.scope,
+					Permissions.alerts.actions.read,
+				),
+			},
+			AlertsController.getImage,
+		);
+
 		// POST /alerts
 		instance.post(
 			'/',
@@ -75,6 +87,30 @@ server.register(
 				),
 			},
 			AlertsController.delete,
+		);
+
+		// POST /alerts/:id/image
+		instance.post(
+			'/:id/image',
+			{
+				preHandler: authorizationMiddleware<Alert>(
+					Permissions.alerts.scope,
+					Permissions.alerts.actions.update,
+				),
+			},
+			AlertsController.uploadImage,
+		);
+
+		// DELETE /alerts/:id/image
+		instance.delete(
+			'/:id/image',
+			{
+				preHandler: authorizationMiddleware<Alert>(
+					Permissions.alerts.scope,
+					Permissions.alerts.actions.update,
+				),
+			},
+			AlertsController.deleteImage,
 		);
 
 		next();
