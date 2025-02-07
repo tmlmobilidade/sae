@@ -104,7 +104,7 @@ export default function AlertImage() {
 			<Label>Imagem</Label>
 			{imageUrl && (
 				<div className={styles.container}>
-					<Image alt="Imagem da alerta" layout="fill" objectFit="cover" src={imageUrl} />
+					<Image alt="Imagem da alerta" className={styles.image} height={300} src={imageUrl} width={400} />
 					<div className={styles.deleteContainer}>
 						<DeleteActionIcon
 							confirmMessage="Tem certeza que deseja apagar a imagem?"
