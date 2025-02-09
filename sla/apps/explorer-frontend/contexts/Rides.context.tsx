@@ -2,9 +2,11 @@
 
 /* * */
 
+import { getDelayStatus } from '@/utils/get-delay-status';
 import { getOperationalStatus } from '@/utils/get-operational-status';
 import { getSeenStatus } from '@/utils/get-seen-status';
-import { type Ride, type RideDisplay, type WebSocketMessage } from '@tmlmobilidade/core/types';
+import { getStartTime } from '@/utils/get-start-time';
+import { type Ride, RideAnalysis, type RideDisplay, type WebSocketMessage } from '@tmlmobilidade/core/types';
 import { getOperationalDate } from '@tmlmobilidade/core/utils';
 import { throttle } from 'lodash';
 import { DateTime } from 'luxon';
@@ -12,12 +14,19 @@ import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRe
 
 /* * */
 
+export interface ExtendedRideDisplay extends RideDisplay {
+	delay_status: 'delayed' | 'early' | 'ontime' | null
+	simple_three_vehicle_events_grade: RideAnalysis['grade']
+	start_time_observed_display: null | string
+	start_time_scheduled_display: string
+}
+
 interface RidesContextState {
 	actions: {
 		getRideById: (rideId: string) => Ride | undefined
 	}
 	data: {
-		rides_display: RideDisplay[]
+		rides_display: ExtendedRideDisplay[]
 		rides_store: Map<string, Ride>
 	}
 	flags: {
@@ -47,7 +56,7 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 
 	const webSocketRef = useRef<null | WebSocket>(null);
 
-	const [dataRidesDisplayState, setDataRidesDisplayState] = useState<RideDisplay[]>([]);
+	const [dataRidesDisplayState, setDataRidesDisplayState] = useState<ExtendedRideDisplay[]>([]);
 	const dataRidesStoreState = useRef<Map<string, Ride>>(new Map());
 
 	const currentOperationalDate = getOperationalDate();
@@ -105,12 +114,16 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 	const updateRidesDisplayState = throttle(() => {
 		console.log('Starting allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);
 		const allRidesDisplay: Ride[] = Array.from(dataRidesStoreState.current.values());
-		const allRidesParsed: RideDisplay[] = allRidesDisplay
+		const allRidesParsed: ExtendedRideDisplay[] = allRidesDisplay
 			.sort((a, b) => String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled)))
 			.map(item => ({
 				...item,
+				delay_status: getDelayStatus(item.start_time_scheduled, item.start_time_observed),
 				operational_status: getOperationalStatus(item.start_time_scheduled, item.seen_last_at),
 				seen_status: getSeenStatus(item.seen_last_at),
+				simple_three_vehicle_events_grade: item.analysis.find(analysis => analysis._id === 'SIMPLE_THREE_VEHICLE_EVENTS')?.grade || null,
+				start_time_observed_display: item.start_time_observed ? getStartTime(item.start_time_observed) : null,
+				start_time_scheduled_display: getStartTime(item.start_time_scheduled),
 			}));
 		setDataRidesDisplayState(allRidesParsed);
 		console.log('Finished allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);

@@ -11,8 +11,8 @@
 	},
 	"dependencies": {
 		"@tabler/icons-react": "3.29.0",
-		"@tmlmobilidade/core": "20250205.1923.17",
-		"@tmlmobilidade/ui": "20250205.1339.11",
+		"@tmlmobilidade/core": "20250206.1231.39",
+		"@tmlmobilidade/ui": "20250206.1428.7",
 		"@turf/turf": "7.2.0",
 		"lodash": "4.17.21",
 		"luxon": "3.5.0",

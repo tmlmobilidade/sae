@@ -1,6 +1,6 @@
 /* * */
 
-import { type RideDisplay } from '@/types/ride-display.type';
+import { type RideDisplay } from '@tmlmobilidade/core/types';
 
 import styles from './styles.module.css';
 
@@ -12,7 +12,7 @@ interface Props {
 
 /* * */
 
-export function SeenStatusBadge({ value }: Props) {
+export function SeenStatusTag({ value }: Props) {
 	return (
 		<div className={styles.container} data-status={value}>
 			<div className={styles.indicator} />

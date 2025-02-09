@@ -3,11 +3,15 @@
 /* * */
 
 import { Label } from '@/components/Label';
-import { SeenStatusBadge } from '@/components/SeenStatusBadge';
+import { SeenStatusTag } from '@/components/SeenStatusTag';
 import { useRidesContext } from '@/contexts/Rides.context';
-import { Badge } from '@tmlmobilidade/ui';
+import { IconCreditCardPay } from '@tabler/icons-react';
+import { Tag } from '@tmlmobilidade/ui';
 import { ViewportList } from 'react-viewport-list';
 
+import { AnalysisStatusTag } from '../AnalysisStatusTag';
+import { OperationalStatusTag } from '../OperationalStatusTag';
+import { StartTimeStatusTag } from '../StartTimeStatusTag';
 import styles from './styles.module.css';
 
 /* * */
@@ -36,41 +40,52 @@ export function DataTable() {
 						<Label size="sm" caps>Pattern</Label>
 					</div>
 					<div className={styles.cell}>
-						<Label size="sm" caps>Ride ID</Label>
+						<Label size="sm" caps>Partida</Label>
 					</div>
 					<div className={styles.cell}>
-						<Label size="sm" caps>Partida</Label>
+						<Label size="sm" caps>Observado</Label>
 					</div>
 					<div className={styles.cell}>
 						<Label size="sm" caps>Validações</Label>
 					</div>
+					<div className={styles.cell}>
+						<Label size="sm" caps>SIMPLE_THREE_VEH...</Label>
+					</div>
+					{/* <div className={styles.cell}>
+						<Label size="sm" caps>Ride ID</Label>
+					</div> */}
 				</div>
 			</div>
 
 			<div className={styles.body}>
 				<ViewportList itemMargin={0} items={ridesContext.data.rides_display}>
 					{item => (
-						<div key={item._ride._id} className={styles.row}>
+						<div key={item._id} className={styles.row}>
 							<div className={styles.cell}>
-								<SeenStatusBadge value={item.seen_status} />
+								<SeenStatusTag value={item.seen_status} />
 							</div>
 							<div className={styles.cell}>
-								<Badge size="sm" variant="secondary">
-									{item.operational_status}
-								</Badge>
+								<OperationalStatusTag value={item.operational_status} />
 							</div>
 							<div className={styles.cell}>
-								<Label lines={1} size="md">{item._ride.pattern_id}{item._ride.headsign}</Label>
+								<Tag label={item.pattern_id} variant="secondary" />
+								<Label lines={1} size="md">{item.headsign}</Label>
 							</div>
 							<div className={styles.cell}>
-								<Label lines={1} size="md">{item._ride._id}</Label>
+								<Tag label={item.start_time_scheduled_display} variant="primary" />
 							</div>
 							<div className={styles.cell}>
-								<Label lines={1} size="md">{String(item._ride.start_time_scheduled).substring(0, 19)}</Label>
+								<StartTimeStatusTag status={item.delay_status} timeString={item.start_time_observed_display} />
 							</div>
 							<div className={styles.cell}>
-								<Label lines={1} size="md">{item._ride.validations_count}</Label>
+								{item.validations_count > 0 && <Tag icon={<IconCreditCardPay />} label={item.validations_count} variant="secondary" />}
 							</div>
+							<div className={styles.cell}>
+								<AnalysisStatusTag grade={item.simple_three_vehicle_events_grade} operationalStatus={item.operational_status} />
+							</div>
+							{/* <div className={styles.cell}>
+								{item._id}
+							</div> */}
 						</div>
 					)}
 				</ViewportList>
