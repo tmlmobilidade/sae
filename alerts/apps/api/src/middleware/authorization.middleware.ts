@@ -33,7 +33,8 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 				action,
 			);
 			request.permissions = permissions;
-		} catch (error) {
+		}
+		catch (error) {
 			reply
 				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
 				.send({

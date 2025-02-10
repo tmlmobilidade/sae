@@ -2,10 +2,10 @@
 
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import fastifyMultipart from '@fastify/multipart';
 import { FastifyServerOptions } from 'fastify';
 
 import FastifyService from './services/fastify.service';
-import fastifyMultipart from '@fastify/multipart';
 
 /* * */
 
@@ -25,22 +25,22 @@ const options: FastifyServerOptions = {
 async function main() {
 	// Start Fastify server
 	const fastifyService = FastifyService.getInstance(options);
-	await fastifyService.server.register(fastifyMultipart,{
+	await fastifyService.server.register(fastifyMultipart, {
 		limits: {
 			fileSize: 1024 * 1024 * 10, // 10MB
-		}
+		},
 	});
 	await fastifyService.server.register(cookie);
 
 	// Setup CORS
-	const origin =
-		process.env.NODE_ENV === 'development'
+	const origin
+		= process.env.NODE_ENV === 'development'
 			? true
 			: `https://*.${process.env.COOKIE_DOMAIN}`;
 
 	await fastifyService.server.register(cors, {
-		origin,
 		credentials: true,
+		origin,
 	});
 
 	await fastifyService.start();

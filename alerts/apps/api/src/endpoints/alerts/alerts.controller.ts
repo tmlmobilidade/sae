@@ -36,11 +36,39 @@ export class AlertsController {
 		}
 	}
 
+	static async deleteImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+		try {
+			const { id } = request.params;
+
+			const alert = await alerts.findById(id);
+
+			if (!alert) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
+				return;
+			}
+
+			if (!alert.file_id) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Image not found' });
+				return;
+			}
+
+			await files.deleteById(alert.file_id);
+			await alerts.updateById(id, { file_id: undefined });
+
+			reply.send({
+				message: 'Image deleted',
+			});
+		}
+		catch (error) {
+			reply
+				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
+				.send(error);
+		}
+	}
+
 	static async getAll(request: FastifyRequest, reply: FastifyReply) {
 		try {
-			const permissions = request.permissions as
-			  | Permission<Alert>
-			  | undefined;
+			const permissions = request.permissions as Permission<Alert> | undefined;
 
 			reply.send(await alerts.findMany({}, undefined, undefined, { created_at: -1 }));
 		}
@@ -57,7 +85,7 @@ export class AlertsController {
 	) {
 		try {
 			const { id } = request.params;
-			
+
 			const alert = await alerts.findById(id);
 
 			if (!alert) {
@@ -66,6 +94,31 @@ export class AlertsController {
 			}
 
 			reply.send(alert);
+		}
+		catch (error) {
+			reply
+				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
+				.send(error);
+		}
+	}
+
+	static async getImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
+		try {
+			const { id } = request.params;
+
+			const alert = await alerts.findById(id);
+
+			if (!alert) {
+				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
+				return;
+			}
+
+			const url = await files.getFileUrl({ file_id: alert.file_id });
+
+			reply.send({
+				data: url,
+				message: 'Image retrieved',
+			});
 		}
 		catch (error) {
 			reply
@@ -95,32 +148,7 @@ export class AlertsController {
 				.send(error);
 		}
 	}
-	
-	static async getImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
-		try {
-			const { id } = request.params;
 
-			const alert = await alerts.findById(id);
-
-			if (!alert) {
-				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
-				return;
-			}
-			
-			const url = await files.getFileUrl({file_id: alert.file_id});
-
-			reply.send({
-				data: url,
-				message: 'Image retrieved',
-			});
-		}
-		catch (error) {
-			reply
-				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
-				.send(error);
-		}
-	}
-	
 	static async uploadImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
 		try {
 			const { id } = request.params;
@@ -137,59 +165,30 @@ export class AlertsController {
 			const size = buffer.buffer.byteLength;
 
 			const result = await files.upload(buffer, {
-				scope: 'alerts',
-				type: data.mimetype,
+				created_by: 'system', // TODO: Change to user id
 				name: data.filename,
 				resource_id: id,
+				scope: 'alerts',
 				size: size,
-				created_by: 'system', // TODO: Change to user id
+				type: data.mimetype,
 				updated_by: 'system', // TODO: Change to user id
 			});
-			
+
 			// Delete the old image if it exists
 			try {
 				if (alert.file_id) {
 					await files.deleteById(alert.file_id);
 				}
-			} catch (error) {
+			}
+			catch (error) {
 				console.error(error);
 			}
-			
+
 			await alerts.updateById(id, { file_id: result.insertedId.toString() });
 
 			reply.send({
 				data: result,
 				message: 'Image uploaded',
-			});
-		}
-		catch (error) {
-			reply
-				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
-				.send(error);	
-		}
-	}
-	
-	static async deleteImage(request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) {
-		try {
-			const { id } = request.params;
-
-			const alert = await alerts.findById(id);
-
-			if (!alert) {
-				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Alert not found' });
-				return;
-			}
-
-			if (!alert.file_id) {
-				reply.status(HttpStatus.NOT_FOUND).send({ message: 'Image not found' });
-				return;
-			}
-
-			await files.deleteById(alert.file_id);
-			await alerts.updateById(id, { file_id: undefined });
-
-			reply.send({
-				message: 'Image deleted',
 			});
 		}
 		catch (error) {
