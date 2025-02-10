@@ -104,12 +104,11 @@ export class AlertsController {
 	static async getGtfs(request: FastifyRequest, reply: FastifyReply) {
 		try {
 			const result = await alerts.findMany({
-				$or: [
-					{
-						active_period_end_date: { $gte: new Date() },
-					},
+				$and: [
 					{
 						publish_end_date: { $gte: new Date() },
+						publish_start_date: { $lte: new Date() },
+						publish_status: 'PUBLISHED',
 					},
 				],
 			}, undefined, undefined, { created_at: -1 });
