@@ -7,7 +7,7 @@
 email="carrismetropolitana@gmail.com"
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
-website_frontend_1=alerts.carrismetropolitana.pt
+website_frontend_1=alerts.sae.carrismetropolitana.pt
 
 
 # # #
