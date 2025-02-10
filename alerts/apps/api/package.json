@@ -30,6 +30,7 @@
 		"@types/fastify-multipart": "^0.7.2",
 		"@types/jest": "^29.5.14",
 		"@types/node": "^22.10.2",
+		"gtfs-types": "^4.0.0",
 		"jest": "^29.7.0",
 		"typescript": "5.7.2"
 	}

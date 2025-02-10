@@ -113,6 +113,9 @@ server.register(
 			AlertsController.deleteImage,
 		);
 
+		// GET /alerts/gtfs
+		instance.get('/gtfs', AlertsController.getGtfs);
+
 		next();
 	},
 	{ prefix: namespace },

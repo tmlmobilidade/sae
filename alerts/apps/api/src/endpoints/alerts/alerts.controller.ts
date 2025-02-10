@@ -1,3 +1,4 @@
+import { parseServiceAlert } from '@/utils/service-alert-parser';
 import { alerts, files } from '@tmlmobilidade/core/interfaces';
 import { HttpStatus } from '@tmlmobilidade/core/lib';
 import { Alert } from '@tmlmobilidade/core/types';
@@ -97,6 +98,35 @@ export class AlertsController {
 			reply
 				.status(error.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR)
 				.send(error);
+		}
+	}
+
+	static async getGtfs(request: FastifyRequest, reply: FastifyReply) {
+		try {
+			const result = await alerts.findMany({
+				$or: [
+					{
+						active_period_end_date: { $gte: new Date() },
+					},
+					{
+						publish_end_date: { $gte: new Date() },
+					},
+				],
+			}, undefined, undefined, { created_at: -1 });
+
+			const serviceAlerts = result.map(alert => parseServiceAlert(alert));
+
+			reply.send({
+				entity: serviceAlerts,
+				header: {
+					gtfs_realtime_version: '2.0',
+					incrementality: 'FULL_DATASET',
+					timestamp: Math.floor(new Date().getTime() / 1000),
+				},
+			});
+		}
+		catch (error) {
+			reply.status(HttpStatus.INTERNAL_SERVER_ERROR).send(error);
 		}
 	}
 
