@@ -6,6 +6,7 @@
 		"clean": "sh cleanup.sh",
 		"dev": "turbo dev",
 		"dev:bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
+		"dev:explorer": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-server --filter=@tmlmobilidade/sae-sla-explorer-frontend",
 		"dev:explorer-frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-frontend",
 		"dev:explorer-server": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-server",
 		"dev:feeder": "turbo dev --filter=@tmlmobilidade/sae-sla-feeder",
