@@ -1,6 +1,6 @@
 import { alerts, files } from '@tmlmobilidade/core/interfaces';
 import { HttpStatus } from '@tmlmobilidade/core/lib';
-import { Alert, Permission } from '@tmlmobilidade/core/types';
+import { Alert } from '@tmlmobilidade/core/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export class AlertsController {
@@ -68,8 +68,6 @@ export class AlertsController {
 
 	static async getAll(request: FastifyRequest, reply: FastifyReply) {
 		try {
-			const permissions = request.permissions as Permission<Alert> | undefined;
-
 			reply.send(await alerts.findMany({}, undefined, undefined, { created_at: -1 }));
 		}
 		catch (error) {
