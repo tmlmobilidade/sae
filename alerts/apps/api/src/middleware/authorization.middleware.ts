@@ -1,5 +1,5 @@
+import { fetchData } from '@/utils/http';
 import { HttpException, HttpStatus } from '@tmlmobilidade/core/lib';
-import { authProvider } from '@tmlmobilidade/core/providers';
 import { Permission } from '@tmlmobilidade/core/types';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -27,12 +27,23 @@ export default function authorizationMiddleware<T = unknown>( // Added default t
 		}
 
 		try {
-			const permissions = await authProvider.getPermissions<T>(
-				token,
-				scope,
-				action,
+			const res = await fetchData<Permission<T>>(
+				`${process.env.AUTH_API_URL}/permissions?resource=${scope}&action=${action}`,
+				'GET',
+				undefined,
+				{
+					Cookie: `session_token=${token}`,
+				},
 			);
-			request.permissions = permissions;
+
+			if (res.status !== HttpStatus.OK) {
+				throw new HttpException(
+					res.status,
+					res.error,
+				);
+			}
+
+			request.permissions = res.data;
 		}
 		catch (error) {
 			reply
