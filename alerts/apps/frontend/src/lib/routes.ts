@@ -5,13 +5,13 @@ export const PageRoutes = Object.freeze({
 });
 
 export const ApiRoutes = Object.freeze({
-	ALERTS_API: process.env.NEXT_PUBLIC_ALERTS_API_URL ?? 'http://localhost:5052',
-	AUTH_API: process.env.NEXT_PUBLIC_AUTH_API_URL ?? 'http://localhost:3001',
+	ALERTS_API: process.env.NEXT_PUBLIC_ALERTS_API_URL ?? 'https://alerts.sae.carrismetropolitana.pt/api',
+	AUTH_API: process.env.NEXT_PUBLIC_AUTH_API_URL ?? 'https://auth.sae.carrismetropolitana.pt',
 	CMET_API: process.env.NEXT_PUBLIC_CMET_API_URL ?? 'https://api.carrismetropolitana.pt/v2',
 });
 
 export const Routes = Object.freeze({
-	URL: process.env.NEXT_PUBLIC_URL ?? 'http://localhost:3000',
+	URL: process.env.NEXT_PUBLIC_URL ?? 'https://alerts.sae.carrismetropolitana.pt',
 	...PageRoutes,
 	...ApiRoutes,
 });
