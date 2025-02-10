@@ -47,7 +47,7 @@ function parseServiceAlert(alert: Alert): ServiceAlert {
 		description_text: {
 			translation: [
 				{
-					language: 'pt-PT',
+					language: 'pt',
 					text: alert.description,
 				},
 			],
@@ -56,7 +56,7 @@ function parseServiceAlert(alert: Alert): ServiceAlert {
 		header_text: {
 			translation: [
 				{
-					language: 'pt-PT',
+					language: 'pt',
 					text: alert.title,
 				},
 			],
