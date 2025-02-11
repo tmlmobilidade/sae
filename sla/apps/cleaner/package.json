@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/sae-sla-sync-apex-t11",
+	"name": "@tmlmobilidade/sae-sla-cleaner",
 	"version": "1.0.0",
 	"type": "module",
 	"files": ["dist"],
@@ -17,13 +17,9 @@
 		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"@helperkits/writer": "20241204.1537.50",
-		"@tmlmobilidade/sae-sla-pckg-constants": "*",
-		"@tmlmobilidade/sae-sla-pckg-parse": "*",
-		"@tmlmobilidade/sae-sla-pckg-sync": "*",
 		"@tmlmobilidade/core": "20250210.1218.37",
-		"luxon": "3.5.0",
-		"tunnel-ssh": "5.2.0"
+		"@tmlmobilidade/sae-sla-pckg-constants": "*",
+		"luxon": "3.5.0"
 	},
 	"devDependencies": {
 		"@types/luxon": "3.4.2",

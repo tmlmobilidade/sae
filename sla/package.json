@@ -6,6 +6,7 @@
 		"clean": "sh cleanup.sh",
 		"dev": "turbo dev",
 		"dev:bridge": "turbo dev --filter=@tmlmobilidade/sae-sla-bridge",
+		"dev:cleaner": "turbo dev --filter=@tmlmobilidade/sae-sla-cleaner",
 		"dev:explorer": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-server --filter=@tmlmobilidade/sae-sla-explorer-frontend",
 		"dev:explorer-frontend": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-frontend",
 		"dev:explorer-server": "turbo dev --filter=@tmlmobilidade/sae-sla-explorer-server",
@@ -22,7 +23,7 @@
 	"devDependencies": {
 		"@carrismetropolitana/eslint": "20250128.1601.13",
 		"@tmlmobilidade/tsconfig": "20241213.1919.54",
-		"turbo": "2.4.0",
+		"turbo": "2.4.1",
 		"typescript": "5.7.3"
 	},
 	"workspaces": [
