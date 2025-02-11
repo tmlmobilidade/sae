@@ -17,43 +17,60 @@ export async function reprocessStuckRides() {
 		//
 		// Get all 'processing' rides from the database
 
-		const fetchStuckTimerA = new TIMETRACKER();
+		const fetchTimerA = new TIMETRACKER();
 
-		const stuckRidesA = await rides.findMany({ system_status: { $in: ['processing'] } });
-		const stuckRideIdsA = stuckRidesA.map(item => item._id);
+		const processingRidesA = await rides.findMany({ system_status: { $in: ['processing'] } });
+		const processingRideIdsA = processingRidesA.map(item => item._id);
 
-		const fetchStuckTimerResultA = fetchStuckTimerA.get();
+		const fetchTimerResultA = fetchTimerA.get();
+
+		LOGGER.info(`Fetched ${processingRideIdsA.length} 'processing' rides. (${fetchTimerResultA})`);
+
+		//
+		// Wait 5 seconds before checking again
+
+		await new Promise(resolve => setTimeout(resolve, 5000));
 
 		//
 		// A Ride can be in the processing state for at most 1 second. If it takes longer than that,
 		// then something happended (like a restart of the monitor worker responsible for that ride)
-		// and the ride is considered stuck. The should be marked as 'pending' to be reprocessed.
+		// and the ride is considered stuck. It should be marked as 'pending' to be reprocessed.
 
-		await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds before checking again
+		const fetchTimerB = new TIMETRACKER();
 
-		const fetchStuckTimerB = new TIMETRACKER();
+		const processingRidesB = await rides.findMany({ system_status: { $in: ['processing'] } });
+		const processingRideIdsB = processingRidesB.map(item => item._id);
 
-		const stuckRidesB = await rides.findMany({ system_status: { $in: ['processing'] } });
-		const stuckRideIdsB = stuckRidesB.map(item => item._id);
+		const fetchTimerResultB = fetchTimerB.get();
 
-		const fetchStuckTimerResultB = fetchStuckTimerB.get();
+		LOGGER.info(`Fetched ${processingRideIdsB.length} 'processing' rides. (${fetchTimerResultB})`);
 
+		//
 		// Now, we have two lists of stuck rides. We need to find the rides that are in both lists
 		// to avoid reprocessing rides that were already reprocessed.
 
-		const markingTimer = new TIMETRACKER();
-
-		const stuckRideIds = stuckRideIdsA.filter(item => stuckRideIdsB.includes(item));
-
-		const ridesCollection = await rides.getCollection();
-		await ridesCollection.updateMany({ _id: { $in: stuckRideIds } }, { system_status: 'pending' });
-
-		const markingTimerResult = markingTimer.get();
+		const stuckRideIds = processingRideIdsA.filter(item => processingRideIdsB.includes(item));
 
 		//
+		// Mark the rides as 'pending' to be reprocessed.
 
-		LOGGER.info(`Found ${stuckRideIds.length} stuck rides that were marked as 'pending'. (fetch A: ${fetchStuckTimerResultA} | fetch B: ${fetchStuckTimerResultB} | marking: ${markingTimerResult})`);
-		LOGGER.spacer(1);
+		if (stuckRideIds.length > 0) {
+			//
+
+			const updateTimer = new TIMETRACKER();
+
+			const ridesCollection = await rides.getCollection();
+			await ridesCollection.updateMany({ _id: { $in: stuckRideIds } }, { $set: { system_status: 'pending' } });
+
+			LOGGER.info(`Found ${stuckRideIds.length} stuck rides that were marked as 'pending'. (${updateTimer.get()})`);
+			LOGGER.spacer(1);
+
+			//
+		}
+		else {
+			LOGGER.info(`No stuck rides found!`);
+			LOGGER.spacer(1);
+		}
 
 		//
 
