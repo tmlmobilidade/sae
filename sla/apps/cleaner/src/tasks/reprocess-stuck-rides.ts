@@ -24,7 +24,7 @@ export async function reprocessStuckRides() {
 
 		const fetchTimerResultA = fetchTimerA.get();
 
-		LOGGER.info(`Fetched ${processingRideIdsA.length} 'processing' rides. (${fetchTimerResultA})`);
+		LOGGER.info(`A: Fetched ${processingRideIdsA.length} 'processing' rides. (${fetchTimerResultA})`);
 
 		//
 		// Wait 3 minutes before checking again
@@ -44,13 +44,31 @@ export async function reprocessStuckRides() {
 
 		const fetchTimerResultB = fetchTimerB.get();
 
-		LOGGER.info(`Fetched ${processingRideIdsB.length} 'processing' rides. (${fetchTimerResultB})`);
+		LOGGER.info(`B: Fetched ${processingRideIdsB.length} 'processing' rides. (${fetchTimerResultB})`);
 
 		//
-		// Now, we have two lists of stuck rides. We need to find the rides that are in both lists
-		// to avoid reprocessing rides that were already reprocessed.
+		// Wait another 3 minutes before checking again
 
-		const stuckRideIds = processingRideIdsA.filter(item => processingRideIdsB.includes(item));
+		await new Promise(resolve => setTimeout(resolve, 180000));
+
+		//
+		// Refetch the procesing rides a third time to make sure
+		// we are not marking rides as stuck unnecessarily.
+
+		const fetchTimerC = new TIMETRACKER();
+
+		const processingRidesC = await rides.findMany({ system_status: { $in: ['processing'] } });
+		const processingRideIdsC = processingRidesC.map(item => item._id);
+
+		const fetchTimerResultC = fetchTimerC.get();
+
+		LOGGER.info(`C: Fetched ${processingRideIdsC.length} 'processing' rides. (${fetchTimerResultC})`);
+
+		//
+		// Now, we have two lists of stuck rides. We need to find the rides that are present
+		// in the 3 lists to avoid reprocessing rides that were already reprocessed.
+
+		const stuckRideIds = processingRideIdsA.filter(id => processingRideIdsB.includes(id) && processingRideIdsC.includes(id));
 
 		//
 		// Mark the rides as 'pending' to be reprocessed.
