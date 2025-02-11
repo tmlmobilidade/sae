@@ -27,13 +27,13 @@ export async function reprocessStuckRides() {
 		LOGGER.info(`Fetched ${processingRideIdsA.length} 'processing' rides. (${fetchTimerResultA})`);
 
 		//
-		// Wait 60 seconds before checking again
+		// Wait 3 minutes before checking again
 
-		await new Promise(resolve => setTimeout(resolve, 60000));
+		await new Promise(resolve => setTimeout(resolve, 180000));
 
 		//
-		// It is unlikely for a Ride to be in the processing state for more than 60 seconds.
-		// If it takes longer than that, then something happended (like a restart of the monitor-worker
+		// It is unlikely for a Ride to be in the processing state for more than 3 minutes.
+		// If it takes longer than that, then something happened (like a restart of the monitor-worker
 		// responsible for that ride) and the ride is considered stuck.
 		// It should be marked as 'pending' to be reprocessed.
 
