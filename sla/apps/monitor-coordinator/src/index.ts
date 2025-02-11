@@ -49,7 +49,7 @@ import { DateTime } from 'luxon';
 		// Find all ride IDs that are pending analysis and which started before the current time,
 		// sorted in descending order to prioritize the most recent rides.
 
-		const batchSize = 1000;
+		const batchSize = 750;
 		const currentTime = DateTime.now().setZone('Europe/Lisbon');
 		const currentOperationalDate = getOperationalDate();
 
