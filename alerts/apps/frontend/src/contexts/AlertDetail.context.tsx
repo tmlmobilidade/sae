@@ -160,8 +160,6 @@ export const AlertDetailContextProvider = ({ alertId, children }: { alertId: str
 			title: 'Sucesso',
 		});
 
-		router.replace(Routes.ALERT_LIST);
-
 		setIsSaving(false);
 	};
 
