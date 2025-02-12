@@ -636,6 +636,8 @@ export async function createRidesFromGtfs() {
 				// Delete all rides for this plan_id that fall outside the current Plan valid range.
 				// Because the amount of rides can be very large, we need to divide the deleteMany operation in chunks.
 
+				const staleRidesForCurrentPlanTimer = new TIMETRACKER();
+
 				const existingRidesStream = ridesCollection.find({ plan_id: planData._id }).stream();
 				const staleRideIds = new Set<string>();
 
@@ -646,20 +648,12 @@ export async function createRidesFromGtfs() {
 					staleRideIds.add(existingRide._id);
 				}
 
-				const staleRideIdsArray = Array.from(staleRideIds);
-				const staleRideIdsChunks = [];
-				const chunkSize = 5000;
-
-				for (let i = 0; i < staleRideIdsArray.length; i += chunkSize) {
-					staleRideIdsChunks.push(staleRideIdsArray.slice(i, i + chunkSize));
-				}
-
-				for (const staleRideIdsChunk of staleRideIdsChunks) {
-					const deleteStaleRidesResult = await rides.deleteMany({ _id: { $in: staleRideIdsChunk } });
+				await performInChunks(Array.from(staleRideIds), async (chunk) => {
+					const deleteStaleRidesResult = await rides.deleteMany({ _id: { $in: chunk } });
 					LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides for plan ${planData._id}`);
-				}
+				});
 
-				LOGGER.info(`Completed delete stale rides for plan ${planData._id}`);
+				LOGGER.info(`Completed delete stale rides for plan ${planData._id}. (${staleRidesForCurrentPlanTimer.get()})`);
 
 				//
 				// Mark this plan as 'success' to indicate that it was processed successfully
@@ -690,9 +684,12 @@ export async function createRidesFromGtfs() {
 		//
 		// Delete all rides from plans that do not exist anymore
 
+		const staleRidesTimer = new TIMETRACKER();
+
 		const allPlanIds = allPlansData.map(plan => plan._id);
 		const deleteStaleRidesResult = await rides.deleteMany({ plan_id: { $nin: allPlanIds } });
-		LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plans that do not exist anymore.`);
+
+		LOGGER.info(`Deleted ${deleteStaleRidesResult.deletedCount} stale rides from plans that do not exist anymore. (${staleRidesTimer.get()})`);
 
 		//
 		// Remove all hashed trips and shapes that are not referenced by any ride
@@ -743,6 +740,21 @@ export async function createRidesFromGtfs() {
 
 	//
 };
+
+/* * */
+
+async function performInChunks<T>(staleRideIdsArray: T[], operation: (chunk: T[]) => Promise<void>, chunkSize = 5000): Promise<void> {
+	// Define an array to hold arrays of data (called chunks).
+	const allChunksOfData = [];
+	// Split the orignal data into chunks
+	for (let i = 0; i < staleRideIdsArray.length; i += chunkSize) {
+		allChunksOfData.push(staleRideIdsArray.slice(i, i + chunkSize));
+	}
+	// Process each chunk of data
+	for (const chunk of allChunksOfData) {
+		await operation(chunk);
+	}
+}
 
 /* * */
 
