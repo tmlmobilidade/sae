@@ -9,7 +9,10 @@ import FastifyService from './services/fastify.service';
 
 /* * */
 
+const MAX_BODY_SIZE = 1024 * 1024 * 10; // 10MB
+
 const options: FastifyServerOptions = {
+	bodyLimit: MAX_BODY_SIZE,
 	ignoreTrailingSlash: true,
 	logger: {
 		level: 'debug',
@@ -27,7 +30,7 @@ async function main() {
 	const fastifyService = FastifyService.getInstance(options);
 	await fastifyService.server.register(fastifyMultipart, {
 		limits: {
-			fileSize: 1024 * 1024 * 10, // 10MB
+			fileSize: MAX_BODY_SIZE,
 		},
 	});
 	await fastifyService.server.register(cookie);
