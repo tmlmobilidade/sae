@@ -52,7 +52,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
 	const sessionToken = cookies.get('session_token')?.value;
 
 	if (!sessionToken) {
-		redirect(`${process.env.NEXT_PUBLIC_AUTH_API_URL ?? 'http://localhost:3001'}/login?redirect=${encodeURI('http://localhost:3004')}`, RedirectType.replace);
+		// redirect(`${process.env.NEXT_PUBLIC_AUTH_API_URL ?? 'http://localhost:3001'}/login?redirect=${encodeURI('http://localhost:3004')}`, RedirectType.replace);
 	}
 
 	//
