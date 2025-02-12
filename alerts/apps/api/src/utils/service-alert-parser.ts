@@ -1,7 +1,26 @@
+import { files } from '@tmlmobilidade/core/interfaces';
 import { Alert } from '@tmlmobilidade/core/types';
-import { Cause, Effect, EntitySelector, Alert as ServiceAlert } from 'gtfs-types';
+import { EntitySelector, Alert as ServiceAlert } from 'gtfs-types';
 
-function parseServiceAlert(alert: Alert): ServiceAlert {
+interface ServiceAlertExtended extends Omit<ServiceAlert, 'cause' | 'effect'> {
+	cause: string
+	effect: string
+	file_id?: string
+	image?: {
+		localizedImage: {
+			language: string
+			media_type: string
+			url: string
+		}[]
+	}
+}
+
+interface ServiceAlertResponse {
+	alert: ServiceAlertExtended
+	id: string
+}
+
+async function parseServiceAlert(alert: Alert): Promise<ServiceAlertResponse> {
 	const informed_entity = (): EntitySelector[] => {
 		const informed_entity: EntitySelector[] = [];
 
@@ -38,38 +57,52 @@ function parseServiceAlert(alert: Alert): ServiceAlert {
 		return informed_entity;
 	};
 
+	const file = await files.findById(alert.file_id);
+
 	return {
-		active_period: {
-			end: alert.active_period_end_date.getTime() / 1000,
-			start: alert.active_period_start_date.getTime() / 1000,
+		alert: {
+			active_period: {
+				end: alert.active_period_end_date.getTime() / 1000,
+				start: alert.active_period_start_date.getTime() / 1000,
+			},
+			cause: alert.cause,
+			description_text: {
+				translation: [
+					{
+						language: 'pt',
+						text: alert.description,
+					},
+				],
+			},
+			effect: alert.effect,
+			header_text: {
+				translation: [
+					{
+						language: 'pt',
+						text: alert.title,
+					},
+				],
+			},
+			image: file && {
+				localizedImage: [
+					{
+						language: 'pt-PT',
+						media_type: file.type ?? 'image/png',
+						url: await files.getFileUrl({ file_id: alert.file_id }),
+					},
+				],
+			},
+			informed_entity: informed_entity(),
+			url: {
+				translation: [
+					{
+						language: 'pt-PT',
+						text: alert.info_url ?? '',
+					},
+				],
+			},
 		},
-		cause: Cause[alert.cause],
-		description_text: {
-			translation: [
-				{
-					language: 'pt',
-					text: alert.description,
-				},
-			],
-		},
-		effect: Effect[alert.effect],
-		header_text: {
-			translation: [
-				{
-					language: 'pt',
-					text: alert.title,
-				},
-			],
-		},
-		informed_entity: informed_entity(),
-		url: {
-			translation: [
-				{
-					language: 'pt-PT',
-					text: alert.info_url ?? '',
-				},
-			],
-		},
+		id: alert._id,
 	};
 }
 

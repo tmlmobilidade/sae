@@ -113,7 +113,7 @@ export class AlertsController {
 				],
 			}, undefined, undefined, { created_at: -1 });
 
-			const serviceAlerts = result.map(alert => parseServiceAlert(alert));
+			const serviceAlerts = await Promise.all(result.map(async alert => await parseServiceAlert(alert)));
 
 			reply.send({
 				entity: serviceAlerts,
