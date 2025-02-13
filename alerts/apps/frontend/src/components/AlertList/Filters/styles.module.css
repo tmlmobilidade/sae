@@ -1,99 +1,104 @@
 .surface {
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    border-width: 1px;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-width: 1px;
 }
 
 .title {
-    text-transform: uppercase;
-    color: var(--color-system-text-300);
+	text-transform: uppercase;
+	color: var(--color-system-text-300);
+	white-space: nowrap;
 }
 
 .filterDescription {
-    color: var(--color-system-text-200);
-    margin-bottom: var(--size-spacing-sm);
+	color: var(--color-system-text-200);
+	margin-bottom: var(--size-spacing-sm);
 }
 
 .filters {
-    display: flex;
-    flex-direction: row;
-    gap: var(--size-spacing-sm);
+	display: flex;
+	flex-direction: row;
+	gap: var(--size-spacing-sm);
+	align-items: center;
+	overflow-x: auto;
+	scrollbar-width: none;
+	
 }
 
 .filterItem {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--size-spacing-md);
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--size-spacing-md);
 }
 
 .dropdown {
-    max-height: 400px;
-    max-width: 600px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-system-text-300) var(--color-system-background-100);
-    
-    &::-webkit-scrollbar {
-        -webkit-appearance: none;
-        width: 8px;
-    }
+	max-height: 400px;
+	max-width: 600px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-system-text-300) var(--color-system-background-100);
+	
+	&::-webkit-scrollbar {
+		-webkit-appearance: none;
+		width: 8px;
+	}
 
-    &::-webkit-scrollbar-track {
-        background: var(--color-system-background-100);
-    }
+	&::-webkit-scrollbar-track {
+		background: var(--color-system-background-100);
+	}
 
-    &::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: var(--color-system-background-100);
-        box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-    }
+	&::-webkit-scrollbar-thumb {
+		border-radius: 4px;
+		background-color: var(--color-system-background-100);
+		box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+	}
 }
 
 .stopDropdown {
-    max-height: 400px;
-    min-width: 600px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-system-text-300) var(--color-system-background-100);
-    
-    &::-webkit-scrollbar {
-        -webkit-appearance: none;
-        width: 8px;
-    }
+	max-height: 400px;
+	min-width: 600px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-system-text-300) var(--color-system-background-100);
+	
+	&::-webkit-scrollbar {
+		-webkit-appearance: none;
+		width: 8px;
+	}
 
-    &::-webkit-scrollbar-track {
-        background: var(--color-system-background-100);
-    }
+	&::-webkit-scrollbar-track {
+		background: var(--color-system-background-100);
+	}
 
-    &::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: var(--color-system-background-100);
-        box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-    }
+	&::-webkit-scrollbar-thumb {
+		border-radius: 4px;
+		background-color: var(--color-system-background-100);
+		box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+	}
 }
 
 .lineDropdown {
-    max-height: 400px;
-    min-width: 700px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-system-text-300) var(--color-system-background-100);
-    
-    &::-webkit-scrollbar {
-        -webkit-appearance: none;
-        width: 8px;
-    }
+	max-height: 400px;
+	min-width: 700px;
+	overflow-y: auto;
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-system-text-300) var(--color-system-background-100);
+	
+	&::-webkit-scrollbar {
+		-webkit-appearance: none;
+		width: 8px;
+	}
 
-    &::-webkit-scrollbar-track {
-        background: var(--color-system-background-100);
-    }
+	&::-webkit-scrollbar-track {
+		background: var(--color-system-background-100);
+	}
 
-    &::-webkit-scrollbar-thumb {
-        border-radius: 4px;
-        background-color: var(--color-system-background-100);
-        box-shadow: 0 0 1px rgba(255, 255, 255, .5);
-    }
+	&::-webkit-scrollbar-thumb {
+		border-radius: 4px;
+		background-color: var(--color-system-background-100);
+		box-shadow: 0 0 1px rgba(255, 255, 255, .5);
+	}
 }

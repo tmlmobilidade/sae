@@ -29,10 +29,7 @@ export default function Header() {
 					value={searchQuery}
 				/>
 				<Link href={Routes.ALERT_DETAIL('new')}>
-					<Button>
-						<IconPlus size={20} />
-						<span>Novo alerta</span>
-					</Button>
+					<Button label="Novo alerta" leftSection={<IconPlus size={20} />} />
 				</Link>
 
 				<SegmentedControl data={['Planeados', 'Tempo Real']} size="md" />

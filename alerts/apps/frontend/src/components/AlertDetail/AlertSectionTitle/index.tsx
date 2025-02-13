@@ -26,7 +26,10 @@ export default function AlertSectionTitle() {
 				<TextArea
 					description="Um bom alerta explica a situação de forma breve e clara, explicita as suas causas e como está a ser mitigado, e apresenta uma ou mais soluções de como o passageiro poderá ultrapassar esta situação."
 					label="Descrição"
+					maxRows={10}
+					minRows={4}
 					placeholder="..."
+					autosize
 					withAsterisk
 					{...alertDetailData.form.getInputProps('description')}
 				/>

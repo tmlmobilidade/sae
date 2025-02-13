@@ -57,12 +57,11 @@ function AlertReferencesAgenciesItem({ index }: { index: number }) {
 			<div className={styles.deleteButtonWrapper}>
 				<Button
 					className={styles.button}
+					icon={<IconTrash size={18} />}
+					label="Eliminar"
 					onClick={() => actions.removeReference(index)}
 					variant="danger"
-				>
-					<IconTrash size={18} />
-					<div>Eliminar</div>
-				</Button>
+				/>
 			</div>
 		</Surface>
 	);

@@ -4,13 +4,14 @@ import { useAlertListContext } from '@/contexts/AlertList.context';
 import { getAvailableLines, getAvailableStops } from '@/lib/alert-utils';
 import { Routes } from '@/lib/routes';
 import { Alert } from '@tmlmobilidade/core-types';
-import { Badge, DataTable, DataTableColumn } from '@tmlmobilidade/ui';
+import { DataTable, DataTableColumn } from '@tmlmobilidade/ui';
 import { useRouter } from 'next/navigation';
 
 import Filters from './Filters';
 import Header from './Header';
 import LineCell from './LineCell';
 import MunicipalityCell from './MunicipalityCell';
+import StatusCell from './StatusCell';
 import StopCell from './StopCell';
 import styles from './styles.module.css';
 
@@ -25,8 +26,9 @@ export default function AlertList() {
 	const columns: DataTableColumn<Alert>[] = [
 		{
 			accessor: 'state',
-			render: ({ publish_status }) => <Badge>{publish_status}</Badge>,
+			render: ({ publish_status }) => <StatusCell status={publish_status} />,
 			title: 'Estado',
+			width: 150,
 		},
 		{ accessor: 'title', title: 'Título', width: 400 },
 		{
@@ -35,6 +37,7 @@ export default function AlertList() {
 				<MunicipalityCell municipality_ids={municipality_ids} />
 			),
 			title: 'Municípios',
+			width: 230,
 		},
 		{
 			accessor: 'lines',
@@ -64,11 +67,12 @@ export default function AlertList() {
 	return (
 		<div className={styles.container}>
 			<Header />
-			<Filters />
+			{/* <Filters /> */}
 			<DataTable
 				classnames={{ root: styles.table, row: styles.row }}
 				columns={columns}
 				records={data.filtered}
+				rowIdAccessor="_id"
 				onRowClick={(alert) => {
 					router.push(Routes.ALERT_DETAIL(alert._id));
 				}}

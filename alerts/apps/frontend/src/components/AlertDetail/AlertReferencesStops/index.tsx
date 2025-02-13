@@ -14,23 +14,31 @@ export default function AlertReferencesStops() {
 	// A. Get Data
 	const alertDetailContext = useAlertDetailContext();
 
-	const references = useMemo(() => alertDetailContext.data.form.values.references, [alertDetailContext.data.form.values.references]);
+	const references = useMemo(
+		() => alertDetailContext.data.form.values.references,
+		[alertDetailContext.data.form.values.references],
+	);
 
 	//
 	// C. Render Components
 	return (
 		<div className={styles.container}>
 			{references.length === 0 ? (
-				<Surface className={styles.empty} padding="md">Não há referências disponíveis.</Surface>
+				<Surface className={styles.empty} padding="md">
+					Não há referências disponíveis.
+				</Surface>
 			) : (
 				references.map((reference, index) => (
 					<AlertReferencesStopsItem key={index} index={index} />
 				))
 			)}
-			<Button className={styles.button} onClick={alertDetailContext.actions.addReference} variant="primary">
-				<IconPlus size={18} />
-				<div>Adicionar Paragem</div>
-			</Button>
+			<Button
+				className={styles.button}
+				icon={<IconPlus size={18} />}
+				label="Adicionar Paragem"
+				onClick={alertDetailContext.actions.addReference}
+				variant="primary"
+			/>
 		</div>
 	);
 }
@@ -46,22 +54,42 @@ function AlertReferencesStopsItem({ index }: { index: number }) {
 		if (!stopsData.stops) return [];
 		if (!alertDetailsData.form.values.municipality_ids) return [];
 
-		return stopsData.stops.filter(stop => alertDetailsData.form.values.municipality_ids.includes(stop.municipality_id)).map(stop => ({
-			label: `[${stop.id}] ${stop.long_name}`,
-			value: stop.id,
-		}));
+		return stopsData.stops
+			.filter(stop =>
+				alertDetailsData.form.values.municipality_ids.includes(
+					stop.municipality_id,
+				),
+			)
+			.map(stop => ({
+				label: `[${stop.id}] ${stop.long_name}`,
+				value: stop.id,
+			}));
 	}, [stopsData.stops, alertDetailsData.form.values.municipality_ids]);
 
 	const availableRoutes = useMemo(() => {
 		if (!linesData.routes) return [];
-		if (!alertDetailsData.form.values.references[index].parent_id) return [];
+		if (!alertDetailsData.form.values.references[index].parent_id)
+			return [];
 
-		const selectedStop = stopsData.stops.find(stop => stop.id === alertDetailsData.form.values.references[index].parent_id);
-		return selectedStop?.route_ids.map(routeId => ({
-			label: `[${routeId}] ${linesData.routes.find(route => route.id === routeId)?.long_name}`,
-			value: routeId,
-		})) || [];
-	}, [linesData.routes, alertDetailsData.form.values.municipality_ids, alertDetailsData.form.values.references[index].parent_id]);
+		const selectedStop = stopsData.stops.find(
+			stop =>
+				stop.id
+				=== alertDetailsData.form.values.references[index].parent_id,
+		);
+		return (
+			selectedStop?.route_ids.map(routeId => ({
+				label: `[${routeId}] ${
+					linesData.routes.find(route => route.id === routeId)
+						?.long_name
+				}`,
+				value: routeId,
+			})) || []
+		);
+	}, [
+		linesData.routes,
+		alertDetailsData.form.values.municipality_ids,
+		alertDetailsData.form.values.references[index].parent_id,
+	]);
 
 	return (
 		<Surface borderRadius="sm" classNames={styles} gap="md" padding="sm">
@@ -72,8 +100,9 @@ function AlertReferencesStopsItem({ index }: { index: number }) {
 				clearable
 				fullWidth
 				searchable
-
-				{...alertDetailsData.form.getInputProps(`references.${index}.parent_id`)}
+				{...alertDetailsData.form.getInputProps(
+					`references.${index}.parent_id`,
+				)}
 			/>
 			<div className={styles.childrenWrapper}>
 				<IconCornerDownRight className={styles.icon} size={28} />
@@ -87,7 +116,9 @@ function AlertReferencesStopsItem({ index }: { index: number }) {
 						fullWidth
 						multiple
 						searchable
-						{...alertDetailsData.form.getInputProps(`references.${index}.child_ids`)}
+						{...alertDetailsData.form.getInputProps(
+							`references.${index}.child_ids`,
+						)}
 					/>
 				</div>
 			</div>
