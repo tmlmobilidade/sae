@@ -43,6 +43,19 @@ export function RidesListClock() {
 		return () => clearInterval(interval);
 	}, []);
 
+	useEffect(() => {
+		if (typeof window === 'undefined') return;
+		const handleKeyDown = (event) => {
+			if (event.key === 'l') {
+				handleToggleLock();
+			}
+		};
+		window.addEventListener('keypress', handleKeyDown);
+		return () => {
+			window.removeEventListener('keypress', handleKeyDown);
+		};
+	}, []);
+
 	//
 	// C. Handle actions
 
