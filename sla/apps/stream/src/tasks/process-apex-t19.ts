@@ -10,7 +10,7 @@ import { parseApexT19 } from '@tmlmobilidade/sae-sla-pckg-parse';
 
 /* * */
 
-const apexT19DbWritter = new MongoDbWriter('apex_t19', await apexT19.getCollection(), { batch_size: 250 });
+const apexT19DbWritter = new MongoDbWriter('apex_t19', await apexT19.getCollection(), { batch_size: 250, timeout: 10000 });
 
 /* * */
 

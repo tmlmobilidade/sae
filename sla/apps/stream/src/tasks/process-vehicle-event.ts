@@ -10,7 +10,7 @@ import { parseVehicleEvent } from '@tmlmobilidade/sae-sla-pckg-parse';
 
 /* * */
 
-const vehicleEventsDbWritter = new MongoDbWriter('vehicle_events', await vehicleEvents.getCollection(), { batch_size: 500 });
+const vehicleEventsDbWritter = new MongoDbWriter('vehicle_events', await vehicleEvents.getCollection(), { batch_size: 500, timeout: 10000 });
 
 /* * */
 

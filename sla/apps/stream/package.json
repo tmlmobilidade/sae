@@ -17,14 +17,14 @@
 		"@dotenv-run/cli": "1.3.6",
 		"@helperkits/logger": "20240703.1726.24",
 		"@helperkits/timer": "20240627.34.23",
-		"@helperkits/writer": "20241204.1537.50",
+		"@helperkits/writer": "20250214.145.12",
 		"@tmlmobilidade/core": "20250212.2306.38",
 		"@tmlmobilidade/sae-sla-pckg-parse": "*",
 		"tunnel-ssh": "5.2.0"
 	},
 	"devDependencies": {
 		"@types/luxon": "3.4.2",
-		"@types/node": "22.13.2",
+		"@types/node": "22.13.4",
 		"resolve-tspaths": "0.8.23",
 		"typescript": "5.7.3"
 	}
