@@ -50,9 +50,9 @@ export function RidesListClock() {
 				handleToggleLock();
 			}
 		};
-		window.addEventListener('keypress', handleKeyDown);
+		window.addEventListener('keydown', handleKeyDown);
 		return () => {
-			window.removeEventListener('keypress', handleKeyDown);
+			window.removeEventListener('keydown', handleKeyDown);
 		};
 	}, []);
 
