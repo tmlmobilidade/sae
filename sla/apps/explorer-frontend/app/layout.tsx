@@ -23,7 +23,7 @@ const workSans = Work_Sans({
 	display: 'swap',
 	subsets: ['latin'],
 	variable: '--font-work-sans',
-	weight: ['600', '700'],
+	weight: ['600', '700', '800'],
 });
 
 /* * */

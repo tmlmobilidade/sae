@@ -1,0 +1,80 @@
+/* * */
+/* ROOT */
+
+.root {
+	display: flex;
+	width: 100%;
+	height: 2px;
+	background-color: var(--color-status-danger-primary);
+}
+
+.root[data-locked="true"] {
+	height: 2px;
+}
+
+
+/* * */
+/* HANDLE */
+
+.handle {
+	z-index: 0;
+	display: flex;
+	gap: 2px;
+	align-items: center;
+	justify-content: center;
+	height: min-content;
+	padding: 3px 4px;
+	margin-left: 15px;
+	font-size: 12px;
+	font-weight: var(--font-weight-semibold);
+	line-height: 1;
+	color: var(--color-status-danger-primary);
+	cursor: pointer;
+	user-select: none;
+	background-color: var(--color-status-danger-contrast);
+	border: 1px solid var(--color-status-danger-primary);
+	border-radius: 3px;
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
+	transform: translateY(-50%);
+}
+
+.root[data-locked="true"] .handle {
+	font-weight: 800;
+	color: var(--color-status-danger-contrast);
+	background-color: var(--color-status-danger-primary);
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 15%);
+}
+
+/* * */
+/* HANDLE / TIME */
+
+.time {
+	display: flex;
+	flex-direction: row;
+	gap: 1px;
+}
+
+.divider {
+	opacity: 1;
+}
+
+.divider[data-blink="true"] {
+	opacity: 0.5;
+}
+
+.seconds {
+	display: none;
+	opacity: 0.75;
+}
+
+
+/* * */
+/* HANDLE / ICON */
+
+.icon {
+	display: none;
+}
+
+.root[data-locked="true"] .icon {
+	display: flex;
+}

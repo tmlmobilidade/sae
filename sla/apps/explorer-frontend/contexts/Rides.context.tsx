@@ -8,9 +8,7 @@ import { getSeenStatus } from '@/utils/get-seen-status';
 import { getStartTime } from '@/utils/get-start-time';
 import { type Ride, RideAnalysis, type RideDisplay, type WebSocketMessage } from '@tmlmobilidade/core/types';
 import { getOperationalDate } from '@tmlmobilidade/core/utils';
-import { throttle } from 'lodash';
-import { DateTime } from 'luxon';
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, PropsWithChildren, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 /* * */
 
@@ -56,8 +54,10 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 
 	const webSocketRef = useRef<null | WebSocket>(null);
 
-	const [dataRidesDisplayState, setDataRidesDisplayState] = useState<ExtendedRideDisplay[]>([]);
 	const dataRidesStoreState = useRef<Map<string, Ride>>(new Map());
+	const [dataRidesDisplayState, setDataRidesDisplayState] = useState<ExtendedRideDisplay[]>([]);
+
+	const flagIsLoadingRef = useRef<boolean>(true);
 
 	const currentOperationalDate = getOperationalDate();
 
@@ -105,30 +105,38 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 			const rideDocument: Ride = JSON.parse(messageData.data);
 			if (rideDocument.operational_date !== currentOperationalDate) return;
 			dataRidesStoreState.current.set(rideDocument._id, rideDocument);
-			updateRidesDisplayState();
+			return;
+		}
+		// Handle complete message
+		if (messageData.action === 'init' && messageData.status === 'complete') {
+			console.log('complete');
+			flagIsLoadingRef.current = false;
 			return;
 		}
 		console.log('Unknown message:', messageData);
 	};
 
-	const updateRidesDisplayState = throttle(() => {
-		console.log('Starting allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);
-		const allRidesDisplay: Ride[] = Array.from(dataRidesStoreState.current.values());
-		const allRidesParsed: ExtendedRideDisplay[] = allRidesDisplay
-			.sort((a, b) => String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled)))
-			.map(item => ({
-				...item,
-				delay_status: getDelayStatus(item.start_time_scheduled, item.start_time_observed),
-				operational_status: getOperationalStatus(item.start_time_scheduled, item.seen_last_at),
-				seen_status: getSeenStatus(item.seen_last_at),
-				simple_three_vehicle_events_grade: item.analysis.find(analysis => analysis._id === 'SIMPLE_THREE_VEHICLE_EVENTS')?.grade || null,
-				start_time_observed_display: item.start_time_observed ? getStartTime(item.start_time_observed) : null,
-				start_time_scheduled_display: getStartTime(item.start_time_scheduled),
-			}));
-		setDataRidesDisplayState(allRidesParsed);
-		console.log('Finished allRidesData...', DateTime.now().toMillis(), dataRidesStoreState.current.size);
-		console.log('----------------------------------------');
-	}, 1000);
+	useEffect(() => {
+		const refreshList = () => {
+			const allRidesDisplay: ExtendedRideDisplay[] = Array
+				.from(dataRidesStoreState.current.values())
+				.sort((a, b) => String(a.start_time_scheduled).localeCompare(String(b.start_time_scheduled)))
+				.map((item) => {
+					return {
+						...item,
+						delay_status: getDelayStatus(item.start_time_scheduled, item.start_time_observed),
+						operational_status: getOperationalStatus(item.start_time_scheduled, item.seen_last_at),
+						seen_status: getSeenStatus(item.seen_last_at),
+						simple_three_vehicle_events_grade: item.analysis.find(analysis => analysis._id === 'SIMPLE_THREE_VEHICLE_EVENTS')?.grade || null,
+						start_time_observed_display: item.start_time_observed ? getStartTime(item.start_time_observed) : null,
+						start_time_scheduled_display: getStartTime(item.start_time_scheduled),
+					};
+				});
+			setDataRidesDisplayState(allRidesDisplay);
+		};
+		const interval = setInterval(refreshList, 1000);
+		return () => clearInterval(interval);
+	}, [dataRidesStoreState.current]);
 
 	const getRideById = (rideId: string): Ride | undefined => {
 		return dataRidesStoreState.current?.get(rideId);
@@ -142,13 +150,13 @@ export const RidesContextProvider = ({ children }: PropsWithChildren) => {
 			getRideById,
 		},
 		data: {
-			rides_display: dataRidesDisplayState || [],
+			rides_display: dataRidesDisplayState,
 			rides_store: dataRidesStoreState.current,
 		},
 		flags: {
-			is_loading: false,
+			is_loading: flagIsLoadingRef.current,
 		},
-	}), [dataRidesDisplayState]);
+	}), [dataRidesDisplayState, dataRidesStoreState.current, flagIsLoadingRef.current]);
 
 	//
 	// E. Render components
