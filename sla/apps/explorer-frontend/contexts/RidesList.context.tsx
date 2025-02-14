@@ -76,7 +76,7 @@ export const RidesListContextProvider = ({ children }: PropsWithChildren) => {
 					offset: dataLockOffsetState,
 				});
 			}
-		}, 1000);
+		}, 10);
 		return () => clearInterval(interval);
 	}, [dataIsLockedState, dataIsUserScrollingState, dataLockIndexState, dataLockOffsetState]);
 

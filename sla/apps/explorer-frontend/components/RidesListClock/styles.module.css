@@ -8,10 +8,6 @@
 	background-color: var(--color-status-danger-primary);
 }
 
-.root[data-locked="true"] {
-	height: 2px;
-}
-
 
 /* * */
 /* HANDLE */
