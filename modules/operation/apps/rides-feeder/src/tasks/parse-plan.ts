@@ -19,7 +19,7 @@ import { toHashedTrip } from '../utils/to-hashed-trip.js';
 
 /* * */
 
-const ridesWritter = new BatchWriter<Ride>({
+const ridesWriter = new BatchWriter<Ride>({
 	batch_size: 10_000,
 	insertFn: async (data) => {
 		await labDb.operation.rides.insert('JSONEachRow', data);
@@ -27,7 +27,7 @@ const ridesWritter = new BatchWriter<Ride>({
 	title: await labDb.operation.rides.getTableName(),
 });
 
-const hashedShapesWritter = new BatchWriter<HashedShape>({
+const hashedShapesWriter = new BatchWriter<HashedShape>({
 	batch_size: 2_000,
 	insertFn: async (data) => {
 		await labDb.operation.hashedShapes.insert('JSONEachRow', data);
@@ -35,7 +35,7 @@ const hashedShapesWritter = new BatchWriter<HashedShape>({
 	title: await labDb.operation.hashedShapes.getTableName(),
 });
 
-const hashedTripsWritter = new BatchWriter<HashedTrip>({
+const hashedTripsWriter = new BatchWriter<HashedTrip>({
 	batch_size: 10_000,
 	insertFn: async (data) => {
 		await labDb.operation.hashedTrips.insert('JSONEachRow', data);
@@ -200,7 +200,7 @@ export async function parsePlanTask(planData: Plan) {
 
 				if (!processedShapeIds.has(currentTrip.shape_id)) {
 					const hashedShapeItem = toHashedShape(planData, currentTrip, shapeData);
-					await hashedShapesWritter.write(hashedShapeItem);
+					await hashedShapesWriter.write(hashedShapeItem);
 					savedHashedShapeIds.add(hashedShapeItem._id);
 					processedShapeIds.set(currentTrip.shape_id, hashedShapeItem);
 				}
@@ -223,7 +223,7 @@ export async function parsePlanTask(planData: Plan) {
 
 				if (!processedTripIds.has(keyForHashedTrip)) {
 					const hashedTripItems = toHashedTrip(planData, currentTrip, stopTimesData, stopsData);
-					await hashedTripsWritter.write(hashedTripItems);
+					await hashedTripsWriter.write(hashedTripItems);
 					savedHashedTripIds.add(hashedTripItems[0]._id);
 					processedTripIds.set(keyForHashedTrip, hashedTripItems);
 				}
@@ -307,7 +307,7 @@ export async function parsePlanTask(planData: Plan) {
 					// Save this Ride document to the database using the
 					// BatchWriter, and store the ID for later reference.
 
-					await ridesWritter.write(finalRide);
+					await ridesWriter.write(finalRide);
 
 					savedRideIds.add(finalRide._id);
 				}
@@ -324,9 +324,9 @@ export async function parsePlanTask(planData: Plan) {
 			// Flush the writers to save all the data to the database
 			// before changing the Plan status to 'success'.
 
-			await hashedShapesWritter.flush();
-			await hashedTripsWritter.flush();
-			await ridesWritter.flush();
+			await hashedShapesWriter.flush();
+			await hashedTripsWriter.flush();
+			await ridesWriter.flush();
 
 			//
 			// Cleanup the saved entities to avoid

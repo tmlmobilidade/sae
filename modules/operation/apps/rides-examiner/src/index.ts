@@ -11,6 +11,7 @@ import { Timer } from '@tmlmobilidade/timer';
 import { analyzeRide } from './utils/analyze-ride.js';
 import { augmentRide } from './utils/augment-ride.js';
 import { fetchAnalysisData } from './utils/fetch-analysis-data.js';
+import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, ridesWriter } from './utils/writers.js';
 
 /* * */
 
@@ -115,26 +116,43 @@ export async function analyzeRides() {
 
 				const insertTimer = new Timer();
 
-				const insertPromises = [
-					labDb.operation.rideAnalysisAtLeastOneVehicleEventOnFirstStop.insert('JSONEachRow', [analyzeRideResults.analyses.at_least_one_vehicle_event_on_first_stop]),
-					labDb.operation.rideAnalysisAtLeastOneVehicleEventOnLastStop.insert('JSONEachRow', [analyzeRideResults.analyses.at_least_one_vehicle_event_on_last_stop]),
-					labDb.operation.rideAnalysisExpectedApexValidationInterval.insert('JSONEachRow', [analyzeRideResults.analyses.expected_apex_validation_interval]),
-					labDb.operation.rideAnalysisExpectedDriverIdQty.insert('JSONEachRow', [analyzeRideResults.analyses.expected_driver_id_qty]),
-					labDb.operation.rideAnalysisExpectedStartTime.insert('JSONEachRow', [analyzeRideResults.analyses.expected_start_time]),
-					labDb.operation.rideAnalysisExpectedVehicleEventDelay.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_event_delay]),
-					labDb.operation.rideAnalysisExpectedVehicleEventInterval.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_event_interval]),
-					labDb.operation.rideAnalysisExpectedVehicleEventQty.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_event_qty]),
-					labDb.operation.rideAnalysisExpectedVehicleIdQty.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_id_qty]),
-					labDb.operation.rideAnalysisMatchingApexLocations.insert('JSONEachRow', [analyzeRideResults.analyses.matching_apex_locations]),
-					labDb.operation.rideAnalysisMatchingVehicleIds.insert('JSONEachRow', [analyzeRideResults.analyses.matching_vehicle_ids]),
-					labDb.operation.rideAnalysisSimpleOneApexValidation.insert('JSONEachRow', [analyzeRideResults.analyses.simple_one_apex_validation]),
-					labDb.operation.rideAnalysisSimpleOneVehicleEventOrApexValidation.insert('JSONEachRow', [analyzeRideResults.analyses.simple_one_vehicle_event_or_apex_validation]),
-					labDb.operation.rideAnalysisSimpleThreeVehicleEvents.insert('JSONEachRow', [analyzeRideResults.analyses.simple_three_vehicle_events]),
-					labDb.operation.rideAnalysisTransactionSequentiality.insert('JSONEachRow', [analyzeRideResults.analyses.transaction_sequentiality]),
-					labDb.operation.rides.insert('JSONEachRow', [{ ...augmentedRideData, processing_status: 'complete', updated_at: Dates.now('utc').unix_milliseconds }]),
-				];
+				await rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.write(analyzeRideResults.analyses.at_least_one_vehicle_event_on_first_stop);
+				await rideAnalysisAtLeastOneVehicleEventOnLastStopWriter.write(analyzeRideResults.analyses.at_least_one_vehicle_event_on_last_stop);
+				await rideAnalysisExpectedApexValidationIntervalWriter.write(analyzeRideResults.analyses.expected_apex_validation_interval);
+				await rideAnalysisExpectedDriverIdQtyWriter.write(analyzeRideResults.analyses.expected_driver_id_qty);
+				await rideAnalysisExpectedStartTimeWriter.write(analyzeRideResults.analyses.expected_start_time);
+				await rideAnalysisExpectedVehicleEventDelayWriter.write(analyzeRideResults.analyses.expected_vehicle_event_delay);
+				await rideAnalysisExpectedVehicleEventIntervalWriter.write(analyzeRideResults.analyses.expected_vehicle_event_interval);
+				await rideAnalysisExpectedVehicleEventQtyWriter.write(analyzeRideResults.analyses.expected_vehicle_event_qty);
+				await rideAnalysisExpectedVehicleIdQtyWriter.write(analyzeRideResults.analyses.expected_vehicle_id_qty);
+				await rideAnalysisMatchingApexLocationsWriter.write(analyzeRideResults.analyses.matching_apex_locations);
+				await rideAnalysisMatchingVehicleIdsWriter.write(analyzeRideResults.analyses.matching_vehicle_ids);
+				await rideAnalysisSimpleOneApexValidationWriter.write(analyzeRideResults.analyses.simple_one_apex_validation);
+				await rideAnalysisSimpleOneVehicleEventOrApexValidationWriter.write(analyzeRideResults.analyses.simple_one_vehicle_event_or_apex_validation);
+				await rideAnalysisSimpleThreeVehicleEventsWriter.write(analyzeRideResults.analyses.simple_three_vehicle_events);
+				await rideAnalysisTransactionSequentialityWriter.write(analyzeRideResults.analyses.transaction_sequentiality);
+				await ridesWriter.write({ ...augmentedRideData, processing_status: 'complete', updated_at: Dates.now('utc').unix_milliseconds });
 
-				await Promise.all(insertPromises);
+				// const insertPromises = [
+				// 	labDb.operation.rideAnalysisAtLeastOneVehicleEventOnFirstStop.insert('JSONEachRow', [analyzeRideResults.analyses.at_least_one_vehicle_event_on_first_stop]),
+				// 	labDb.operation.rideAnalysisAtLeastOneVehicleEventOnLastStop.insert('JSONEachRow', [analyzeRideResults.analyses.at_least_one_vehicle_event_on_last_stop]),
+				// 	labDb.operation.rideAnalysisExpectedApexValidationInterval.insert('JSONEachRow', [analyzeRideResults.analyses.expected_apex_validation_interval]),
+				// 	labDb.operation.rideAnalysisExpectedDriverIdQty.insert('JSONEachRow', [analyzeRideResults.analyses.expected_driver_id_qty]),
+				// 	labDb.operation.rideAnalysisExpectedStartTime.insert('JSONEachRow', [analyzeRideResults.analyses.expected_start_time]),
+				// 	labDb.operation.rideAnalysisExpectedVehicleEventDelay.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_event_delay]),
+				// 	labDb.operation.rideAnalysisExpectedVehicleEventInterval.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_event_interval]),
+				// 	labDb.operation.rideAnalysisExpectedVehicleEventQty.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_event_qty]),
+				// 	labDb.operation.rideAnalysisExpectedVehicleIdQty.insert('JSONEachRow', [analyzeRideResults.analyses.expected_vehicle_id_qty]),
+				// 	labDb.operation.rideAnalysisMatchingApexLocations.insert('JSONEachRow', [analyzeRideResults.analyses.matching_apex_locations]),
+				// 	labDb.operation.rideAnalysisMatchingVehicleIds.insert('JSONEachRow', [analyzeRideResults.analyses.matching_vehicle_ids]),
+				// 	labDb.operation.rideAnalysisSimpleOneApexValidation.insert('JSONEachRow', [analyzeRideResults.analyses.simple_one_apex_validation]),
+				// 	labDb.operation.rideAnalysisSimpleOneVehicleEventOrApexValidation.insert('JSONEachRow', [analyzeRideResults.analyses.simple_one_vehicle_event_or_apex_validation]),
+				// 	labDb.operation.rideAnalysisSimpleThreeVehicleEvents.insert('JSONEachRow', [analyzeRideResults.analyses.simple_three_vehicle_events]),
+				// 	labDb.operation.rideAnalysisTransactionSequentiality.insert('JSONEachRow', [analyzeRideResults.analyses.transaction_sequentiality]),
+				// 	labDb.operation.rides.insert('JSONEachRow', [{ ...augmentedRideData, processing_status: 'complete', updated_at: Dates.now('utc').unix_milliseconds }]),
+				// ];
+
+				// await Promise.all(insertPromises);
 
 				const insertTime = insertTimer.get();
 
