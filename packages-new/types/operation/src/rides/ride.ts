@@ -72,7 +72,7 @@ export const RideLifecycleSchema = z.object({
 });
 
 export const RideAnalysesSchema = z.object({
-	analyses: RideAnalysesRegistrySchema,
+	analyses: RideAnalysesRegistrySchema.nullable().default(null),
 });
 
 /* * */
