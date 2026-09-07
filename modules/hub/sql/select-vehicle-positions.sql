@@ -86,12 +86,12 @@ SELECT
 	concat('[', e.agency_id, ']', e.vehicle_id) AS vehicle_id,
 	e.stop_id,
 	toInt8OrNull(r.direction_id) AS direction_id,
-	if(empty(r.route_short_name), NULL, concat('[', e.agency_id, ']', r.route_short_name)) AS line_id,
 	r.route_id,
+	nullIf(r.route_short_name, '') AS route_short_name,
 	e.bearing,
 	e.current_status,
 	geohashEncode(e.longitude, e.latitude, 7) AS geohash,
-	if(empty(r.shape_id), NULL, concat('[', e.agency_id, ']', r.shape_id)) AS pattern_id,
+	nullIf(r.shape_id, '') AS shape_id,
 	r._id AS ride_id,
 	e.speed
 FROM latest_events AS e
