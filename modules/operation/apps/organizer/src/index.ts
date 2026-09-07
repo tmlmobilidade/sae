@@ -58,4 +58,4 @@ async function reprocessStuckRides() {
 
 /* * */
 
-await runOnInterval(reprocessStuckRides, { intervalMs: '1h' });
+await runOnInterval(reprocessStuckRides, { intervalMs: '10m' });
