@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-types-core": "*",
+		"@tmlmobilidade/go-types-infrastructure": "*",
 		"@tmlmobilidade/go-types-offer": "*",
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-permissions": "*",

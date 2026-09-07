@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 /* * */
 
-export const PlanStopItemSchema = StopSchema.pick({
+export const PlansStopsItemSchema = StopSchema.pick({
 	_id: true,
 	name: true,
 	short_name: true,
@@ -16,4 +16,4 @@ export const PlanStopItemSchema = StopSchema.pick({
 /**
  * The item schema for listing stops available to Plans poster exports.
  */
-export type PlanStopItem = z.infer<typeof PlanStopItemSchema>;
+export type PlansStopsItem = z.infer<typeof PlansStopsItemSchema>;

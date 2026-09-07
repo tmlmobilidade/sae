@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 /* * */
 
-export const PlanStopRequestSchema = z.object({
+export const PlansStopsRequestSchema = z.object({
 	agency_id: z.string(),
 	permissions: PermissionsRegistrySchema,
 });
@@ -13,4 +13,4 @@ export const PlanStopRequestSchema = z.object({
 /**
  * The request schema for listing stops available to Plans poster exports.
  */
-export type PlanStopRequest = z.infer<typeof PlanStopRequestSchema>;
+export type PlansStopsRequest = z.infer<typeof PlansStopsRequestSchema>;
