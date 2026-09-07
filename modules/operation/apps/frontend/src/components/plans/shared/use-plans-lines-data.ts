@@ -28,7 +28,7 @@ export function usePlansLines(query: null | PlansLinesRequest): UsePlansLinesRet
 	// A. Fetch data
 
 	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<PlansLinesItem[]>>(
-		query ? [API_ROUTES.operation.PLANS_POSTER_LINES, query] : null,
+		query ? [API_ROUTES.operation.PLANS_LINES_LIST, query] : null,
 		{
 			fetcher: async ([url, request]: [string, PlansLinesRequest]) => await fetchApiData<PlansLinesItem[]>({ body: request, method: 'POST', url }),
 			refreshInterval: 10_000,

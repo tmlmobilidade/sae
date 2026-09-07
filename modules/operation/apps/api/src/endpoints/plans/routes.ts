@@ -15,7 +15,9 @@ import { getOperationGtfsNormalizedHandler } from './handlers/get-operation-gtfs
 import { getOperationGtfsHandler } from './handlers/get-operation-gtfs.js';
 import { getPlanHandler } from './handlers/get-plan.js';
 import { listAgenciesHandler } from './handlers/list-agencies.js';
+import { listPlansLinesHandler } from './handlers/list-lines.js';
 import { listPlansHandler } from './handlers/list-plans.js';
+import { listPlansStopsHandler } from './handlers/list-stops.js';
 import { lockPlanHandler } from './handlers/lock-plan.js';
 import { sendApexNotificationHandler } from './handlers/send-apex-notification.js';
 import { updateApexConfigHandler } from './handlers/update-apex-config.js';
@@ -77,6 +79,12 @@ server.register(
 		instance.get('/:id/operation-gtfs-normalized', { preHandler: authorizationMiddleware('plans', ['read']) }, getOperationGtfsNormalizedHandler);
 
 		instance.get('/:id/operation-gtfs-normalized/download', { preHandler: authorizationMiddleware('plans', ['read']) }, downloadOperationGtfsNormalizedHandler);
+
+		//
+		// Poster exports
+
+		instance.post('/lines/list', { preHandler: authorizationMiddleware('plans', ['read']) }, listPlansLinesHandler);
+		instance.post('/stops/list', { preHandler: authorizationMiddleware('plans', ['read']) }, listPlansStopsHandler);
 
 		next();
 	},

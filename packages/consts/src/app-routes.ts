@@ -434,8 +434,10 @@ export const API_ROUTES = Object.freeze({
 		PLANS_DETAIL_OPERATION_GTFS_DOWNLOAD: (id: string) => `${getModuleConfig('operation', 'api_url')}/plans/${encodeURIComponent(id)}/operation-gtfs/download`,
 		PLANS_DETAIL_OPERATION_GTFS_NORMALIZED: (id: string) => `${getModuleConfig('operation', 'api_url')}/plans/${encodeURIComponent(id)}/operation-gtfs-normalized`,
 		PLANS_DETAIL_OPERATION_GTFS_NORMALIZED_DOWNLOAD: (id: string) => `${getModuleConfig('operation', 'api_url')}/plans/${encodeURIComponent(id)}/operation-gtfs-normalized/download`,
+		PLANS_LINES_LIST: `${getModuleConfig('operation', 'api_url')}/plans/lines/list`,
 		PLANS_LIST: `${getModuleConfig('operation', 'api_url')}/plans/list`,
 		PLANS_LIST_AGENCIES: `${getModuleConfig('operation', 'api_url')}/plans/list-agencies`,
+		PLANS_STOPS_LIST: `${getModuleConfig('operation', 'api_url')}/plans/stops/list`,
 
 		// RIDE-ACCEPTANCES
 		RIDE_ACCEPTANCES_CHANGE_STATUS: (id: string) => `${getModuleConfig('operation', 'api_url')}/ride-acceptances/${encodeURIComponent(id)}/change-status`,

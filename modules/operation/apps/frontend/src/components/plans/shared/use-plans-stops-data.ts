@@ -1,8 +1,8 @@
 'use client';
 
 import { API_ROUTES } from '@tmlmobilidade/consts';
-import { type PlanStopItem, type PlanStopRequest } from '@tmlmobilidade/go-plans-pckg-types';
-import { type ApiResponse, type UnixTimestamp } from '@tmlmobilidade/go-types-shared';
+import { type PlansStopsItem, type PlansStopsRequest } from '@tmlmobilidade/go-operation-pckg-types';
+import { type ApiResponse, type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { fetchApiData, type SelectDataItem } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -10,27 +10,27 @@ import useSWR from 'swr';
 /* * */
 
 interface UsePlansStopsReturnType {
-	data: PlanStopItem[]
+	data: PlansStopsItem[]
 	error: null | string
 	ids: string[]
 	isLoading: boolean
 	options: SelectDataItem[]
-	timestamp: null | UnixTimestamp
+	timestamp: null | UnixMilliseconds
 }
 
 /**
  * Fetch stops available to Plans poster exports for the selected agency.
  */
-export function usePlansStops(query: null | PlanStopRequest): UsePlansStopsReturnType {
+export function usePlansStops(query: null | PlansStopsRequest): UsePlansStopsReturnType {
 	//
 
 	//
 	// A. Fetch data
 
-	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<PlanStopItem[]>>(
-		query ? [API_ROUTES.plans.PLANS_POSTER_STOPS, query] : null,
+	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<PlansStopsItem[]>>(
+		query ? [API_ROUTES.operation.PLANS_STOPS_LIST, query] : null,
 		{
-			fetcher: async ([url, request]: [string, PlanStopRequest]) => await fetchApiData<PlanStopItem[]>({ body: request, method: 'POST', url }),
+			fetcher: async ([url, request]: [string, PlansStopsRequest]) => await fetchApiData<PlansStopsItem[]>({ body: request, method: 'POST', url }),
 			refreshInterval: 10_000,
 		},
 	);

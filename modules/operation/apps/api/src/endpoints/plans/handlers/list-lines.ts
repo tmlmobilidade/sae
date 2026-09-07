@@ -11,7 +11,7 @@ import { AllowAllFlagValue } from '@tmlmobilidade/go-types-permissions';
  * @param request The Fastify request object.
  * @param reply The Fastify reply object.
  */
-export async function listLines(request: FastifyRequest<{ Body: PlansLinesRequest }>, reply: FastifyReply<PlansLinesItem[]>) {
+export async function listPlansLinesHandler(request: FastifyRequest<{ Body: PlansLinesRequest }>, reply: FastifyReply<PlansLinesItem[]>) {
 	//
 
 	//
