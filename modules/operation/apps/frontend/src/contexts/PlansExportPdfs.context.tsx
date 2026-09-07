@@ -168,7 +168,7 @@ export const PlansExportPdfsModalContextProvider = ({ children }: PropsWithChild
 				canvas_profile: contentMode === 'all' ? '0Master.C' : canvasProfile,
 				content_mode: contentMode,
 				line_ids: contentMode === 'lines' ? lineIds : undefined,
-				lines_mode: contentMode === 'lines' ? filterMode : 'all',
+				lines_mode: contentMode === 'lines' ? filterMode : undefined,
 				plan_id: planId,
 				stop_ids: contentMode === 'stops' ? stopIds : undefined,
 				stops_mode: contentMode === 'stops' ? filterMode : undefined,

@@ -16,7 +16,7 @@ export const PlanPostersExportPropertiesSchema = z.object({
 		canvas_profile: z.enum(['0Master.A', '0Master.B', '0Master.C', '0Master.F']).nullish(),
 		content_mode: PlanPostersContentModeSchema.optional(),
 		line_ids: z.array(z.string()).optional(),
-		lines_mode: z.enum(['all', 'exclude', 'include']).optional(),
+		lines_mode: PlanPostersFilterModeSchema.optional(),
 		plan_id: z.string(),
 		stop_ids: z.array(z.string()).optional(),
 		stops_mode: PlanPostersFilterModeSchema.optional(),
