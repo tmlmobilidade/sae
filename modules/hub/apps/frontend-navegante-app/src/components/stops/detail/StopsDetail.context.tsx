@@ -1,9 +1,9 @@
 'use client';
 
 import { useAlertsContext } from '@/components/alerts/Alerts.context';
-import { useEtaContext } from '@/components/eta/Eta.context';
 import { useLinesContext } from '@/components/lines/Lines.context';
 import { useStopsContext } from '@/components/stops/Stops.context';
+import { useEtaContext } from '@/contexts/Eta.context';
 import { useOperationalDate } from '@/hooks/transit/useOperationalDate';
 import { fetchPatterns } from '@/utils/transit/fetch-patterns';
 import { type HubAlert, type HubLine, type HubPattern, type HubStop } from '@tmlmobilidade/go-types-hub';
