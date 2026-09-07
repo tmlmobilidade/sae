@@ -1,4 +1,4 @@
-export type BottomSheetView = 'alerts-detail' | 'alerts-list' | 'help' | 'lines-detail' | 'routes' | 'search' | 'stops-detail' | 'vehicles-detail' | null;
+export type BottomSheetView = 'alerts-detail' | 'lines-detail' | 'routes' | 'search' | 'stops-detail' | 'vehicles-detail' | null;
 
 export interface BottomSheetNavigationEntry {
 	entityId?: null | string

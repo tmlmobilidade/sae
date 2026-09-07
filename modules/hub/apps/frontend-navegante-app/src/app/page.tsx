@@ -1,11 +1,9 @@
 'use client';
 
 import { AlertsDetail } from '@/components/alerts/detail/AlertsDetail';
-import { AlertsList } from '@/components/alerts/list/AlertsList';
 import { ActionBar } from '@/components/common/action-bar/ActionBar';
 import { BaseMap } from '@/components/common/base-map/BaseMap';
 import { BaseMapOverlaysControl } from '@/components/common/base-map/BaseMapOverlaysControl';
-import { HelpDetail } from '@/components/help/HelpDetail';
 import { LinesDetail } from '@/components/lines/detail/LinesDetail';
 import { LinesDetailContextProvider } from '@/components/lines/detail/LinesDetail.context';
 import { RoutePlannerVehiclesCounter } from '@/components/routes/common/RoutePlannerVehiclesCounter';
@@ -55,8 +53,6 @@ export default function Page() {
 				<VehiclesDetail />
 				<LinesDetail />
 				<StopsDetail />
-				<HelpDetail />
-				<AlertsList />
 				<AlertsDetail />
 				<SearchDetail />
 				<RoutePlanner />

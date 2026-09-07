@@ -26,62 +26,6 @@
 		},
 		"AlertsDetail": {
 			"title": "Alerta"
-		},
-		"AlertsList": {
-			"title": "Alertas de Serviço"
-		},
-		"AlertsListGroup": {
-			"label": "{count, plural, one {Alerta ativo} other {Alertas ativos}}",
-			"titles": {
-				"future": "A partir de {value}",
-				"past": "Desde {value}",
-				"today": "A partir de hoje, {value}",
-				"tomorrow": "A partir de amanhã, {value}",
-				"yesterday": "Desde ontem, {value}"
-			}
-		},
-		"AlertsListToolbar": {
-			"SelectLine": {
-				"nothing_found": "Nenhum Resultado Encontrado",
-				"placeholder": "Procurar linha por número, nome, localidade..."
-			},
-			"SelectStop": {
-				"label": "Procurar paragem por nome, número, localidade...",
-				"nothing_found": "Nenhum Resultado Encontrado",
-				"placeholder": "Procurar paragem por nome, número, localidade..."
-			},
-			"by_date": {
-				"current": "Agora ({count})",
-				"future": "Futuros ({count})"
-			},
-			"expand_toggle": {
-				"is_hidden": {
-					"label": "Ver Filtros"
-				},
-				"is_visible": {
-					"label": "Ocultar Filtros"
-				}
-			},
-			"filters": {
-				"by_line": {
-					"label": "Filtrar por linha",
-					"placeholder": "Filtrar por linha"
-				},
-				"by_stop": {
-					"label": "Filtrar por paragem",
-
-					"placeholder": "Filtrar por paragem"
-				}
-			}
-		},
-		"AlertsListViewList": {
-			"no_data": "Nenhum alerta encontrado para esta pesquisa"
-		},
-		"SelectCause": {
-			"placeholder": "Filtrar por causa"
-		},
-		"SelectEffect": {
-			"placeholder": "Filtrar por efeito"
 		}
 	},
 	"common": {
@@ -174,12 +118,6 @@
 		},
 		"trigger": {
 			"label": "Dá-nos o teu feedback"
-		}
-	},
-	"help": {
-		"HelpDetail": {
-			"no_data": "Nenhuma pergunta frequente disponível de momento.",
-			"title": "Ajuda"
 		}
 	},
 	"layout": {
