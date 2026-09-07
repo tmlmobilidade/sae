@@ -6,6 +6,8 @@ import { setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
+import { releaseStuckPlans } from '../utils/release-stuck-plans.js';
+
 /* * */
 
 let IS_BUSY = false;
@@ -37,6 +39,11 @@ export async function getPlans(): Promise<RidesCoordinatorPlansResponse> {
 		// from being processed until the current one is done.
 
 		IS_BUSY = true;
+
+		//
+		// Release stuck plans before fetching new ones
+
+		await releaseStuckPlans();
 
 		//
 		// Find the next Plan that is waiting to be processed.

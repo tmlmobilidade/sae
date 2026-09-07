@@ -11,7 +11,7 @@ const STUCK_PLAN_TIMEOUT_MS = 180_000; // 3 minutes
 
 /* * */
 
-export async function releaseStuckPlansTask() {
+export async function releaseStuckPlans() {
 	//
 
 	//
