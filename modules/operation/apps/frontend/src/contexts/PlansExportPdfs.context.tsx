@@ -132,7 +132,7 @@ export const PlansExportPdfsModalContextProvider = ({ children }: PropsWithChild
 	}, []);
 
 	const selectPlanId = useCallback((value: null | string) => {
-		const selectedPlan = plansData.data.find(plan => plan._id === value && plan.agency_id === agencyId && !!plan.operation_file_id);
+		const selectedPlan = plansData.data.find(plan => plan._id === value && plan.agency_id === agencyId);
 
 		setPlanId(selectedPlan?._id ?? null);
 		setLineIds([]);
@@ -156,7 +156,7 @@ export const PlansExportPdfsModalContextProvider = ({ children }: PropsWithChild
 		if (contentMode === 'stops' && (!canvasProfile || !stopIds.length)) return;
 
 		const selectedPlan = plansData.data.find(plan => plan._id === planId && plan.agency_id === agencyId);
-		if (!selectedPlan?.operation_file_id) return;
+		if (!selectedPlan?.attachments.operation_gtfs) return;
 
 		const createFileExportDto: CreateFileExportDto<PlanPostersExportProperties> = {
 			created_by: 'will-be-set-by-api',

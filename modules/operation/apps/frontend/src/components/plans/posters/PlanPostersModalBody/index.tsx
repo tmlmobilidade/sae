@@ -1,8 +1,8 @@
 'use client';
 
 import { usePlansExportPdfsContext } from '@/contexts/PlansExportPdfs.context';
-import { Dates } from '@tmlmobilidade/dates';
 import { type PlanPostersContentMode, type PlanPostersFilterMode } from '@tmlmobilidade/go-types-downloads';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { Divider, MultiSelect, Section, SegmentedControl, Select } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 
@@ -26,10 +26,10 @@ export function PlanPostersExportModalBody() {
 	const context = usePlansExportPdfsContext();
 
 	const plansOptions = useMemo(() => context.data.plans
-		.filter(plan => !!plan.operation_file_id && plan.agency_id === context.data.agencyId)
+		.filter(plan => plan.agency_id === context.data.agencyId)
 		.map((plan) => {
-			const startDate = Dates.fromOperationalDate(plan.gtfs_feed_info.feed_start_date, 'Europe/Lisbon').toFormat('dd-MM-yyyy');
-			const endDate = Dates.fromOperationalDate(plan.gtfs_feed_info.feed_end_date, 'Europe/Lisbon').toFormat('dd-MM-yyyy');
+			const startDate = Dates.fromOperationalDateInt(plan.active_from, 'Europe/Lisbon').toFormat('dd-MM-yyyy');
+			const endDate = Dates.fromOperationalDateInt(plan.active_until, 'Europe/Lisbon').toFormat('dd-MM-yyyy');
 
 			return {
 				label: `#${plan._id} · ${startDate} - ${endDate}`,
