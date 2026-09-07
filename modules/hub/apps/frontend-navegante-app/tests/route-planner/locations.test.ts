@@ -2,7 +2,7 @@ import { type MotisGeocodeResult, type RoutePlannerLocation } from '@/types/rout
 import { createRoutePlannerCurrentLocation, mapHubStopToRoutePlannerLocation } from '@/utils/route-planner/planning/locations';
 import { formatMotisLocationDetail } from '@/utils/route-planner/presentation/format';
 import { getMotisPlaceParam, mapMotisGeocodeResultToLocation, parseRoutePlannerCoordinate, routePlannerCoordinateToLocation } from '@/utils/search/motis-geocode';
-import { type HubStop } from '@tmlmobilidade/go-types-public-info';
+import { HubStopSchema } from '@tmlmobilidade/go-types-hub';
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
@@ -114,8 +114,8 @@ describe('route-planner stop and coordinate locations', () => {
 	});
 
 	it('maps Hub stops while preserving each search path stop-ID convention', () => {
-		const stop: HubStop = {
-			_id: 60001,
+		const stop = HubStopSchema.parse({
+			_id: '600001',
 			agency_ids: ['41'],
 			district_id: '11',
 			district_name: 'Lisboa',
@@ -136,7 +136,7 @@ describe('route-planner stop and coordinate locations', () => {
 			route_ids: ['1000_0'],
 			short_name: '060001',
 			tts_name: 'Praça do Comércio',
-		};
+		});
 		const expectedLocation = {
 			detail: 'Baixa | Lisboa',
 			label: 'Praça do Comércio',
@@ -145,8 +145,8 @@ describe('route-planner stop and coordinate locations', () => {
 			type: 'STOP',
 		};
 
-		assert.deepEqual(mapHubStopToRoutePlannerLocation(stop), { ...expectedLocation, id: '60001' });
-		assert.deepEqual(mapHubStopToRoutePlannerLocation(stop, { ensureGtfsId: true }), { ...expectedLocation, id: 'GTFS_60001' });
+		assert.deepEqual(mapHubStopToRoutePlannerLocation(stop), { ...expectedLocation, id: '600001' });
+		assert.deepEqual(mapHubStopToRoutePlannerLocation(stop, { ensureGtfsId: true }), { ...expectedLocation, id: 'GTFS_600001' });
 	});
 
 	it('converts both raw and already-prefixed stop IDs to one MOTIS GTFS place parameter', () => {
