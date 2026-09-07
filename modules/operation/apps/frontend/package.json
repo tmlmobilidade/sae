@@ -22,6 +22,7 @@
 		"@tmlmobilidade/go-operation-pckg-types": "*",
 		"@tmlmobilidade/go-types-apex": "*",
 		"@tmlmobilidade/go-types-core": "*",
+		"@tmlmobilidade/go-types-downloads": "*",
 		"@tmlmobilidade/go-types-gtfs": "*",
 		"@tmlmobilidade/go-types-gtfs-validator": "*",
 		"@tmlmobilidade/go-types-locations": "*",
