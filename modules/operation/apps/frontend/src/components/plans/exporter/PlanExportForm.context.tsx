@@ -4,7 +4,6 @@ import { usePlansAgenciesData } from '@/components/plans/shared/use-plans-agenci
 import { usePlansExportListData } from '@/components/plans/shared/use-plans-export-list-data';
 import { type PlansListItem } from '@tmlmobilidade/go-operation-pckg-types';
 import { type CreateFileExportDto, type PlanPostersExportProperties } from '@tmlmobilidade/go-types-downloads';
-import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
 import { closeModal, type SelectDataItem, useExportsContext, useToast } from '@tmlmobilidade/ui';
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -55,7 +54,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 	const [planId, setPlanId] = useState<null | string>(null);
 	const [loading, setLoading] = useState(false);
 
-	const { options: agencyOptions } = usePlansAgenciesData();
+	const { options } = usePlansAgenciesData();
 
 	const plansData = usePlansExportListData(agencyId);
 
@@ -79,14 +78,14 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 	}, [agencyId, plansData.data]);
 
 	useEffect(() => {
-		const selectedAgencyIsAvailable = agencyOptions.some(option => option.value === agencyId);
+		const selectedAgencyIsAvailable = options.some(option => option.value === agencyId);
 
-		if (agencyOptions.length === 1 && agencyId !== agencyOptions[0].value) {
-			selectAgencyId(agencyOptions[0].value);
-		} else if (agencyOptions.length > 1 && agencyId && !selectedAgencyIsAvailable) {
+		if (options.length === 1 && agencyId !== options[0].value) {
+			selectAgencyId(options[0].value);
+		} else if (options.length > 1 && agencyId && !selectedAgencyIsAvailable) {
 			selectAgencyId(null);
 		}
-	}, [agencyId, agencyOptions, selectAgencyId]);
+	}, [agencyId, options, selectAgencyId]);
 
 	const exportPlan = useCallback(async () => {
 		if (loading) return;
@@ -132,7 +131,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 		},
 		data: {
 			agencyId,
-			agencyOptions,
+			agencyOptions: options,
 			planId,
 			plans: plansData.data,
 		},
@@ -140,7 +139,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 			canSave,
 			loading,
 		},
-	}), [agencyId, agencyOptions, canSave, exportPlan, loading, planId, plansData.data, selectAgencyId, selectPlanId]);
+	}), [agencyId, options, canSave, exportPlan, loading, planId, plansData.data, selectAgencyId, selectPlanId]);
 
 	//
 	// E. Render components

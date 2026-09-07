@@ -28,7 +28,6 @@ export function usePlansExportListData(agencyId: null | string): UsePlansExportL
 
 	const query = useMemo<null | PlansListFilters>(() => agencyId ? ({
 		agency_ids: [agencyId],
-		temporal_statuses: [],
 	}) : null, [agencyId]);
 
 	//

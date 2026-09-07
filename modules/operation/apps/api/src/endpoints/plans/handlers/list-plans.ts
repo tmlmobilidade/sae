@@ -65,7 +65,7 @@ export async function listPlansHandler(request: FastifyRequest<{ Body: PlansList
 		};
 	});
 
-	const filteredResults = resultsWithTemporalStatus.filter(result => validatedFilters.temporal_statuses.includes(result.temporal_status));
+	const filteredResults = resultsWithTemporalStatus.filter(result => validatedFilters.temporal_statuses?.includes(result.temporal_status) ?? true);
 
 	//
 	// Send the response

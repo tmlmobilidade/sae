@@ -17,7 +17,7 @@ export const PlansListFiltersSchema = z.object({
 
 	temporal_statuses: z
 		.array(TemporalStatusSchema)
-		.default([]),
+		.optional(),
 
 });
 
