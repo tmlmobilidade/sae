@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 /* * */
 
-export const PlanLineItemSchema = LineSchema.pick({
+export const PlansLinesItemSchema = LineSchema.pick({
 	_id: true,
 	agency_id: true,
 	code: true,
@@ -15,4 +15,4 @@ export const PlanLineItemSchema = LineSchema.pick({
 /**
  * The item schema for listing lines available to Plans poster exports.
  */
-export type PlanLineItem = z.infer<typeof PlanLineItemSchema>;
+export type PlansLinesItem = z.infer<typeof PlansLinesItemSchema>;

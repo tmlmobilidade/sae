@@ -1,2 +1,2 @@
-export * from './plan-line-item.js';
-export * from './plan-line-request.js';
+export * from './plans-lines-item.js';
+export * from './plans-lines-request.js';

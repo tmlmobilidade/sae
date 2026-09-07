@@ -1,2 +1,2 @@
-export * from './plan-stop-item.js';
-export * from './plan-stop-request.js';
+export * from './plans-stops-item.js';
+export * from './plans-stops-request.js';

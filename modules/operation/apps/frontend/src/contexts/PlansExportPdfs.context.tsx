@@ -1,10 +1,10 @@
 'use client';
 
-import { usePlansExportListData } from '@/components/plans/exporter/use-plans-export-list-data';
-import { PLAN_POSTERS_EXPORT_MODAL_ID } from '@/components/plans/Posters/PlanPostersModal/constants';
-import { usePlansAgenciesData } from '@/components/plans/shared/use-plans-agencies';
-import { usePlansLines } from '@/components/plans/shared/use-plans-lines';
-import { usePlansStops } from '@/components/plans/shared/use-plans-stops';
+import { PLAN_POSTERS_EXPORT_MODAL_ID } from '@/components/plans/posters/PlanPostersModal/constants';
+import { usePlansAgenciesData } from '@/components/plans/shared/use-plans-agencies-data';
+import { usePlansExportListData } from '@/components/plans/shared/use-plans-export-list-data';
+import { usePlansLines } from '@/components/plans/shared/use-plans-lines-data';
+import { usePlansStops } from '@/components/plans/shared/use-plans-stops-data';
 import { type PlansListItem } from '@tmlmobilidade/go-operation-pckg-types';
 import { type CreateFileExportDto, type PlanPostersContentMode, type PlanPostersExportProperties, type PlanPostersFilterMode } from '@tmlmobilidade/go-types-downloads';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
@@ -78,12 +78,7 @@ export const PlansExportPdfsModalContextProvider = ({ children }: PropsWithChild
 	const [stopIds, setStopIds] = useState<string[]>([]);
 	const [loading, setLoading] = useState(false);
 
-	const { options: agencyOptions } = usePlansAgenciesData({
-		permissions: {
-			actions: [PermissionCatalog.all.plans.actions.read],
-			scope: PermissionCatalog.all.plans.scope,
-		},
-	});
+	const { options: agencyOptions } = usePlansAgenciesData();
 
 	const plansLines = usePlansLines(agencyId && contentMode === 'lines' ? {
 		agency_id: agencyId,
