@@ -14,6 +14,8 @@ export function VehiclesDetail() {
 	// A. Setup variables
 
 	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const isOpen = activeBottomSheet?.view === 'vehicles-detail';
+	const activeVehicleId = isOpen ? activeBottomSheet?.entityId : null;
 
 	//
 	// B. Render componentss
@@ -21,12 +23,12 @@ export function VehiclesDetail() {
 	return (
 		<BottomSheet
 			onClose={closeActiveBottomSheet}
-			opened={activeBottomSheet?.view === 'vehicles-detail'}
+			opened={isOpen}
 			size="fit"
 			withOverlay={false}
 		>
-			{activeBottomSheet?.entityId && (
-				<VehiclesDetailContextProvider vehicleId={activeBottomSheet.entityId}>
+			{activeVehicleId && (
+				<VehiclesDetailContextProvider vehicleId={activeVehicleId}>
 					<VehiclesDetailView />
 				</VehiclesDetailContextProvider>
 			)}

@@ -14,6 +14,8 @@ export function StopsDetail() {
 	// A. Setup variables
 
 	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const isOpen = activeBottomSheet?.view === 'stops-detail';
+	const activeStopId = isOpen ? activeBottomSheet?.entityId : null;
 
 	//
 	// B. Render components
@@ -21,14 +23,14 @@ export function StopsDetail() {
 	return (
 		<BottomSheet
 			onClose={closeActiveBottomSheet}
-			opened={activeBottomSheet?.view === 'stops-detail'}
+			opened={isOpen}
 			withOverlay={false}
 			mapAware
 			withCompactCloseButton
 			withHeaderBackground
 		>
-			{activeBottomSheet?.entityId && (
-				<StopsDetailContextProvider stopId={activeBottomSheet.entityId}>
+			{activeStopId && (
+				<StopsDetailContextProvider stopId={activeStopId}>
 					<StopsDetailView />
 				</StopsDetailContextProvider>
 			)}

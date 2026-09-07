@@ -13,19 +13,21 @@ export function LinesDetail() {
 	// A. Setup variables
 
 	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const isOpen = activeBottomSheet?.view === 'lines-detail';
+	const activeLineId = isOpen ? activeBottomSheet?.entityId : null;
 
 	// B. Render components
 
 	return (
 		<BottomSheet
 			onClose={closeActiveBottomSheet}
-			opened={activeBottomSheet?.view === 'lines-detail'}
+			opened={isOpen}
 			withOverlay={false}
 			mapAware
 			withCompactCloseButton
 			withHeaderBackground
 		>
-			{activeBottomSheet?.entityId && <LinesDetailView />}
+			{activeLineId && <LinesDetailView />}
 		</BottomSheet>
 	);
 }

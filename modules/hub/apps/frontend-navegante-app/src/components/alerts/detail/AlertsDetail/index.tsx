@@ -17,8 +17,10 @@ export function AlertsDetail() {
 	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
 	const alertsContext = useAlertsContext();
 	const { t } = useTranslation();
+	const isOpen = activeBottomSheet?.view === 'alerts-detail';
+	const activeAlertId = isOpen ? activeBottomSheet?.entityId : null;
 
-	const alert = activeBottomSheet?.entityId ? alertsContext.actions.getAlertById(activeBottomSheet.entityId) : null;
+	const alert = activeAlertId ? alertsContext.actions.getAlertById(activeAlertId) : null;
 
 	//
 	// B. Render components
@@ -26,10 +28,10 @@ export function AlertsDetail() {
 	return (
 		<BottomSheet
 			onClose={closeActiveBottomSheet}
-			opened={activeBottomSheet?.view === 'alerts-detail'}
+			opened={isOpen}
 			title={t('default:alerts.AlertsDetail.title')}
 		>
-			{activeBottomSheet?.entityId && alert && (
+			{activeAlertId && alert && (
 				<AlertsDetailView alert={alert} />
 			)}
 		</BottomSheet>
