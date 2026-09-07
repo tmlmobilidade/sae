@@ -13,7 +13,7 @@ import { exportPlanPostersFile } from './export-plan-posters.js';
 async function processWaitingExports(): Promise<void> {
 	const globalTimer = new Timer();
 	const waitingExports = await goDb.core.exports.findMany({
-		processing_status: ProcessingStatusSchema.enum.waiting,
+		processing_status: ProcessingStatusSchema.safeParse('waiting').data,
 		type: 'plan_posters',
 	});
 

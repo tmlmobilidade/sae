@@ -49,6 +49,9 @@ async function main() {
 			//
 			// Process the file export.
 			switch (fileExport.type) {
+				case 'plan_posters':
+					// pathToFile = await exportPlanPostersFile(fileExport);
+					break;
 				case 'ride':
 					pathToFile = await exportRidesFile(fileExport);
 					break;
