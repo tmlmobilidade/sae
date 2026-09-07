@@ -41,6 +41,8 @@ export interface GoDbCollection<T extends Document> {
 
 	insertMany(docs: InsertableDocument<T>[], options?: MinimalOptions): Promise<T[]>
 
+	insertManyUnsafe(docs: T[], options?: MinimalOptions): Promise<T[]>
+
 	insertOne(doc: InsertableDocument<T>, options?: MinimalOptions): Promise<T>
 
 	insertOneUnsafe(doc: T, options?: MinimalOptions): Promise<T>
