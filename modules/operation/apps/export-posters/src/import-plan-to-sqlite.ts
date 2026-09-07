@@ -27,16 +27,14 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 	//
 	// Import the Plan into a local SQLite database
 
-	const operationFileUrl = await storageProvider.getSignedUrl({ fileId: planData.operation_file_id });
-	const feedStartDate = planData.gtfs_feed_info.feed_start_date;
-	const feedEndDate = planData.gtfs_feed_info.feed_end_date;
-	const agencyId = planData.gtfs_agency.agency_id;
+	const operationFileUrl = await storageProvider.getSignedUrl({ fileId: planData.attachments.operation_gtfs_normalized });
+	const agencyId = planData.agency_id;
 
 	//
-	// Check if the feed start and end dates are valid
+	// Check the plan's active date range
 
-	if (!feedStartDate || !feedEndDate) {
-		throw new Error(`Plan ${planData._id} is missing feed start or end dates.`);
+	if (!planData.active_from || !planData.active_until || planData.active_from > planData.active_until) {
+		throw new Error(`Plan ${planData._id} has missing or invalid active_from / active_until dates.`);
 	}
 
 	//
@@ -48,8 +46,8 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 		},
 		time_range: {
 			date_range: {
-				end: feedEndDate,
-				start: feedStartDate,
+				end: planData.active_until,
+				start: planData.active_from,
 			},
 		},
 	};
@@ -59,7 +57,7 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 
 	const sqlGtfs = await importGtfsStrictV29ExtToDatabase(importConfig);
 
-	// Line filtering is temporarily disabled while PDF exports use stop filters only.
+	// ! Line filtering is temporarily disabled while PDF exports use stop filters only.
 	// if (options?.content_mode === 'lines' && options.line_codes?.length) {
 	// 	const lineIdMatchExpression = options.line_codes
 	// 		.map(() => '(CAST(line_id AS TEXT) = ? OR CAST(line_id AS TEXT) GLOB ?)')
@@ -108,8 +106,8 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 		canvas_profile: options?.canvas_profile ?? '0Master.C',
 		content_mode: options?.content_mode ?? 'all',
 		date_range: {
-			end: validateOperationalDate(feedEndDate),
-			start: validateOperationalDate(feedStartDate),
+			end: validateOperationalDate(String(planData.active_until)),
+			start: validateOperationalDate(String(planData.active_from)),
 		},
 		line_codes: options?.line_codes ?? [],
 		lines_mode: options?.content_mode === 'lines' ? options.lines_mode ?? 'include' : undefined,
@@ -140,7 +138,7 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 	await exportRoutesFile(sqlGtfs, exportConfig);
 	await exportStopsFile(sqlGtfs, exportConfig);
 	await exportAgencyFile(planData, exportConfig);
-	// await exportFeedInfoFile(exportConfig); // feed_info.txt is intentionally excluded because ZPHERES Studio does not support it.
+	// await exportFeedInfoFile(exportConfig); // feed_info.txt is intentionally excluded because HiTouch does not support it.
 	await exportDayTypesFile(exportConfig);
 
 	Logger.info({ message: `Exported files in ${exportTimer.get()} seconds` });

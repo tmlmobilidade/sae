@@ -25,15 +25,15 @@ export async function exportPlanPostersFile(fileExport: FileExport): Promise<Att
 		throw new Error(`Plan ${planData._id} does not belong to agency ${properties.agency_id}`);
 	}
 
-	if (!planData.operation_file_id) {
-		throw new Error(`Plan ${planData._id} has no operation file for poster export`);
+	if (!planData.attachments.operation_gtfs_normalized) {
+		throw new Error(`Plan ${planData._id} has no normalized GTFS attachment for poster export`);
 	}
 
 	const contentMode = properties.content_mode ?? (properties.stop_ids?.length ? 'stops' : properties.line_ids?.length ? 'lines' : 'all');
 	const selectedStopIds = contentMode === 'stops' ? properties.stop_ids ?? [] : [];
 	const stopsMode = properties.stops_mode ?? 'include';
 
-	// Line filtering is temporarily disabled while PDF exports use stop filters only.
+	// ! Line filtering is temporarily disabled while PDF exports use stop filters only.
 	// const linesMode = properties.lines_mode ?? (properties.line_ids?.length ? 'include' : 'all');
 	// const selectedLineIds = contentMode === 'lines' ? properties.line_ids ?? [] : [];
 	// if (contentMode === 'lines' && !selectedLineIds.length) {
