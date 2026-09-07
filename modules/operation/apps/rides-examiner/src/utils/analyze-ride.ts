@@ -28,17 +28,12 @@ interface AnalyzeRideMetrics {
 	skip: (keyof RideAnalysesRegistry)[]
 }
 
-interface AnalyzeRideReturnType {
-	analyses: RideAnalysesRegistry
-	metrics: AnalyzeRideMetrics
-}
-
 /**
  * Analyzes the ride data and returns the analysis results.
  * @param analysisData The analysis data to use for the analysis.
  * @returns The analysis results for the ride.
  */
-export function analyzeRide(analysisData: AnalysisData): AnalyzeRideReturnType {
+export function analyzeRide(analysisData: AnalysisData): RideAnalysesRegistry {
 	// Run each analyzer and store the results
 	const analyses: RideAnalysesRegistry = {
 		at_least_one_vehicle_event_on_first_stop: atLeastOneVehicleEventOnFirstStopAnalyzer(analysisData),
@@ -69,6 +64,7 @@ export function analyzeRide(analysisData: AnalysisData): AnalyzeRideReturnType {
 		else if (analysisResult.grade_status === 'pass') metrics.pass.push(analysisKey);
 		else if (analysisResult.grade_status === 'skip') metrics.skip.push(analysisKey);
 	}
-	// Return the analyses and metrics
-	return { analyses, metrics };
+
+	// Return the analyses
+	return analyses;
 }
