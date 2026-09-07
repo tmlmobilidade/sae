@@ -96,7 +96,8 @@ export function PlanPostersExportModalBody() {
 						/>
 					)}
 
-					{context.data.contentMode === 'lines' && (
+					{/* TODO: Check if make sense to have this filter */}
+					{/* {context.data.contentMode === 'lines' && (
 						<MultiSelect
 							key={`${context.data.agencyId}-lines-${context.data.filterMode}`}
 							data={context.data.lineOptions}
@@ -106,7 +107,7 @@ export function PlanPostersExportModalBody() {
 							value={context.data.lineIds}
 							w="100%"
 						/>
-					)}
+					)} */}
 
 					{context.data.contentMode === 'stops' && (
 						<MultiSelect

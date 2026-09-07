@@ -3,7 +3,7 @@
 import { usePlansAgenciesData } from '@/components/plans/shared/use-plans-agencies-data';
 import { usePlansExportListData } from '@/components/plans/shared/use-plans-export-list-data';
 import { type PlansListItem } from '@tmlmobilidade/go-operation-pckg-types';
-import { type CreateFileExportDto, type PlanPostersExportProperties } from '@tmlmobilidade/go-types-downloads';
+import { type CreateFileExportDto, type PlanExportProperties } from '@tmlmobilidade/go-types-downloads';
 import { closeModal, type SelectDataItem, useExportsContext, useToast } from '@tmlmobilidade/ui';
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -77,6 +77,8 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 		setPlanId(selectedPlan?._id ?? null);
 	}, [agencyId, plansData.data]);
 
+	//
+
 	useEffect(() => {
 		const selectedAgencyIsAvailable = options.some(option => option.value === agencyId);
 
@@ -87,6 +89,8 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 		}
 	}, [agencyId, options, selectAgencyId]);
 
+	//
+
 	const exportPlan = useCallback(async () => {
 		if (loading) return;
 
@@ -95,7 +99,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 		const selectedPlan = plansData.data.find(plan => plan._id === planId && plan.agency_id === agencyId);
 		if (!selectedPlan) return;
 
-		const createFileExportDto: CreateFileExportDto<PlanPostersExportProperties> = {
+		const createFileExportDto: CreateFileExportDto<PlanExportProperties> = {
 			created_by: 'will-be-set-by-api',
 			file_id: null,
 			file_name: `gtfs-${selectedPlan._id}.zip`,
@@ -104,7 +108,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 				agency_id: agencyId,
 				plan_id: planId,
 			},
-			type: 'plan_posters',
+			type: 'plan',
 		};
 
 		try {

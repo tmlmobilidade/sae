@@ -9,10 +9,13 @@ import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 import fs from 'fs';
 
-import { exportRidesFile } from './export-rides.js';
-import { exportSamsAnalysisFile } from './export-sams-analysis.js';
+import { exportPlanFile } from './export-plan.js';
 import { exportStopsFile } from './export-stops.js';
 import { exportVehiclesFile } from './export-vehicles.js';
+
+// TODO: fix imports of this both files
+// import { exportSamsAnalysisFile } from './export-sams-analysis.js';
+// import { exportRidesFile } from './export-rides.js';
 
 /* * */
 
@@ -49,14 +52,18 @@ async function main() {
 			//
 			// Process the file export.
 			switch (fileExport.type) {
+				case 'plan': {
+					await exportPlanFile(fileExport);
+					continue;
+				}
 				case 'plan_posters':
 					// pathToFile = await exportPlanPostersFile(fileExport);
 					break;
 				case 'ride':
-					pathToFile = await exportRidesFile(fileExport);
+					// pathToFile = await exportRidesFile(fileExport);
 					break;
 				case 'sams_analysis':
-					pathToFile = await exportSamsAnalysisFile(fileExport);
+					// pathToFile = await exportSamsAnalysisFile(fileExport);
 					break;
 				case 'stop':
 					pathToFile = await exportStopsFile(fileExport);
@@ -92,7 +99,9 @@ async function main() {
 		} catch (error) {
 			Logger.error(error);
 			Logger.error({ message: `Error processing file export ${fileExport._id} (${fileExport.type}): ${error instanceof Error ? error.message : 'Unknown error'}.` });
-			await goDb.core.exports.updateById(fileExport._id, { processing_status: 'error' });
+			if (fileExport.type !== 'plan') {
+				await goDb.core.exports.updateById(fileExport._id, { processing_status: 'error' });
+			}
 			continue;
 		}
 	}
