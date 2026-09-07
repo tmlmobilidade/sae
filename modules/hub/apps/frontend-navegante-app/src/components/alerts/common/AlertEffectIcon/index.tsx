@@ -1,9 +1,9 @@
 /* * */
 
 import { getEffectSeverityLevel } from '@/utils/alerts/get-alert-severity-level';
-import { type AlertEffect, AlertEffectValues } from '@tmlmobilidade/go-types-operation';
+import { type HubAlert } from '@tmlmobilidade/go-types-hub';
 import { AlertEffectIcons } from '@tmlmobilidade/ui';
-import { useTranslation } from 'react-i18next';
+import { type ReactNode } from 'react';
 
 import styles from './styles.module.css';
 
@@ -11,55 +11,42 @@ import styles from './styles.module.css';
 
 interface AlertEffectIconProps {
 	className?: string
-	effect?: AlertEffect
-	withText?: boolean
+	effect?: HubAlert['effect']
 }
 
 /* * */
 
-export function AlertEffectIcon({ className, effect, withText = false }: AlertEffectIconProps) {
+const HUB_ALERT_EFFECT_ICONS: Partial<Record<HubAlert['effect'], ReactNode>> = AlertEffectIcons;
+
+/* * */
+
+export function AlertEffectIcon({ className, effect }: AlertEffectIconProps) {
 	//
 
 	//
 	// A. Setup variables
 
-	const { t } = useTranslation();
-
 	const severityColor = {
-		high: styles.severityLevel_high,
-		info: styles.severityLevel_info,
-		low: styles.severityLevel_low,
-		medium: styles.severityLevel_medium,
+		high: styles.levelHigh,
+		info: styles.levelInfo,
+		low: styles.levelLow,
+		medium: styles.levelMedium,
 	};
 
 	//
 	// B. Transform data
 
-	const effectsWithIcons = AlertEffectValues.map(effect => ({
-		color: severityColor[getEffectSeverityLevel(effect)],
-		effect,
-		icon: AlertEffectIcons[effect],
-	}));
+	const effectIcon = effect ? HUB_ALERT_EFFECT_ICONS[effect] : null;
+	const effectColor = effect ? severityColor[getEffectSeverityLevel(effect)] : null;
 
 	//
 	// C. Render components
 
-	const effectItem = effectsWithIcons.find(item => item.effect === effect);
-
-	if (withText && effect && effectItem) {
-		return (
-			<div className={`${styles.container} ${className ?? ''} ${effectItem.color}`}>
-				{effectItem.icon}
-				<span className={styles.label}>{t(`shared:alerts.effects.${effect}.title`)}</span>
-			</div>
-		);
-	}
-
-	if (!effectItem) {
+	if (!effectIcon || !effectColor) {
 		return null;
 	}
 
-	return <span className={effectItem.color}>{effectItem.icon}</span>;
+	return <span className={`${effectColor} ${className ?? ''}`}>{effectIcon}</span>;
 
 	//
 }
