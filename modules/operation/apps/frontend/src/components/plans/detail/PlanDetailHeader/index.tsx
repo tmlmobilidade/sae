@@ -2,14 +2,13 @@
 
 import { openPlanChangeModal } from '@/components/plans/change/PlanChange.modal';
 import { usePlanDetailContext } from '@/components/plans/detail/PlanDetailForm.context';
+import { usePlansAgenciesData } from '@/components/plans/shared/use-plans-agencies-data';
 import { IconRefresh } from '@tabler/icons-react';
 import { PAGE_ROUTES } from '@tmlmobilidade/consts';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
 import { AgencyTag, CloseButton, DeleteButton, HasPermission, IconButton, IdTag, LockButton, Spacer, Toolbar, UpdateButton } from '@tmlmobilidade/ui';
 import { keepUrlParams } from '@tmlmobilidade/ui';
 import { useRouter } from 'next/navigation';
-
-import { usePlansAgenciesData } from '../../shared/use-plans-agencies-data';
 
 /* * */
 
