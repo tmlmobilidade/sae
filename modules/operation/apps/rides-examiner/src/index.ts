@@ -180,6 +180,23 @@ export async function analyzeRides() {
 			}
 		});
 
+		await rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.flush();
+		await rideAnalysisAtLeastOneVehicleEventOnLastStopWriter.flush();
+		await rideAnalysisExpectedApexValidationIntervalWriter.flush();
+		await rideAnalysisExpectedDriverIdQtyWriter.flush();
+		await rideAnalysisExpectedStartTimeWriter.flush();
+		await rideAnalysisExpectedVehicleEventDelayWriter.flush();
+		await rideAnalysisExpectedVehicleEventIntervalWriter.flush();
+		await rideAnalysisExpectedVehicleEventQtyWriter.flush();
+		await rideAnalysisExpectedVehicleIdQtyWriter.flush();
+		await rideAnalysisMatchingApexLocationsWriter.flush();
+		await rideAnalysisMatchingVehicleIdsWriter.flush();
+		await rideAnalysisSimpleOneApexValidationWriter.flush();
+		await rideAnalysisSimpleOneVehicleEventOrApexValidationWriter.flush();
+		await rideAnalysisSimpleThreeVehicleEventsWriter.flush();
+		await rideAnalysisTransactionSequentialityWriter.flush();
+		await ridesWriter.flush();
+
 		void fetch('https://status.carrismetropolitana.pt/api/push/B52rdR5Luo30Y1RAtCpHDrn4MF7vXCZb');
 
 		Logger.terminate(`Run took ${globalTimer.get()}.`);

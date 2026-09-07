@@ -53,7 +53,7 @@ export async function getRides(): Promise<RidesCoordinatorRidesResponse> {
 				WHERE processing_status = 'waiting'
 				AND start_time_scheduled <= $1
 				ORDER BY start_time_scheduled DESC
-				LIMIT 100
+				LIMIT 750
 			`,
 			{ 1: standardWindowInterval.end },
 		);
