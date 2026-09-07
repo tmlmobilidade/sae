@@ -1,6 +1,6 @@
 import { type MotisItinerary } from '@/types/route-planner/models';
 import { isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
-import { type HubVehiclePosition } from '@tmlmobilidade/go-types-public-info';
+import { type HubVehiclePosition } from '@tmlmobilidade/go-types-hub';
 
 /* * */
 
@@ -45,23 +45,6 @@ export function filterVehicleFeatureCollectionByRouteDirections(
 		}),
 	};
 }
-
-export function filterVehicleFeatureCollectionByPatternIds(
-	vehiclesData: GeoJSON.FeatureCollection<GeoJSON.Point, HubVehiclePosition>,
-	patternIds: null | Set<string>,
-) {
-	if (!patternIds) return vehiclesData;
-
-	return {
-		...vehiclesData,
-		features: vehiclesData.features.filter((feature) => {
-			const patternId = feature.properties?.pattern_id;
-			return typeof patternId === 'string' && patternIds.has(patternId);
-		}),
-	};
-}
-
-/* * */
 
 export function getRoutePlannerRouteDirectionKey(routeId: null | string | undefined, directionId: null | number | string | undefined, agencyId: null | string | undefined) {
 	const normalizedRouteId = getRoutePlannerRouteIdKey(routeId, agencyId);

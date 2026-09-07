@@ -8,7 +8,7 @@ import { useMotisGeocode } from '@/hooks/search/useMotisGeocode';
 import { type SearchGroup, type SearchResult } from '@/types/common/search';
 import { type RoutePlannerLocation } from '@/types/route-planner/models';
 import { normalizeSearchText } from '@/utils/search/normalize';
-import { type HubAlert, type HubLine, type HubStop } from '@tmlmobilidade/go-types-public-info';
+import { type HubAlert, type HubLine, type HubStop } from '@tmlmobilidade/go-types-hub';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

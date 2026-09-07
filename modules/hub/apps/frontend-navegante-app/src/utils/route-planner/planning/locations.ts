@@ -1,5 +1,5 @@
 import { type RoutePlannerLocation } from '@/types/route-planner/models';
-import { type HubStop } from '@tmlmobilidade/go-types-public-info';
+import { type HubStop } from '@tmlmobilidade/go-types-hub';
 
 /* * */
 

@@ -33,9 +33,7 @@ export function RoutePlannerTopSearch() {
 	const isDestinationSearchWithRouteInput = routePlannerContext.data.view_mode === 'destination-search' && hasRouteInputContext;
 	const isRouteInputView = ['itinerary-detail', 'results'].includes(routePlannerContext.data.view_mode) || isDestinationSearchWithRouteInput;
 	const shouldShowRouteInput = !isNavigating && isRouteInputView;
-	const searchLabel = isNavigating
-		? t('default:routes.RoutePlannerTopSearch.placeholder')
-		: lastSearchQuery.trim() || t('default:action-bar.ActionBar.search.label');
+	const searchLabel = isNavigating ? t('default:routes.RoutePlannerTopSearch.placeholder') : lastSearchQuery.trim() || t('default:action-bar.ActionBar.search.label');
 	const isRouteInputReadOnly = isPreviewDetail;
 
 	//

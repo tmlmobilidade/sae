@@ -1,13 +1,13 @@
 'use client';
 
 import { AlertEffectIcon } from '@/components/alerts/common/AlertEffectIcon';
-import { type AlertEffect } from '@tmlmobilidade/types';
+import { type HubAlert } from '@tmlmobilidade/go-types-hub';
 import { Section, Surface } from '@tmlmobilidade/ui';
 
 import styles from './styles.module.css';
 
 interface AlertDetailViewHeaderProps {
-	effect: AlertEffect
+	effect: HubAlert['effect']
 	title: string
 }
 

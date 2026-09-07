@@ -7,7 +7,7 @@ import { getMotisLegDurationSeconds } from '@/utils/route-planner/planning/motis
 import { formatMotisPlanDurationMinutes } from '@/utils/route-planner/presentation/format';
 import { isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
 import { IconWalk } from '@tabler/icons-react';
-import { type HubLine } from '@tmlmobilidade/go-types-public-info';
+import { type HubLine } from '@tmlmobilidade/go-types-hub';
 
 import styles from './styles.module.css';
 

@@ -79,6 +79,32 @@
 	border-top: 1px solid var(--color-system-border-100);
 }
 
+/* * */
+/* SWAP BUTTON */
+
+.swapButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	color: var(--color-system-text-200);
+	cursor: pointer;
+	background-color: var(--color-system-background-200);
+	border: 0;
+	border-radius: 999px;
+}
+
+.swapButton:active {
+	transform: scale(0.96);
+}
+
+.swapButton:disabled {
+	cursor: default;
+	opacity: 0.5;
+}
+
+
 .container[data-readonly='true'] {
 	grid-template-columns: 18px minmax(0, 1fr);
 }
@@ -104,29 +130,4 @@
 	line-height: 1.2;
 	color: var(--color-system-text-100);
 	white-space: nowrap;
-}
-
-/* * */
-/* SWAP BUTTON */
-
-.swapButton {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
-	color: var(--color-system-text-200);
-	cursor: pointer;
-	background-color: var(--color-system-background-200);
-	border: 0;
-	border-radius: 999px;
-}
-
-.swapButton:active {
-	transform: scale(0.96);
-}
-
-.swapButton:disabled {
-	cursor: default;
-	opacity: 0.5;
 }
