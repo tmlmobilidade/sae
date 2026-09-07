@@ -1,8 +1,8 @@
 /* * */
 
 import { ClickHouseClient, ClickHouseLogLevel, createClient } from '@clickhouse/client';
-import { Logger } from '@tmlmobilidade/logger';
 import { createSshTunnelFactory, SshTunnel, SshTunnelType } from '@tmlmobilidade/go-clients-ssh';
+import { Logger } from '@tmlmobilidade/logger';
 
 /* * */
 
@@ -110,7 +110,7 @@ export class ClickHouseDatabaseClient {
 				http_receive_timeout: 360 * 1000,
 				http_send_timeout: 360 * 1000,
 				max_execution_time: 360,
-				wait_for_async_insert: 1,
+				wait_for_async_insert: 0,
 			},
 			compression: {
 				request: true,
