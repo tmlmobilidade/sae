@@ -1,7 +1,7 @@
 /* * */
 
 import { type ExportToHitouchConfig, type RoutesToCanvasExt } from '@/types.js';
-import { type GtfsRoutes } from '@tmlmobilidade/go-types-gtfs';
+import { GtfsRoutesSchema } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtRoutes } from '@tmlmobilidade/go-types-gtfs-strict';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
@@ -30,7 +30,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 	for (const routesGroup of Object.values(routesByLineId)) {
 		// If this line only has one route, export it as is
 		if (routesGroup.length === 1) {
-			const data: GtfsRoutes = {
+			const data = GtfsRoutesSchema.parse({
 				agency_id: routesGroup[0].agency_id,
 				route_color: routesGroup[0].route_color,
 				route_desc: routesGroup[0].route_desc,
@@ -39,7 +39,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 				route_short_name: routesGroup[0].route_short_name,
 				route_text_color: routesGroup[0].route_text_color,
 				route_type: routesGroup[0].route_type,
-			};
+			});
 			await routesCsv.write(data);
 			continue;
 		}
@@ -48,7 +48,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 		// to differentiate between them.
 		routesGroup.sort((a, b) => (a.route_id < b.route_id ? -1 : 1));
 		for (let i = 0; i < routesGroup.length; i++) {
-			const data: GtfsRoutes = {
+			const data = GtfsRoutesSchema.parse({
 				agency_id: routesGroup[i].agency_id,
 				route_color: routesGroup[i].route_color,
 				route_desc: routesGroup[i].route_desc,
@@ -57,7 +57,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 				route_short_name: `${routesGroup[i].route_short_name}${String.fromCharCode(65 + i)}`, // 65 is 'A' in ASCII
 				route_text_color: routesGroup[i].route_text_color,
 				route_type: routesGroup[i].route_type,
-			};
+			});
 			await routesCsv.write(data);
 		}
 	}

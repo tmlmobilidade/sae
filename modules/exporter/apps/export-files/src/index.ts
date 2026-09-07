@@ -1,12 +1,12 @@
 // /* * */
 
-import { Files } from '@tmlmobilidade/go-utils-files';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { storageProvider } from '@tmlmobilidade/go-providers-storage';
+import { ProcessingStatusSchema } from '@tmlmobilidade/go-types-shared';
+import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
+import { Files } from '@tmlmobilidade/go-utils-files';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
-import { ProcessingStatusSchema } from '@tmlmobilidade/types';
-import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import fs from 'fs';
 
 import { exportRidesFile } from './export-rides.js';
@@ -36,7 +36,7 @@ async function main() {
 
 	const globalTimer = new Timer();
 
-	const waitingFileExports = await goDb.core.exports.findMany({ processing_status: ProcessingStatusSchema.enum.waiting });
+	const waitingFileExports = await goDb.core.exports.findMany({ processing_status: ProcessingStatusSchema.safeParse('waiting').data });
 
 	Logger.info({ message: `Found ${waitingFileExports.length} waiting file exports.` });
 

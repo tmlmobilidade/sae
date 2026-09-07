@@ -3,9 +3,9 @@
 import { DAY_TYPES } from '@/day-types.js';
 import { getFormattedDates, getPeriodName, getWeekdayNames } from '@/get-names.js';
 import { type CalendarAssignmentsExt, type CalendarExt, type DayTypeConfig, type ExportToHitouchConfig, type GtfsDate } from '@/types.js';
-import { type GtfsCalendar, type GtfsCalendarDates, validateGtfsDate } from '@tmlmobilidade/go-types-gtfs';
+import { type GtfsCalendar, type GtfsCalendarDates } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtStopTimes, type GtfsStrictV29ExtTrips } from '@tmlmobilidade/go-types-gtfs-strict';
-import { type OperationalDate, validateOperationalDate } from '@tmlmobilidade/go-types-shared';
+import { type OperationalDate, OperationalDateIntSchema, validateOperationalDate } from '@tmlmobilidade/go-types-shared';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
@@ -100,7 +100,7 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 				if (!serviceDates.length) continue;
 				// Categorize each date
 				serviceDates.forEach((gtfsDate) => {
-					const date = validateOperationalDate(gtfsDate);
+					const date = validateOperationalDate(String(gtfsDate));
 					// Get the generated metadata for this date
 					const matchingDateEntry = datesMap.get(date);
 					if (!matchingDateEntry) throw new Error(`Date ${date} for service_id ${serviceId} has no generated date metadata.`);
@@ -152,8 +152,8 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 				// Delete original entries from trips and stop_times
 
 				equalTripsData.trip_ids.forEach((tripId) => {
-					sqlTables.trips.run('DELETE FROM trips WHERE trip_id = ?', [tripId]);
-					sqlTables.stop_times.run('DELETE FROM stop_times WHERE trip_id = ?', [tripId]);
+					sqlTables._db.databaseInstance.prepare('DELETE FROM trips WHERE trip_id = ?').run(tripId);
+					sqlTables._db.databaseInstance.prepare('DELETE FROM stop_times WHERE trip_id = ?').run(tripId);
 				});
 
 				//
@@ -403,12 +403,12 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 			// Output the calendar data
 
 			const calendarData: GtfsCalendar = {
-				end_date: validateGtfsDate(sortedDates.at(-1) ?? exportConfig.date_range.end),
+				end_date: OperationalDateIntSchema.parse(sortedDates.at(-1) ?? exportConfig.date_range.end),
 				friday: '0',
 				monday: '0',
 				saturday: '0',
 				service_id: serviceIdData._id,
-				start_date: validateGtfsDate(sortedDates.at(0) ?? exportConfig.date_range.start),
+				start_date: OperationalDateIntSchema.parse(sortedDates.at(0) ?? exportConfig.date_range.start),
 				sunday: '0',
 				thursday: '0',
 				tuesday: '0',
@@ -452,7 +452,7 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 
 		for (const operationalDate of sortedDates) {
 			const data: GtfsCalendarDates = {
-				date: validateGtfsDate(operationalDate),
+				date: OperationalDateIntSchema.parse(operationalDate),
 				exception_type: '1',
 				service_id: serviceIdData._id,
 			};
