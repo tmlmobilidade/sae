@@ -111,7 +111,7 @@ export async function rewriteShapeIdsToPatternIds(context: NormalizePlansTaskCon
 		const currentShapeId = data.shape_id;
 		const currentPatternId = shapeIdToPatternIdMap.get(currentShapeId);
 		// Update the map and write the row to the output file
-		await shapesWriter.write({ ...data, shape_id: currentPatternId });
+		await shapesWriter.write({ ...data, shape_id: currentPatternId || data.shape_id });
 	};
 
 	await streamCsvFile(path.join(context.paths.extracted_dir_path, 'shapes.txt'), parseEachShapesRow);
