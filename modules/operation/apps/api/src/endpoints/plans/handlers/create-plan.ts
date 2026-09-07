@@ -98,28 +98,19 @@ export async function createPlanHandler(request: FastifyRequest<{ Body: { valida
 			await goDb.operation.plans.deleteById(planResult._id);
 			throw new Error('Failed to copy validation GTFS into the plan scope');
 		},
-		onSuccess: async (_, result) => {
-			// Get a new hash for this plan
-			const hashValue = await getPlanHash({
-				activeFrom: planResult.active_from,
-				activeUntil: planResult.active_until,
-				operationGtfsAttachmentId: planResult.attachments.operation_gtfs,
-				operationGtfsNormalizedAttachmentId: planResult.attachments.operation_gtfs_normalized,
-				planId: planResult._id,
-			});
-			// Update the plan in the database
+		onSuccess: async (_, result, session) => {
+			// Update the plan in the database with the operation GTFS attachment ID
 			const plansCollection = await goDb.operation.plans.getCollection();
-			await plansCollection.updateOne({ _id: planResult._id }, {
-				$set: {
-					'attachments.operation_gtfs': result._id,
-					'hash': hashValue,
-				},
-			});
+			await plansCollection.updateOne(
+				{ _id: planResult._id },
+				{ $set: { 'attachments.operation_gtfs': result._id } },
+				{ session },
+			);
 		},
 	});
 
 	//
-	// Return the success response
+	// Get a new hash for this plan
 
 	const createdPlanData = await goDb.operation.plans.findById(planResult._id);
 
@@ -130,5 +121,18 @@ export async function createPlanHandler(request: FastifyRequest<{ Body: { valida
 		});
 	}
 
-	return sendSuccessApiResponse(reply, createdPlanData);
+	const hashValue = await getPlanHash({
+		activeFrom: createdPlanData.active_from,
+		activeUntil: createdPlanData.active_until,
+		operationGtfsAttachmentId: createdPlanData.attachments.operation_gtfs,
+		operationGtfsNormalizedAttachmentId: createdPlanData.attachments.operation_gtfs_normalized,
+		planId: createdPlanData._id,
+	});
+
+	const updatePlanHashResult = await goDb.operation.plans.updateById(createdPlanData._id, { hash: hashValue });
+
+	//
+	// Return the success response
+
+	return sendSuccessApiResponse(reply, updatePlanHashResult);
 }

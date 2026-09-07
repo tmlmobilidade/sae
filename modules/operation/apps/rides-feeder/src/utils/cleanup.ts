@@ -38,7 +38,7 @@ export async function cleanupOrphanRidesForPlan(planId: string, savedRideIds: Se
 	await performInChunks(Array.from(staleRideIds), async (chunk) => {
 		await labDb.operation.rides.delete('_id IN ($1)', { 1: chunk.join(',') });
 		Logger.info({ message: `Deleted ${chunk.length} stale rides for plan "${planId}"` });
-	});
+	}, 150);
 
 	Logger.info({ message: `Completed delete stale rides for plan "${planId}". (${timer.get()})` });
 
