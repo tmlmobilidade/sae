@@ -18,6 +18,7 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
+		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-interfaces-labdb": "*",
 		"@tmlmobilidade/go-operation-pckg-types": "*",
 		"@tmlmobilidade/go-operation-pckg-utils": "*",
