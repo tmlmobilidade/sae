@@ -32,11 +32,10 @@ export async function normalizePlansTask() {
 	//
 	// Fetch all plans from the database
 
-	const allPlans = await goDb.operation.plans.findMany({
-		$expr: {
-			$ne: ['$hash', '$apps.organizer.last_hash'],
-		},
-	});
+	const allPlans = await goDb.operation.plans.findMany(
+		{ $expr: { $ne: ['$hash', '$apps.organizer.last_hash'] } },
+		{ sort: { active_from: -1 } },
+	);
 
 	Logger.info({ message: `Found ${allPlans.length} plans to normalize.` });
 
