@@ -22,7 +22,7 @@ import { toHashedTrip } from '../utils/to-hashed-trip.js';
 const ridesWriter = new BatchWriter<RideWithAnalyses>({
 	batch_size: 10_000,
 	insertFn: async (data) => {
-		await goDb.operation.rides.insertMany(data);
+		await goDb.operation.rides.insertManyUnsafe(data);
 	},
 	title: (await goDb.operation.rides.getCollection()).collectionName,
 });
