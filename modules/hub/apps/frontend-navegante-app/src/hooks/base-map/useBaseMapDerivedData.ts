@@ -34,11 +34,11 @@ export function useBaseMapDerivedData(params: UseBaseMapDerivedDataParams) {
 	//
 	// B. Transform data
 
-	const lineDetailVehiclePatternIds = useMemo(() => {
+	const lineDetailVehicleShapeIds = useMemo(() => {
 		if (params.activeBottomSheet?.view !== 'lines-detail') return null;
-		const activePatternId = linesDetailContext.data.active_pattern?._id;
-		return new Set(activePatternId ? [activePatternId] : []);
-	}, [params.activeBottomSheet?.view, linesDetailContext.data.active_pattern?._id]);
+		const activeShapeId = linesDetailContext.data.active_pattern?.shape_id;
+		return new Set(activeShapeId ? [activeShapeId] : []);
+	}, [params.activeBottomSheet?.view, linesDetailContext.data.active_pattern?.shape_id]);
 
 	const alertsMapData = useMemo(() => {
 		return getBaseMapAlertsMapData({
@@ -54,13 +54,13 @@ export function useBaseMapDerivedData(params: UseBaseMapDerivedDataParams) {
 		return getBaseMapVehiclesMapData({
 			excludedOperatorIds: params.excludedOperatorIds,
 			focusedVehicleId: params.focusedVehicleId,
-			lineDetailPatternIds: lineDetailVehiclePatternIds,
+			lineDetailShapeIds: lineDetailVehicleShapeIds,
 			routePlannerRouteDirections: routePlannerMapData.vehicleRouteDirections,
 			vehiclesData: vehiclesContext.data.fc,
 		});
-	}, [lineDetailVehiclePatternIds, params.excludedOperatorIds, params.focusedVehicleId, routePlannerMapData.vehicleRouteDirections, vehiclesContext.data.fc]);
+	}, [lineDetailVehicleShapeIds, params.excludedOperatorIds, params.focusedVehicleId, routePlannerMapData.vehicleRouteDirections, vehiclesContext.data.fc]);
 
-	const shouldAlwaysShowFilteredVehicles = routePlannerMapData.vehicleRouteDirections !== null || lineDetailVehiclePatternIds !== null;
+	const shouldAlwaysShowFilteredVehicles = routePlannerMapData.vehicleRouteDirections !== null || lineDetailVehicleShapeIds !== null;
 
 	//
 	// C. Return data

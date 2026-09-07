@@ -75,11 +75,11 @@ describe('base-map alert filtering order', () => {
 
 describe('base-map vehicle filtering order', () => {
 	const vehiclesData = createVehicleCollection([
-		{ agency_id: '2', direction_id: 0, pattern_id: 'route-pattern', route_id: 'route-a', vehicle_id: 'route-vehicle' },
-		{ agency_id: '3', direction_id: 1, pattern_id: 'line-pattern', route_id: 'route-b', vehicle_id: 'line-vehicle' },
-		{ agency_id: '4', direction_id: 1, pattern_id: 'focused-pattern', route_id: 'route-c', vehicle_id: 'focused-vehicle' },
-		{ agency_id: '41', direction_id: 0, pattern_id: 'cm-pattern', route_id: 'route-d', vehicle_id: 'cm-vehicle' },
-		{ agency_id: 'unknown-agency', direction_id: 0, pattern_id: 'unknown-pattern', route_id: 'route-e', vehicle_id: 'unknown-vehicle' },
+		{ agency_id: '2', direction_id: 0, route_id: 'route-a', shape_id: 'route-shape', vehicle_id: 'route-vehicle' },
+		{ agency_id: '3', direction_id: 1, route_id: 'route-b', shape_id: 'line-shape', vehicle_id: 'line-vehicle' },
+		{ agency_id: '4', direction_id: 1, route_id: 'route-c', shape_id: 'focused-shape', vehicle_id: 'focused-vehicle' },
+		{ agency_id: '41', direction_id: 0, route_id: 'route-d', shape_id: 'cm-shape', vehicle_id: 'cm-vehicle' },
+		{ agency_id: 'unknown-agency', direction_id: 0, route_id: 'route-e', shape_id: 'unknown-shape', vehicle_id: 'unknown-vehicle' },
 	]);
 	const routePlannerRouteDirections = new Set(['[2]route-a:0']);
 
@@ -87,7 +87,7 @@ describe('base-map vehicle filtering order', () => {
 		const result = getBaseMapVehiclesMapData({
 			excludedOperatorIds: [],
 			focusedVehicleId: null,
-			lineDetailPatternIds: null,
+			lineDetailShapeIds: null,
 			routePlannerRouteDirections,
 			vehiclesData,
 		});
@@ -95,11 +95,11 @@ describe('base-map vehicle filtering order', () => {
 		assert.deepEqual(getVehicleIds(result), ['route-vehicle']);
 	});
 
-	it('lets a selected line pattern override itinerary vehicle filtering', () => {
+	it('lets a selected line shape override itinerary vehicle filtering', () => {
 		const result = getBaseMapVehiclesMapData({
 			excludedOperatorIds: [],
 			focusedVehicleId: null,
-			lineDetailPatternIds: new Set(['line-pattern']),
+			lineDetailShapeIds: new Set(['line-shape']),
 			routePlannerRouteDirections,
 			vehiclesData,
 		});
@@ -111,7 +111,7 @@ describe('base-map vehicle filtering order', () => {
 		const result = getBaseMapVehiclesMapData({
 			excludedOperatorIds: [],
 			focusedVehicleId: 'focused-vehicle',
-			lineDetailPatternIds: new Set(['line-pattern']),
+			lineDetailShapeIds: new Set(['line-shape']),
 			routePlannerRouteDirections,
 			vehiclesData,
 		});
@@ -123,7 +123,7 @@ describe('base-map vehicle filtering order', () => {
 		const result = getBaseMapVehiclesMapData({
 			excludedOperatorIds: ['CM'],
 			focusedVehicleId: null,
-			lineDetailPatternIds: null,
+			lineDetailShapeIds: null,
 			routePlannerRouteDirections: null,
 			vehiclesData,
 		});
@@ -135,7 +135,7 @@ describe('base-map vehicle filtering order', () => {
 		const result = getBaseMapVehiclesMapData({
 			excludedOperatorIds: ['4'],
 			focusedVehicleId: 'focused-vehicle',
-			lineDetailPatternIds: new Set(['line-pattern']),
+			lineDetailShapeIds: new Set(['line-shape']),
 			routePlannerRouteDirections,
 			vehiclesData,
 		});
@@ -160,8 +160,8 @@ function createAlertCollection(alertIds: string[]): GeoJSON.FeatureCollection<Ge
 interface VehicleProperties {
 	agency_id: string
 	direction_id: number
-	pattern_id: string
 	route_id: string
+	shape_id: string
 	vehicle_id: string
 }
 

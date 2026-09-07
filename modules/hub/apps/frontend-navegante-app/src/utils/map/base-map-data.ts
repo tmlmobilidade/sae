@@ -12,8 +12,8 @@ interface BaseMapAlert {
 interface BaseMapVehicleProperties {
 	agency_id?: null | string
 	direction_id?: null | number | string
-	pattern_id?: null | string
 	route_id?: null | string
+	shape_id?: null | string
 	vehicle_id?: null | string
 }
 
@@ -28,7 +28,7 @@ interface GetBaseMapAlertsMapDataParams {
 interface GetBaseMapVehiclesMapDataParams<TProperties extends BaseMapVehicleProperties> {
 	excludedOperatorIds: BaseMapOperatorId[]
 	focusedVehicleId: null | string
-	lineDetailPatternIds: null | Set<string>
+	lineDetailShapeIds: null | Set<string>
 	routePlannerRouteDirections: null | Set<string>
 	vehiclesData: GeoJSON.FeatureCollection<GeoJSON.Point, TProperties>
 }
@@ -76,12 +76,12 @@ export function getBaseMapVehiclesMapData<TProperties extends BaseMapVehicleProp
 		}
 		: params.vehiclesData;
 
-	const lineDetailVehiclesData = params.lineDetailPatternIds
+	const lineDetailVehiclesData = params.lineDetailShapeIds
 		? {
 			...params.vehiclesData,
 			features: params.vehiclesData.features.filter((feature) => {
-				const patternId = feature.properties?.pattern_id;
-				return typeof patternId === 'string' && params.lineDetailPatternIds?.has(patternId);
+				const shapeId = feature.properties?.shape_id;
+				return typeof shapeId === 'string' && params.lineDetailShapeIds?.has(shapeId);
 			}),
 		}
 		: routePlannerVehiclesData;
