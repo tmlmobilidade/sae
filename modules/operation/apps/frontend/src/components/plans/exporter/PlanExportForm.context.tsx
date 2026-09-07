@@ -1,9 +1,9 @@
 'use client';
 
-import { usePlansAgencies } from '@/components/plans/shared/use-plans-agencies';
+import { usePlansAgenciesData } from '@/components/plans/shared/use-plans-agencies-data';
 import { usePlansExportListData } from '@/components/plans/shared/use-plans-export-list-data';
-import { type PlanListItem } from '@tmlmobilidade/go-plans-pckg-types';
-import { type CreateFileExportDto, type PlanExportProperties } from '@tmlmobilidade/go-types-downloads';
+import { type PlansListItem } from '@tmlmobilidade/go-operation-pckg-types';
+import { type CreateFileExportDto, type PlanPostersExportProperties } from '@tmlmobilidade/go-types-downloads';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
 import { closeModal, type SelectDataItem, useExportsContext, useToast } from '@tmlmobilidade/ui';
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -22,7 +22,7 @@ interface PlanExportModalContextState {
 		agencyId: null | string
 		agencyOptions: SelectDataItem[]
 		planId: null | string
-		plans: PlanListItem[]
+		plans: PlansListItem[]
 	}
 	flags: {
 		canSave: boolean
@@ -55,12 +55,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 	const [planId, setPlanId] = useState<null | string>(null);
 	const [loading, setLoading] = useState(false);
 
-	const { options: agencyOptions } = usePlansAgencies({
-		permissions: {
-			actions: [PermissionCatalog.all.plans.actions.read],
-			scope: PermissionCatalog.all.plans.scope,
-		},
-	});
+	const { options: agencyOptions } = usePlansAgenciesData();
 
 	const plansData = usePlansExportListData(agencyId);
 
@@ -101,7 +96,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 		const selectedPlan = plansData.data.find(plan => plan._id === planId && plan.agency_id === agencyId);
 		if (!selectedPlan) return;
 
-		const createFileExportDto: CreateFileExportDto<PlanExportProperties> = {
+		const createFileExportDto: CreateFileExportDto<PlanPostersExportProperties> = {
 			created_by: 'will-be-set-by-api',
 			file_id: null,
 			file_name: `gtfs-${selectedPlan._id}.zip`,
@@ -110,7 +105,7 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 				agency_id: agencyId,
 				plan_id: planId,
 			},
-			type: 'plan',
+			type: 'plan_posters',
 		};
 
 		try {

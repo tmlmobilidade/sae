@@ -1,8 +1,8 @@
 'use client';
 
 import { API_ROUTES } from '@tmlmobilidade/consts';
-import { type PlanListFilters, type PlanListItem } from '@tmlmobilidade/go-plans-pckg-types';
-import { type ApiResponse, type UnixTimestamp } from '@tmlmobilidade/go-types-shared';
+import { type PlansListFilters, type PlansListItem } from '@tmlmobilidade/go-operation-pckg-types';
+import { type ApiResponse, type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { fetchApiData } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -10,11 +10,11 @@ import useSWR from 'swr';
 /* * */
 
 interface UsePlansExportListDataReturnType {
-	data: PlanListItem[]
+	data: PlansListItem[]
 	error: null | string
 	isLoading: boolean
 	isValidating: boolean
-	timestamp: null | UnixTimestamp
+	timestamp: null | UnixMilliseconds
 }
 
 /**
@@ -26,18 +26,18 @@ export function usePlansExportListData(agencyId: null | string): UsePlansExportL
 	//
 	// A. Setup query
 
-	const query = useMemo<null | PlanListFilters>(() => agencyId ? ({
+	const query = useMemo<null | PlansListFilters>(() => agencyId ? ({
 		agency_ids: [agencyId],
-		validity_statuses: [],
+		temporal_statuses: [],
 	}) : null, [agencyId]);
 
 	//
 	// B. Fetch data
 
-	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<PlanListItem[]>>(
-		query ? [API_ROUTES.plans.PLANS_LIST, query] : null,
+	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<PlansListItem[]>>(
+		query ? [API_ROUTES.operation.PLANS_LIST, query] : null,
 		{
-			fetcher: async ([url, request]: [string, PlanListFilters]) => await fetchApiData<PlanListItem[]>({ body: request, method: 'POST', url }),
+			fetcher: async ([url, request]: [string, PlansListFilters]) => await fetchApiData<PlansListItem[]>({ body: request, method: 'POST', url }),
 			refreshInterval: 10_000,
 		},
 	);
