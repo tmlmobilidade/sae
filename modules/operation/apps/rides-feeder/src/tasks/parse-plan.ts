@@ -4,7 +4,7 @@ import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
 import { storageProvider } from '@tmlmobilidade/go-providers-storage';
-import { type HashedShape, type HashedTrip, type Plan, type Ride } from '@tmlmobilidade/go-types-operation';
+import { type HashedShape, type HashedTrip, type Plan, type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
 import { HexColorSchema, NonNegativeIntegerSchema, OperationalDateIntSchema } from '@tmlmobilidade/go-types-shared';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { BatchWriter, startHeartbeat } from '@tmlmobilidade/go-utils-exec';
@@ -19,12 +19,12 @@ import { toHashedTrip } from '../utils/to-hashed-trip.js';
 
 /* * */
 
-const ridesWriter = new BatchWriter<Ride>({
+const ridesWriter = new BatchWriter<RideWithAnalyses>({
 	batch_size: 10_000,
 	insertFn: async (data) => {
-		await labDb.operation.rides.insert('JSONEachRow', data);
+		await goDb.operation.rides.insertMany(data);
 	},
-	title: await labDb.operation.rides.getTableName(),
+	title: (await goDb.operation.rides.getCollection()).collectionName,
 });
 
 const hashedShapesWriter = new BatchWriter<HashedShape>({
@@ -254,10 +254,11 @@ export async function parsePlanTask(planData: Plan) {
 					//
 					// Build the final Ride objects
 
-					const finalRide: Ride = {
+					const finalRide: RideWithAnalyses = {
 						_id: uniqueIdValueForRide,
 						agency_code: agencyData.code,
 						agency_id: planData.agency_id,
+						analyses: null,
 						apex_banking_taps_amount: null,
 						apex_banking_taps_qty: null,
 						apex_locations_qty: null,
