@@ -40,7 +40,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/agency.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'agency',
 		}),
@@ -51,7 +51,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/calendar_dates.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'calendar_dates',
 		}),
@@ -62,7 +62,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/feed_info.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'feed_info',
 		}),
@@ -73,7 +73,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/plans.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'plans',
 		}),
@@ -84,7 +84,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/routes.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'routes',
 		}),
@@ -95,7 +95,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/shapes.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'shapes',
 		}),
@@ -106,7 +106,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/stop_times.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'stop_times',
 		}),
@@ -117,7 +117,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/stops.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'stops',
 		}),
@@ -128,7 +128,7 @@ export function initExportGtfsContext(): ExportGtfsContext {
 				const dirPath = `${workdirContext.path}/trips.txt`;
 				const fileAlreadyExists = fs.existsSync(dirPath);
 				const csvData = csvStringify(data, { header: !fileAlreadyExists });
-				fs.appendFileSync(dirPath, fileAlreadyExists ? '\n' + csvData : csvData, { encoding: 'utf-8', flush: true });
+				fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
 			},
 			title: 'trips',
 		}),
