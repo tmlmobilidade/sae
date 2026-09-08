@@ -145,6 +145,7 @@ export class OperationDatabase {
 		await this.rideAnalysisExpectedApexValidationInterval.init();
 		await this.rideAnalysisExpectedDriverIdQty.init();
 		await this.rideAnalysisExpectedStartTime.init();
+		await this.rideAnalysisExpectedVehicleEventCoverageGeo.init();
 		await this.rideAnalysisExpectedVehicleEventDelay.init();
 		await this.rideAnalysisExpectedVehicleEventInterval.init();
 		await this.rideAnalysisExpectedVehicleEventQty.init();
