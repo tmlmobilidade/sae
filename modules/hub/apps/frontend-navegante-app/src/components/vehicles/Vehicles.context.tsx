@@ -3,6 +3,7 @@
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { getBaseGeoJsonFeatureCollection } from '@tmlmobilidade/geo';
 import { type HubV1ApiVehiclePosition } from '@tmlmobilidade/go-types-hub';
+import { fetchApiData } from '@tmlmobilidade/ui';
 import { createContext, type PropsWithChildren, useContext, useMemo } from 'react';
 import useSWR from 'swr';
 
@@ -48,14 +49,18 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 	//
 	// A. Fetch data
 
-	const { data: allVehiclesPositionsData, isLoading: allVehiclesPositionsLoading } = useSWR<HubV1ApiVehiclePosition[], Error>({ credentials: 'omit', url: API_ROUTES.hub.REALTIME_VEHICLES_POSITIONS }, { refreshInterval: 5_000 }); // 5 seconds
+	// <HubV1ApiVehiclePosition[], Error>
+	const { data: allVehiclesPositionsData, isLoading: allVehiclesPositionsLoading } = useSWR(API_ROUTES.hub.REALTIME_VEHICLES_POSITIONS, {
+		fetcher: async (url: string) => await fetchApiData<HubV1ApiVehiclePosition[]>({ credentials: 'omit', url }),
+		refreshInterval: 5_000, // 5 seconds
+	});
 
 	//
 	// B. Transform data
 
 	const vehiclesGeoJsonFeatureCollection = useMemo(() => {
 		const collection = getBaseGeoJsonFeatureCollection<GeoJSON.Point, HubV1ApiVehiclePosition>();
-		allVehiclesPositionsData?.forEach((vehicle) => {
+		allVehiclesPositionsData?.data?.forEach((vehicle) => {
 			// Skip if vehicle position is not from an allowed agency
 			if (![
 				'7NTB1', // Fertagus
@@ -84,7 +89,7 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 	// B. Handle actions
 
 	const getVehicleById = (vehicleId: string): HubV1ApiVehiclePosition | undefined => {
-		return allVehiclesPositionsData?.find(vehicle => vehicle._id === vehicleId);
+		return allVehiclesPositionsData?.data?.find(vehicle => vehicle._id === vehicleId);
 	};
 
 	const getVehicleByIdGeoJsonFC = (vehicleId: string): GeoJSON.FeatureCollection | undefined => {
@@ -96,7 +101,7 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 	};
 
 	const getVehiclesByLineId = (lineId: string): HubV1ApiVehiclePosition[] => {
-		return allVehiclesPositionsData?.filter(vehicle => vehicle.trip_id === lineId) || [];
+		return allVehiclesPositionsData?.data?.filter(vehicle => vehicle.trip_id === lineId) || [];
 	};
 
 	const getVehiclesByLineIdGeoJsonFC = (lineId: string): GeoJSON.FeatureCollection | undefined => {
@@ -108,7 +113,7 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 	};
 
 	const getVehiclesByPatternId = (patternId: string): HubV1ApiVehiclePosition[] => {
-		return allVehiclesPositionsData?.filter(vehicle => vehicle.trip_id === patternId) || [];
+		return allVehiclesPositionsData?.data?.filter(vehicle => vehicle.trip_id === patternId) || [];
 	};
 
 	const getVehiclesByPatternIdGeoJsonFC = (patternId: string) => {
@@ -120,7 +125,7 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 	};
 
 	const getVehiclesByTripId = (tripId: string): HubV1ApiVehiclePosition[] => {
-		return allVehiclesPositionsData?.filter(vehicle => vehicle.trip_id === tripId) || [];
+		return allVehiclesPositionsData?.data?.filter(vehicle => vehicle.trip_id === tripId) || [];
 	};
 
 	const getVehiclesByTripIdGeoJsonFC = (tripId: string) => {
@@ -147,7 +152,7 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 		},
 		data: {
 			fc: vehiclesGeoJsonFeatureCollection,
-			vehicles: allVehiclesPositionsData || [],
+			vehicles: allVehiclesPositionsData?.data || [],
 		},
 		flags: {
 			isLoading: allVehiclesPositionsLoading,

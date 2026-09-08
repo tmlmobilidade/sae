@@ -11,6 +11,7 @@ import styles from './styles.module.css';
 /* * */
 
 interface BottomSheetProps {
+	allowBackgroundInteraction?: boolean
 	onClose: () => void
 	opened: boolean
 	size?: 'fit' | 'full' | 'half' | 'short'
@@ -29,6 +30,7 @@ const SHEET_SNAP_POINTS_BY_SIZE: Record<NonNullable<BottomSheetProps['size']>, n
 /* * */
 
 export function BottomSheet({
+	allowBackgroundInteraction,
 	children,
 	onClose,
 	opened,
@@ -79,7 +81,7 @@ export function BottomSheet({
 				</Sheet.Content>
 			</Sheet.Container>
 
-			<Sheet.Backdrop className={styles.backdrop} onTap={onClose} />
+			{!allowBackgroundInteraction && <Sheet.Backdrop className={styles.backdrop} onTap={onClose} />}
 		</Sheet>
 	);
 

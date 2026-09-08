@@ -20,6 +20,7 @@ export function VehiclesDetail() {
 
 	return (
 		<BottomSheet
+			allowBackgroundInteraction={true}
 			onClose={closeActiveBottomSheet}
 			opened={activeBottomSheet?.view === 'vehicles-detail'}
 			size="short"

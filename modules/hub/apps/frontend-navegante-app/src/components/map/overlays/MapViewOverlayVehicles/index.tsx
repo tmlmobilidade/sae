@@ -185,7 +185,7 @@ export function MapViewOverlayVehicles({ presentBeforeId, vehiclesData = baseGeo
 						'match',
 						['to-string', ['get', 'agency_id']],
 						'IA9T6', 'map-vehicle-ccfl-bus',
-						'2IA2N9', 'map-vehicle-ml-train',
+						'IA2N9', 'map-vehicle-ml-train',
 						'N18KL', 'map-vehicle-cp-train',
 						'LTP61', 'map-vehicle-ttsl-boat',
 						'A3H3M', 'map-vehicle-tcb-bus',

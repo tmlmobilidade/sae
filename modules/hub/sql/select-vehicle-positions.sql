@@ -91,7 +91,7 @@ SELECT
 	e.bearing,
 	e.current_status,
 	geohashEncode(e.longitude, e.latitude, 7) AS geohash,
-	nullIf(r.shape_id, '') AS shape_id,
+	concat('[', r.agency_id, ']', nullIf(r.shape_id, '')) AS shape_id,
 	r._id AS ride_id,
 	e.speed
 FROM latest_events AS e
