@@ -1,6 +1,6 @@
 /* * */
 
-import { syncApexBankingTaps } from '@/task.js';
+import { syncApexBankingTaps } from '@/tasks/rides.js';
 import { getEarliestDate } from '@tmlmobilidade/consts';
 import { performInTimeChunks, runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
