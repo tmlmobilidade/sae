@@ -25,7 +25,11 @@ export function AlertsList() {
 
 	const { t } = useTranslation();
 
+	const router = useRouter();
+
 	const { alertId } = useAlertsDetailAlertId();
+
+	const alertsListData = useAlertsListData();
 
 	const { data: agenciesData } = useAlertsAgenciesData({
 		permissions: {
@@ -33,10 +37,6 @@ export function AlertsList() {
 			scope: PermissionCatalog.all.alerts.scope,
 		},
 	});
-
-	const router = useRouter();
-
-	const alertsData = useAlertsListData();
 
 	const columns: DataTableColumn<AlertsListItem>[] = [
 		{
@@ -106,12 +106,12 @@ export function AlertsList() {
 				<AlertsListFiltersBar key="filters" />,
 			]}
 		>
-			{alertsData.error && <ErrorDisplay message={alertsData.error} />}
+			{alertsListData.error && <ErrorDisplay message={alertsListData.error} />}
 			<DataTable
 				columns={columns}
-				isLoading={alertsData.isLoading}
+				isLoading={alertsListData.isLoading}
 				onRowClick={handleRowClick}
-				records={alertsData.data}
+				records={alertsListData.data}
 				rowIdAccessor="_id"
 				selectedId={alertId}
 			/>
