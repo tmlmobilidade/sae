@@ -1,6 +1,6 @@
 /* * */
 
-import { syncApexBankingTaps } from '@/tasks/rides.js';
+import { syncRides } from '@/tasks/rides.js';
 import { getEarliestDate } from '@tmlmobilidade/consts';
 import { performInTimeChunks, runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
@@ -8,17 +8,17 @@ import { Timer } from '@tmlmobilidade/timer';
 
 /* * */
 
+//
+// Initialize Sentry
+
+try {
+	await initSentryNode();
+	Logger.startNodeLogs({ app: 'rides-sync', message: 'Sentry Rides Sync initialized', module: 'operation', severity: 'info' });
+} catch (error) {
+	Logger.error({ error, message: 'Error initializing Sentry Rides Sync' });
+}
+
 async function main() {
-	//
-	// Initialize Sentry
-
-	try {
-		await initSentryNode();
-		Logger.startNodeLogs({ app: 'raw-sync-banking-taps', message: 'Sentry APEX Raw Sync Banking Taps initialized', module: 'apex', severity: 'info' });
-	} catch (error) {
-		Logger.error({ error, message: 'Error initializing Sentry APEX Raw Sync Banking Taps' });
-	}
-
 	//
 
 	try {
@@ -42,7 +42,7 @@ async function main() {
 			intervalHrs: 2,
 			onChunk: async (chunk) => {
 				try {
-					await syncApexBankingTaps(chunk);
+					await syncRides(chunk);
 				} catch (error) {
 					// Verify if the error is related to
 					// the distinct query being too big
@@ -54,7 +54,7 @@ async function main() {
 					await performInTimeChunks({
 						endDate: chunk.end,
 						intervalHrs: 5 / 60, // 5 minutes
-						onChunk: async chunk => await syncApexBankingTaps(chunk),
+						onChunk: async chunk => await syncRides(chunk),
 						order: 'desc',
 						startDate: chunk.start,
 					});

@@ -18,11 +18,9 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-apex-pckg-callback": "*",
-		"@tmlmobilidade/go-apex-pckg-parsers": "*",
+		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-interfaces-labdb": "*",
-		"@tmlmobilidade/go-interfaces-rawdb": "*",
-		"@tmlmobilidade/go-types-apex": "*",
+		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
 		"@tmlmobilidade/logger": "*",
