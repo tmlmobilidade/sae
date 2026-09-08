@@ -40,6 +40,7 @@ export async function getRideAnalysesHandler(request: FastifyRequest<{ Params: {
 		expectedApexValidationIntervalResult,
 		expectedDriverIdQtyResult,
 		expectedStartTimeResult,
+		expectedVehicleEventCoverageGeoResult,
 		expectedVehicleEventDelayResult,
 		expectedVehicleEventIntervalResult,
 		expectedVehicleEventQtyResult,
@@ -56,6 +57,7 @@ export async function getRideAnalysesHandler(request: FastifyRequest<{ Params: {
 		labDb.operation.rideAnalysisExpectedApexValidationInterval.select('*', whereClause, params),
 		labDb.operation.rideAnalysisExpectedDriverIdQty.select('*', whereClause, params),
 		labDb.operation.rideAnalysisExpectedStartTime.select('*', whereClause, params),
+		labDb.operation.rideAnalysisExpectedVehicleEventCoverageGeo.select('*', whereClause, params),
 		labDb.operation.rideAnalysisExpectedVehicleEventDelay.select('*', whereClause, params),
 		labDb.operation.rideAnalysisExpectedVehicleEventInterval.select('*', whereClause, params),
 		labDb.operation.rideAnalysisExpectedVehicleEventQty.select('*', whereClause, params),
@@ -71,12 +73,13 @@ export async function getRideAnalysesHandler(request: FastifyRequest<{ Params: {
 	//
 	// Return the result
 
-	const result = RideAnalysesRegistrySchema.parse({
+	const result: RideAnalysesRegistry = {
 		at_least_one_vehicle_event_on_first_stop: atLeastOneVehicleEventOnFirstStopResult[0],
 		at_least_one_vehicle_event_on_last_stop: atLeastOneVehicleEventOnLastStopResult[0],
 		expected_apex_validation_interval: expectedApexValidationIntervalResult[0],
 		expected_driver_id_qty: expectedDriverIdQtyResult[0],
 		expected_start_time: expectedStartTimeResult[0],
+		expected_vehicle_event_coverage_geo: expectedVehicleEventCoverageGeoResult[0],
 		expected_vehicle_event_delay: expectedVehicleEventDelayResult[0],
 		expected_vehicle_event_interval: expectedVehicleEventIntervalResult[0],
 		expected_vehicle_event_qty: expectedVehicleEventQtyResult[0],
@@ -87,7 +90,9 @@ export async function getRideAnalysesHandler(request: FastifyRequest<{ Params: {
 		simple_one_vehicle_event_or_apex_validation: simpleOneVehicleEventOrApexValidationResult[0],
 		simple_three_vehicle_events: simpleThreeVehicleEventsResult[0],
 		transaction_sequentiality: transactionSequentialityResult[0],
-	});
+	};
 
-	return sendSuccessApiResponse(reply, result);
+	const validatedResult = RideAnalysesRegistrySchema.parse(result);
+
+	return sendSuccessApiResponse(reply, validatedResult);
 }
