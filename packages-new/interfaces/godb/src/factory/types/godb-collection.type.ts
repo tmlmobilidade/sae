@@ -33,7 +33,7 @@ export interface GoDbCollection<T extends Document> {
 
 	findMany(filter?: Filter<T>, options?: MinimalOptions): Promise<T[]>
 
-	findOne(filter: Filter<T>, options?: MinimalOptions): Promise<null | T>
+	findOne(filter: Filter<T>, options?: Pick<MinimalOptions, 'projection' | 'session' | 'sort'>): Promise<null | T>
 
 	getCollection(): Promise<Collection<T>>
 
