@@ -36,6 +36,11 @@ export function VehiclesDetailView() {
 		refreshInterval: 5_000, // 5 seconds
 	});
 
+	const activeHeadsign = useMemo(() => {
+		if (!activePatternData) return 'desconhecido';
+		return activePatternData.data?.[0]?.headsign ?? 'desconhecido';
+	}, [activePatternData]);
+
 	const activeLineData = useMemo(() => {
 		if (!vehiclesDetailContext.data.vehicle?.route_short_name) return;
 		return linesContext.data.lines.find(line => line.short_name === vehiclesDetailContext.data.vehicle?.route_short_name);
@@ -61,7 +66,7 @@ export function VehiclesDetailView() {
 					<Image alt="" height={40} src={getAgencyLogo(vehiclesDetailContext.data.vehicle?.agency_id, '180x120', 'light')} width={60} />
 				</div>
 
-				<LineName align="center" longName={`Destino: ${activePatternData?.[0]?.headsign ?? 'desconhecido'}`} />
+				<LineName align="center" longName={`Destino: ${activeHeadsign}`} />
 
 				<CopyBadge value={vehiclesDetailContext.data.vehicle?.vehicle_id} />
 
