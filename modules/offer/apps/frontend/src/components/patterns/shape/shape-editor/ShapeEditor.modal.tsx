@@ -2,7 +2,6 @@
 
 /* * */
 
-import { StopsContextProvider } from '@/contexts/Stops.context';
 import { MapContextProvider, Modal } from '@tmlmobilidade/ui';
 
 import { ShapeEditor } from './ShapeEditor';
@@ -31,13 +30,10 @@ export function ShapeEditorModal({ onClose, opened }: ShapeEditorModalProps) {
 			}}
 		>
 			<MapContextProvider>
-				<StopsContextProvider>
-					<StopsEditorContextProvider onClose={onClose}>
-						<ShapeEditor />
-					</StopsEditorContextProvider>
-				</StopsContextProvider>
+				<StopsEditorContextProvider onClose={onClose}>
+					<ShapeEditor />
+				</StopsEditorContextProvider>
 			</MapContextProvider>
 		</Modal>
 	);
 }
-
