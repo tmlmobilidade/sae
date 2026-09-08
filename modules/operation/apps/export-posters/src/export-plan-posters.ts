@@ -1,15 +1,13 @@
 /* * */
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { storageProvider } from '@tmlmobilidade/go-providers-storage';
-import { type Attachment } from '@tmlmobilidade/go-types-core';
 import { type FileExport, type PlanPostersExportProperties } from '@tmlmobilidade/go-types-downloads';
 
-import { generatePlanPostersZip } from './pipeline.js';
+import { generatePlanPostersDownloadUrl } from './pipeline.js';
 
 /* * */
 
-export async function exportPlanPostersFile(fileExport: FileExport): Promise<Attachment> {
+export async function exportPlanPostersFile(fileExport: FileExport): Promise<string> {
 	if (fileExport.type !== 'plan_posters') {
 		throw new Error(`File export type is not plan_posters: ${fileExport.type}.`);
 	}
@@ -25,8 +23,8 @@ export async function exportPlanPostersFile(fileExport: FileExport): Promise<Att
 		throw new Error(`Plan ${planData._id} does not belong to agency ${properties.agency_id}`);
 	}
 
-	if (!planData.attachments.operation_gtfs_normalized) {
-		throw new Error(`Plan ${planData._id} has no normalized GTFS attachment for poster export`);
+	if (!planData.attachments.operation_gtfs) {
+		throw new Error(`Plan ${planData._id} has no operation GTFS attachment for poster export`);
 	}
 
 	const contentMode = properties.content_mode ?? (properties.stop_ids?.length ? 'stops' : properties.line_ids?.length ? 'lines' : 'all');
@@ -80,22 +78,12 @@ export async function exportPlanPostersFile(fileExport: FileExport): Promise<Att
 	// 	return String(numericCode);
 	// });
 
-	const pdfZip = await generatePlanPostersZip(planData, fileExport._id, {
+	return generatePlanPostersDownloadUrl(planData, fileExport._id, {
 		canvas_profile: properties.canvas_profile,
 		content_mode: contentMode,
 		// line_codes: lineCodes,
 		// lines_mode: linesMode,
 		stop_ids: selectedStopIds,
 		stops_mode: stopsMode,
-	});
-
-	return storageProvider.upload(pdfZip, {
-		created_by: 'system',
-		name: fileExport.file_name,
-		resource_id: fileExport._id,
-		scope: 'exports',
-		size: pdfZip.byteLength,
-		type: 'application/zip',
-		updated_by: 'system',
 	});
 }

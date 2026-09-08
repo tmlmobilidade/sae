@@ -9,11 +9,17 @@ export const FileExportTypes = ['gtfs', 'plan_posters', 'plan', 'ride', 'sams_an
 export const FileExportTypeSchema = z.enum(FileExportTypes);
 export type FileExportType = z.infer<typeof FileExportTypeSchema>;
 
+export const FileExportDownloadUrlSchema = z.string().url().refine(
+	value => value.startsWith('https://') || value.startsWith('http://'),
+	{ message: 'Export download URL must use HTTP or HTTPS.' },
+);
+
 /* * */
 
 export const FileExportBaseSchema = BaseDocumentSchema
 	.omit({ is_locked: true })
 	.extend({
+		download_url: FileExportDownloadUrlSchema.nullish(),
 		file_id: z.string().nullish(),
 		file_name: z.string(),
 		processing_status: ProcessingStatusSchema,

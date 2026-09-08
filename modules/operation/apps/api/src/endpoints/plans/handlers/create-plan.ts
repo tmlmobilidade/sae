@@ -103,7 +103,7 @@ export async function createPlanHandler(request: FastifyRequest<{ Body: { valida
 			const hashValue = await getPlanHash({
 				activeFrom: planResult.active_from,
 				activeUntil: planResult.active_until,
-				operationGtfsAttachmentId: planResult.attachments.operation_gtfs,
+				operationGtfsAttachmentId: result._id,
 				operationGtfsNormalizedAttachmentId: planResult.attachments.operation_gtfs_normalized,
 				planId: planResult._id,
 			});

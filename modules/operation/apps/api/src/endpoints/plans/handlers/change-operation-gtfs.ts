@@ -68,7 +68,7 @@ export async function changeOperationGtfsHandler(request: FastifyRequest<{ Body:
 			const hashValue = await getPlanHash({
 				activeFrom: planData.active_from,
 				activeUntil: planData.active_until,
-				operationGtfsAttachmentId: planData.attachments.operation_gtfs,
+				operationGtfsAttachmentId: result._id,
 				operationGtfsNormalizedAttachmentId: planData.attachments.operation_gtfs_normalized,
 				planId: planData._id,
 			});

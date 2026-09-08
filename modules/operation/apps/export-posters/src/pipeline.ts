@@ -3,7 +3,7 @@
 import { PostersController } from '@/controller/poster.js';
 import { importPlanToSqlite } from '@/import-plan-to-sqlite.js';
 import { type ExportToHitouchConfig } from '@/types.js';
-import { type PlanPostersContentMode, type PlanPostersFilterMode } from '@tmlmobilidade/go-types-downloads';
+import { FileExportDownloadUrlSchema, type PlanPostersContentMode, type PlanPostersFilterMode } from '@tmlmobilidade/go-types-downloads';
 import { type LinesMode } from '@tmlmobilidade/go-types-offer';
 import { type Plan } from '@tmlmobilidade/go-types-operation';
 import { Logger } from '@tmlmobilidade/logger';
@@ -22,13 +22,7 @@ function waitForNextStatusCheck(): Promise<void> {
 
 /* * */
 
-function isZipFile(file: Buffer): boolean {
-	return file.length >= 2 && file[0] === 0x50 && file[1] === 0x4b;
-}
-
-/* * */
-
-export async function generatePlanPostersZip(planData: Plan, exportId: string, options?: { canvas_profile?: ExportToHitouchConfig['canvas_profile'], content_mode?: PlanPostersContentMode, line_codes?: string[], lines_mode?: LinesMode, stop_ids?: string[], stops_mode?: PlanPostersFilterMode }): Promise<Buffer> {
+export async function generatePlanPostersDownloadUrl(planData: Plan, exportId: string, options?: { canvas_profile?: ExportToHitouchConfig['canvas_profile'], content_mode?: PlanPostersContentMode, line_codes?: string[], lines_mode?: LinesMode, stop_ids?: string[], stops_mode?: PlanPostersFilterMode }): Promise<string> {
 	const postersController = new PostersController();
 	let exportConfig: ExportToHitouchConfig | undefined;
 
@@ -61,13 +55,9 @@ export async function generatePlanPostersZip(planData: Plan, exportId: string, o
 			throw new Error(`PDF job ${pdfId} completed without a download URL.`);
 		}
 
-		const pdfZip = await postersController.downloadPDF(pdfStatus.downloadLink);
-		if (!isZipFile(pdfZip)) {
-			throw new Error(`PDF job ${pdfId} returned an invalid or empty ZIP file.`);
-		}
-
-		Logger.info({ message: `Downloaded and validated ZIP for poster export ${exportId} (${pdfZip.byteLength} bytes).` });
-		return pdfZip;
+		const downloadUrl = FileExportDownloadUrlSchema.parse(pdfStatus.downloadLink);
+		Logger.info({ message: `Poster export ${exportId} is ready for download from ZPHERES.` });
+		return downloadUrl;
 	} finally {
 		if (exportConfig) {
 			fs.rmSync(exportConfig.workdir, { force: true, recursive: true });

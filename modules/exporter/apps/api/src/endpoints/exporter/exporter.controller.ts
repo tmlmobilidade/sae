@@ -17,7 +17,7 @@ export class ExporterController {
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static async create(request: FastifyRequest<{ Body: CreateFileExportDto<any> }>, reply: FastifyReply<FileExport>) {
-		const fileExportData = await goDb.core.exports.insertOne({ ...request.body, created_by: request.me._id, updated_by: request.me._id });
+		const fileExportData = await goDb.core.exports.insertOne({ ...request.body, created_by: request.me._id, download_url: null, file_id: null, processing_status: 'waiting', updated_by: request.me._id });
 		return reply.send({ data: fileExportData, error: null, statusCode: HTTP_STATUS.CREATED });
 	}
 
@@ -31,6 +31,9 @@ export class ExporterController {
 		const fileExport = await goDb.core.exports.findById(id);
 		if (!fileExport) {
 			throw new HttpException(HTTP_STATUS.NOT_FOUND, 'File export not found');
+		}
+		if (fileExport.type === 'plan_posters' && fileExport.processing_status === 'complete' && fileExport.download_url) {
+			return reply.redirect(fileExport.download_url);
 		}
 
 		// Retrieve file data from database

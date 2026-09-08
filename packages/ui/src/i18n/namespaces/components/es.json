@@ -89,6 +89,7 @@
 			"title": "Exportaciones"
 		},
 		"SidebarExportsItem": {
+			"download_posters": "Descargar carteles",
 			"no_name": "Sin nombre"
 		},
 		"SidebarGroups": {

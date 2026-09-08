@@ -24,10 +24,10 @@ async function processWaitingExports(): Promise<void> {
 			Logger.info({ message: `Processing plan poster export ${fileExport._id} for Plan ${(fileExport.properties as { plan_id?: string }).plan_id ?? 'unknown'}.` });
 			await goDb.core.exports.updateById(fileExport._id, { processing_status: 'processing' });
 
-			const file = await exportPlanPostersFile(fileExport);
-			await goDb.core.exports.updateById(fileExport._id, { file_id: file._id, processing_status: 'complete' });
+			const downloadUrl = await exportPlanPostersFile(fileExport);
+			await goDb.core.exports.updateById(fileExport._id, { download_url: downloadUrl, file_id: null, processing_status: 'complete' });
 
-			Logger.success(`Plan poster export ${fileExport._id} completed and attachment ${file._id} saved.`);
+			Logger.success(`Plan poster export ${fileExport._id} completed and download link saved.`);
 		} catch (error) {
 			Logger.error({ error, message: `Error processing plan poster export ${fileExport._id}.` });
 			await goDb.core.exports.updateById(fileExport._id, { processing_status: 'error' });

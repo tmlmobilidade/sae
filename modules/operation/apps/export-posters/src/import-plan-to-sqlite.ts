@@ -27,7 +27,7 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 	//
 	// Import the Plan into a local SQLite database
 
-	const operationFileUrl = await storageProvider.getSignedUrl({ fileId: planData.attachments.operation_gtfs_normalized });
+	const operationFileUrl = await storageProvider.getSignedUrl({ fileId: planData.attachments.operation_gtfs });
 	const agencyId = planData.agency_id;
 
 	//

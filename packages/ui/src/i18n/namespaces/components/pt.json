@@ -89,6 +89,7 @@
 			"title": "Exportações"
 		},
 		"SidebarExportsItem": {
+			"download_posters": "Descarregar cartazes",
 			"no_name": "Sem nome"
 		},
 		"SidebarGroups": {
