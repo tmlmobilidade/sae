@@ -50,11 +50,17 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 	await replicate<Ride>({
 
 		countDestinationDbFn: async () => {
-			return 0;
+			const result = await labDb.operation.simplifiedRides.count(
+				'DISTINCT hash',
+				'start_time_scheduled >= $1 AND start_time_scheduled < $2',
+				{ 1: timeChunk.start, 2: timeChunk.end },
+			);
+			return result;
 		},
 
 		countSourceDbFn: async () => {
-			return 1;
+			const result = await goDb.operation.rides.distinct('hash', godDQuery);
+			return result.length;
 		},
 
 		deleteDestinationDbFn: async (ids: string[]) => {
@@ -72,12 +78,12 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 				'start_time_scheduled >= $1 AND start_time_scheduled < $2',
 				{ 1: timeChunk.start, 2: timeChunk.end },
 			);
-			return result.map(id => String(id).toUpperCase());
+			return result;
 		},
 
 		distinctSourceDbFn: async () => {
 			const result = await goDb.operation.rides.distinct('hash', godDQuery);
-			return result.map(String);
+			return result;
 		},
 
 		missingDocumentsSourceDbAsyncIterator: (missingDocumentIds: RideHash[]) => {
