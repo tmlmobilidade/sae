@@ -95,6 +95,7 @@
 		"dev:operation:rides-examiner": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-rides-examiner",
 		"dev:operation:rides-feeder": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-rides-feeder",
 		"dev:operation:rides-matcher": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-rides-matcher",
+		"dev:operation:rides-sync": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-rides-sync",
 		"dev:operation:ui": "npm run build:operation:pckg && npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-api --filter=@tmlmobilidade/go-operation-frontend",
 		"dev:performance": "npm run build:performance && npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-performance-frontend --filter=@tmlmobilidade/go-performance-api",
 		"dev:performance:sync-metrics-daily": "npm run build:performance:sync-metrics-daily && npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-performance-sync-metrics-daily",

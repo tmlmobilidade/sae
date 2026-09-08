@@ -1,7 +1,7 @@
 /* * */
 
 import { type ChangeStreamDocument } from '@tmlmobilidade/go-clients-mongo';
-import { type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
+import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { Logger } from '@tmlmobilidade/logger';
 import { ZodError } from 'zod';
 
@@ -21,7 +21,7 @@ import {
 	rideAnalysisSimpleOneVehicleEventOrApexValidationWriter,
 	rideAnalysisSimpleThreeVehicleEventsWriter,
 	rideAnalysisTransactionSequentialityWriter,
-	ridesWriter,
+	simplifiedRidesWriter,
 } from '../utils/writers.js';
 
 /**
@@ -31,7 +31,7 @@ import {
  * @param ride The Ride document to be processed.
  * @returns A promise that resolves when the Ride document has been processed.
  */
-export async function processRide(databaseOperation: ChangeStreamDocument<RideWithAnalyses>) {
+export async function processRide(databaseOperation: ChangeStreamDocument<Ride>) {
 	//
 
 	//
@@ -47,7 +47,12 @@ export async function processRide(databaseOperation: ChangeStreamDocument<RideWi
 	// and write it to the database, using a batch writer.
 
 	try {
-		await ridesWriter.write(databaseOperation.fullDocument);
+		await simplifiedRidesWriter.write(databaseOperation.fullDocument);
+
+		if (!databaseOperation.fullDocument.analyses) {
+			Logger.info({ message: `No analyses found for ride: ${databaseOperation.fullDocument._id}` });
+			return;
+		}
 
 		//
 		await Promise.all([

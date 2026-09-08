@@ -1,9 +1,9 @@
 /* * */
 
-import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, ridesWriter } from '@/utils/writers.js';
+import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, simplifiedRidesWriter } from '@/utils/writers.js';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
+import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { performInChunks, type PerformInTimeChunksItem, replicate } from '@tmlmobilidade/go-utils-exec';
 import { Logger } from '@tmlmobilidade/logger';
@@ -33,8 +33,8 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 	// Prepare the GoDB query to retrieve documents
 	// for the current timestamp chunk.
 
-	const godDQuery: Filter<RideWithAnalyses> = {
-		updated_at: {
+	const godDQuery: Filter<Ride> = {
+		start_time_scheduled: {
 			$gte: timeChunk.start,
 			$lt: timeChunk.end,
 		},
@@ -47,41 +47,36 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 	// This function will handle the logic of counting, comparing, syncing and deleting documents
 	// between the source and destination databases based on the provided functions.
 
-	await replicate<RideWithAnalyses>({
+	await replicate<Ride>({
 
 		countDestinationDbFn: async () => {
-			return await labDb.operation.rides.count(
-				'*',
-				'updated_at >= $1 AND updated_at < $2',
-				{ 1: timeChunk.start, 2: timeChunk.end },
-			);
+			return 0;
 		},
 
 		countSourceDbFn: async () => {
-			const result = await goDb.operation.rides.count(godDQuery);
-			return result;
+			return 1;
 		},
 
 		deleteDestinationDbFn: async (ids: string[]) => {
 			await performInChunks(ids, async (chunk) => {
-				await labDb.operation.rides.delete(
-					'_id IN $1',
+				await labDb.operation.simplifiedRides.delete(
+					'hash IN $1',
 					{ 1: chunk },
 				);
 			}, 1_000);
 		},
 
 		distinctDestinationDbFn: async () => {
-			const result = await labDb.operation.rides.distinct(
-				'_id',
-				'created_at >= $1 AND created_at < $2',
+			const result = await labDb.operation.simplifiedRides.distinct(
+				'hash',
+				'start_time_scheduled >= $1 AND start_time_scheduled < $2',
 				{ 1: timeChunk.start, 2: timeChunk.end },
 			);
 			return result.map(id => String(id).toUpperCase());
 		},
 
 		distinctSourceDbFn: async () => {
-			const result = await goDb.operation.rides.distinct('_id', godDQuery);
+			const result = await goDb.operation.rides.distinct('hash', godDQuery);
 			return result.map(String);
 		},
 
@@ -93,7 +88,12 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 
 		writeSourceDocumentToDestinationDbFn: async (sourceDbDocument) => {
 			try {
-				await ridesWriter.write(sourceDbDocument);
+				await simplifiedRidesWriter.write(sourceDbDocument);
+
+				if (!sourceDbDocument.analyses) {
+					Logger.info({ message: `No analyses found for ride: ${sourceDbDocument._id}` });
+					return;
+				}
 
 				await Promise.all([
 					rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.write(sourceDbDocument.analyses.at_least_one_vehicle_event_on_first_stop),

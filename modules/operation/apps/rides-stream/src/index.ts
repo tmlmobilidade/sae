@@ -31,10 +31,10 @@ try {
 
 	// On Update
 	const updateFilter = {
-		'operationType': 'update',
-		'updateDescription.updatedFields.processing_status': {
-			$in: ['complete', 'error'],
-		},
+		operationType: 'update',
+		// 'updateDescription.updatedFields.processing_status': {
+		// 	$in: ['complete', 'error'],
+		// },
 	};
 
 	//
