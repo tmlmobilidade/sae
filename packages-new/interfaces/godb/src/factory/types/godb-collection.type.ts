@@ -1,6 +1,6 @@
 /* * */
 
-import type { AggregateOptions, AggregationCursor, AggregationPipeline, Collection, DeleteResult, Document, Filter } from '@tmlmobilidade/go-clients-mongo';
+import type { AggregateOptions, AggregationCursor, AggregationPipeline, BulkWriteResult, Collection, DeleteResult, Document, Filter } from '@tmlmobilidade/go-clients-mongo';
 
 import { type InsertableDocument } from './insertable-document.type.js';
 import { type MinimalOptions } from './minimal-options.type.js';
@@ -41,15 +41,9 @@ export interface GoDbCollection<T extends Document> {
 
 	insertMany(docs: InsertableDocument<T>[], options?: MinimalOptions): Promise<T[]>
 
-	insertManyUnsafe(docs: T[], options?: MinimalOptions): Promise<T[]>
-
 	insertOne(doc: InsertableDocument<T>, options?: MinimalOptions): Promise<T>
 
 	insertOneUnsafe(doc: T, options?: MinimalOptions): Promise<T>
-
-	// isLocked(filter: Filter<T>): Promise<boolean>
-
-	// isLockedById(id: string): Promise<boolean>
 
 	/**
 	 * Toggles the lock status of a document by its ID.
@@ -58,7 +52,13 @@ export interface GoDbCollection<T extends Document> {
 	 */
 	toggleLockById(id: string, options?: MinimalOptions): Promise<T>
 
+	// isLocked(filter: Filter<T>): Promise<boolean>
+
+	// isLockedById(id: string): Promise<boolean>
+
 	updateById(_id: string, updateFields: UpdatableDocument<T>, options?: MinimalOptions): Promise<T>
+
+	upsertManyUnsafe(docs: T[], options?: MinimalOptions): Promise<BulkWriteResult>
 
 	// updateMany<TReturnDocument extends boolean = true>(filter: Filter<T>, updateFields: T & { updated_at?: UnixMilliseconds, updated_by?: string }, options?: UpdateOptions & { returnResults?: TReturnDocument }): Promise<TReturnDocument extends true ? WithId<T>[] : UpdateResult<T>>
 
