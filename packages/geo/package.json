@@ -37,6 +37,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-types-hub": "*",
+		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-vehicle-events": "*",
 		"@turf/turf": "7.4.0"
 	},

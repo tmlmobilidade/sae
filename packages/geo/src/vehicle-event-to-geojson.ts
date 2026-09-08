@@ -20,7 +20,7 @@ import { type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-eve
  * - lon:       Vehicle longitude
  * - trip_id:   Associated trip identifier
  */
-export function transformVehicleDataIntoGeoJsonFeature(event: HubVehiclePosition | SimplifiedVehicleEvent, vehicleData?: Vehicle): GeoJSON.Feature<GeoJSON.Point> {
+export function transformVehicleDataIntoGeoJsonFeature<T extends HubVehiclePosition | SimplifiedVehicleEvent>(event: T, vehicleData?: Vehicle): GeoJSON.Feature<GeoJSON.Point, Partial<Vehicle> & T> {
 	return {
 		geometry: {
 			coordinates: [event.longitude, event.latitude],

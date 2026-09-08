@@ -1,7 +1,8 @@
 'use client';
 
 import { useVehiclesData } from '@/components/vehicles/use-vehicles-data';
-import { buildVehiclesFeatureCollection } from '@/utils/map/entity-feature-collections';
+import { isVehicleIncludedInMap } from '@/utils/map/vehicle-visibility';
+import { getBaseGeoJsonFeatureCollection, transformVehicleDataIntoGeoJsonFeature } from '@tmlmobilidade/geo';
 import { type HubVehiclePosition } from '@tmlmobilidade/go-types-hub';
 import { type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { useMemo } from 'react';
@@ -16,6 +17,19 @@ interface UseVehiclesMapDataReturnType {
 	isValidating: boolean
 	mutate: () => void
 	timestamp: null | UnixMilliseconds
+}
+
+/* * */
+
+function buildVehiclesFeatureCollection(vehicles: HubVehiclePosition[]): GeoJSON.FeatureCollection<GeoJSON.Point, HubVehiclePosition> {
+	const collection = getBaseGeoJsonFeatureCollection<GeoJSON.Point, HubVehiclePosition>();
+
+	for (const vehicle of vehicles) {
+		if (!isVehicleIncludedInMap(vehicle)) continue;
+		collection.features.push(transformVehicleDataIntoGeoJsonFeature(vehicle));
+	}
+
+	return collection;
 }
 
 /* * */
