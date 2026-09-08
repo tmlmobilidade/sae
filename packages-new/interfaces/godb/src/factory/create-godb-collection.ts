@@ -14,12 +14,12 @@ import { findById } from './methods/find-by-id.js';
 import { findMany } from './methods/find-many.js';
 import { findOne } from './methods/find-one.js';
 import { getCollection } from './methods/get-collection.js';
-import { insertManyUnsafe } from './methods/insert-many-unsafe.js';
 import { insertMany } from './methods/insert-many.js';
 import { insertOneUnsafe } from './methods/insert-one-unsafe.js';
 import { insertOne } from './methods/insert-one.js';
 import { toggleLockById } from './methods/toggle-lock-by-id.js';
 import { updateById } from './methods/update-by-id.js';
+import { upsertManyUnsafe } from './methods/upsert-many-unsafe.js';
 import { type GoDbCollectionContext } from './types/godb-collection-context.type.js';
 import { type GoDbCollection } from './types/godb-collection.type.js';
 
@@ -80,11 +80,11 @@ export function createGoDbCollection<T extends Document>({ collectionName, datab
 
 		insertMany: (docs, options) => insertMany(context, docs, options),
 
-		insertManyUnsafe: (docs, options) => insertManyUnsafe(context, docs, options),
-
 		insertOne: (doc, clientSession) => insertOne<T>(context, doc, clientSession),
 
 		insertOneUnsafe: (doc, clientSession) => insertOneUnsafe<T>(context, doc, clientSession),
+
+		upsertManyUnsafe: (docs, options) => upsertManyUnsafe(context, docs, options),
 
 		// isLocked: filter => isLocked(context, filter),
 

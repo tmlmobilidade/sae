@@ -1,7 +1,7 @@
 'use client';
 
 import { API_ROUTES, PAGE_ROUTES } from '@tmlmobilidade/consts';
-import { SimplifiedRide } from '@tmlmobilidade/go-types-operation';
+import { Ride } from '@tmlmobilidade/go-types-operation';
 import { hasPermissionResource } from '@tmlmobilidade/go-types-permissions';
 import { ProcessingStatus } from '@tmlmobilidade/go-types-shared';
 import { CloseButton, fetchApiData, IdTag, keepUrlParams, LoadingActivity, OperationalStatusDisplay, ProcessingStatusDisplay, SegmentedControl, Spacer, Toolbar, useHandleAction, useMeData } from '@tmlmobilidade/ui';
@@ -76,8 +76,8 @@ export function RidesDetailHeader() {
 		router.push(keepUrlParams(PAGE_ROUTES.operation.RIDES_LIST));
 	};
 
-	const { action: handleUpdateProcessingStatus, isLoading: isUpdatingRideProcessingStatus } = useHandleAction<SimplifiedRide, ProcessingStatus>({
-		fetchFn: async data => await fetchApiData<SimplifiedRide, { processing_status: ProcessingStatus }>({ body: { processing_status: data }, method: 'PUT', url: API_ROUTES.operation.RIDES_DETAIL_PROCESSING_STATUS(rideId) }),
+	const { action: handleUpdateProcessingStatus, isLoading: isUpdatingRideProcessingStatus } = useHandleAction<Ride, ProcessingStatus>({
+		fetchFn: async data => await fetchApiData<Ride, { processing_status: ProcessingStatus }>({ body: { processing_status: data }, method: 'PUT', url: API_ROUTES.operation.RIDES_DETAIL_PROCESSING_STATUS(rideId) }),
 		onSuccess: () => {},
 	});
 

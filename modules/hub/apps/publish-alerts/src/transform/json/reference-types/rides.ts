@@ -37,7 +37,7 @@ export async function transformReferenceTypeRidesIntoJson(alertData: Alert): Pro
 		// and prepare the AlertReference object
 
 		const foundRide = await labDb.queryFromString<Ride>(`
-			SELECT * FROM operation.simplified_rides
+			SELECT * FROM operation.rides
 			WHERE _id = '${reference.parent_id}'
 			ORDER BY updated_at DESC
 			LIMIT 1 BY _id

@@ -4,7 +4,6 @@ import { GtfsTripDirectionSchema } from '@tmlmobilidade/go-types-gtfs';
 import { HexColorSchema, NonNegativeIntegerSchema, OperationalDateIntSchema, ProcessingStatusSchema, TimezoneIdentifiedSchema, UnixMillisecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
 
-import { RideAnalysesRegistrySchema } from '../ride-analyses/ride-analyses-registry.js';
 import { RideHashSchema } from './ride-hash.js';
 
 /* * */
@@ -74,10 +73,6 @@ export const RideLifecycleSchema = z.object({
 	updated_at: UnixMillisecondsSchema,
 });
 
-export const RideAnalysesSchema = z.object({
-	analyses: RideAnalysesRegistrySchema.nullable().default(null),
-});
-
 /* * */
 
 export const RideSchema = RideIdentitySchema
@@ -85,8 +80,7 @@ export const RideSchema = RideIdentitySchema
 	.merge(RideApexSchema)
 	.merge(RidePassengersSchema)
 	.merge(RideOperationSchema)
-	.merge(RideLifecycleSchema)
-	.merge(RideAnalysesSchema);
+	.merge(RideLifecycleSchema);
 
 /**
  * A Ride represents a single vehicle journey on a single route for a single day.

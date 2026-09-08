@@ -2,7 +2,7 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { type SimplifiedRide, SimplifiedRideSchema } from '@tmlmobilidade/go-types-operation';
+import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { hasPermissionResource } from '@tmlmobilidade/go-types-permissions';
 import { type ProcessingStatus } from '@tmlmobilidade/go-types-shared';
 
@@ -11,7 +11,7 @@ import { type ProcessingStatus } from '@tmlmobilidade/go-types-shared';
  * @param request The Fastify request object.
  * @param reply The Fastify reply object.
  */
-export async function updateProcessingStatusHandler(request: FastifyRequest<{ Body: { processing_status: ProcessingStatus }, Params: { id: string } }>, reply: FastifyReply<SimplifiedRide>) {
+export async function updateProcessingStatusHandler(request: FastifyRequest<{ Body: { processing_status: ProcessingStatus }, Params: { id: string } }>, reply: FastifyReply<Ride>) {
 	//
 
 	//
@@ -47,11 +47,5 @@ export async function updateProcessingStatusHandler(request: FastifyRequest<{ Bo
 
 	const updatedRideResult = await goDb.operation.rides.updateById(request.params.id, { processing_status: 'waiting' });
 
-	//
-	// Run the simplified schema to strip the analyses object from the Ride,
-	// as the API receives data from labDb and not from goDb directly.
-
-	const simplifiedRideData = SimplifiedRideSchema.parse(updatedRideResult);
-
-	return sendSuccessApiResponse(reply, simplifiedRideData);
+	return sendSuccessApiResponse(reply, updatedRideResult);
 }

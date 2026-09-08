@@ -15,7 +15,7 @@ export async function removeOrphanHashedShapesTask() {
 	Logger.info({ message: `Starting cleanup of orphan Hashed Shapes...` });
 
 	// TODO: Replace with goDb query
-	// await labDb.operation.hashedShapes.delete('_id NOT IN (SELECT DISTINCT hashed_shape_id FROM operation.simplified_rides)');
+	// await labDb.operation.hashedShapes.delete('_id NOT IN (SELECT DISTINCT hashed_shape_id FROM operation.rides)');
 
 	Logger.success(`Hashed Shapes cleanup complete. Deleted orphan Hashed Shapes. (${timer.get()})`);
 }

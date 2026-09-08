@@ -1,18 +1,18 @@
 /* * */
 
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type RideAnalysisAtLeastOneVehicleEventOnFirstStop, type RideAnalysisAtLeastOneVehicleEventOnLastStop, type RideAnalysisExpectedApexValidationInterval, type RideAnalysisExpectedDriverIdQty, type RideAnalysisExpectedStartTime, type RideAnalysisExpectedVehicleEventDelay, type RideAnalysisExpectedVehicleEventInterval, type RideAnalysisExpectedVehicleEventQty, type RideAnalysisExpectedVehicleIdQty, type RideAnalysisMatchingApexLocations, type RideAnalysisMatchingVehicleIds, type RideAnalysisSimpleOneApexValidation, type RideAnalysisSimpleOneVehicleEventOrApexValidation, type RideAnalysisSimpleThreeVehicleEvents, type RideAnalysisTransactionSequentiality, SimplifiedRide } from '@tmlmobilidade/go-types-operation';
+import { type Ride, type RideAnalysisAtLeastOneVehicleEventOnFirstStop, type RideAnalysisAtLeastOneVehicleEventOnLastStop, type RideAnalysisExpectedApexValidationInterval, type RideAnalysisExpectedDriverIdQty, type RideAnalysisExpectedStartTime, RideAnalysisExpectedVehicleEventCoverageGeo, type RideAnalysisExpectedVehicleEventDelay, type RideAnalysisExpectedVehicleEventInterval, type RideAnalysisExpectedVehicleEventQty, type RideAnalysisExpectedVehicleIdQty, type RideAnalysisMatchingApexLocations, type RideAnalysisMatchingVehicleIds, type RideAnalysisSimpleOneApexValidation, type RideAnalysisSimpleOneVehicleEventOrApexValidation, type RideAnalysisSimpleThreeVehicleEvents, type RideAnalysisTransactionSequentiality } from '@tmlmobilidade/go-types-operation';
 import { BatchWriter } from '@tmlmobilidade/go-utils-exec';
 
 /* * */
 
-export const simplifiedRidesWriter = new BatchWriter<SimplifiedRide>({
+export const ridesWriter = new BatchWriter<Ride>({
 	batch_size: 10_000,
 	// batch_timeout: 20_000,
 	insertFn: async (data) => {
-		await labDb.operation.simplifiedRides.insert('JSONEachRow', data);
+		await labDb.operation.rides.insert('JSONEachRow', data);
 	},
-	title: await labDb.operation.simplifiedRides.getTableName(),
+	title: await labDb.operation.rides.getTableName(),
 });
 
 /* * */
@@ -68,6 +68,17 @@ export const rideAnalysisExpectedStartTimeWriter = new BatchWriter<RideAnalysisE
 		await labDb.operation.rideAnalysisExpectedStartTime.insert('JSONEachRow', data);
 	},
 	title: await labDb.operation.rideAnalysisExpectedStartTime.getTableName(),
+});
+
+/* * */
+
+export const rideAnalysisExpectedVehicleEventCoverageGeoWriter = new BatchWriter<RideAnalysisExpectedVehicleEventCoverageGeo>({
+	batch_size: 10_000,
+	// batch_timeout: 20_000,
+	insertFn: async (data) => {
+		await labDb.operation.rideAnalysisExpectedVehicleEventCoverageGeo.insert('JSONEachRow', data);
+	},
+	title: await labDb.operation.rideAnalysisExpectedVehicleEventCoverageGeo.getTableName(),
 });
 
 /* * */

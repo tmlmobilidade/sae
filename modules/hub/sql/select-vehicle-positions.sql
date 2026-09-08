@@ -60,7 +60,7 @@ associated_rides AS (
 		shape_id,
 		start_time_scheduled,
 		trip_id
-	FROM operation.simplified_rides
+	FROM operation.rides
 	WHERE
 		start_time_scheduled BETWEEN
 			toUnixTimestamp64Milli(now64(3) - INTERVAL $stdWindowHours HOUR)

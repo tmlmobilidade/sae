@@ -1,13 +1,12 @@
 /* * */
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { getRideHash, setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
 import { storageProvider } from '@tmlmobilidade/go-providers-storage';
-import { HashableRide, type HashedShape, type HashedTrip, type Plan, type Ride, RideSchema } from '@tmlmobilidade/go-types-operation';
+import { type HashableRide, type HashedShape, type HashedTrip, type Plan, RideSchema } from '@tmlmobilidade/go-types-operation';
 import { HexColorSchema, NonNegativeIntegerSchema, OperationalDateIntSchema } from '@tmlmobilidade/go-types-shared';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
-import { BatchWriter, startHeartbeat } from '@tmlmobilidade/go-utils-exec';
+import { startHeartbeat } from '@tmlmobilidade/go-utils-exec';
 import { type ImportGtfsConfig, importGtfsStrictV30ToDatabase } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
@@ -16,32 +15,7 @@ import { fromOperationalTimeAndOperationalDateToUnixMilliseconds } from '@tmlmob
 import { cleanupOrphanRidesForPlan } from '../utils/cleanup.js';
 import { toHashedShape } from '../utils/to-hashed-shape.js';
 import { toHashedTrip } from '../utils/to-hashed-trip.js';
-
-/* * */
-
-const ridesWriter = new BatchWriter<Ride>({
-	batch_size: 10_000,
-	insertFn: async (data) => {
-		await goDb.operation.rides.insertManyUnsafe(data);
-	},
-	title: (await goDb.operation.rides.getCollection()).collectionName,
-});
-
-const hashedShapesWriter = new BatchWriter<HashedShape>({
-	batch_size: 2_000,
-	insertFn: async (data) => {
-		await labDb.operation.hashedShapes.insert('JSONEachRow', data);
-	},
-	title: await labDb.operation.hashedShapes.getTableName(),
-});
-
-const hashedTripsWriter = new BatchWriter<HashedTrip>({
-	batch_size: 10_000,
-	insertFn: async (data) => {
-		await labDb.operation.hashedTrips.insert('JSONEachRow', data);
-	},
-	title: await labDb.operation.hashedTrips.getTableName(),
-});
+import { hashedShapesWriter, hashedTripsWriter, ridesWriter } from '../utils/writers.js';
 
 /* * */
 
@@ -258,7 +232,6 @@ export async function parsePlanTask(planData: Plan) {
 						_id: uniqueIdValueForRide,
 						agency_code: agencyData.code,
 						agency_id: planData.agency_id,
-						analyses: null,
 						apex_banking_taps_amount: null,
 						apex_banking_taps_qty: null,
 						apex_locations_qty: null,
@@ -304,11 +277,9 @@ export async function parsePlanTask(planData: Plan) {
 						vehicle_ids: [],
 					};
 
-					const rideHashValue = getRideHash(hashableRide);
-
 					const finalRide = RideSchema.parse({
 						...hashableRide,
-						hash: rideHashValue,
+						hash: getRideHash(hashableRide),
 					});
 
 					//

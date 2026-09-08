@@ -113,7 +113,7 @@ WITH
 	(
 		SELECT
 			*
-		FROM operation.simplified_rides
+		FROM operation.rides
 		WHERE
 			start_time_scheduled >= $1
 			AND start_time_scheduled <= $2

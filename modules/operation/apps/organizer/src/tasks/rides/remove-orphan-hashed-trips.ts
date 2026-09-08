@@ -15,7 +15,7 @@ export async function removeOrphanHashedTripsTask() {
 	Logger.info({ message: `Starting cleanup of orphan Hashed Trips...` });
 
 	// TODO: Replace with goDb query
-	// await labDb.operation.hashedTrips.delete('_id NOT IN (SELECT DISTINCT hashed_trip_id FROM operation.simplified_rides)');
+	// await labDb.operation.hashedTrips.delete('_id NOT IN (SELECT DISTINCT hashed_trip_id FROM operation.rides)');
 
 	Logger.success(`Hashed Trips cleanup complete. Deleted orphan Hashed Trips. (${timer.get()})`);
 }

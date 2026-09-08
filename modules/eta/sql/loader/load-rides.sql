@@ -1,4 +1,4 @@
--- Current window rides: operation.simplified_rides + hashed_shapes + hashed_trips first/last stops → eta.curr_rides.
+-- Current window rides: operation.rides + hashed_shapes + hashed_trips first/last stops → eta.curr_rides.
 -- first/last geohash columns use table DEFAULTs (omit from insert column list).
 --
 -- Params:
@@ -64,7 +64,7 @@ WITH
             trip_id,
             updated_at,
             vehicle_ids
-        FROM operation.simplified_rides FINAL
+        FROM operation.rides FINAL
         WHERE
             has(splitByChar(',', $agency_ids), agency_id)
             AND ($line_ids = '' OR has(splitByChar(',', $line_ids), route_short_name))

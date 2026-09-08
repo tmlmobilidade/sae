@@ -1,11 +1,12 @@
 /* * */
 
-import { syncRides } from '@/tasks/rides.js';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { performInTimeChunks, runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
+
+import { syncRides } from './tasks/sync-rides.js';
 
 /* * */
 
