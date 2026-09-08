@@ -88,6 +88,7 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 
 		writeSourceDocumentToDestinationDbFn: async (sourceDbDocument) => {
 			try {
+				Logger.info({ message: `Synchronizing ride: ${sourceDbDocument._id}` });
 				await simplifiedRidesWriter.write(sourceDbDocument);
 
 				if (!sourceDbDocument.analyses) {
@@ -121,6 +122,28 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 		},
 
 	});
+
+	//
+	// Flush the writers
+
+	await Promise.all([
+		simplifiedRidesWriter.flush(),
+		rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.flush(),
+		rideAnalysisAtLeastOneVehicleEventOnLastStopWriter.flush(),
+		rideAnalysisExpectedApexValidationIntervalWriter.flush(),
+		rideAnalysisExpectedDriverIdQtyWriter.flush(),
+		rideAnalysisExpectedStartTimeWriter.flush(),
+		rideAnalysisExpectedVehicleEventDelayWriter.flush(),
+		rideAnalysisExpectedVehicleEventIntervalWriter.flush(),
+		rideAnalysisExpectedVehicleEventQtyWriter.flush(),
+		rideAnalysisExpectedVehicleIdQtyWriter.flush(),
+		rideAnalysisMatchingApexLocationsWriter.flush(),
+		rideAnalysisMatchingVehicleIdsWriter.flush(),
+		rideAnalysisSimpleOneApexValidationWriter.flush(),
+		rideAnalysisSimpleOneVehicleEventOrApexValidationWriter.flush(),
+		rideAnalysisSimpleThreeVehicleEventsWriter.flush(),
+		rideAnalysisTransactionSequentialityWriter.flush(),
+	]);
 
 	//
 }
