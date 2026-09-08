@@ -1,7 +1,6 @@
 /* * */
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -19,15 +18,12 @@ export async function removeOrphanRidesTask() {
 	const allPlanIds = await goDb.operation.plans.distinct('_id');
 
 	if (!allPlanIds.length) {
-		Logger.info({ message: `No plans found!` });
+		Logger.info({ message: `No plans found. No rides deleted.` });
 		return;
 	}
 
-	const result = await labDb.command({
-		query: 'ALTER TABLE operation.rides DELETE WHERE plan_id NOT IN ({planIds:Array(String)})',
-		query_params: { planIds: allPlanIds },
-	});
+	const result = await goDb.operation.rides.deleteMany({ plan_id: { $nin: allPlanIds } });
 
-	Logger.success(`Deleted ${result.summary.result_rows} orphan Rides from Plans that do not exist anymore. (${timer.get()})`);
+	Logger.success(`Deleted ${result.deletedCount} orphan Rides from Plans that do not exist anymore. (${timer.get()})`);
 	Logger.spacer(1);
 }
