@@ -3,7 +3,7 @@
 import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, simplifiedRidesWriter } from '@/utils/writers.js';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type Ride } from '@tmlmobilidade/go-types-operation';
+import { type Ride, RideHash } from '@tmlmobilidade/go-types-operation';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { performInChunks, type PerformInTimeChunksItem, replicate } from '@tmlmobilidade/go-utils-exec';
 import { Logger } from '@tmlmobilidade/logger';
@@ -80,19 +80,17 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 			return result.map(String);
 		},
 
-		missingDocumentsSourceDbAsyncIterator: (missingDocumentIds) => {
+		missingDocumentsSourceDbAsyncIterator: (missingDocumentIds: RideHash[]) => {
 			return ridesCollection
-				.find({ _id: { $in: missingDocumentIds } })
+				.find({ hash: { $in: missingDocumentIds } })
 				.stream();
 		},
 
 		writeSourceDocumentToDestinationDbFn: async (sourceDbDocument) => {
 			try {
-				Logger.info({ message: `Synchronizing ride: ${sourceDbDocument._id}` });
 				await simplifiedRidesWriter.write(sourceDbDocument);
 
 				if (!sourceDbDocument.analyses) {
-					Logger.info({ message: `No analyses found for ride: ${sourceDbDocument._id}` });
 					return;
 				}
 
