@@ -1,1 +1,1 @@
-export * from './from-raw-to-simplified/index.js';
+export * from './from-godb-to-labdb/index.js';
