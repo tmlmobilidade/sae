@@ -33,7 +33,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 			const data = GtfsRoutesSchema.parse({
 				agency_id: routesGroup[0].agency_id,
 				route_color: routesGroup[0].route_color,
-				route_desc: routesGroup[0].route_desc,
+				route_desc: routesGroup[0].route_desc ?? '',
 				route_id: routesGroup[0].route_id,
 				route_long_name: routesGroup[0].route_long_name,
 				route_short_name: routesGroup[0].route_short_name,
@@ -51,7 +51,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 			const data = GtfsRoutesSchema.parse({
 				agency_id: routesGroup[i].agency_id,
 				route_color: routesGroup[i].route_color,
-				route_desc: routesGroup[i].route_desc,
+				route_desc: routesGroup[i].route_desc ?? '',
 				route_id: routesGroup[i].route_id,
 				route_long_name: routesGroup[i].route_long_name,
 				route_short_name: `${routesGroup[i].route_short_name}${String.fromCharCode(65 + i)}`, // 65 is 'A' in ASCII

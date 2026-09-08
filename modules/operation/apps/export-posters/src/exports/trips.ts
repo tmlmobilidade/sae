@@ -22,7 +22,7 @@ export async function exportTripsFile(sqlTables: GtfsStrictV29ExtSQLTables, expo
 			shape_id: tripData.shape_id,
 			trip_headsign: tripData.trip_headsign,
 			trip_id: tripData.trip_id,
-			wheelchair_accessible: tripData.wheelchair_accessible,
+			wheelchair_accessible: tripData.wheelchair_accessible ?? '0',
 		});
 		await tripsCsv.write(data);
 	}
