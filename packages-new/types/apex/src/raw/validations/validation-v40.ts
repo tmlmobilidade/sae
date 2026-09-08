@@ -36,6 +36,7 @@ export const RawApexTransactionValidationV40PayloadSchema = z.object({
 	serviceInfo: z.object({
 		journeyID: z.string().nullable().default(null),
 		lineLongID: z.string(),
+		onBehalfOfOperatorLongID: z.string().nullable().default(null),
 		outOfBoundsType: z.number(),
 		patternLongID: z.string(),
 		stopLongID: z.string(),
@@ -60,8 +61,10 @@ export const RawApexTransactionValidationV40PayloadSchema = z.object({
 		calendarID: z.string().nullable().default(null),
 		contractNumber: z.number().nullable().default(null),
 		eventType: z.number(),
+		greylistItemsCount: z.number().nullable().default(null),
 		greylistItemsData: z.array(z.any()).default([]),
 		productLongID: z.string().nullable().default(null),
+		profilesUsedCount: z.number().nullable().default(null),
 		profilesUsedData: z.array(z.any()).default([]),
 		spatialValidityLongID: z.string().nullable().default(null),
 		tickLoadDate: z.string().nullable().default(null),

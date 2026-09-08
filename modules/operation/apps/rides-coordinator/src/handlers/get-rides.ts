@@ -1,6 +1,6 @@
 /* * */
 
-import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type RidesCoordinatorRidesResponse } from '@tmlmobilidade/go-operation-pckg-types';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { Logger } from '@tmlmobilidade/logger';
@@ -27,7 +27,7 @@ export async function getRides(): Promise<RidesCoordinatorRidesResponse> {
 		// we need to make sure that instances request the next batch of documents
 		// sequentially. To do that, we implement a simple lock mechanism.
 
-		if (IS_BUSY) {
+		while (IS_BUSY) {
 			Logger.info({ message: `[${sessionId}] Waiting for another request to complete... (elapsed: ${timer.get()})` });
 			return { ride_ids: [] };
 		}
@@ -46,16 +46,16 @@ export async function getRides(): Promise<RidesCoordinatorRidesResponse> {
 
 		const standardWindowInterval = Dates.now('utc').std_window;
 
-		const latestWaitingRides = await labDb.operation.rides.queryFromString(
-			`
-				SELECT *
-				FROM operation.rides FINAL
-				WHERE processing_status = 'waiting'
-				AND start_time_scheduled <= $1
-				ORDER BY start_time_scheduled DESC
-				LIMIT 100
-			`,
-			{ 1: standardWindowInterval.end },
+		const latestWaitingRides = await goDb.operation.rides.findMany(
+			{
+				processing_status: 'waiting',
+				start_time_scheduled: { $lte: standardWindowInterval.end },
+			},
+			{
+				limit: 750,
+				projection: { _id: 1, operational_date: 1, start_time_scheduled: 1 },
+				sort: { start_time_scheduled: -1 },
+			},
 		);
 
 		/* === FOR TESTING === */
@@ -66,7 +66,6 @@ export async function getRides(): Promise<RidesCoordinatorRidesResponse> {
 
 		if (!latestWaitingRides.length) {
 			Logger.info({ message: `[${sessionId}] No documents waiting | start_time_scheduled: ${standardWindowInterval.end} (fetch: ${fetchTimerResult})` });
-			IS_BUSY = false;
 			return { ride_ids: [] };
 		}
 
@@ -78,22 +77,18 @@ export async function getRides(): Promise<RidesCoordinatorRidesResponse> {
 
 		const latestWaitingRidesIds = latestWaitingRides.map(item => item._id);
 
-		await labDb.operation.rides.insert('JSONEachRow', latestWaitingRides.map(item => ({
-			...item,
-			processing_status: 'processing',
-			updated_at: Dates.now('utc').unix_milliseconds,
-		})));
+		const updatePromises = latestWaitingRidesIds.map(id => goDb.operation.rides.updateById(id, { processing_status: 'processing' }));
+		await Promise.all(updatePromises);
 
 		Logger.info({ message: `[${sessionId}] New batch: Qty ${latestWaitingRidesIds.length} | operational_date: ${latestWaitingRides[latestWaitingRides.length - 1].operational_date} | start_time_scheduled: ${latestWaitingRides[latestWaitingRides.length - 1].start_time_scheduled} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})` });
-
-		IS_BUSY = false;
 
 		return { ride_ids: latestWaitingRidesIds };
 
 		//
 	} catch (error) {
 		Logger.error({ error, message: `[${sessionId}] Error getting rides: ${error.message}` });
-		IS_BUSY = false;
 		return { ride_ids: [] };
+	} finally {
+		IS_BUSY = false;
 	}
 }

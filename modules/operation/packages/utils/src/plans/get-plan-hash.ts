@@ -3,7 +3,7 @@
 import { storageProvider } from '@tmlmobilidade/go-providers-storage';
 import { type Attachment } from '@tmlmobilidade/go-types-core';
 import { type HashablePlanMetadata } from '@tmlmobilidade/go-types-operation';
-import { OperationalDateInt } from '@tmlmobilidade/go-types-shared';
+import { type OperationalDateInt } from '@tmlmobilidade/go-types-shared';
 import { getZipFileHash } from '@tmlmobilidade/go-utils-exec';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
@@ -15,7 +15,7 @@ interface GetPlanHashParams {
 	activeFrom: OperationalDateInt
 	activeUntil: OperationalDateInt
 	operationGtfsAttachmentId: string
-	operationGtfsNormalizedAttachmentId?: string
+	operationGtfsNormalizedAttachmentId?: null | string
 	planId: string
 }
 
@@ -26,6 +26,8 @@ interface GetPlanHashParams {
  */
 export async function getPlanHash({ activeFrom, activeUntil, operationGtfsAttachmentId, operationGtfsNormalizedAttachmentId, planId }: GetPlanHashParams): Promise<string> {
 	//
+
+	console.info({ message: `[getPlanHash()] Getting hash for plan ${planId}: activeFrom=${activeFrom}, activeUntil=${activeUntil}, operationGtfsAttachmentId=${operationGtfsAttachmentId}, operationGtfsNormalizedAttachmentId=${operationGtfsNormalizedAttachmentId}` });
 
 	//
 	// Check if all necessary data is present

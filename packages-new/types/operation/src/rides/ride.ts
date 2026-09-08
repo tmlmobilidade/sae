@@ -1,5 +1,6 @@
 /* * */
 
+import { RideAnalysesRegistrySchema } from '@/ride-analyses/ride-analyses-registry.js';
 import { GtfsTripDirectionSchema } from '@tmlmobilidade/go-types-gtfs';
 import { HexColorSchema, NonNegativeIntegerSchema, OperationalDateIntSchema, ProcessingStatusSchema, TimezoneIdentifiedSchema, UnixMillisecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
@@ -70,6 +71,10 @@ export const RideLifecycleSchema = z.object({
 	updated_at: UnixMillisecondsSchema,
 });
 
+export const RideAnalysesSchema = z.object({
+	analyses: RideAnalysesRegistrySchema.nullable().default(null),
+});
+
 /* * */
 
 export const RideSchema = RideIdentitySchema
@@ -79,8 +84,15 @@ export const RideSchema = RideIdentitySchema
 	.merge(RideOperationSchema)
 	.merge(RideLifecycleSchema);
 
+export const RideWithAnalysesSchema = RideSchema.merge(RideAnalysesSchema);
+
 /**
  * A Ride represents a single vehicle journey on a single route for a single day.
  * It is the basic unit of analysis for the public transit system.
  */
 export type Ride = z.infer<typeof RideSchema>;
+
+/**
+ * A RideWithAnalyses represents a single vehicle journey on a single route for a single day, along with its analyses.
+ */
+export type RideWithAnalyses = z.infer<typeof RideWithAnalysesSchema>;

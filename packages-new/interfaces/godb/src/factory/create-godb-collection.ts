@@ -14,6 +14,7 @@ import { findById } from './methods/find-by-id.js';
 import { findMany } from './methods/find-many.js';
 import { findOne } from './methods/find-one.js';
 import { getCollection } from './methods/get-collection.js';
+import { insertManyUnsafe } from './methods/insert-many-unsafe.js';
 import { insertMany } from './methods/insert-many.js';
 import { insertOneUnsafe } from './methods/insert-one-unsafe.js';
 import { insertOne } from './methods/insert-one.js';
@@ -78,6 +79,8 @@ export function createGoDbCollection<T extends Document>({ collectionName, datab
 		// getCollectionName: () => getCollectionName(context),
 
 		insertMany: (docs, options) => insertMany(context, docs, options),
+
+		insertManyUnsafe: (docs, options) => insertManyUnsafe(context, docs, options),
 
 		insertOne: (doc, clientSession) => insertOne<T>(context, doc, clientSession),
 
