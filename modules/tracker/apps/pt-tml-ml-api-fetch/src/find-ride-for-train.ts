@@ -38,7 +38,7 @@ export async function findRideForTrain({ destinationId, now }: FindRideForTrainP
 
 	if (!destinationStop) return null;
 
-	const rides = await labDb.operation.rides.queryFromString(findRidesForTrainQuery, {
+	const rides = await labDb.operation.simplifiedRides.queryFromString(findRidesForTrainQuery, {
 		1: ML_AGENCY_ID,
 		2: destinationStop.name,
 		3: now.minus({ hours: 1 }).unix_milliseconds,
