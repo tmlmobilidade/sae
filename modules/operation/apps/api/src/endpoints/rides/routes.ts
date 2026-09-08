@@ -15,7 +15,7 @@ import { getRideHandler } from './handlers/get-ride.js';
 import { getSimplifiedVehicleEventsHandler } from './handlers/get-vehicle-events.js';
 import { listAgenciesHandler } from './handlers/list-agencies.js';
 import { listRidesHandler } from './handlers/list-rides.js';
-import { reprocessRideHandler } from './handlers/reprocess-ride.js';
+import { updateProcessingStatusHandler } from './handlers/update-processing-status.js';
 
 /* * */
 
@@ -55,7 +55,7 @@ server.register(
 
 		instance.get('/:id/apex-refunds', { preHandler: authorizationMiddleware('rides', ['analysis_read']) }, getSimplifiedApexOnBoardRefundsHandler);
 
-		instance.get('/:id/reprocess', { preHandler: authorizationMiddleware('rides', ['analysis_update']) }, reprocessRideHandler);
+		instance.patch('/:id/processing-status', { preHandler: authorizationMiddleware('rides', ['analysis_reprocess']) }, updateProcessingStatusHandler);
 
 		// instance.get('/favorites', { preHandler: authorizationMiddleware('rides', ['analysis_read']) }, (request: FastifyRequest<{ Querystring: { ids: string } }>, reply: FastifyReply<RideNormalized[]>) => RidesSharedController.getRideByIds(request, reply, 'rides', 'analysis_read'));
 
