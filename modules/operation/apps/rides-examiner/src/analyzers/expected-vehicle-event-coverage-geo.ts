@@ -1,11 +1,14 @@
 /* * */
 
-import { type RideAnalysisExpectedVehicleEventCoverageGeo, RideAnalysisExpectedVehicleEventCoverageGeoSchema, RideAnalysisExpectedVehicleEventDelaySchema } from '@tmlmobilidade/go-types-operation';
+import { type RideAnalysisExpectedVehicleEventCoverageGeo, RideAnalysisExpectedVehicleEventCoverageGeoSchema } from '@tmlmobilidade/go-types-operation';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
+import { getDistanceBetweenPositions } from '@tmlmobilidade/go-utils-geo';
 
 import { type AnalysisData } from '../types/analysis-data.js';
 
 /* * */
+
+const BUFFER_RADIUS = 50; // meters
 
 /**
  * This analyzer tests if at least 90% of all stops are covered by at least one vehicle event,
@@ -18,6 +21,20 @@ import { type AnalysisData } from '../types/analysis-data.js';
 export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisData): RideAnalysisExpectedVehicleEventCoverageGeo {
 	try {
 		//
+
+		if (!analysisData.hashed_trip?.length) {
+			return RideAnalysisExpectedVehicleEventCoverageGeoSchema.parse({
+				agency_id: analysisData.ride.agency_id,
+				grade_status: 'skip',
+				operational_date: analysisData.ride.operational_date,
+				reason: 'NO_PATH_DATA',
+				remarks: null,
+				ride_id: analysisData.ride._id,
+				stops_coverage_absolute: null,
+				stops_coverage_percentage: null,
+				updated_at: Dates.now('utc').unix_milliseconds,
+			});
+		}
 
 		if (!analysisData.vehicle_events.length) {
 			return RideAnalysisExpectedVehicleEventCoverageGeoSchema.parse({
@@ -36,78 +53,67 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 		//
 		// Evaluate each vehicle event
 
-		let countOfEventsWithDelay = 0;
-		let totalDelay = 0;
-		let minDelay = Infinity;
-		let maxDelay = -Infinity;
+		const stopsWithVehicleEvents = new Set<string>();
 
-		for (const vehicleEvent of analysisData.vehicle_events) {
-			const delayInMilliseconds = vehicleEvent.received_at - vehicleEvent.created_at;
-			totalDelay += delayInMilliseconds;
-			minDelay = Math.min(minDelay, delayInMilliseconds);
-			maxDelay = Math.max(maxDelay, delayInMilliseconds);
-			if (delayInMilliseconds >= MAX_DELAY_IN_MILLISECONDS) countOfEventsWithDelay++;
+		for (const pathWaypoint of analysisData.hashed_trip) {
+			for (const vehicleEvent of analysisData.vehicle_events) {
+				const distanceInMeters = getDistanceBetweenPositions(
+					[pathWaypoint.stop_lon, pathWaypoint.stop_lat],
+					[vehicleEvent.longitude, vehicleEvent.latitude],
+				);
+				if (distanceInMeters <= BUFFER_RADIUS) {
+					stopsWithVehicleEvents.add(pathWaypoint.stop_id);
+					break;
+				}
+			}
 		}
 
 		//
-		// Calculate delay metrics
+		// Calculate coverage metrics
 
-		const averageDelay = totalDelay / analysisData.vehicle_events.length;
-		const delayPercentage = (countOfEventsWithDelay / analysisData.vehicle_events.length) * 100;
+		const stopsCoveragePercentage = stopsWithVehicleEvents.size / analysisData.hashed_trip.length * 100;
 
 		//
 		// Return the result
 
-		if (countOfEventsWithDelay > 0) {
-			return RideAnalysisExpectedVehicleEventDelaySchema.parse({
+		if (stopsCoveragePercentage < 90) {
+			return RideAnalysisExpectedVehicleEventCoverageGeoSchema.parse({
 				agency_id: analysisData.ride.agency_id,
 				grade_status: 'fail',
-				observed_average_delay: averageDelay,
-				observed_max_delay: maxDelay,
-				observed_min_delay: minDelay,
 				operational_date: analysisData.ride.operational_date,
-				reason: 'UNEXPECTED_VEHICLE_EVENTS_DELAY',
+				reason: 'LESS_THAN_90_PCT_COVERAGE',
 				remarks: null,
 				ride_id: analysisData.ride._id,
+				stops_coverage_absolute: stopsWithVehicleEvents.size,
+				stops_coverage_percentage: stopsCoveragePercentage,
 				updated_at: Dates.now('utc').unix_milliseconds,
-				vehicle_events_qty: analysisData.vehicle_events.length,
-				vehicle_events_with_delay_percent: delayPercentage,
-				vehicle_events_with_delay_qty: countOfEventsWithDelay,
 			});
 		}
 
-		return RideAnalysisExpectedVehicleEventDelaySchema.parse({
+		return RideAnalysisExpectedVehicleEventCoverageGeoSchema.parse({
 			agency_id: analysisData.ride.agency_id,
 			grade_status: 'pass',
-			observed_average_delay: averageDelay,
-			observed_max_delay: maxDelay,
-			observed_min_delay: minDelay,
 			operational_date: analysisData.ride.operational_date,
-			reason: 'EXPECTED_VEHICLE_EVENTS_DELAY',
+			reason: '90_PCT_OR_MORE_COVERAGE',
 			remarks: null,
 			ride_id: analysisData.ride._id,
+			stops_coverage_absolute: stopsWithVehicleEvents.size,
+			stops_coverage_percentage: stopsCoveragePercentage,
 			updated_at: Dates.now('utc').unix_milliseconds,
-			vehicle_events_qty: analysisData.vehicle_events.length,
-			vehicle_events_with_delay_percent: delayPercentage,
-			vehicle_events_with_delay_qty: countOfEventsWithDelay,
 		});
 
 		//
 	} catch (error) {
-		return RideAnalysisExpectedVehicleEventDelaySchema.parse({
+		return RideAnalysisExpectedVehicleEventCoverageGeoSchema.parse({
 			agency_id: analysisData.ride.agency_id,
 			grade_status: 'error',
-			observed_average_delay: null,
-			observed_max_delay: null,
-			observed_min_delay: null,
 			operational_date: analysisData.ride.operational_date,
 			reason: null,
 			remarks: error.message,
 			ride_id: analysisData.ride._id,
+			stops_coverage_absolute: null,
+			stops_coverage_percentage: null,
 			updated_at: Dates.now('utc').unix_milliseconds,
-			vehicle_events_qty: null,
-			vehicle_events_with_delay_percent: null,
-			vehicle_events_with_delay_qty: null,
 		});
 	}
 };
