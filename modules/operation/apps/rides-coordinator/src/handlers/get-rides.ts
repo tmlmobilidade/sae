@@ -12,7 +12,7 @@ let IS_BUSY = false;
 
 /* * */
 
-export async function getRides(): Promise<RidesCoordinatorRidesResponse> {
+export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> {
 	//
 
 	const timer = new Timer();

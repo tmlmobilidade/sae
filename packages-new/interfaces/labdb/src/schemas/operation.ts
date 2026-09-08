@@ -1,7 +1,7 @@
 /* * */
 
 import { type ClickHouseTableSchema } from '@tmlmobilidade/go-clients-clickhouse';
-import { type HashedShape, type HashedTrip, type RideAnalysisAtLeastOneVehicleEventOnFirstStop, type RideAnalysisAtLeastOneVehicleEventOnLastStop, type RideAnalysisBase, type RideAnalysisExpectedApexValidationInterval, type RideAnalysisExpectedDriverIdQty, type RideAnalysisExpectedStartTime, type RideAnalysisExpectedVehicleEventCoverageGeo, type RideAnalysisExpectedVehicleEventDelay, type RideAnalysisExpectedVehicleEventInterval, type RideAnalysisExpectedVehicleEventQty, type RideAnalysisExpectedVehicleIdQty, type RideAnalysisMatchingApexLocations, type RideAnalysisMatchingVehicleIds, type RideAnalysisSimpleOneApexValidation, type RideAnalysisSimpleOneVehicleEventOrApexValidation, type RideAnalysisSimpleThreeVehicleEvents, type RideAnalysisTransactionSequentiality, type RideMatch, type SimplifiedRide } from '@tmlmobilidade/go-types-operation';
+import { type HashedShape, type HashedTrip, type RideAnalysisAtLeastOneVehicleEventOnFirstStop, type RideAnalysisAtLeastOneVehicleEventOnLastStop, type RideAnalysisBase, type RideAnalysisExpectedApexValidationInterval, type RideAnalysisExpectedDriverIdQty, type RideAnalysisExpectedStartTime, type RideAnalysisExpectedVehicleEventCoverageGeo, type RideAnalysisExpectedVehicleEventDelay, type RideAnalysisExpectedVehicleEventInterval, type RideAnalysisExpectedVehicleEventQty, type RideAnalysisExpectedVehicleIdQty, type RideAnalysisMatchingApexLocations, type RideAnalysisMatchingVehicleIds, type RideAnalysisSimpleOneApexValidation, type RideAnalysisSimpleOneVehicleEventOrApexValidation, type RideAnalysisSimpleThreeVehicleEvents, type RideAnalysisTransactionSequentiality, type SimplifiedRide } from '@tmlmobilidade/go-types-operation';
 import { type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-events';
 
 /* * */
@@ -176,19 +176,6 @@ export const rideAnalysisTransactionSequentialityTableSchema: ClickHouseTableSch
 	expected_transactions_qty: { type: 'Nullable(UInt16) CODEC(T64, ZSTD)' },
 	found_transactions_qty: { type: 'Nullable(UInt16) CODEC(T64, ZSTD)' },
 	missing_transactions_qty: { type: 'Nullable(UInt16) CODEC(T64, ZSTD)' },
-};
-
-/* * */
-
-export const rideMatchesTableSchema: ClickHouseTableSchema<RideMatch> = {
-	_id: { type: 'String' },
-	agency_id: { type: 'LowCardinality(String)' },
-	operational_dates: { type: 'Array(UInt32) CODEC(ZSTD)' },
-	processing_status: { type: 'LowCardinality(String)' },
-	trip_id: { type: 'LowCardinality(String)' },
-	updated_at: { type: 'Int64 CODEC(DoubleDelta, ZSTD)' },
-	window_end: { type: 'Int64 CODEC(DoubleDelta, ZSTD)' },
-	window_start: { type: 'Int64 CODEC(DoubleDelta, ZSTD)' },
 };
 
 /* * */
