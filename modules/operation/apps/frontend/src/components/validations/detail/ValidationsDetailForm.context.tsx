@@ -9,7 +9,7 @@ import { createContext, type PropsWithChildren, useCallback, useContext, useMemo
 import useSWR from 'swr';
 
 import { useValidationsListData } from '../list/use-validations-list-data';
-import { useValidationsDetailData } from './use-validations-detail-data';
+import { useGtfsValidationsDetailData } from './use-gtfs-validations-detail-data';
 import { useValidationsDetailValidationId } from './use-validations-detail-validation-id';
 
 /* * */
@@ -51,7 +51,7 @@ export const ValidationsDetailContextProvider = ({ children }: PropsWithChildren
 
 	const { validationId } = useValidationsDetailValidationId();
 
-	const { data: validationData, error: validationError, isLoading: validationLoading, mutate: validationMutate } = useValidationsDetailData();
+	const { data: validationData, error: validationError, isLoading: validationLoading, mutate: validationMutate } = useGtfsValidationsDetailData();
 
 	//
 	// B. Fetch data

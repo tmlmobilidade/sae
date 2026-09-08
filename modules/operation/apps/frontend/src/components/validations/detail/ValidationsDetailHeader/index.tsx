@@ -1,8 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import { openApprovePlanModal } from '@/components/validations/detail/ApprovePlanModal';
-import { openRequestApprovalModalModal } from '@/components/validations/detail/RequestApprovalModal';
 import { useValidationsDetailContext } from '@/components/validations/detail/ValidationsDetailForm.context';
 import { PAGE_ROUTES } from '@tmlmobilidade/consts';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
@@ -12,6 +10,8 @@ import { keepUrlParams } from '@tmlmobilidade/ui';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
+import { openGtfsValidationsApproveModal } from '../../approve/GtfsValidationsApprove.modal';
+import { openGtfsValidationsRequestApprovalModal } from '../../request-approval/GtfsValidationsRequestApproval.modal';
 import { useGtfsValidationsAgenciesData } from '../../shared/use-gtfs-validations-agencies-data';
 
 /* * */
@@ -60,14 +60,6 @@ export function ValidationsDetailHeader() {
 		router.push(keepUrlParams(PAGE_ROUTES.operation.GTFS_VALIDATIONS_LIST));
 	};
 
-	const handleApprovePlan = () => {
-		openApprovePlanModal(validationsDetailContext.data.validation._id);
-	};
-
-	const handleRequestApproval = () => {
-		openRequestApprovalModalModal(validationsDetailContext.data.validation._id);
-	};
-
 	//
 	// D. Render components
 
@@ -102,7 +94,7 @@ export function ValidationsDetailHeader() {
 					<Button
 						disabled={validationsDetailContext.flags.loading || validationsDetailContext.data.validation.notification_sent}
 						label="Pedir aprovação"
-						onClick={handleRequestApproval}
+						onClick={openGtfsValidationsRequestApprovalModal}
 						variant="secondary"
 					/>
 				</HasPermission>
@@ -119,7 +111,7 @@ export function ValidationsDetailHeader() {
 						disabled={validationsDetailContext.flags.loading}
 						label="Aprovar Plano"
 						loading={validationsDetailContext.flags.loading}
-						onClick={handleApprovePlan}
+						onClick={openGtfsValidationsApproveModal}
 					/>
 				</HasPermission>
 			)}

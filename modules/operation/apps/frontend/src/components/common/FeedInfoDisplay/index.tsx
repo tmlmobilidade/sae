@@ -57,6 +57,4 @@ export function FeedInfoDisplay({ data }: FeedInfoDisplayProps) {
 			<ValueDisplay label="feed_publisher_url" value={data?.feed_publisher_url || 'N/A'} />
 		</Grid>
 	);
-
-	//
 }

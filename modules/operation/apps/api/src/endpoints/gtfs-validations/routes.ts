@@ -39,7 +39,7 @@ server.register(
 
 		instance.get('/:id/request-approval', { preHandler: authorizationMiddleware('gtfs_validations', ['request_approval']) }, requestApprovalHandler);
 
-		instance.post('/:id/approve', { preHandler: authorizationMiddleware('plans', ['create']) }, approveGtfsValidationHandler);
+		instance.get('/:id/approve', { preHandler: authorizationMiddleware('plans', ['create']) }, approveGtfsValidationHandler);
 
 		instance.get('/:id/lock', { preHandler: authorizationMiddleware('gtfs_validations', ['lock']) }, lockGtfsValidationHandler);
 
