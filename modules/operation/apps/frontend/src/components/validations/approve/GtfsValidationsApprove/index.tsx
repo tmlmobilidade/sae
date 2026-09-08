@@ -30,10 +30,11 @@ export function GtfsValidationsApprove() {
 	//
 	// B. Handle actions
 
-	const { action: handleApproveGtfsValidation, isLoading: isApprovingGtfsValidation } = useHandleAction({
+	const { action: handleApproveGtfsValidation, isLoading: isLoadingGtfsValidationApprove } = useHandleAction({
 		fetchFn: async () => await fetchApiData<Plan>({ method: 'GET', url: API_ROUTES.operation.GTFS_VALIDATIONS_DETAIL_APPROVE(gtfsValidationData._id) }),
 		onSuccess: ({ data }) => {
 			if (!data?._id) return;
+			closeGtfsValidationsApproveModal();
 			router.push(PAGE_ROUTES.operation.PLANS_DETAIL(data._id));
 		},
 	});
@@ -80,7 +81,7 @@ export function GtfsValidationsApprove() {
 			<Section>
 				<Grid columns="ab" gap="md">
 					<Button
-						disabled={isLoading}
+						disabled={isLoading || isLoadingGtfsValidationApprove}
 						label="Cancelar"
 						onClick={closeGtfsValidationsApproveModal}
 						variant="secondary"
@@ -88,7 +89,7 @@ export function GtfsValidationsApprove() {
 					<Tooltip label="Lembra-te de ajustar as datas de validade do plano depois de aprovado">
 						<Button
 							label="Aprovar"
-							loading={isApprovingGtfsValidation}
+							loading={isLoadingGtfsValidationApprove}
 							onClick={handleApproveGtfsValidation}
 						/>
 					</Tooltip>

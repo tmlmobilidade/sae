@@ -27,7 +27,7 @@ export function GtfsValidationsRequestApproval() {
 	//
 	// B. Handle actions
 
-	const { action: handleRequestApprovalGtfsValidation, isLoading: isApprovingGtfsValidation } = useHandleAction({
+	const { action: handleRequestApprovalGtfsValidation, isLoading: isLoadingGtfsValidationRequestApproval } = useHandleAction({
 		fetchFn: async () => await fetchApiData<Plan>({ method: 'GET', url: API_ROUTES.operation.GTFS_VALIDATIONS_DETAIL_REQUEST_APPROVAL(gtfsValidationData._id) }),
 		onSuccess: () => {
 			mutate();
@@ -77,14 +77,14 @@ export function GtfsValidationsRequestApproval() {
 			<Section>
 				<Grid columns="ab" gap="md">
 					<Button
-						disabled={isLoading}
+						disabled={isLoading || isLoadingGtfsValidationRequestApproval}
 						label="Cancelar"
 						onClick={closeGtfsValidationsRequestApprovalModal}
 						variant="secondary"
 					/>
 					<Button
 						label="Solicitar Aprovação"
-						loading={isApprovingGtfsValidation}
+						loading={isLoadingGtfsValidationRequestApproval}
 						onClick={handleRequestApprovalGtfsValidation}
 					/>
 				</Grid>
