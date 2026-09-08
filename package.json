@@ -87,6 +87,8 @@
 		"dev:offer": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-offer-api --filter=@tmlmobilidade/go-offer-frontend",
 		"dev:offer:gtfs-exporter": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-offer-gtfs-exporter",
 		"dev:operation": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-*",
+		"dev:operation:export-posters": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-export-posters",
+		"dev:operation:gtfs-validator": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-gtfs-validator",
 		"dev:operation:organizer": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-organizer",
 		"dev:operation:rides-acceptor": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-rides-acceptor",
 		"dev:operation:rides-cleaner": "npm run repo:load-env-stg -- turbo run dev --filter=@tmlmobilidade/go-operation-rides-cleaner",
