@@ -453,7 +453,7 @@ export const API_ROUTES = Object.freeze({
 		RIDES_DETAIL_APEX_VALIDATIONS: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/apex-validations`,
 		RIDES_DETAIL_HASHED_SHAPE: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/hashed-shape`,
 		RIDES_DETAIL_HASHED_TRIP: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/hashed-trip`,
-		RIDES_DETAIL_REPROCESS: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/reprocess`,
+		RIDES_DETAIL_PROCESSING_STATUS: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/processing-status`,
 		RIDES_DETAIL_RIDE: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/ride`,
 		RIDES_DETAIL_VEHICLE_EVENTS: (id: string) => `${getModuleConfig('operation', 'api_url')}/rides/${encodeURIComponent(id)}/vehicle-events`,
 		RIDES_FAVORITES: `${getModuleConfig('operation', 'api_url')}/rides/favorites`,

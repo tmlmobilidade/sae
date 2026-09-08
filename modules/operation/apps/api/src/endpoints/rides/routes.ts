@@ -55,7 +55,7 @@ server.register(
 
 		instance.get('/:id/apex-refunds', { preHandler: authorizationMiddleware('rides', ['analysis_read']) }, getSimplifiedApexOnBoardRefundsHandler);
 
-		instance.patch('/:id/processing-status', { preHandler: authorizationMiddleware('rides', ['analysis_reprocess']) }, updateProcessingStatusHandler);
+		instance.put('/:id/processing-status', { preHandler: authorizationMiddleware('rides', ['analysis_reprocess']) }, updateProcessingStatusHandler);
 
 		// instance.get('/favorites', { preHandler: authorizationMiddleware('rides', ['analysis_read']) }, (request: FastifyRequest<{ Querystring: { ids: string } }>, reply: FastifyReply<RideNormalized[]>) => RidesSharedController.getRideByIds(request, reply, 'rides', 'analysis_read'));
 

@@ -1,7 +1,10 @@
 'use client';
 
-import { PAGE_ROUTES } from '@tmlmobilidade/consts';
-import { CloseButton, IdTag, keepUrlParams, LoadingActivity, OperationalStatusDisplay, ProcessingStatusDisplay, SegmentedControl, Spacer, Toolbar } from '@tmlmobilidade/ui';
+import { API_ROUTES, PAGE_ROUTES } from '@tmlmobilidade/consts';
+import { SimplifiedRide } from '@tmlmobilidade/go-types-operation';
+import { hasPermissionResource } from '@tmlmobilidade/go-types-permissions';
+import { ProcessingStatus } from '@tmlmobilidade/go-types-shared';
+import { CloseButton, fetchApiData, IdTag, keepUrlParams, LoadingActivity, OperationalStatusDisplay, ProcessingStatusDisplay, SegmentedControl, Spacer, Toolbar, useHandleAction, useMeData } from '@tmlmobilidade/ui';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +30,8 @@ export function RidesDetailHeader() {
 	const router = useRouter();
 
 	const { t } = useTranslation();
+
+	const { data: meData } = useMeData();
 
 	const { rideId } = useRidesDetailRideId();
 	const { availableViews, currentView, setCurrentView } = useRidesDetailCurrentView();
@@ -56,12 +61,25 @@ export function RidesDetailHeader() {
 	// 	return rideFavoritesContext.data.favorites.includes(rideAnalysisContext.data.ride_id);
 	// }, [rideAnalysisContext.data.ride_id, rideFavoritesContext.data.favorites]);
 
+	const hasPermissionToChangeProcessingStatus = useMemo(() => {
+		return hasPermissionResource(meData.permissions, {
+			requiredPermission: { action: 'analysis_reprocess', scope: 'rides' },
+			requiredValue: rideData?.agency_id,
+			resourceKey: 'agency_ids',
+		});
+	}, [meData.permissions, rideData?.agency_id]);
+
 	//
 	// C. Handle actions
 
 	const handleClose = () => {
 		router.push(keepUrlParams(PAGE_ROUTES.operation.RIDES_LIST));
 	};
+
+	const { action: handleUpdateProcessingStatus, isLoading: isUpdatingRideProcessingStatus } = useHandleAction<SimplifiedRide, ProcessingStatus>({
+		fetchFn: async data => await fetchApiData<SimplifiedRide, { processing_status: ProcessingStatus }>({ body: { processing_status: data }, method: 'PUT', url: API_ROUTES.operation.RIDES_DETAIL_PROCESSING_STATUS(rideId) }),
+		onSuccess: () => {},
+	});
 
 	// const handleToggleFavorite = () => {
 	// 	if (!rideAnalysisContext.data.ride_id || rideFavoritesContext.flags.loading) return;
@@ -81,7 +99,11 @@ export function RidesDetailHeader() {
 				isValidating={rideIsValidating || rideAnalysesIsValidating || hashedTripIsValidating || simplifiedApexBankingTapsIsValidating || simplifiedApexValidationsIsValidating || simplifiedApexSalesIsValidating || simplifiedApexRefundsIsValidating}
 				timestamp={[rideTimestamp, rideAnalysesTimestamp, hashedTripTimestamp, simplifiedApexBankingTapsTimestamp, simplifiedApexValidationsTimestamp, simplifiedApexSalesTimestamp, simplifiedApexRefundsTimestamp]}
 			/>
-			<ProcessingStatusDisplay disabled={true} value={rideData?.processing_status} />
+			<ProcessingStatusDisplay
+				disabled={!hasPermissionToChangeProcessingStatus || isUpdatingRideProcessingStatus}
+				onChange={handleUpdateProcessingStatus}
+				value={rideData?.processing_status}
+			/>
 			{/* <GradeStatusDisplay value={rideData?.analysis_simple_three_vehicle_events_grade} /> */}
 			<OperationalStatusDisplay value={rideData?.operational_status} />
 			{/* <IconButton
