@@ -1,7 +1,7 @@
 /* * */
 
 import { type SimplifiedMongoIndex } from '@tmlmobilidade/go-clients-mongo';
-import { type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
+import { type Ride } from '@tmlmobilidade/go-types-operation';
 
 /* * */
 
@@ -11,7 +11,7 @@ import { type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
  * The order of keys in a compound index is very important and should be
  * carefully considered based on the cardinality of each key.
  */
-export const ridesIndexes: SimplifiedMongoIndex<RideWithAnalyses>[] = [
+export const ridesIndexes: SimplifiedMongoIndex<Ride>[] = [
 	{ key: { hashed_trip_id: 1 } },
 	{ key: { hashed_shape_id: 1 } },
 	{ key: { operational_date: 1 } },

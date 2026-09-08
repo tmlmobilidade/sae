@@ -30,6 +30,4 @@ export function AgencyDisplay({ data }: AgencyDisplayProps) {
 			<ValueDisplay label="agency_phone" value={data.agency_phone || 'N/A'} />
 		</Grid>
 	);
-
-	//
 }

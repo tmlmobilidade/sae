@@ -2,9 +2,9 @@
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
+import { getRideHash, setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
 import { storageProvider } from '@tmlmobilidade/go-providers-storage';
-import { type HashedShape, type HashedTrip, type Plan, type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
+import { HashableRide, type HashedShape, type HashedTrip, type Plan, type Ride, RideSchema } from '@tmlmobilidade/go-types-operation';
 import { HexColorSchema, NonNegativeIntegerSchema, OperationalDateIntSchema } from '@tmlmobilidade/go-types-shared';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { BatchWriter, startHeartbeat } from '@tmlmobilidade/go-utils-exec';
@@ -19,7 +19,7 @@ import { toHashedTrip } from '../utils/to-hashed-trip.js';
 
 /* * */
 
-const ridesWriter = new BatchWriter<RideWithAnalyses>({
+const ridesWriter = new BatchWriter<Ride>({
 	batch_size: 10_000,
 	insertFn: async (data) => {
 		await goDb.operation.rides.insertManyUnsafe(data);
@@ -254,7 +254,7 @@ export async function parsePlanTask(planData: Plan) {
 					//
 					// Build the final Ride objects
 
-					const finalRide: RideWithAnalyses = {
+					const hashableRide: HashableRide = {
 						_id: uniqueIdValueForRide,
 						agency_code: agencyData.code,
 						agency_id: planData.agency_id,
@@ -303,6 +303,13 @@ export async function parsePlanTask(planData: Plan) {
 						updated_at: Dates.now('utc').unix_milliseconds,
 						vehicle_ids: [],
 					};
+
+					const rideHashValue = getRideHash(hashableRide);
+
+					const finalRide = RideSchema.parse({
+						...hashableRide,
+						hash: rideHashValue,
+					});
 
 					//
 					// Save this Ride document to the database using the

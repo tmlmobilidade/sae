@@ -1,6 +1,6 @@
 /* * */
 
-import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { performInChunks } from '@tmlmobilidade/go-utils-exec';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
@@ -23,7 +23,7 @@ export async function cleanupOrphanRidesForPlan(planId: string, savedRideIds: Se
 	//
 	// Setup a stream for all Ride IDs that are in use by Rides
 
-	const existingRideIds = await labDb.operation.rides.distinct('_id', 'plan_id = $1', { 1: planId });
+	const existingRideIds = await goDb.operation.rides.distinct('_id', { planId: planId });
 	const staleRideIds = new Set<string>();
 
 	for (const rideId of existingRideIds) {
@@ -36,9 +36,9 @@ export async function cleanupOrphanRidesForPlan(planId: string, savedRideIds: Se
 	Logger.info({ message: `Will delete ${staleRideIds.size} stale rides for plan "${planId}". (${timer.get()})` });
 
 	await performInChunks(Array.from(staleRideIds), async (chunk) => {
-		await labDb.operation.rides.delete('_id IN ($1)', { 1: chunk.join(',') });
+		await goDb.operation.rides.deleteMany({ _id: { $in: chunk } });
 		Logger.info({ message: `Deleted ${chunk.length} stale rides for plan "${planId}"` });
-	}, 150);
+	}, 500);
 
 	Logger.info({ message: `Completed delete stale rides for plan "${planId}". (${timer.get()})` });
 

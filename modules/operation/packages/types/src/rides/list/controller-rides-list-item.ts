@@ -1,12 +1,12 @@
 /* * */
 
-import { RideAcceptanceStatusSchema, RideSchema } from '@tmlmobilidade/go-types-operation';
+import { RideAcceptanceStatusSchema, SimplifiedRideSchema } from '@tmlmobilidade/go-types-operation';
 import { DelayStatusSchema, GradeStatusSchema, OperationalStatusSchema, SeenStatusSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
 
 /* * */
 
-export const ControllerRidesListItemSchema = RideSchema
+export const ControllerRidesListItemSchema = SimplifiedRideSchema
 	.pick({
 		_id: true,
 		agency_id: true,

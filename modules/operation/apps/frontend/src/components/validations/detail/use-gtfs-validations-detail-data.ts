@@ -11,7 +11,7 @@ import { useValidationsDetailValidationId } from './use-validations-detail-valid
 
 /* * */
 
-interface UseValidationsDetailDataReturnType {
+interface UseGtfsValidationsDetailDataReturnType {
 	data: GtfsValidation | null
 	error: null | string
 	isLoading: boolean
@@ -22,14 +22,13 @@ interface UseValidationsDetailDataReturnType {
 
 /* * */
 
-export function useValidationsDetailData(validationIdOverride?: string): UseValidationsDetailDataReturnType {
+export function useGtfsValidationsDetailData(): UseGtfsValidationsDetailDataReturnType {
 	//
 
 	//
 	// A. Setup variables
 
-	const { validationId: routeValidationId } = useValidationsDetailValidationId();
-	const validationId = validationIdOverride ?? routeValidationId;
+	const { validationId } = useValidationsDetailValidationId();
 
 	//
 	// B. Fetch data

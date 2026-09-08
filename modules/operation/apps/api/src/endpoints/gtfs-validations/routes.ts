@@ -2,6 +2,7 @@
 
 import { authorizationMiddleware, FastifyService } from '@tmlmobilidade/go-clients-fastify';
 
+import { approveGtfsValidationHandler } from './handlers/approve-gtfs-validation.js';
 import { createGtfsValidationHandler } from './handlers/create-gtfs-validation.js';
 import { downloadGtfsValidationFileHandler } from './handlers/download-gtfs-validation-file.js';
 import { getGtfsValidationFileHandler } from './handlers/get-gtfs-validation-file.js';
@@ -37,6 +38,8 @@ server.register(
 		instance.get('/:id/file/download', { preHandler: authorizationMiddleware('gtfs_validations', ['read']) }, downloadGtfsValidationFileHandler);
 
 		instance.get('/:id/request-approval', { preHandler: authorizationMiddleware('gtfs_validations', ['request_approval']) }, requestApprovalHandler);
+
+		instance.get('/:id/approve', { preHandler: authorizationMiddleware('plans', ['create']) }, approveGtfsValidationHandler);
 
 		instance.get('/:id/lock', { preHandler: authorizationMiddleware('gtfs_validations', ['lock']) }, lockGtfsValidationHandler);
 

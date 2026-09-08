@@ -2,8 +2,8 @@
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type RidesCoordinatorRidesResponse } from '@tmlmobilidade/go-operation-pckg-types';
-import { getCoordinatorUrl } from '@tmlmobilidade/go-operation-pckg-utils';
-import { type RideWithAnalyses, RideWithAnalysesSchema } from '@tmlmobilidade/go-types-operation';
+import { getCoordinatorUrl, getRideHash } from '@tmlmobilidade/go-operation-pckg-utils';
+import { type HashableRide, RideSchema } from '@tmlmobilidade/go-types-operation';
 import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
@@ -13,20 +13,19 @@ import { augmentRide } from './utils/augment-ride.js';
 import { fetchAnalysisData } from './utils/fetch-analysis-data.js';
 
 /* * */
+//
+// Initialize Sentry
+
+try {
+	await initSentryNode();
+	Logger.startNodeLogs({ app: 'rides-examiner', message: 'Sentry Rides Examiner initialized', module: 'controller', severity: 'info' });
+} catch (error) {
+	Logger.error({ error, message: 'Error initializing Sentry Rides Examiner' });
+}
 
 export async function validateRides() {
 	try {
 		//
-
-		//
-		// Initialize Sentry
-
-		try {
-			await initSentryNode();
-			Logger.startNodeLogs({ app: 'rides-examiner', message: 'Sentry Rides Examiner initialized', module: 'controller', severity: 'info' });
-		} catch (error) {
-			Logger.error({ error, message: 'Error initializing Sentry Rides Examiner' });
-		}
 
 		//
 		// Initialize the logger
@@ -93,8 +92,9 @@ export async function validateRides() {
 				});
 
 				//
-				//
-				const rideWithAnalyses: RideWithAnalyses = {
+				// Build the hashable ride object and get the hash value
+
+				const hashableRide: HashableRide = {
 					...augmentedRideData,
 					analyses: analyzeRide({
 						apex_banking_taps: analysisData.apex_banking_taps,
@@ -109,29 +109,32 @@ export async function validateRides() {
 					}),
 				};
 
-				if (!rideWithAnalyses.analyses) {
-					throw new Error('No analyses found for ride: ' + rideData._id);
-				}
-
-				//
-				// Run the analyzers and count how many passed,
-				// how many failed and how many errored.
-
-				const skipAnalysisCount = Object.entries(rideWithAnalyses.analyses).filter(([, value]) => value.grade_status === 'skip').map(([key]) => key);
-				const passAnalysisCount = Object.entries(rideWithAnalyses.analyses).filter(([, value]) => value.grade_status === 'pass').map(([key]) => key);
-				const failAnalysisCount = Object.entries(rideWithAnalyses.analyses).filter(([, value]) => value.grade_status === 'fail').map(([key]) => key);
-				const errorAnalysisCount = Object.entries(rideWithAnalyses.analyses).filter(([, value]) => value.grade_status === 'error').map(([key]) => key);
+				const rideHashValue = getRideHash(hashableRide);
 
 				//
 				// Update the current Ride with the analysis result
 				// and 'complete' status to indicate that the ride has been processed.
 
-				const validatedRide = RideWithAnalysesSchema.parse(augmentedRideData);
+				const validatedRide = RideSchema.parse({
+					...hashableRide,
+					hash: rideHashValue,
+				});
 
 				await goDb.operation.rides.updateById(rideData._id, {
 					...validatedRide,
 					processing_status: 'complete',
 				});
+
+				//
+				// Run the analyzers and count how many passed,
+				// how many failed and how many errored.
+
+				if (!validatedRide.analyses) throw new Error(`Analyses object is unavailable for ride after analysis run: ${rideData._id}`);
+
+				const skipAnalysisCount = Object.entries(validatedRide.analyses).filter(([, value]) => value.grade_status === 'skip').map(([key]) => key);
+				const passAnalysisCount = Object.entries(validatedRide.analyses).filter(([, value]) => value.grade_status === 'pass').map(([key]) => key);
+				const failAnalysisCount = Object.entries(validatedRide.analyses).filter(([, value]) => value.grade_status === 'fail').map(([key]) => key);
+				const errorAnalysisCount = Object.entries(validatedRide.analyses).filter(([, value]) => value.grade_status === 'error').map(([key]) => key);
 
 				Logger.info({ message: [
 					'[', { a: 'right', c: 7, t: `${ridesBatch.length - rideIndex}/${ridesBatch.length}` }, ']',
