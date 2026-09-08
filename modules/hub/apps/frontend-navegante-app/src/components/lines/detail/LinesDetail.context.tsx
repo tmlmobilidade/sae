@@ -1,8 +1,9 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
-import { useLinesContext } from '@/components/lines/Lines.context';
-import { useStopsContext } from '@/components/stops/Stops.context';
+import { useAlertsData } from '@/components/alerts/use-alerts-data';
+import { useLinesData } from '@/components/lines/use-lines-data';
+import { useRoutesData } from '@/components/lines/use-routes-data';
+import { useStopsData } from '@/components/stops/use-stops-data';
 import { useOperationalDate } from '@/hooks/transit/useOperationalDate';
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type HubAlert, type HubLine, type HubPattern, type HubRoute, type HubShape, type HubWaypoint } from '@tmlmobilidade/go-types-hub';
@@ -59,9 +60,10 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 	//
 	// A. Setup variables
 
-	const linesContext = useLinesContext();
-	const stopsContext = useStopsContext();
-	const alertsContext = useAlertsContext();
+	const { data: alerts } = useAlertsData();
+	const { data: lines, isLoading: isLinesLoading } = useLinesData();
+	const { data: routes, isLoading: isRoutesLoading } = useRoutesData();
+	const { data: stops, isLoading: isStopsLoading } = useStopsData();
 
 	const { selectedOperationalDate } = useOperationalDate();
 
@@ -83,13 +85,13 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 
 	const selectedLineData = useMemo(() => {
 		if (!lineId) return;
-		return linesContext.data.lines.find(item => item._id === lineId);
-	}, [lineId, linesContext.data.lines]);
+		return lines.find(item => item._id === lineId);
+	}, [lineId, lines]);
 
 	const availableRoutesData = useMemo(() => {
 		if (!selectedLineData?.route_ids?.length) return;
-		return linesContext.data.routes.filter(item => selectedLineData.route_ids.includes(item._id));
-	}, [linesContext.data.routes, selectedLineData?.route_ids]);
+		return routes.filter(item => selectedLineData.route_ids.includes(item._id));
+	}, [routes, selectedLineData?.route_ids]);
 
 	useEffect(() => {
 		setDataAllPatternsState(null);
@@ -121,7 +123,7 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 							const patternData = Array.isArray(patternPayload) ? patternPayload : patternPayload.data ?? [];
 							return patternData.map((patternGroup) => {
 								patternGroup.path = patternGroup.path.map((waypoint) => {
-									const stopData = stopsContext.actions.getStopById(waypoint.stop_id);
+									const stopData = stops.find(stop => String(stop._id) === String(waypoint.stop_id));
 									if (!stopData) return waypoint;
 									return { ...waypoint, stop: stopData };
 								});
@@ -139,7 +141,7 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 		return () => {
 			isCancelled = true;
 		};
-	}, [selectedLineData, stopsContext.actions, stopsContext.data.stops]);
+	}, [selectedLineData, stops]);
 
 	/**
 	 * TASK: Fetch shape data for the active pattern.
@@ -206,10 +208,8 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 	}, [dataAllPatternsState, selectedOperationalDate]);
 
 	useEffect(() => {
-		if (!alertsContext.data.alerts) return;
-
-		const activeAlerts = alertsContext.data.alerts.filter((row) => {
-			if (!alertsContext.actions.getAlertById(row._id).active_period_start_date && alertsContext.actions.getAlertById(row._id).active_period_end_date) return false;
+		const activeAlerts = alerts.filter((row) => {
+			if (!row.active_period_start_date && row.active_period_end_date) return false;
 			return row.references.some((reference) => {
 				const normalizedLineId = lineId?.trim();
 				const lineAgencyId = selectedLineData?.agency_id?.trim();
@@ -235,7 +235,7 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 		});
 
 		setDataActiveAlertsState(activeAlerts);
-	}, [alertsContext.data.alerts, lineId, selectedLineData, dataAllPatternsState, alertsContext.actions]);
+	}, [alerts, lineId, selectedLineData, dataAllPatternsState]);
 
 	//
 	// D. Handle actions
@@ -387,9 +387,9 @@ export function LinesDetailContextProvider({ children, lineId }: PropsWithChildr
 		},
 		flags: {
 			is_interactive_mode: flagIsInteractiveModeState,
-			is_loading: linesContext.flags.is_loading || stopsContext.flags.is_loading || availableRoutesData === null || dataAllPatternsState === null,
+			is_loading: isLinesLoading || isRoutesLoading || isStopsLoading || availableRoutesData === null || dataAllPatternsState === null,
 		},
-	}), [availableRoutesData, dataActiveAlertsState, dataActivePatternState, dataActiveShapeState, dataActiveWaypointState, dataAllPatternsState, dataHighlightedTripIdsState, dataValidPatternsState, filterActivePatternIdState, filterActiveWaypointStopIdState, filterActiveWaypointStopSequenceState, flagIsInteractiveModeState, linesContext.flags.is_loading, selectedLineData, setActivePattern, setActiveWaypoint, setHighlightedTripIds, stopsContext.flags.is_loading]);
+	}), [availableRoutesData, dataActiveAlertsState, dataActivePatternState, dataActiveShapeState, dataActiveWaypointState, dataAllPatternsState, dataHighlightedTripIdsState, dataValidPatternsState, filterActivePatternIdState, filterActiveWaypointStopIdState, filterActiveWaypointStopSequenceState, flagIsInteractiveModeState, isLinesLoading, isRoutesLoading, isStopsLoading, selectedLineData, setActivePattern, setActiveWaypoint, setHighlightedTripIds]);
 
 	//
 	// F. Render components

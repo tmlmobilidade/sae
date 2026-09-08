@@ -1,8 +1,8 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
-import { useLinesContext } from '@/components/lines/Lines.context';
-import { useStopsContext } from '@/components/stops/Stops.context';
+import { useAlertsData } from '@/components/alerts/use-alerts-data';
+import { useLinesData } from '@/components/lines/use-lines-data';
+import { useStopsData } from '@/components/stops/use-stops-data';
 import { useUserLocation } from '@/contexts/UserLocation.context';
 import { useMotisGeocode } from '@/hooks/search/useMotisGeocode';
 import { type SearchGroup, type SearchResult } from '@/types/common/search';
@@ -39,9 +39,9 @@ export function useSearch(query: string): UseSearchResult {
 
 	// A. Setup variables
 
-	const alertsContext = useAlertsContext();
-	const linesContext = useLinesContext();
-	const stopsContext = useStopsContext();
+	const { data: alerts } = useAlertsData();
+	const { data: lines } = useLinesData();
+	const { data: stops } = useStopsData();
 	const userLocationContext = useUserLocation();
 	const { t } = useTranslation();
 	const userCoordinates = useMemo(() => getSearchCoordinates(userLocationContext.data.location), [userLocationContext.data.location?.latitude, userLocationContext.data.location?.longitude]);
@@ -61,18 +61,18 @@ export function useSearch(query: string): UseSearchResult {
 	// C. Transform data
 
 	const groups = useMemo(() => {
-		if (!normalizedQuery) return getAgencyAlertGroup(alertsContext.data.alerts);
+		if (!normalizedQuery) return getAgencyAlertGroup(alerts);
 		if (normalizedQuery.length < 2) return [];
 
 		const results: SearchResult[] = [
-			...alertsContext.data.alerts.map(alert => toResult('alert', alert, `${alert.title} ${alert.description}`, normalizedQuery)),
-			...linesContext.data.lines.map(line => toResult('line', line, `${line.short_name} ${line.long_name}`, normalizedQuery)),
-			...stopsContext.data.stops.map(stop => toResult('stop', stop, `${stop.name} ${stop.short_name} ${stop.locality_name ?? ''} ${stop.municipality_name}`, normalizedQuery)),
+			...alerts.map(alert => toResult('alert', alert, `${alert.title} ${alert.description}`, normalizedQuery)),
+			...lines.map(line => toResult('line', line, `${line.short_name} ${line.long_name}`, normalizedQuery)),
+			...stops.map(stop => toResult('stop', stop, `${stop.name} ${stop.short_name} ${stop.locality_name ?? ''} ${stop.municipality_name}`, normalizedQuery)),
 			...motisSearch.data.map(location => toPoiResult(location, normalizedQuery)),
 		].filter((result): result is SearchResult => result !== null);
 
 		return groupResults(results);
-	}, [alertsContext.data.alerts, linesContext.data.lines, motisSearch.data, normalizedQuery, stopsContext.data.stops]);
+	}, [alerts, lines, motisSearch.data, normalizedQuery, stops]);
 
 	return { error: motisSearch.error, groups, isLoading: motisSearch.isLoading };
 }

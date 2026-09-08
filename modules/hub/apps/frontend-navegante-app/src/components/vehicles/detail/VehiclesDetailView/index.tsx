@@ -1,7 +1,7 @@
 'use client';
 
 import { CopyBadge } from '@/components/common/display/CopyBadge';
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
 import { useVehiclesDetailContext } from '@/components/vehicles/detail/VehiclesDetail.context';
 import { getAgencyLogo } from '@/lib/agency-logos-map';
 import { API_ROUTES } from '@tmlmobilidade/consts';
@@ -26,7 +26,7 @@ export function VehiclesDetailView() {
 
 	const { t } = useTranslation();
 
-	const linesContext = useLinesContext();
+	const { data: lines } = useLinesData();
 	const vehiclesDetailContext = useVehiclesDetailContext();
 
 	//
@@ -42,8 +42,8 @@ export function VehiclesDetailView() {
 
 	const activeLineData = useMemo(() => {
 		if (!vehiclesDetailContext.data.vehicle?.route_id) return;
-		return linesContext.data.lines.find(line => line._id === vehiclesDetailContext.data.vehicle?.route_id);
-	}, [linesContext.data.lines, vehiclesDetailContext.data.vehicle?.route_id]);
+		return lines.find(line => line._id === vehiclesDetailContext.data.vehicle?.route_id);
+	}, [lines, vehiclesDetailContext.data.vehicle?.route_id]);
 
 	const differenceInSeconds = useMemo(() => {
 		if (!vehiclesDetailContext.data.vehicle?.created_at) return;

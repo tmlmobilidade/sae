@@ -2,8 +2,9 @@
 
 import { VehiclesCounter } from '@/components/common/display/VehiclesCounter';
 import { useRoutePlannerContext } from '@/components/routes/RoutePlanner.context';
-import { useVehiclesContext } from '@/components/vehicles/Vehicles.context';
-import { filterVehicleFeatureCollectionByRouteDirections, getRoutePlannerItineraryRouteDirections } from '@/utils/route-planner/itinerary/vehicles';
+import { useVehiclesData } from '@/components/vehicles/use-vehicles-data';
+import { isVehicleIncludedInMap } from '@/utils/map/entity-feature-collections';
+import { getRoutePlannerItineraryRouteDirections, isVehicleInRouteDirections } from '@/utils/route-planner/itinerary/vehicles';
 import { useMemo } from 'react';
 
 /* * */
@@ -15,7 +16,7 @@ export function RoutePlannerVehiclesCounter() {
 	// A. Setup variables
 
 	const routePlannerContext = useRoutePlannerContext();
-	const vehiclesContext = useVehiclesContext();
+	const { data: vehicles } = useVehiclesData();
 
 	//
 	// B. Transform data
@@ -24,14 +25,16 @@ export function RoutePlannerVehiclesCounter() {
 		return getRoutePlannerItineraryRouteDirections(routePlannerContext.data.selected_itinerary);
 	}, [routePlannerContext.data.selected_itinerary]);
 
-	const vehiclesData = useMemo(() => {
-		return filterVehicleFeatureCollectionByRouteDirections(vehiclesContext.data.fc, routePlannerVehicleRouteDirections);
-	}, [routePlannerVehicleRouteDirections, vehiclesContext.data.fc]);
+	const vehicleCount = useMemo(() => {
+		return vehicles.filter((vehicle) => {
+			return isVehicleIncludedInMap(vehicle) && isVehicleInRouteDirections(vehicle, routePlannerVehicleRouteDirections);
+		}).length;
+	}, [routePlannerVehicleRouteDirections, vehicles]);
 
 	//
 	// C. Render components
 
-	return <VehiclesCounter count={vehiclesData.features.length} />;
+	return <VehiclesCounter count={vehicleCount} />;
 
 	//
 }

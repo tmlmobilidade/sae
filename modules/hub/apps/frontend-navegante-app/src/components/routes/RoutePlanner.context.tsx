@@ -1,6 +1,6 @@
 'use client';
 
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
 import { useUserLocation } from '@/contexts/UserLocation.context';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
 import { type MotisItinerary, type MotisPlanResponse, type RoutePlannerItineraryMapData, type RoutePlannerLocation, type RoutePlannerLocationSearchTarget, type RoutePlannerPlanViewMode, type RoutePlannerTravelTime, type RoutePlannerTravelTimeMode, type RoutePlannerViewMode } from '@/types/route-planner/models';
@@ -103,7 +103,7 @@ export function RoutePlannerContextProvider({ children }: PropsWithChildren) {
 
 	const { t } = useTranslation();
 	const { clearActiveBottomSheets, setActiveBottomSheet } = useBottomSheet();
-	const linesContext = useLinesContext();
+	const { data: lines } = useLinesData();
 	const { actions: { requestCurrentLocation }, data: { location: userLocation } } = useUserLocation();
 
 	const [destination, setDestinationState] = useState<null | RoutePlannerLocation>(null);
@@ -126,7 +126,7 @@ export function RoutePlannerContextProvider({ children }: PropsWithChildren) {
 
 	const routeMapData = useMemo(() => {
 		const lineStyleByShortName = new Map(
-			linesContext.data.lines.map(line => [
+			lines.map(line => [
 				line.short_name,
 				{
 					color: line.color,
@@ -136,7 +136,7 @@ export function RoutePlannerContextProvider({ children }: PropsWithChildren) {
 		);
 
 		return buildRoutePlannerItineraryMapData(selectedItinerary, origin, destination, { lineStyleByShortName });
-	}, [destination, linesContext.data.lines, origin, selectedItinerary]);
+	}, [destination, lines, origin, selectedItinerary]);
 
 	//
 	// C. Handle actions

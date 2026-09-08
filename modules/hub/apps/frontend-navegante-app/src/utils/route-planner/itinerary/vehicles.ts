@@ -40,10 +40,16 @@ export function filterVehicleFeatureCollectionByRouteDirections(
 		...vehiclesData,
 		features: vehiclesData.features.filter((feature) => {
 			const vehicle = feature.properties;
-			const routeDirection = getRoutePlannerRouteDirectionKey(vehicle?.route_id, vehicle?.direction_id, vehicle?.agency_id);
-			return routeDirection !== null && routeDirections.has(routeDirection);
+			return vehicle !== null && isVehicleInRouteDirections(vehicle, routeDirections);
 		}),
 	};
+}
+
+export function isVehicleInRouteDirections(vehicle: HubVehiclePosition, routeDirections: null | Set<string>) {
+	if (!routeDirections) return true;
+
+	const routeDirection = getRoutePlannerRouteDirectionKey(vehicle.route_id, vehicle.direction_id, vehicle.agency_id);
+	return routeDirection !== null && routeDirections.has(routeDirection);
 }
 
 export function getRoutePlannerRouteDirectionKey(routeId: null | string | undefined, directionId: null | number | string | undefined, agencyId: null | string | undefined) {

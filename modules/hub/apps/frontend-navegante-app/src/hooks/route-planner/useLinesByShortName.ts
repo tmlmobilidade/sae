@@ -1,14 +1,14 @@
 'use client';
 
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
 import { useMemo } from 'react';
 
 /* * */
 
 export function useLinesByShortName() {
-	const linesContext = useLinesContext();
+	const { data: lines } = useLinesData();
 
 	return useMemo(() => {
-		return new Map(linesContext.data.lines.map(line => [line.short_name, line]));
-	}, [linesContext.data.lines]);
+		return new Map(lines.map(line => [line.short_name, line]));
+	}, [lines]);
 }

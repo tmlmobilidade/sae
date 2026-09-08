@@ -1,8 +1,8 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
+import { useAlertsMapData } from '@/components/alerts/use-alerts-map-data';
 import { useLinesDetailContext } from '@/components/lines/detail/LinesDetail.context';
-import { useVehiclesContext } from '@/components/vehicles/Vehicles.context';
+import { useVehiclesMapData } from '@/components/vehicles/use-vehicles-map-data';
 import { useRoutePlannerMapData } from '@/hooks/base-map/useRoutePlannerMapData';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
 import { type BaseMapOperatorId } from '@/types/common/map';
@@ -26,10 +26,14 @@ export function useBaseMapDerivedData(params: UseBaseMapDerivedDataParams) {
 	//
 	// A. Setup variables
 
-	const alertsContext = useAlertsContext();
+	const { data: alertsFeatureCollection, entities: alerts } = useAlertsMapData();
 	const linesDetailContext = useLinesDetailContext();
-	const vehiclesContext = useVehiclesContext();
-	const routePlannerMapData = useRoutePlannerMapData({ activeBottomSheet: params.activeBottomSheet });
+	const { data: vehiclesFeatureCollection } = useVehiclesMapData();
+	const routePlannerMapData = useRoutePlannerMapData({
+		activeBottomSheet: params.activeBottomSheet,
+		alerts,
+		alertsFeatureCollection,
+	});
 
 	//
 	// B. Transform data
@@ -42,13 +46,13 @@ export function useBaseMapDerivedData(params: UseBaseMapDerivedDataParams) {
 
 	const alertsMapData = useMemo(() => {
 		return getBaseMapAlertsMapData({
-			alerts: alertsContext.data.alerts,
-			alertsData: alertsContext.data.fc,
+			alerts,
+			alertsData: alertsFeatureCollection,
 			excludedOperatorIds: params.excludedOperatorIds,
 			focusedAlertId: params.focusedAlertId,
 			routePlannerAlertsData: routePlannerMapData.alertsMapData,
 		});
-	}, [alertsContext.data.alerts, alertsContext.data.fc, params.excludedOperatorIds, params.focusedAlertId, routePlannerMapData.alertsMapData]);
+	}, [alerts, alertsFeatureCollection, params.excludedOperatorIds, params.focusedAlertId, routePlannerMapData.alertsMapData]);
 
 	const vehiclesMapData = useMemo(() => {
 		return getBaseMapVehiclesMapData({
@@ -56,9 +60,9 @@ export function useBaseMapDerivedData(params: UseBaseMapDerivedDataParams) {
 			focusedVehicleId: params.focusedVehicleId,
 			lineDetailShapeIds: lineDetailVehicleShapeIds,
 			routePlannerRouteDirections: routePlannerMapData.vehicleRouteDirections,
-			vehiclesData: vehiclesContext.data.fc,
+			vehiclesData: vehiclesFeatureCollection,
 		});
-	}, [lineDetailVehicleShapeIds, params.excludedOperatorIds, params.focusedVehicleId, routePlannerMapData.vehicleRouteDirections, vehiclesContext.data.fc]);
+	}, [lineDetailVehicleShapeIds, params.excludedOperatorIds, params.focusedVehicleId, routePlannerMapData.vehicleRouteDirections, vehiclesFeatureCollection]);
 
 	const shouldAlwaysShowFilteredVehicles = routePlannerMapData.vehicleRouteDirections !== null || lineDetailVehicleShapeIds !== null;
 

@@ -1,8 +1,8 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
+import { useAlertsData } from '@/components/alerts/use-alerts-data';
 import { LiveIcon } from '@/components/common/display/LiveIcon';
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
 import { RoutePlannerItineraryLegStrip } from '@/components/routes/common/RoutePlannerItineraryLegStrip';
 import { RoutePlannerGoButton } from '@/components/routes/navigation/RoutePlannerGoButton';
 import { type MotisItinerary } from '@/types/route-planner/models';
@@ -34,8 +34,8 @@ export function RoutePlannerItineraryCard({ isSelected = false, itinerary, onSel
 	// A. Setup variables
 
 	const { t } = useTranslation();
-	const alertsContext = useAlertsContext();
-	const linesContext = useLinesContext();
+	const { data: alerts } = useAlertsData();
+	const { data: lines } = useLinesData();
 
 	//
 	// B. Transform data
@@ -61,12 +61,12 @@ export function RoutePlannerItineraryCard({ isSelected = false, itinerary, onSel
 	const arrivalStatus = getArrivalStatus(realtimeStatus.arrival_delay_seconds, hasChangedArrival);
 
 	const itineraryAlertFilters = useMemo(() => {
-		return getRoutePlannerItineraryAlertFilters(itinerary, linesContext.data.lines);
-	}, [itinerary, linesContext.data.lines]);
+		return getRoutePlannerItineraryAlertFilters(itinerary, lines);
+	}, [itinerary, lines]);
 
 	const itineraryAlerts = useMemo(() => {
-		return filterAlertsByRoutePlannerItinerary(alertsContext.data.alerts, itineraryAlertFilters);
-	}, [alertsContext.data.alerts, itineraryAlertFilters]);
+		return filterAlertsByRoutePlannerItinerary(alerts, itineraryAlertFilters);
+	}, [alerts, itineraryAlertFilters]);
 
 	//
 	// C. Handle actions

@@ -1,9 +1,9 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
-import { useLinesContext } from '@/components/lines/Lines.context';
-import { useStopsContext } from '@/components/stops/Stops.context';
-import { useEtaContext } from '@/contexts/Eta.context';
+import { useAlertsData } from '@/components/alerts/use-alerts-data';
+import { useLinesData } from '@/components/lines/use-lines-data';
+import { useStopsData } from '@/components/stops/use-stops-data';
+import { useStopEtaData } from '@/hooks/transit/use-stop-eta-data';
 import { useOperationalDate } from '@/hooks/transit/useOperationalDate';
 import { fetchPatterns } from '@/utils/transit/fetch-patterns';
 import { type HubAlert, type HubLine, type HubPattern, type HubStop } from '@tmlmobilidade/go-types-hub';
@@ -77,11 +77,11 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 	//
 	// A. Setup variables
 
-	const stopsContext = useStopsContext();
-	const linesContext = useLinesContext();
-	const alertsContext = useAlertsContext();
+	const { data: alerts } = useAlertsData();
+	const { data: lines, isLoading: isLinesLoading } = useLinesData();
+	const { data: stops, isLoading: isStopsLoading } = useStopsData();
+	const { data: stopEtas } = useStopEtaData(stopId);
 	const operationalDate = useOperationalDate();
-	const etaContext = useEtaContext();
 
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -95,14 +95,14 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 	// B. Fetch data
 
 	const selectedStopData = useMemo(() => {
-		if (!stopId || !stopsContext.data.stops?.length) return;
-		return stopsContext.actions.getStopById(stopId);
-	}, [stopId, stopsContext.data.stops, stopsContext.actions]);
+		if (!stopId || !stops.length) return;
+		return stops.find(stop => String(stop._id) === String(stopId));
+	}, [stopId, stops]);
 
 	const associatedLinesData = useMemo(() => {
 		if (!selectedStopData) return;
-		return linesContext.data.lines.filter(line => selectedStopData.line_ids.includes(line._id));
-	}, [linesContext.data.lines, selectedStopData]);
+		return lines.filter(line => selectedStopData.line_ids.includes(line._id));
+	}, [lines, selectedStopData]);
 
 	useEffect(() => {
 		(async () => {
@@ -120,9 +120,8 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 	const activeAlertsData = useMemo(() => {
 		// Skip if no data is available
 		if (!selectedStopData) return [];
-		if (!alertsContext.data.alerts) return [];
 		// Return active alerts for the selected stop
-		return alertsContext.data.alerts.filter((alert) => {
+		return alerts.filter((alert) => {
 			// Include this alert if it is associated with any of the selected stop's agencies
 			if (alert.reference_type === 'agency') return selectedStopData.agency_ids.includes(alert.agency_id);
 			// Include this alert if it directly assigned to the selected stop
@@ -132,7 +131,7 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 			// Otherwise, exclude this alert
 			return false;
 		});
-	}, [selectedStopData, alertsContext.data.alerts]);
+	}, [alerts, selectedStopData]);
 
 	const validPatternsData = useMemo(() => {
 		// Skip if no associated patterns data or no operational date is selected
@@ -148,7 +147,6 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 		if (!validPatternsData || !operationalDate.selectedOperationalDate) return;
 		// Initialize the timetable data for the selected date
 		const timetableDataForSelectedDate: StopsDetailViewTimetableData[] = [];
-		const etaData = etaContext.actions.getEtasByStop(stopId);
 		// Loop through each valid pattern, and each trip of the pattern
 		for (const patternData of validPatternsData) {
 			for (const tripData of patternData.trips) {
@@ -163,7 +161,7 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 					// Convert GTFS time string to Unix Timestamp
 					const scheduledArrivalMs = fromOperationalTimeAndOperationalDateToUnixMilliseconds(OperationalTimeSchema.parse(stopTime.arrival_time), operationalDate.selectedOperationalDate);
 					// Fetch the trip update for this stop time
-					const tripUpdate = etaData?.find(eta => eta.trip_id.substring(eta.trip_id.indexOf(']') + 1) === tripData.trip_ids.find(tripId => tripId.substring(tripId.indexOf(']') + 1) === eta.trip_id.substring(eta.trip_id.indexOf(']') + 1))?.substring(eta.trip_id.indexOf(']') + 1)) ?? undefined;
+					const tripUpdate = stopEtas.find(eta => eta.trip_id.substring(eta.trip_id.indexOf(']') + 1) === tripData.trip_ids.find(tripId => tripId.substring(tripId.indexOf(']') + 1) === eta.trip_id.substring(eta.trip_id.indexOf(']') + 1))?.substring(eta.trip_id.indexOf(']') + 1)) ?? undefined;
 					// Extract the arrival time, delay and effective arrival time
 					// from the trip update, if any was found
 					const estimatedArrivalMs = tripUpdate?.eta_at;
@@ -204,7 +202,7 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 		}
 		// Return the timetable data, sorted by scheduled arrival time
 		return timetableDataForSelectedDate.sort((a, b) => a.arrival_effective_ms - b.arrival_effective_ms);
-	}, [validPatternsData, operationalDate.selectedOperationalDate, operationalDate.isTodaySelected, etaContext.actions, stopId]);
+	}, [operationalDate.isTodaySelected, operationalDate.selectedOperationalDate, stopEtas, stopId, validPatternsData]);
 
 	//
 	// D. Handle actions
@@ -240,9 +238,9 @@ export function StopsDetailContextProvider({ children, stopId }: PropsWithChildr
 			timetable: timetableDataForSelectedDate,
 		},
 		flags: {
-			is_loading: isLoading || stopsContext.flags.is_loading || linesContext.flags.is_loading,
+			is_loading: isLoading || isStopsLoading || isLinesLoading,
 		},
-	}), [activeAlertsData, associatedLinesData, highlightedPattern, highlightedStopSequence, highlightedTripId, isLoading, linesContext.flags.is_loading, resetActiveTripId, selectedStopData, setActiveTripId, stopsContext.flags.is_loading, timetableDataForSelectedDate]);
+	}), [activeAlertsData, associatedLinesData, highlightedPattern, highlightedStopSequence, highlightedTripId, isLinesLoading, isLoading, isStopsLoading, resetActiveTripId, selectedStopData, setActiveTripId, timetableDataForSelectedDate]);
 
 	//
 	// F. Render components

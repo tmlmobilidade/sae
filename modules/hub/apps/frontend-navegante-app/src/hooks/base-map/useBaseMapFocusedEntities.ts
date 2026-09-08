@@ -1,8 +1,8 @@
 'use client';
 
 import { useLinesDetailContext } from '@/components/lines/detail/LinesDetail.context';
-import { useStopsContext } from '@/components/stops/Stops.context';
-import { useVehiclesContext } from '@/components/vehicles/Vehicles.context';
+import { useStopsMapData } from '@/components/stops/use-stops-map-data';
+import { useVehiclesData } from '@/components/vehicles/use-vehicles-data';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { getBaseGeoJsonFeatureCollection } from '@tmlmobilidade/geo';
@@ -27,8 +27,8 @@ export function useBaseMapFocusedEntities({ activeBottomSheet }: UseBaseMapFocus
 	// A. Setup variables
 
 	const linesDetailContext = useLinesDetailContext();
-	const stopsContext = useStopsContext();
-	const vehiclesContext = useVehiclesContext();
+	const { data: stopsFeatureCollection, entities: stops } = useStopsMapData();
+	const { data: vehicles } = useVehiclesData();
 
 	const focusedAlertId = activeBottomSheet?.view === 'alerts-detail' ? activeBottomSheet.entityId : null;
 	const focusedLineShape = activeBottomSheet?.view === 'lines-detail' ? linesDetailContext.data.active_shape?.geojson : null;
@@ -40,10 +40,10 @@ export function useBaseMapFocusedEntities({ activeBottomSheet }: UseBaseMapFocus
 
 	const focusedVehiclePatternId = useMemo(() => {
 		if (!focusedVehicleId) return null;
-		const vehicle = vehiclesContext.data.vehicles.find(candidate => candidate.vehicle_id === focusedVehicleId);
+		const vehicle = vehicles.find(candidate => candidate.vehicle_id === focusedVehicleId);
 		if (!vehicle?.route_id || vehicle.direction_id === undefined) return null;
 		return `${vehicle.route_id}_${vehicle.direction_id}`;
-	}, [focusedVehicleId, vehiclesContext.data.vehicles]);
+	}, [focusedVehicleId, vehicles]);
 
 	const { data: patternsResponse } = useSWR<ApiResponse<HubPattern[]>>(focusedVehiclePatternId ? API_ROUTES.hub.NETWORK_PATTERNS(focusedVehiclePatternId) : null, {
 		fetcher: async url => await fetchApiData<HubPattern[]>({ options: { credentials: 'omit' }, url }),
@@ -60,26 +60,26 @@ export function useBaseMapFocusedEntities({ activeBottomSheet }: UseBaseMapFocus
 
 	const focusedStop = useMemo(() => {
 		if (!focusedStopId) return null;
-		return stopsContext.data.stops.find(stop => String(stop._id) === focusedStopId) ?? null;
-	}, [focusedStopId, stopsContext.data.stops]);
+		return stops.find(stop => String(stop._id) === focusedStopId) ?? null;
+	}, [focusedStopId, stops]);
 
 	const focusedStopMapData = useMemo(() => {
 		if (!focusedStopId) return null;
 
 		const collection = getBaseGeoJsonFeatureCollection();
-		const feature = stopsContext.data.fc.features.find(item => String(item.properties?._id) === focusedStopId);
+		const feature = stopsFeatureCollection.features.find(item => String(item.properties?._id) === focusedStopId);
 		if (feature) collection.features.push(feature);
 		return collection;
-	}, [focusedStopId, stopsContext.data.fc]);
+	}, [focusedStopId, stopsFeatureCollection]);
 
 	const stopsMapData = useMemo(() => {
-		if (!focusedStopId) return stopsContext.data.fc;
+		if (!focusedStopId) return stopsFeatureCollection;
 
 		return {
-			...stopsContext.data.fc,
-			features: stopsContext.data.fc.features.filter(feature => String(feature.properties?._id) !== focusedStopId),
+			...stopsFeatureCollection,
+			features: stopsFeatureCollection.features.filter(feature => String(feature.properties?._id) !== focusedStopId),
 		};
-	}, [focusedStopId, stopsContext.data.fc]);
+	}, [focusedStopId, stopsFeatureCollection]);
 
 	//
 	// D. Return data

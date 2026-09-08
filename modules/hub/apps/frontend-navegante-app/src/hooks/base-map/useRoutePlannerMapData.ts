@@ -1,7 +1,7 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
+import { useRoutesData } from '@/components/lines/use-routes-data';
 import { useRoutePlannerContext } from '@/components/routes/RoutePlanner.context';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
 import { buildRoutePlannerAlertFeatureCollection, filterAlertsByRoutePlannerItinerary, getRoutePlannerItineraryAlertFilters } from '@/utils/route-planner/itinerary/alerts';
@@ -9,7 +9,7 @@ import { getRoutePlannerItineraryRouteDirections, getRoutePlannerItineraryRouteI
 import { getRoutePlannerMapFitFeatures } from '@/utils/route-planner/planning/navigation';
 import { fetchPatterns } from '@/utils/transit/fetch-patterns';
 import { API_ROUTES } from '@tmlmobilidade/consts';
-import { type HubPattern, type HubShape } from '@tmlmobilidade/go-types-hub';
+import { type HubAlert, type HubPattern, type HubShape } from '@tmlmobilidade/go-types-hub';
 import { fetchApiData } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -18,18 +18,20 @@ import useSWR from 'swr';
 
 interface UseRoutePlannerMapDataParams {
 	activeBottomSheet: ReturnType<typeof useBottomSheet>['activeBottomSheet']
+	alerts: HubAlert[]
+	alertsFeatureCollection: GeoJSON.FeatureCollection<GeoJSON.Geometry, GeoJSON.GeoJsonProperties>
 }
 
 /* * */
 
-export function useRoutePlannerMapData({ activeBottomSheet }: UseRoutePlannerMapDataParams) {
+export function useRoutePlannerMapData({ activeBottomSheet, alerts: allAlerts, alertsFeatureCollection }: UseRoutePlannerMapDataParams) {
 	//
 
 	//
 	// A. Setup variables
 
-	const alertsContext = useAlertsContext();
-	const linesContext = useLinesContext();
+	const { data: lines } = useLinesData();
+	const { data: routes } = useRoutesData();
 	const routePlannerContext = useRoutePlannerContext();
 
 	//
@@ -47,11 +49,11 @@ export function useRoutePlannerMapData({ activeBottomSheet }: UseRoutePlannerMap
 		if (!routeIds) return [];
 
 		return Array.from(new Set(
-			linesContext.data.routes
+			routes
 				.filter(route => routeIds.has(getRoutePlannerRouteIdKey(route._id, route.agency_id) || ''))
 				.flatMap(route => route.pattern_ids),
 		));
-	}, [linesContext.data.routes, routeIds]);
+	}, [routeIds, routes]);
 
 	const { data: patternGroups } = useSWR<HubPattern[][]>(
 		patternIds.length > 0 ? ['route-planner-patterns', ...patternIds] : null,
@@ -94,17 +96,17 @@ export function useRoutePlannerMapData({ activeBottomSheet }: UseRoutePlannerMap
 	// C. Transform data
 
 	const alertFilters = useMemo(() => {
-		return getRoutePlannerItineraryAlertFilters(routePlannerContext.data.selected_itinerary, linesContext.data.lines);
-	}, [linesContext.data.lines, routePlannerContext.data.selected_itinerary]);
+		return getRoutePlannerItineraryAlertFilters(routePlannerContext.data.selected_itinerary, lines);
+	}, [lines, routePlannerContext.data.selected_itinerary]);
 
 	const alerts = useMemo(() => {
-		return filterAlertsByRoutePlannerItinerary(alertsContext.data.alerts, alertFilters);
-	}, [alertsContext.data.alerts, alertFilters]);
+		return filterAlertsByRoutePlannerItinerary(allAlerts, alertFilters);
+	}, [alertFilters, allAlerts]);
 
 	const alertsMapData = useMemo(() => {
-		if (!alertFilters) return alertsContext.data.fc;
-		return buildRoutePlannerAlertFeatureCollection(alertsContext.data.fc, alerts, routePlannerContext.data.route_map_data, linesContext.data.lines);
-	}, [alertFilters, alerts, alertsContext.data.fc, linesContext.data.lines, routePlannerContext.data.route_map_data]);
+		if (!alertFilters) return alertsFeatureCollection;
+		return buildRoutePlannerAlertFeatureCollection(alertsFeatureCollection, alerts, routePlannerContext.data.route_map_data, lines);
+	}, [alertFilters, alerts, alertsFeatureCollection, lines, routePlannerContext.data.route_map_data]);
 
 	const contextShapeData = useMemo<GeoJSON.FeatureCollection<GeoJSON.LineString>>(() => {
 		const shapesById = new Map(shapes?.map(candidate => [candidate._id, candidate]) ?? []);

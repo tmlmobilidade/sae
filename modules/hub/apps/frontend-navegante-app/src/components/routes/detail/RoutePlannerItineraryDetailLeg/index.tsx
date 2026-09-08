@@ -1,6 +1,5 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
 import { RoutePlannerLinePill } from '@/components/routes/common/RoutePlannerLinePill';
 import { RoutePlannerModeBadge } from '@/components/routes/common/RoutePlannerModeBadge';
 import { RoutePlannerTime } from '@/components/routes/common/RoutePlannerTime';
@@ -11,7 +10,7 @@ import { getMotisLegDurationSeconds } from '@/utils/route-planner/planning/motis
 import { formatMotisPlanDurationMinutes } from '@/utils/route-planner/presentation/format';
 import { isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
 import { IconAlertTriangle, IconChevronDown, IconNavigationTop } from '@tabler/icons-react';
-import { type HubLine } from '@tmlmobilidade/go-types-hub';
+import { type HubAlert, type HubLine } from '@tmlmobilidade/go-types-hub';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -20,7 +19,7 @@ import styles from './styles.module.css';
 /* * */
 
 interface RoutePlannerItineraryDetailLegProps {
-	alertsContext: ReturnType<typeof useAlertsContext>
+	alerts: HubAlert[]
 	isActive: boolean
 	leg: MotisPlanLeg
 	lineByShortName: Map<string, HubLine>
@@ -30,7 +29,7 @@ interface RoutePlannerItineraryDetailLegProps {
 
 /* * */
 
-export function RoutePlannerItineraryDetailLeg({ alertsContext, isActive, leg, lineByShortName, routeDestinationLabel, routeOriginLabel }: RoutePlannerItineraryDetailLegProps) {
+export function RoutePlannerItineraryDetailLeg({ alerts: allAlerts, isActive, leg, lineByShortName, routeDestinationLabel, routeOriginLabel }: RoutePlannerItineraryDetailLegProps) {
 	//
 
 	//
@@ -56,8 +55,8 @@ export function RoutePlannerItineraryDetailLeg({ alertsContext, isActive, leg, l
 
 	const alerts = useMemo(() => {
 		if (isMotisWalkingLeg(leg)) return [];
-		return filterAlertsByRoutePlannerItinerary(alertsContext.data.alerts, legAlertFilters);
-	}, [alertsContext.data.alerts, leg, legAlertFilters]);
+		return filterAlertsByRoutePlannerItinerary(allAlerts, legAlertFilters);
+	}, [allAlerts, leg, legAlertFilters]);
 
 	//
 	// C. Render components

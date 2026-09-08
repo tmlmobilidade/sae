@@ -1,6 +1,6 @@
 'use client';
 
-import { useAlertsContext } from '@/components/alerts/Alerts.context';
+import { useAlertsData } from '@/components/alerts/use-alerts-data';
 import { RoutePlannerItineraryLegStrip } from '@/components/routes/common/RoutePlannerItineraryLegStrip';
 import { RoutePlannerTime } from '@/components/routes/common/RoutePlannerTime';
 import { getRoutePlannerLegPlaceName, RoutePlannerItineraryDetailLeg } from '@/components/routes/detail/RoutePlannerItineraryDetailLeg';
@@ -24,7 +24,7 @@ export function RoutePlannerItineraryDetail() {
 	// A. Setup variables
 
 	const { t } = useTranslation();
-	const alertsContext = useAlertsContext();
+	const { data: alerts } = useAlertsData();
 	const lineByShortName = useLinesByShortName();
 	const routePlannerContext = useRoutePlannerContext();
 	const { activeLegIndex } = useRoutePlannerActiveLeg();
@@ -84,7 +84,7 @@ export function RoutePlannerItineraryDetail() {
 				{legs.map((leg, index) => (
 					<RoutePlannerItineraryDetailLeg
 						key={`${getRoutePlannerLegPlaceName(leg.from, routeOriginLabel, routeOriginLabel, routeDestinationLabel)}-${getRoutePlannerLegPlaceName(leg.to, routeDestinationLabel, routeOriginLabel, routeDestinationLabel)}-${index}`}
-						alertsContext={alertsContext}
+						alerts={alerts}
 						isActive={isNavigating && index === activeLegIndex}
 						leg={leg}
 						lineByShortName={lineByShortName}

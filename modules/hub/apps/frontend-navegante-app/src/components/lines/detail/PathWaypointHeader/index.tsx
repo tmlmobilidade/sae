@@ -1,6 +1,6 @@
 /* * */
 
-import { useStopsContext } from '@/components/stops/Stops.context';
+import { useStopsData } from '@/components/stops/use-stops-data';
 import { formatStopLocation } from '@/utils/transit/format-stop-location';
 import { useClipboard } from '@mantine/hooks';
 import { IconCheck, IconCopy } from '@tabler/icons-react';
@@ -26,7 +26,7 @@ export function PathWaypointHeader({ isFirstStop, isLastStop, isSelected, waypoi
 	//
 	// A. Setup variables
 
-	const stopsContext = useStopsContext();
+	const { data: stops } = useStopsData();
 	const { t } = useTranslation();
 
 	const stopIdClipboard = useClipboard();
@@ -34,7 +34,7 @@ export function PathWaypointHeader({ isFirstStop, isLastStop, isSelected, waypoi
 	//
 	// B. Fetch data
 
-	const stopData = stopsContext.actions.getStopById(waypointData.stop_id);
+	const stopData = stops.find(stop => String(stop._id) === String(waypointData.stop_id));
 
 	//
 	// C. Handle actions

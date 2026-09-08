@@ -1,6 +1,6 @@
 'use client';
 
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
 import { IconInfoTriangleFilled } from '@tabler/icons-react';
 import { type HubLine } from '@tmlmobilidade/go-types-hub';
 
@@ -28,12 +28,12 @@ export function LineBadge({ agencyId, color, lineData, lineId, onClick, shortNam
 	//
 	// A. Setup variables
 
-	const linesContext = useLinesContext();
+	const { data: lines } = useLinesData();
 
 	//
 	// B. Transform data
 
-	const fetchedLineData = lineId ? linesContext.data.lines.find(line => line._id === lineId) : undefined;
+	const fetchedLineData = lineId ? lines.find(line => line._id === lineId) : undefined;
 
 	//
 	// C. Render components

@@ -1,6 +1,6 @@
 'use client';
 
-import { useVehiclesContext } from '@/components/vehicles/Vehicles.context';
+import { useVehiclesData } from '@/components/vehicles/use-vehicles-data';
 import { type HubVehiclePosition } from '@tmlmobilidade/go-types-hub';
 import { createContext, type PropsWithChildren, useContext, useMemo } from 'react';
 
@@ -32,14 +32,14 @@ export const VehiclesDetailContextProvider = ({ children, vehicleId }: PropsWith
 	//
 	// A. Setup variables
 
-	const vehiclesContext = useVehiclesContext();
+	const { data: vehicles } = useVehiclesData();
 
 	//
 	// B. Transform data
 
 	const vehicleData = useMemo(() => {
-		return vehiclesContext.data.vehicles.find(vehicle => vehicle.vehicle_id === vehicleId);
-	}, [vehicleId, vehiclesContext.data.vehicles]);
+		return vehicles.find(vehicle => vehicle.vehicle_id === vehicleId);
+	}, [vehicleId, vehicles]);
 
 	//
 	// E. Define context value

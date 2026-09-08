@@ -1,6 +1,6 @@
 'use client';
 
-import { useLinesContext } from '@/components/lines/Lines.context';
+import { useLinesData } from '@/components/lines/use-lines-data';
 import { MapViewOverlayStopsInteractiveLayerId } from '@/components/map/MapViewOverlayStops';
 import { useMapContext } from '@/contexts/Map.context';
 import { useDebouncedCallback } from '@mantine/hooks';
@@ -44,7 +44,7 @@ export function MapViewOverlayStopLineBadges({ limit = 4, visible }: MapViewOver
 	// A. Setup variables
 
 	const mapContext = useMapContext();
-	const linesContext = useLinesContext();
+	const { data: lines } = useLinesData();
 
 	const [visibleBadges, setVisibleBadges] = useState<StopLineBadgeGroup[]>([]);
 
@@ -71,7 +71,7 @@ export function MapViewOverlayStopLineBadges({ limit = 4, visible }: MapViewOver
 			const properties = stopFeature.properties as HubStop;
 			const badges: StopLineBadge[] = [];
 			lineIds.forEach((lineId: string) => {
-				const lineData = linesContext.data.lines.find(line => line._id === lineId);
+				const lineData = lines.find(line => line._id === lineId);
 				if (!lineData) return;
 				badges.push({
 					_id: `${String(stopFeature.properties._id)}-${lineId}`,

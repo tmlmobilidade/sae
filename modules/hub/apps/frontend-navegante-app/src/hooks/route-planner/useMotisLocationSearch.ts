@@ -1,6 +1,6 @@
 'use client';
 
-import { useStopsContext } from '@/components/stops/Stops.context';
+import { useStopsData } from '@/components/stops/use-stops-data';
 import { useMotisGeocode } from '@/hooks/search/useMotisGeocode';
 import { type RoutePlannerLocation } from '@/types/route-planner/models';
 import { mapHubStopToRoutePlannerLocation } from '@/utils/route-planner/planning/locations';
@@ -26,10 +26,10 @@ export function useMotisLocationSearch(query: string): UseMotisLocationSearchRes
 	//
 	// A. Setup variables
 
-	const stopsContext = useStopsContext();
+	const { data: stops } = useStopsData();
 	const { t } = useTranslation();
 	const coordinateLocation = routePlannerCoordinateToLocation(query.trim(), t('default:common.locations.coordinates'));
-	const localStopResults = useMemo(() => searchStops(stopsContext.data.stops, query), [query, stopsContext.data.stops]);
+	const localStopResults = useMemo(() => searchStops(stops, query), [query, stops]);
 	const motisSearch = useMotisGeocode(query, {
 		enabled: !coordinateLocation,
 		errorMessage: t('default:routes.RoutePlannerInput.search.error'),
