@@ -2,6 +2,7 @@
 
 import { syncRides } from '@/tasks/rides.js';
 import { getEarliestDate } from '@tmlmobilidade/consts';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { performInTimeChunks, runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
@@ -32,13 +33,15 @@ async function main() {
 		// Get the earliest date from which we have data to sync,
 		// and perform the sync in time chunks until we reach the current date.
 
-		const earliestDate = getEarliestDate();
+		const earliestRide = await goDb.operation.rides.findOne({}, { sort: { start_time_scheduled: 1 } });
+		const latestRide = await goDb.operation.rides.findOne({}, { sort: { start_time_scheduled: -1 } });
 
 		//
 		// Divide the time range into chunks
 		// and sync each one sequentially.
 
 		await performInTimeChunks({
+			endDate: latestRide.start_time_scheduled,
 			intervalHrs: 2,
 			onChunk: async (chunk) => {
 				try {
@@ -61,7 +64,7 @@ async function main() {
 				}
 			},
 			order: 'desc',
-			startDate: earliestDate.unix_milliseconds,
+			startDate: earliestRide.start_time_scheduled,
 		});
 
 		Logger.terminate(`Run took ${globalTimer.get()}.`);
