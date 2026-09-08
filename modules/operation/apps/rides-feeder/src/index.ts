@@ -11,18 +11,18 @@ import { parsePlanTask } from './tasks/parse-plan.js';
 
 /* * */
 
+//
+// Initialize Sentry
+
+try {
+	await initSentryNode();
+	Logger.startNodeLogs({ app: 'rides-feeder', message: 'Sentry Rides Feeder initialized', module: 'controller', severity: 'info' });
+} catch (error) {
+	Logger.error({ error, message: 'Error initializing Sentry Rides Feeder' });
+}
+
 async function main() {
 	//
-
-	//
-	// Initialize Sentry
-
-	try {
-		await initSentryNode();
-		Logger.startNodeLogs({ app: 'rides-feeder', message: 'Sentry Rides Feeder initialized', module: 'controller', severity: 'info' });
-	} catch (error) {
-		Logger.error({ error, message: 'Error initializing Sentry Rides Feeder' });
-	}
 
 	Logger.init();
 
