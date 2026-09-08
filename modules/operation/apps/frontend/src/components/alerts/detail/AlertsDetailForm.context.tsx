@@ -144,7 +144,7 @@ export function AlertsDetailFormContextProvider({ children }: PropsWithChildren)
 			isUpdating,
 		},
 		unblock,
-	}), [editEnabled, form, handleUpdate, isUpdating, alertDataLoading, unblock, updateEnabled, isDirty, isValid]);
+	}), [handleDuplicate, handleUpdate, duplicateEnabled, editEnabled, updateEnabled, form, isDirty, isValid, alertDataLoading, isUpdating, unblock]);
 
 	return (
 		<AlertsDetailFormContext.Provider value={stateValue}>

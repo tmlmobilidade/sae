@@ -1,18 +1,19 @@
 /* * */
 
-import { ValidationsList } from '@/components/validations/list/shared/ValidationsList';
 import { PanesManager } from '@tmlmobilidade/ui';
-import { type PropsWithChildren } from 'react';
+import { Fragment, type PropsWithChildren } from 'react';
+
+import { GtfsValidationsList } from '../../components/gtfs-validations/list/GtfsValidationsList';
 
 /* * */
 
 export default function Layout({ children }: PropsWithChildren) {
 	return (
 		<PanesManager
-			id="validations"
+			id="gtfs-validations"
 			panes={[
-				<ValidationsList key="list" />,
-				children,
+				<GtfsValidationsList key="gtfs-validations-list" />,
+				<Fragment key="gtfs-validations-detail">{children}</Fragment>,
 			]}
 		/>
 	);

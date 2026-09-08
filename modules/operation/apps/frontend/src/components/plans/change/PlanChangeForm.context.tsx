@@ -2,7 +2,7 @@
 
 import { closePlanChangeModal } from '@/components/plans/change/PlanChange.modal';
 import { usePlansListData } from '@/components/plans/list/use-plans-list-data';
-import { useValidationsListData } from '@/components/validations/list/use-validations-list-data';
+import { useValidationsListData } from '@/components/gtfs-validations/list/use-validations-list-data';
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type PlanChangeItem, PlanChangeItemSchema, type ValidationListItem } from '@tmlmobilidade/go-operation-pckg-types';
 import { type Plan } from '@tmlmobilidade/go-types-operation';
