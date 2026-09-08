@@ -43,15 +43,22 @@ export async function listPlansStopsHandler(request: FastifyRequest<{ Body: Plan
 		{ projection: { _id: 1, flags: 1, name: 1, short_name: 1 }, sort: { name: 1 } },
 	);
 
-	const stopItems: PlansStopsItem[] = stops.flatMap(stop => stop.flags
-		.filter(flag => flag.agency_ids.includes(validatedRequest.agency_id))
-		.map(flag => ({
-			_id: stop._id,
-			name: stop.name,
-			short_name: stop.short_name,
-			stop_id: flag.stop_id,
-		})),
-	);
+	const stopItemsByStopId = new Map<string, PlansStopsItem>();
+
+	for (const stop of stops) {
+		for (const flag of stop.flags) {
+			if (!flag.agency_ids.includes(validatedRequest.agency_id)) continue;
+			if (stopItemsByStopId.has(flag.stop_id)) continue;
+			stopItemsByStopId.set(flag.stop_id, {
+				_id: stop._id,
+				name: stop.name,
+				short_name: stop.short_name,
+				stop_id: flag.stop_id,
+			});
+		}
+	}
+
+	const stopItems = [...stopItemsByStopId.values()];
 
 	if (!stopItems.length) {
 		return sendErrorApiResponse(reply, {

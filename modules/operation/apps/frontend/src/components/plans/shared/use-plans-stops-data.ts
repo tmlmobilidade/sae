@@ -40,14 +40,21 @@ export function usePlansStops(query: null | PlansStopsRequest): UsePlansStopsRet
 
 	const stopsData = data?.data ?? [];
 
-	const idsData = useMemo(() => stopsData.map(item => item.stop_id), [stopsData]);
+	const idsData = useMemo(() => [...new Set(stopsData.map(item => item.stop_id))], [stopsData]);
 
-	const optionsData = useMemo(() => stopsData.map((item): SelectDataItem => ({
-		checked: false,
-		disabled: false,
-		label: `[${item.stop_id}] ${item.short_name || item.name}`,
-		value: item.stop_id,
-	})), [stopsData]);
+	const optionsData = useMemo(() => {
+		const optionsByStopId = new Map<string, SelectDataItem>();
+		for (const item of stopsData) {
+			if (optionsByStopId.has(item.stop_id)) continue;
+			optionsByStopId.set(item.stop_id, {
+				checked: false,
+				disabled: false,
+				label: `[${item.stop_id}] ${item.short_name || item.name}`,
+				value: item.stop_id,
+			});
+		}
+		return [...optionsByStopId.values()];
+	}, [stopsData]);
 
 	//
 	// C. Return data
