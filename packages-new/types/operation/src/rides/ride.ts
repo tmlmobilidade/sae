@@ -1,9 +1,11 @@
 /* * */
 
-import { RideAnalysesRegistrySchema } from '@/ride-analyses/ride-analyses-registry.js';
 import { GtfsTripDirectionSchema } from '@tmlmobilidade/go-types-gtfs';
 import { HexColorSchema, NonNegativeIntegerSchema, OperationalDateIntSchema, ProcessingStatusSchema, TimezoneIdentifiedSchema, UnixMillisecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
+
+import { RideAnalysesRegistrySchema } from '../ride-analyses/ride-analyses-registry.js';
+import { RideHashSchema } from './ride-hash.js';
 
 /* * */
 
@@ -12,7 +14,7 @@ export const RideIdentitySchema = z.object({
 	agency_code: z.string(),
 	agency_id: z.string(),
 	direction_id: GtfsTripDirectionSchema,
-	hash: z.string(),
+	hash: RideHashSchema,
 	hashed_shape_id: z.string(),
 	hashed_trip_id: z.string(),
 	headsign: z.string(),
@@ -91,17 +93,3 @@ export const RideSchema = RideIdentitySchema
  * It is the basic unit of analysis for the public transit system.
  */
 export type Ride = z.infer<typeof RideSchema>;
-
-/* * */
-
-export const SimplifiedRideSchema = RideIdentitySchema
-	.merge(RideScheduleSchema)
-	.merge(RideApexSchema)
-	.merge(RidePassengersSchema)
-	.merge(RideOperationSchema)
-	.merge(RideLifecycleSchema);
-
-/**
- * A SimplifiedRide represents a single vehicle journey on a single route for a single day, without its analyses.
- */
-export type SimplifiedRide = z.infer<typeof SimplifiedRideSchema>;
