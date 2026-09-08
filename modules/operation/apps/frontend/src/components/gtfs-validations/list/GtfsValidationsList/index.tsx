@@ -1,15 +1,15 @@
 'use client';
 
-import { ValidationsListFiltersBar } from '@/components/gtfs-validations/list/filters/ValidationsListFiltersBar';
-import { ValidationsListCellDate } from '@/components/gtfs-validations/list/ValidationsListCellCreatedAt';
-import { ValidationsListHeader } from '@/components/gtfs-validations/list/ValidationsListHeader';
-import { useGtfsValidationsAgenciesData } from '@/components/gtfs-validations/shared/use-gtfs-validations-agencies-data';
 import { PAGE_ROUTES } from '@tmlmobilidade/consts';
 import { type ValidationListItem } from '@tmlmobilidade/go-operation-pckg-types';
-import { AgencyTag, DataTable, type DataTableColumn, ErrorDisplay, IdTag, Pane, ProcessingStatusDisplay, ValidityStatusDisplay } from '@tmlmobilidade/ui';
+import { AgencyTag, DataTable, type DataTableColumn, displayUnixMilliseconds, ErrorDisplay, IdTag, Pane, ProcessingStatusDisplay, ValidityStatusDisplay } from '@tmlmobilidade/ui';
 import { keepUrlParams } from '@tmlmobilidade/ui';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
+import { useGtfsValidationsAgenciesData } from '../..//shared/use-gtfs-validations-agencies-data';
+import { useGtfsValidationsDetailGtfsValidationId } from '../../detail/use-gtfs-validations-detail-gtfs-validation-id';
+import { ValidationsListFiltersBar } from '../filters/ValidationsListFiltersBar';
+import { GtfsValidationsListHeader } from '../GtfsValidationsListHeader';
 import { useValidationsListData } from '../use-validations-list-data';
 
 /* * */
@@ -21,13 +21,14 @@ export function GtfsValidationsList() {
 	// A. Setup variables
 
 	const router = useRouter();
-	const params = useParams<{ id?: string }>();
+
+	const { gtfsValidationId } = useGtfsValidationsDetailGtfsValidationId();
+
+	const validationsListData = useValidationsListData();
 
 	const { data: agenciesData } = useGtfsValidationsAgenciesData({
 		permissions: { actions: ['read'], scope: 'gtfs_validations' },
 	});
-
-	const validationsData = useValidationsListData();
 
 	const columns: DataTableColumn<ValidationListItem>[] = [
 		{
@@ -63,7 +64,7 @@ export function GtfsValidationsList() {
 		},
 		{
 			accessor: 'created_at',
-			render: item => <ValidationsListCellDate value={item.created_at} />,
+			render: item => displayUnixMilliseconds(item.created_at),
 			title: 'Data de Submissão',
 			width: 300,
 		},
@@ -81,18 +82,18 @@ export function GtfsValidationsList() {
 
 	return (
 		<Pane header={[
-			<ValidationsListHeader key="header" />,
+			<GtfsValidationsListHeader key="header" />,
 			<ValidationsListFiltersBar key="filters" />,
 		]}
 		>
-			{validationsData.error && <ErrorDisplay message={validationsData.error} />}
+			{validationsListData.error && <ErrorDisplay message={validationsListData.error} />}
 			<DataTable
 				columns={columns}
-				isLoading={validationsData.isLoading}
+				isLoading={validationsListData.isLoading}
 				onRowClick={handleRowClick}
-				records={validationsData.data}
+				records={validationsListData.data}
 				rowIdAccessor="_id"
-				selectedId={params.id}
+				selectedId={gtfsValidationId}
 			/>
 		</Pane>
 	);
