@@ -44,7 +44,7 @@ export async function transformReferenceTypeRidesIntoGtfsRt(alertData: Alert): P
 		// the agency ID, and the alert start time.
 
 		const foundRide = await labDb.queryFromString<Ride>(`
-			SELECT * FROM operation.rides
+			SELECT * FROM operation.simplified_rides
 			WHERE _id = '${reference.parent_id}'
 			ORDER BY updated_at DESC
 			LIMIT 1 BY _id

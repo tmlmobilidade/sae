@@ -26,7 +26,7 @@ export async function getHashedTripHandler(request: FastifyRequest<{ Params: { i
 	// Fetch the ride data from the database
 
 	const ridesQueryResult = await labDb.queryFromString<Pick<Ride, 'hashed_trip_id'>>(
-		'SELECT hashed_trip_id FROM operation.rides WHERE _id = $1 ORDER BY updated_at DESC LIMIT 1 BY _id',
+		'SELECT hashed_trip_id FROM operation.simplified_rides WHERE _id = $1 ORDER BY updated_at DESC LIMIT 1 BY _id',
 		{ 1: request.params.id },
 	);
 

@@ -8,7 +8,7 @@ export const findRidesForTrainQuery = `
 			hashed_trip_id,
 			start_time_scheduled,
 			trip_id
-		FROM operation.rides
+		FROM operation.simplified_rides
 		WHERE
 			agency_id = $1
 			AND headsign = $2

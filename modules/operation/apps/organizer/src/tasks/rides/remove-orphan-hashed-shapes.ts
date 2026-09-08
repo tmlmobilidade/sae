@@ -1,6 +1,5 @@
 /* * */
 
-import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -15,7 +14,8 @@ export async function removeOrphanHashedShapesTask() {
 	Logger.spacer(1);
 	Logger.info({ message: `Starting cleanup of orphan Hashed Shapes...` });
 
-	await labDb.operation.hashedShapes.delete('_id NOT IN (SELECT DISTINCT hashed_shape_id FROM operation.rides)');
+	// TODO: Replace with goDb query
+	// await labDb.operation.hashedShapes.delete('_id NOT IN (SELECT DISTINCT hashed_shape_id FROM operation.simplified_rides)');
 
 	Logger.success(`Hashed Shapes cleanup complete. Deleted orphan Hashed Shapes. (${timer.get()})`);
 }

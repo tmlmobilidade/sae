@@ -81,7 +81,7 @@ export async function transformReferenceTypeStopsIntoGtfsRt(alertData: Alert): P
 			const foundRouteIds = await labDb.queryFromString<{ route_id: string }>(
 				`
 					SELECT DISTINCT route_id
-					FROM operation.rides
+					FROM operation.simplified_rides
 					WHERE agency_id = $1
 					AND route_short_name = $2
 					AND start_time_scheduled >= $3

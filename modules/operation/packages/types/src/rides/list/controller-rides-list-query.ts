@@ -21,7 +21,7 @@ WITH
 	(
 		SELECT
 			*
-		FROM operation.rides
+		FROM operation.simplified_rides
 		WHERE
 			_id = $3
 		ORDER BY
@@ -45,7 +45,7 @@ WITH
 	(
 		SELECT
 			*
-		FROM operation.rides
+		FROM operation.simplified_rides
 		WHERE
 			start_time_scheduled >= $1
 			AND start_time_scheduled <= $2

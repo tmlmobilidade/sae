@@ -20,7 +20,7 @@ WITH
 			start_time_scheduled,
 			updated_at
 
-		FROM operation.rides
+		FROM operation.simplified_rides
 
 		WHERE
 			agency_id = $1

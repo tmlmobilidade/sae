@@ -18,7 +18,7 @@ WITH
 	(
 		SELECT
 			*
-		FROM operation.rides
+		FROM operation.simplified_rides
 		WHERE
 			_id = $1
 		ORDER BY

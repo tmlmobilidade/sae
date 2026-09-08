@@ -23,7 +23,7 @@ export async function fetchHistoricalRidesForDayIndex() {
 	return await labDb.queryFromString<{ _id: string }>(
 		`
 			SELECT _id
-			FROM operation.rides FINAL
+			FROM operation.simplified_rides FINAL
 			WHERE start_time_scheduled >= $1
 			  AND start_time_scheduled <= $2
 			ORDER BY start_time_scheduled ASC

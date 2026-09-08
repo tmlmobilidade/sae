@@ -28,7 +28,7 @@ export async function getSimplifiedVehicleEventsHandler(request: FastifyRequest<
 	// Fetch the ride data from the database
 
 	const ridesQueryResult = await labDb.queryFromString<Pick<Ride, 'agency_id' | 'start_time_scheduled' | 'trip_id'>>(
-		'SELECT * FROM operation.rides WHERE _id = $1 ORDER BY updated_at DESC LIMIT 1 BY _id',
+		'SELECT * FROM operation.simplified_rides WHERE _id = $1 ORDER BY updated_at DESC LIMIT 1 BY _id',
 		{ 1: request.params.id },
 	);
 
