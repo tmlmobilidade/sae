@@ -13,20 +13,19 @@ import { augmentRide } from './utils/augment-ride.js';
 import { fetchAnalysisData } from './utils/fetch-analysis-data.js';
 
 /* * */
+//
+// Initialize Sentry
+
+try {
+	await initSentryNode();
+	Logger.startNodeLogs({ app: 'rides-examiner', message: 'Sentry Rides Examiner initialized', module: 'controller', severity: 'info' });
+} catch (error) {
+	Logger.error({ error, message: 'Error initializing Sentry Rides Examiner' });
+}
 
 export async function validateRides() {
 	try {
 		//
-
-		//
-		// Initialize Sentry
-
-		try {
-			await initSentryNode();
-			Logger.startNodeLogs({ app: 'rides-examiner', message: 'Sentry Rides Examiner initialized', module: 'controller', severity: 'info' });
-		} catch (error) {
-			Logger.error({ error, message: 'Error initializing Sentry Rides Examiner' });
-		}
 
 		//
 		// Initialize the logger
