@@ -4,8 +4,8 @@ import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
-// import { publishTripUpdates } from './tasks/eta/gtfs/publish-trip-updates.js';
-// import { publishEtas } from './tasks/eta/simplified/publish-etas.js';
+import { publishTripUpdates } from './tasks/eta/gtfs/publish-trip-updates.js';
+import { publishEtas } from './tasks/eta/simplified/publish-etas.js';
 import { publishVehiclesPositions } from './tasks/vehicles/publish-vehicle-positions.js';
 import { publishVehiclesMetadata } from './tasks/vehicles/publish-vehicles-metadata.js';
 
@@ -40,8 +40,8 @@ const main = async () => {
 	await publishVehiclesPositions();
 
 	if (ITERATION % 15 === 0) await publishVehiclesMetadata(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
-	// if (ITERATION % 15 === 0) await publishTripUpdates(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
-	// if (ITERATION % 15 === 0) await publishEtas(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
+	if (ITERATION % 15 === 0) await publishTripUpdates(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
+	if (ITERATION % 15 === 0) await publishEtas(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
 
 	ITERATION++;
 

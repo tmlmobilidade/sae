@@ -19,13 +19,13 @@
 	"dependencies": {
 		"@fastify/websocket": "11.3.0",
 		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-clients-fastify": "*",
 		"@tmlmobilidade/go-interfaces-cachedb": "*",
 		"@tmlmobilidade/go-providers-storage": "*",
 		"@tmlmobilidade/go-types-gtfs-rt": "*",
-		"@tmlmobilidade/go-types-performance": "*",
 		"@tmlmobilidade/go-types-hub": "*",
+		"@tmlmobilidade/go-types-performance": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/gtfs-rt": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/rss": "*"
