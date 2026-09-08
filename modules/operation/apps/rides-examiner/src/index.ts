@@ -52,7 +52,7 @@ export async function main() {
 	Logger.info({ message: `Processing ${ridesBatch.length} rides... (coordinator: ${fetchCoordinatorTimerResult} | interface: ${fetchRideDocumentsTimer.get()})`, spacesAfterOrBefore: 1 });
 
 	//
-	// Process each Ride
+	// Process each Ride in parallel
 
 	await runWithConcurrency(ridesBatch, 100, async (data, index) => {
 		await examineRide(data, index, ridesBatch.length);

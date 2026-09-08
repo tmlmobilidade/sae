@@ -8,7 +8,7 @@ import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
 import { fetchAnalysisData } from '../utils/fetch-analysis-data.js';
-import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, ridesWriter } from '../utils/writers.js';
+import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventCoverageGeoWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, ridesWriter } from '../utils/writers.js';
 import { analyzeRide } from './analyze-ride.js';
 import { augmentRide } from './augment-ride.js';
 
@@ -81,6 +81,7 @@ export async function examineRide(rideData: Ride, index: number, batchSize: numb
 		await rideAnalysisExpectedApexValidationIntervalWriter.write(analysesResult.expected_apex_validation_interval);
 		await rideAnalysisExpectedDriverIdQtyWriter.write(analysesResult.expected_driver_id_qty);
 		await rideAnalysisExpectedStartTimeWriter.write(analysesResult.expected_start_time);
+		await rideAnalysisExpectedVehicleEventCoverageGeoWriter.write(analysesResult.expected_vehicle_event_coverage_geo);
 		await rideAnalysisExpectedVehicleEventDelayWriter.write(analysesResult.expected_vehicle_event_delay);
 		await rideAnalysisExpectedVehicleEventIntervalWriter.write(analysesResult.expected_vehicle_event_interval);
 		await rideAnalysisExpectedVehicleEventQtyWriter.write(analysesResult.expected_vehicle_event_qty);
@@ -95,8 +96,6 @@ export async function examineRide(rideData: Ride, index: number, batchSize: numb
 		//
 		// Run the analyzers and count how many passed,
 		// how many failed and how many errored.
-
-		if (!analysesResult) throw new Error(`Analyses object is unavailable for ride after analysis run: ${rideData._id}`);
 
 		const skipAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value.grade_status === 'skip').map(([key]) => key);
 		const passAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value.grade_status === 'pass').map(([key]) => key);
