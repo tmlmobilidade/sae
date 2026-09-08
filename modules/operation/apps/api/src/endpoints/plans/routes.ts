@@ -4,7 +4,6 @@ import { authorizationMiddleware, FastifyService } from '@tmlmobilidade/go-clien
 
 import { changeOperationGtfsHandler } from './handlers/change-operation-gtfs.js';
 import { controllerReprocessPlanHandler } from './handlers/controller-reprocess-plan.js';
-import { createPlanHandler } from './handlers/create-plan.js';
 import { deleteApexConfigHandler } from './handlers/delete-apex-config.js';
 import { deletePlanHandler } from './handlers/delete-plan.js';
 import { downloadApexConfigHandler } from './handlers/download-apex-config.js';
@@ -38,8 +37,6 @@ server.register(
 		instance.get('/list-agencies', { preHandler: authorizationMiddleware('plans', ['read']) }, listAgenciesHandler);
 
 		instance.get('/:id', { preHandler: authorizationMiddleware('plans', ['read']) }, getPlanHandler);
-
-		instance.post('/create', { preHandler: authorizationMiddleware('plans', ['create']) }, createPlanHandler);
 
 		instance.put('/:id', { preHandler: authorizationMiddleware('plans', ['update']) }, updatePlanHandler);
 

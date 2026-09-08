@@ -9,11 +9,11 @@ import { hasPermissionResource } from '@tmlmobilidade/go-types-permissions';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 
 /**
- * Creates a new plan from a validation ID.
- * @param request Fastify request containing plan data and operation plan file in multipart form
+ * Approves a GTFS validation, creating a new plan from it.
+ * @param request Fastify request containing the validation ID to approve
  * @param reply Fastify reply
  */
-export async function createPlanHandler(request: FastifyRequest<{ Body: { validation_id: string } }>, reply: FastifyReply<Plan>) {
+export async function approveGtfsValidationHandler(request: FastifyRequest<{ Body: { validation_id: string } }>, reply: FastifyReply<Plan>) {
 	//
 
 	//

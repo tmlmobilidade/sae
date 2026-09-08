@@ -413,6 +413,7 @@ export const API_ROUTES = Object.freeze({
 		// GTFS-VALIDATIONS
 		GTFS_VALIDATIONS_CREATE: `${getModuleConfig('operation', 'api_url')}/gtfs-validations/create`,
 		GTFS_VALIDATIONS_DETAIL: (id: string) => `${getModuleConfig('operation', 'api_url')}/gtfs-validations/${encodeURIComponent(id)}`,
+		GTFS_VALIDATIONS_DETAIL_APPROVE: (id: string) => `${getModuleConfig('operation', 'api_url')}/gtfs-validations/${encodeURIComponent(id)}/approve`,
 		GTFS_VALIDATIONS_DETAIL_FILE: (id: string) => `${getModuleConfig('operation', 'api_url')}/gtfs-validations/${encodeURIComponent(id)}/file`,
 		GTFS_VALIDATIONS_DETAIL_FILE_DOWNLOAD: (id: string) => `${getModuleConfig('operation', 'api_url')}/gtfs-validations/${encodeURIComponent(id)}/file/download`,
 		GTFS_VALIDATIONS_DETAIL_LOCK: (id: string) => `${getModuleConfig('operation', 'api_url')}/gtfs-validations/${encodeURIComponent(id)}/lock`,
@@ -422,7 +423,6 @@ export const API_ROUTES = Object.freeze({
 		GTFS_VALIDATIONS_LIST_AGENCIES: `${getModuleConfig('operation', 'api_url')}/gtfs-validations/list-agencies`,
 
 		// PLANS
-		PLANS_CREATE: `${getModuleConfig('operation', 'api_url')}/plans/create`,
 		PLANS_DETAIL: (id: string) => `${getModuleConfig('operation', 'api_url')}/plans/${encodeURIComponent(id)}`,
 		PLANS_DETAIL_APEX_CONFIG: (id: string) => `${getModuleConfig('operation', 'api_url')}/plans/${encodeURIComponent(id)}/apex-config`,
 		PLANS_DETAIL_APEX_CONFIG_DOWNLOAD: (id: string) => `${getModuleConfig('operation', 'api_url')}/plans/${encodeURIComponent(id)}/apex-config/download`,
