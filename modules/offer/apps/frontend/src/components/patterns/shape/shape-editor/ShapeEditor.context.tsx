@@ -149,9 +149,16 @@ export function StopsEditorContextProvider({ children, onClose }: PropsWithChild
 	formRef.current = patternDetailContext.data.form;
 
 	// Local intermediate state — only written back to the pattern form on submit
-	const [initialPath] = useState<PopulatedPath[]>(() =>
-		(patternDetailContext.data.form.values.path ?? patternDetailContext.data.pattern?.path ?? []) as PopulatedPath[],
-	);
+	const [initialPath] = useState<PopulatedPath[]>(() => {
+		const populatedPath = patternDetailContext.data.pattern?.path ?? [];
+		const path = patternDetailContext.data.form.values.path ?? populatedPath;
+		const stopsById = new Map(populatedPath.map(pathItem => [pathItem.stop_id, pathItem.stop]));
+
+		return path.map(pathItem => ({
+			...pathItem,
+			stop: (pathItem as Partial<PopulatedPath>).stop ?? stopsById.get(pathItem.stop_id) ?? null,
+		}));
+	});
 	const [initialShape] = useState<Shape | undefined>(() =>
 		patternDetailContext.data.form.values.shape,
 	);

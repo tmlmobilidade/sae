@@ -8,7 +8,7 @@ import { type FastifyReply, type FastifyRequest } from '@tmlmobilidade/go-client
 
 /* * */
 
-const VALHALLA_URL = process.env.VALHALLA_URL ?? 'https://valhalla-stg.go.tmlmobilidade.pt';
+const VALHALLA_URL = process.env.VALHALLA_URL ?? 'https://valhalla.go.tmlmobilidade.pt';
 
 /* * */
 

@@ -1,7 +1,6 @@
 /* * */
 
 import { usePatternDetailContext } from '@/components/patterns/detail/PatternDetail.context';
-import { useStopsContext } from '@/contexts/Stops.context';
 import { PopulatedPath } from '@tmlmobilidade/go-types-offer';
 import { MapOverlayPatternShape, type MapOverlayPatternShapeLineData, MapView, Section, useToast } from '@tmlmobilidade/ui';
 import { useCallback, useMemo } from 'react';
@@ -23,7 +22,6 @@ export function ShapeEditorContent() {
 
 	const patternDetailContext = usePatternDetailContext();
 	const stopsEditorContext = useStopsEditorContext();
-	const stopsContext = useStopsContext();
 
 	const lineData = useMemo(() => {
 		const legs = stopsEditorContext.data.routeData?.legs ?? stopsEditorContext.data.shape?.legs;
@@ -182,18 +180,12 @@ export function ShapeEditorContent() {
 	// C. Render components
 
 	if (!stopsEditorContext.data.path.length) {
-		const stopOptions = stopsContext.data.raw.map(stop => ({
-			label: `${stop.name} (#${stop._id})`,
-			value: String(stop._id),
-		}));
-
 		return (
 			<InitialStopSelector
 				isLoading={stopsEditorContext.flags.isLoadingRoute}
 				lineColor={patternDetailContext.data.typologyData?.color || undefined}
 				lineData={patternDetailContext.geojson.pattern_line}
 				onInitialize={(s1, s2) => void stopsEditorContext.actions.initializePath(s1, s2)}
-				stopOptions={stopOptions}
 			/>
 		);
 	}
