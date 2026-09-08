@@ -12,6 +12,7 @@ export const RideIdentitySchema = z.object({
 	agency_code: z.string(),
 	agency_id: z.string(),
 	direction_id: GtfsTripDirectionSchema,
+	hash: z.string(),
 	hashed_shape_id: z.string(),
 	hashed_trip_id: z.string(),
 	headsign: z.string(),
@@ -82,9 +83,8 @@ export const RideSchema = RideIdentitySchema
 	.merge(RideApexSchema)
 	.merge(RidePassengersSchema)
 	.merge(RideOperationSchema)
-	.merge(RideLifecycleSchema);
-
-export const RideWithAnalysesSchema = RideSchema.merge(RideAnalysesSchema);
+	.merge(RideLifecycleSchema)
+	.merge(RideAnalysesSchema);
 
 /**
  * A Ride represents a single vehicle journey on a single route for a single day.
@@ -92,7 +92,16 @@ export const RideWithAnalysesSchema = RideSchema.merge(RideAnalysesSchema);
  */
 export type Ride = z.infer<typeof RideSchema>;
 
+/* * */
+
+export const SimplifiedRideSchema = RideIdentitySchema
+	.merge(RideScheduleSchema)
+	.merge(RideApexSchema)
+	.merge(RidePassengersSchema)
+	.merge(RideOperationSchema)
+	.merge(RideLifecycleSchema);
+
 /**
- * A RideWithAnalyses represents a single vehicle journey on a single route for a single day, along with its analyses.
+ * A SimplifiedRide represents a single vehicle journey on a single route for a single day, without its analyses.
  */
-export type RideWithAnalyses = z.infer<typeof RideWithAnalysesSchema>;
+export type SimplifiedRide = z.infer<typeof SimplifiedRideSchema>;

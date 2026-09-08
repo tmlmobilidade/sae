@@ -1,7 +1,7 @@
 /* * */
 
 import { type ClickHouseTableSchema } from '@tmlmobilidade/go-clients-clickhouse';
-import { type HashedShape, type HashedTrip, type Ride, type RideAnalysisAtLeastOneVehicleEventOnFirstStop, type RideAnalysisAtLeastOneVehicleEventOnLastStop, type RideAnalysisBase, type RideAnalysisExpectedApexValidationInterval, type RideAnalysisExpectedDriverIdQty, type RideAnalysisExpectedStartTime, type RideAnalysisExpectedVehicleEventCoverageGeo, type RideAnalysisExpectedVehicleEventDelay, type RideAnalysisExpectedVehicleEventInterval, type RideAnalysisExpectedVehicleEventQty, type RideAnalysisExpectedVehicleIdQty, type RideAnalysisMatchingApexLocations, type RideAnalysisMatchingVehicleIds, type RideAnalysisSimpleOneApexValidation, type RideAnalysisSimpleOneVehicleEventOrApexValidation, type RideAnalysisSimpleThreeVehicleEvents, type RideAnalysisTransactionSequentiality, type RideMatch } from '@tmlmobilidade/go-types-operation';
+import { type HashedShape, type HashedTrip, type RideAnalysisAtLeastOneVehicleEventOnFirstStop, type RideAnalysisAtLeastOneVehicleEventOnLastStop, type RideAnalysisBase, type RideAnalysisExpectedApexValidationInterval, type RideAnalysisExpectedDriverIdQty, type RideAnalysisExpectedStartTime, type RideAnalysisExpectedVehicleEventCoverageGeo, type RideAnalysisExpectedVehicleEventDelay, type RideAnalysisExpectedVehicleEventInterval, type RideAnalysisExpectedVehicleEventQty, type RideAnalysisExpectedVehicleIdQty, type RideAnalysisMatchingApexLocations, type RideAnalysisMatchingVehicleIds, type RideAnalysisSimpleOneApexValidation, type RideAnalysisSimpleOneVehicleEventOrApexValidation, type RideAnalysisSimpleThreeVehicleEvents, type RideAnalysisTransactionSequentiality, type RideMatch, type SimplifiedRide } from '@tmlmobilidade/go-types-operation';
 import { type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-events';
 
 /* * */
@@ -193,7 +193,7 @@ export const rideMatchesTableSchema: ClickHouseTableSchema<RideMatch> = {
 
 /* * */
 
-export const ridesTableSchema: ClickHouseTableSchema<Ride> = {
+export const simplifiedRidesTableSchema: ClickHouseTableSchema<SimplifiedRide> = {
 	_id: { type: 'String' },
 	agency_code: { type: 'LowCardinality(String)' },
 	agency_id: { type: 'LowCardinality(String)' },
@@ -211,6 +211,7 @@ export const ridesTableSchema: ClickHouseTableSchema<Ride> = {
 	end_time_scheduled: { type: 'Int64 CODEC(DoubleDelta, ZSTD)' },
 	extension_observed: { type: 'Nullable(UInt32) CODEC(T64, ZSTD)' },
 	extension_scheduled: { type: 'UInt32 CODEC(T64, ZSTD)' },
+	hash: { type: 'String' },
 	hashed_shape_id: { type: 'LowCardinality(String)' },
 	hashed_trip_id: { type: 'LowCardinality(String)' },
 	headsign: { type: 'LowCardinality(String)' },
