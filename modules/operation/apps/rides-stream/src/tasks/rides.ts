@@ -5,7 +5,24 @@ import { type RideWithAnalyses } from '@tmlmobilidade/go-types-operation';
 import { Logger } from '@tmlmobilidade/logger';
 import { ZodError } from 'zod';
 
-import { ridesWriter } from '../utils/writers.js';
+import {
+	rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter,
+	rideAnalysisAtLeastOneVehicleEventOnLastStopWriter,
+	rideAnalysisExpectedApexValidationIntervalWriter,
+	rideAnalysisExpectedDriverIdQtyWriter,
+	rideAnalysisExpectedStartTimeWriter,
+	rideAnalysisExpectedVehicleEventDelayWriter,
+	rideAnalysisExpectedVehicleEventIntervalWriter,
+	rideAnalysisExpectedVehicleEventQtyWriter,
+	rideAnalysisExpectedVehicleIdQtyWriter,
+	rideAnalysisMatchingApexLocationsWriter,
+	rideAnalysisMatchingVehicleIdsWriter,
+	rideAnalysisSimpleOneApexValidationWriter,
+	rideAnalysisSimpleOneVehicleEventOrApexValidationWriter,
+	rideAnalysisSimpleThreeVehicleEventsWriter,
+	rideAnalysisTransactionSequentialityWriter,
+	ridesWriter,
+} from '../utils/writers.js';
 
 /**
  * Process the Ride document by validating the operation type,
@@ -18,19 +35,43 @@ export async function processRide(databaseOperation: ChangeStreamDocument<RideWi
 	//
 
 	//
+	// Validate the database operation
+
+	if ((databaseOperation.operationType !== 'insert' && databaseOperation.operationType !== 'update') || !databaseOperation.fullDocument) {
+		Logger.error({ message: `[rides-stream] WARNING: unexpected changeStream document: operationType="${databaseOperation.operationType}"` });
+		return;
+	}
+
+	//
 	// Transform the APEX Banking Tap document into a SimplifiedApexBankingTap
 	// and write it to the database, using a batch writer.
 
 	try {
-		let parseResult: null | SimplifiedApexBankingTap = null;
-		if (databaseOperation.fullDocument.version === 'banking-tap-4.0') parseResult = parseRawApexTransactionBankingTapV40IntoSimplifiedApexBankingTap(databaseOperation.fullDocument);
-		if (!parseResult) return;
-		await writer.write(parseResult, { flushCallback: setRidesAsWaiting });
+		await ridesWriter.write(databaseOperation.fullDocument);
+
+		//
+		await Promise.all([
+			rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.write(databaseOperation.fullDocument.analyses.at_least_one_vehicle_event_on_first_stop),
+			rideAnalysisAtLeastOneVehicleEventOnLastStopWriter.write(databaseOperation.fullDocument.analyses.at_least_one_vehicle_event_on_last_stop),
+			rideAnalysisExpectedApexValidationIntervalWriter.write(databaseOperation.fullDocument.analyses.expected_apex_validation_interval),
+			rideAnalysisExpectedDriverIdQtyWriter.write(databaseOperation.fullDocument.analyses.expected_driver_id_qty),
+			rideAnalysisExpectedStartTimeWriter.write(databaseOperation.fullDocument.analyses.expected_start_time),
+			rideAnalysisExpectedVehicleEventDelayWriter.write(databaseOperation.fullDocument.analyses.expected_vehicle_event_delay),
+			rideAnalysisExpectedVehicleEventIntervalWriter.write(databaseOperation.fullDocument.analyses.expected_vehicle_event_interval),
+			rideAnalysisExpectedVehicleEventQtyWriter.write(databaseOperation.fullDocument.analyses.expected_vehicle_event_qty),
+			rideAnalysisExpectedVehicleIdQtyWriter.write(databaseOperation.fullDocument.analyses.expected_vehicle_id_qty),
+			rideAnalysisMatchingApexLocationsWriter.write(databaseOperation.fullDocument.analyses.matching_apex_locations),
+			rideAnalysisMatchingVehicleIdsWriter.write(databaseOperation.fullDocument.analyses.matching_vehicle_ids),
+			rideAnalysisSimpleOneApexValidationWriter.write(databaseOperation.fullDocument.analyses.simple_one_apex_validation),
+			rideAnalysisSimpleOneVehicleEventOrApexValidationWriter.write(databaseOperation.fullDocument.analyses.simple_one_vehicle_event_or_apex_validation),
+			rideAnalysisSimpleThreeVehicleEventsWriter.write(databaseOperation.fullDocument.analyses.simple_three_vehicle_events),
+			rideAnalysisTransactionSequentialityWriter.write(databaseOperation.fullDocument.analyses.transaction_sequentiality),
+		]);
 	} catch (error) {
 		const errorMessage = error instanceof ZodError
 			? error.issues.map(issue => `${issue.path.join('.')} ${issue.message}`).join('; ')
 			: error instanceof Error ? error.message : String(error);
-		Logger.error({ message: `Error transforming APEX Banking Tap: ${databaseOperation.fullDocument.transaction.transactionId}: Reason: ${errorMessage}` });
+		Logger.error({ message: `Error synchronizing ride or analyses: ${databaseOperation.fullDocument._id} - Reason: ${errorMessage}` });
 	}
 
 	//
