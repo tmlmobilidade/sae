@@ -4,7 +4,7 @@ import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 
-import { type AnalysisData, PickedSimplifiedApexBankingTap, PickedSimplifiedApexLocation, PickedSimplifiedApexOnBoardRefund, PickedSimplifiedApexOnBoardSale, PickedSimplifiedApexValidation, PickedSimplifiedVehicleEvent } from '../types/analysis-data.js';
+import { type AnalysisData, type PickedSimplifiedApexBankingTap, type PickedSimplifiedApexLocation, type PickedSimplifiedApexOnBoardRefund, type PickedSimplifiedApexOnBoardSale, type PickedSimplifiedApexValidation, type PickedSimplifiedVehicleEvent } from '../types/analysis-data.js';
 
 /* * */
 

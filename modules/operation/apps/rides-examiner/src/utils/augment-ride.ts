@@ -1,12 +1,13 @@
 /* * */
 
-import { type AnalysisData } from '@/types/analysis-data.js';
-import { detectEndEvent } from '@/utils/detect-end-event.js';
-import { detectFirstEvent } from '@/utils/detect-first-event.js';
-import { detectLastEvent } from '@/utils/detect-last-event.js';
-import { detectStartEvent } from '@/utils/detect-start-event.js';
-import { getObservedExtension } from '@/utils/get-observed-extension.js';
-import { Ride } from '@tmlmobilidade/go-types-operation';
+import { type Ride } from '@tmlmobilidade/go-types-operation';
+
+import { type AnalysisData } from '../types/analysis-data.js';
+import { detectEndEvent } from './detect-end-event.js';
+import { detectFirstEvent } from './detect-first-event.js';
+import { detectLastEvent } from './detect-last-event.js';
+import { detectStartEvent } from './detect-start-event.js';
+import { getObservedExtension } from './get-observed-extension.js';
 
 /**
  * Augments the ride data with additional information from the analysis data.

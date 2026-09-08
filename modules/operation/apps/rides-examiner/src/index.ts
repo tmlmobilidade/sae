@@ -1,15 +1,16 @@
 /* * */
 
-import { analyzeRide } from '@/utils/analyze-ride.js';
-import { augmentRide } from '@/utils/augment-ride.js';
-import { fetchAnalysisData } from '@/utils/fetch-analysis-data.js';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { RidesCoordinatorRidesResponse } from '@tmlmobilidade/go-operation-pckg-types';
+import { type RidesCoordinatorRidesResponse } from '@tmlmobilidade/go-operation-pckg-types';
 import { getCoordinatorUrl } from '@tmlmobilidade/go-operation-pckg-utils';
-import { RideWithAnalyses, RideWithAnalysesSchema } from '@tmlmobilidade/go-types-operation';
+import { type RideWithAnalyses, RideWithAnalysesSchema } from '@tmlmobilidade/go-types-operation';
 import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
+
+import { analyzeRide } from './utils/analyze-ride.js';
+import { augmentRide } from './utils/augment-ride.js';
+import { fetchAnalysisData } from './utils/fetch-analysis-data.js';
 
 /* * */
 
@@ -170,4 +171,4 @@ export async function validateRides() {
 
 /* * */
 
-await runOnInterval(validateRides, { intervalMs: '10s' });
+await runOnInterval(validateRides, { intervalMs: '1s' });
