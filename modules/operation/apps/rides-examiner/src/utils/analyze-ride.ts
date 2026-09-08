@@ -7,6 +7,7 @@ import { atLeastOneVehicleEventOnLastStopAnalyzer } from '../analyzers/at-least-
 import { expectedApexValidationIntervalAnalyzer } from '../analyzers/expected-apex-validation-interval.js';
 import { expectedDriverIdQtyAnalyzer } from '../analyzers/expected-driver-id-qty.js';
 import { expectedStartTimeAnalyzer } from '../analyzers/expected-start-time.js';
+import { expectedVehicleEventCoverageGeoAnalyzer } from '../analyzers/expected-vehicle-event-coverage-geo.js';
 import { expectedVehicleEventDelayAnalyzer } from '../analyzers/expected-vehicle-event-delay.js';
 import { expectedVehicleEventIntervalAnalyzer } from '../analyzers/expected-vehicle-event-interval.js';
 import { expectedVehicleEventQtyAnalyzer } from '../analyzers/expected-vehicle-event-qty.js';
@@ -41,6 +42,7 @@ export function analyzeRide(analysisData: AnalysisData): RideAnalysesRegistry {
 		expected_apex_validation_interval: expectedApexValidationIntervalAnalyzer(analysisData),
 		expected_driver_id_qty: expectedDriverIdQtyAnalyzer(analysisData),
 		expected_start_time: expectedStartTimeAnalyzer(analysisData),
+		expected_vehicle_event_coverage_geo: expectedVehicleEventCoverageGeoAnalyzer(analysisData),
 		expected_vehicle_event_delay: expectedVehicleEventDelayAnalyzer(analysisData),
 		expected_vehicle_event_interval: expectedVehicleEventIntervalAnalyzer(analysisData),
 		expected_vehicle_event_qty: expectedVehicleEventQtyAnalyzer(analysisData),

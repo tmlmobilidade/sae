@@ -85,7 +85,7 @@ export async function createPlanHandler(request: FastifyRequest<{ Body: { valida
 	//
 	// Insert the new plan data
 
-	const planResult = await goDb.operation.plans.insertOne(newPlanData);
+	const insertPlanResult = await goDb.operation.plans.insertOne(newPlanData);
 
 	//
 	// Copy validation GTFS into the plan scope, then attach it to the plan.
@@ -93,16 +93,16 @@ export async function createPlanHandler(request: FastifyRequest<{ Body: { valida
 	// - copy fails → saga compensates blob/metadata; onRollback deletes the plan
 	// - plan update fails → onSuccess throws → onRollback deletes the plan → saga compensates the copy
 
-	await storageProvider.copy(validationData.file_id, 'plans', planResult._id, {
+	await storageProvider.copy(validationData.file_id, 'plans', insertPlanResult._id, {
 		onRollback: async () => {
-			await goDb.operation.plans.deleteById(planResult._id);
+			await goDb.operation.plans.deleteById(insertPlanResult._id);
 			throw new Error('Failed to copy validation GTFS into the plan scope');
 		},
 		onSuccess: async (_, result, session) => {
 			// Update the plan in the database with the operation GTFS attachment ID
 			const plansCollection = await goDb.operation.plans.getCollection();
 			await plansCollection.updateOne(
-				{ _id: planResult._id },
+				{ _id: insertPlanResult._id },
 				{ $set: { 'attachments.operation_gtfs': result._id } },
 				{ session },
 			);
@@ -112,11 +112,11 @@ export async function createPlanHandler(request: FastifyRequest<{ Body: { valida
 	//
 	// Get a new hash for this plan
 
-	const createdPlanData = await goDb.operation.plans.findById(planResult._id);
+	const createdPlanData = await goDb.operation.plans.findById(insertPlanResult._id);
 
 	if (!createdPlanData) {
 		return sendErrorApiResponse(reply, {
-			error: `Plan with ID "${planResult._id}" not found after creating the plan.`,
+			error: `Plan with ID "${insertPlanResult._id}" not found after creating the plan.`,
 			status_code: '404',
 		});
 	}

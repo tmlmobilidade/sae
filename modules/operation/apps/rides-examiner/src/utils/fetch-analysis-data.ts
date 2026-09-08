@@ -4,7 +4,7 @@ import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 
-import { type AnalysisData } from '../types/analysis-data.js';
+import { type AnalysisData, PickedSimplifiedApexBankingTap, PickedSimplifiedApexLocation, PickedSimplifiedApexOnBoardRefund, PickedSimplifiedApexOnBoardSale, PickedSimplifiedApexValidation, PickedSimplifiedVehicleEvent } from '../types/analysis-data.js';
 
 /* * */
 
@@ -21,33 +21,48 @@ export async function fetchAnalysisData(rideData: Ride): Promise<AnalysisData> {
 	//
 	// Fetch data from LabDB in parallel.
 
-	const simplifiedApexBankingTapsPromise = labDb.simplifiedApex.bankingTaps.select(
-		'group_dimension, mac_ase_counter_value, mac_sam_serial_number, vehicle_id',
-		`created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4`,
+	const simplifiedApexBankingTapsPromise = labDb.queryFromString<PickedSimplifiedApexBankingTap>(
+		`
+			SELECT group_dimension, mac_ase_counter_value, mac_sam_serial_number, vehicle_id
+			FROM simplified_apex.banking_taps
+			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4
+		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 
-	const simplifiedApexLocationsPromise = labDb.simplifiedApex.locations.select(
-		'mac_ase_counter_value, mac_sam_serial_number, stop_id, vehicle_id',
-		`created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4`,
+	const simplifiedApexLocationsPromise = labDb.queryFromString<PickedSimplifiedApexLocation>(
+		`
+			SELECT mac_ase_counter_value, mac_sam_serial_number, stop_id, vehicle_id
+			FROM simplified_apex.locations
+			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4
+		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 
-	const simplifiedApexOnBoardRefundsPromise = labDb.simplifiedApex.refunds.select(
-		'mac_ase_counter_value, mac_sam_serial_number, price, vehicle_id',
-		`created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4`,
+	const simplifiedApexOnBoardRefundsPromise = labDb.queryFromString<PickedSimplifiedApexOnBoardRefund>(
+		`
+			SELECT mac_ase_counter_value, mac_sam_serial_number, price, vehicle_id
+			FROM simplified_apex.refunds
+			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4
+		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 
-	const simplifiedApexOnBoardSalesPromise = labDb.simplifiedApex.sales.select(
-		'is_passenger, mac_ase_counter_value, mac_sam_serial_number, price, vehicle_id',
-		`created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4`,
+	const simplifiedApexOnBoardSalesPromise = labDb.queryFromString<PickedSimplifiedApexOnBoardSale>(
+		`
+			SELECT is_passenger, mac_ase_counter_value, mac_sam_serial_number, price, vehicle_id
+			FROM simplified_apex.sales
+			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4
+		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 
-	const simplifiedApexValidationsPromise = labDb.simplifiedApex.validations.select(
-		'category, created_at, is_passenger, mac_ase_counter_value, mac_sam_serial_number, units_qty, vehicle_id',
-		`created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4`,
+	const simplifiedApexValidationsPromise = labDb.queryFromString<PickedSimplifiedApexValidation>(
+		`
+			SELECT category, created_at, is_passenger, mac_ase_counter_value, mac_sam_serial_number, units_qty, vehicle_id
+			FROM simplified_apex.validations
+			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4
+		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 
@@ -63,9 +78,12 @@ export async function fetchAnalysisData(rideData: Ride): Promise<AnalysisData> {
 		{ 1: rideData.hashed_trip_id },
 	);
 
-	const vehicleEventsPromise = labDb.operation.simplifiedVehicleEvents.select(
-		'created_at, driver_id, latitude, longitude, odometer, received_at, stop_id, vehicle_id',
-		`created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4 AND extra_trip_id IS NULL`,
+	const vehicleEventsPromise = labDb.queryFromString<PickedSimplifiedVehicleEvent>(
+		`
+			SELECT created_at, driver_id, latitude, longitude, odometer, received_at, stop_id, vehicle_id
+			FROM simplified_vehicle_events
+			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4 AND extra_trip_id IS NULL
+		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 

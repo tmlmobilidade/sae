@@ -7,6 +7,7 @@ import { RideAnalysisAtLeastOneVehicleEventOnLastStopSchema } from './at-least-o
 import { RideAnalysisExpectedApexValidationIntervalSchema } from './expected-apex-validation-interval.js';
 import { RideAnalysisExpectedDriverIdQtySchema } from './expected-driver-id-qty.js';
 import { RideAnalysisExpectedStartTimeSchema } from './expected-start-time.js';
+import { RideAnalysisExpectedVehicleEventCoverageGeoSchema } from './expected-vehicle-event-coverage-geo.js';
 import { RideAnalysisExpectedVehicleEventDelaySchema } from './expected-vehicle-event-delay.js';
 import { RideAnalysisExpectedVehicleEventIntervalSchema } from './expected-vehicle-event-interval.js';
 import { RideAnalysisExpectedVehicleEventQtySchema } from './expected-vehicle-event-qty.js';
@@ -26,6 +27,7 @@ export const RideAnalysesRegistrySchema = z.object({
 	expected_apex_validation_interval: RideAnalysisExpectedApexValidationIntervalSchema,
 	expected_driver_id_qty: RideAnalysisExpectedDriverIdQtySchema,
 	expected_start_time: RideAnalysisExpectedStartTimeSchema,
+	expected_vehicle_event_coverage_geo: RideAnalysisExpectedVehicleEventCoverageGeoSchema,
 	expected_vehicle_event_delay: RideAnalysisExpectedVehicleEventDelaySchema,
 	expected_vehicle_event_interval: RideAnalysisExpectedVehicleEventIntervalSchema,
 	expected_vehicle_event_qty: RideAnalysisExpectedVehicleEventQtySchema,

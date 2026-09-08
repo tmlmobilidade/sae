@@ -3,6 +3,7 @@ export * from './at-least-one-vehicle-event-on-last-stop.js';
 export * from './expected-apex-validation-interval.js';
 export * from './expected-driver-id-qty.js';
 export * from './expected-start-time.js';
+export * from './expected-vehicle-event-coverage-geo.js';
 export * from './expected-vehicle-event-delay.js';
 export * from './expected-vehicle-event-interval.js';
 export * from './expected-vehicle-event-qty.js';
