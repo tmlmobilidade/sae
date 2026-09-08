@@ -21,7 +21,7 @@ import {
 	rideAnalysisSimpleOneVehicleEventOrApexValidationWriter,
 	rideAnalysisSimpleThreeVehicleEventsWriter,
 	rideAnalysisTransactionSequentialityWriter,
-	simplifiedRidesWriter,
+	ridesWriter,
 } from '../utils/writers.js';
 
 /**
@@ -47,7 +47,7 @@ export async function processRide(databaseOperation: ChangeStreamDocument<Ride>)
 	// and write it to the database, using a batch writer.
 
 	try {
-		await simplifiedRidesWriter.write(databaseOperation.fullDocument);
+		await ridesWriter.write(databaseOperation.fullDocument);
 
 		if (!databaseOperation.fullDocument.analyses) {
 			// Logger.info({ message: `No analyses found for ride: ${databaseOperation.fullDocument._id}` });

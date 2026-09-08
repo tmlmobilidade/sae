@@ -1,12 +1,12 @@
 /* * */
 
-import { SimplifiedRideSchema } from '@tmlmobilidade/go-types-operation';
+import { RideSchema } from '@tmlmobilidade/go-types-operation';
 import { DelayStatusSchema, OperationalStatusSchema, SeenStatusSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
 
 /* * */
 
-export const ControllerRidesDetailRideItemSchema = SimplifiedRideSchema.extend({
+export const ControllerRidesDetailRideItemSchema = RideSchema.extend({
 	end_delay_status: DelayStatusSchema.nullable().default(null),
 	operational_status: OperationalStatusSchema,
 	seen_status: SeenStatusSchema,

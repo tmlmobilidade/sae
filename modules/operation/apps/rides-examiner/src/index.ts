@@ -168,8 +168,6 @@ export async function validateRides() {
 			process.exit(1); // End process
 		}, 10000); // after 10 seconds
 	}
-
-	//
 };
 
 /* * */

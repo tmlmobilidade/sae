@@ -1,7 +1,7 @@
 -- Delete out-of-window historical rides from eta.hist_rides.
 --
 -- The cleaner mirrors the loader's historical window: rides from
--- `operation.simplified_rides` whose `start_time_scheduled` falls inside
+-- `operation.rides` whose `start_time_scheduled` falls inside
 -- `[now − historicalDataDaysBack − standardWindowHours, now − standardWindowHours]`.
 -- Those `_id` values are the set currently considered in-window.
 --

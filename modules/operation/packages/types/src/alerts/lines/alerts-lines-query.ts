@@ -18,7 +18,7 @@ WITH
 	(
 		SELECT
 			*
-		FROM operation.simplified_rides
+		FROM operation.rides
 		WHERE
 			agency_id = $1
 			AND start_time_scheduled >= $2

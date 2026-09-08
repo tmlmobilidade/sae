@@ -1,6 +1,6 @@
 /* * */
 
-import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, simplifiedRidesWriter } from '@/utils/writers.js';
+import { rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter, rideAnalysisAtLeastOneVehicleEventOnLastStopWriter, rideAnalysisExpectedApexValidationIntervalWriter, rideAnalysisExpectedDriverIdQtyWriter, rideAnalysisExpectedStartTimeWriter, rideAnalysisExpectedVehicleEventDelayWriter, rideAnalysisExpectedVehicleEventIntervalWriter, rideAnalysisExpectedVehicleEventQtyWriter, rideAnalysisExpectedVehicleIdQtyWriter, rideAnalysisMatchingApexLocationsWriter, rideAnalysisMatchingVehicleIdsWriter, rideAnalysisSimpleOneApexValidationWriter, rideAnalysisSimpleOneVehicleEventOrApexValidationWriter, rideAnalysisSimpleThreeVehicleEventsWriter, rideAnalysisTransactionSequentialityWriter, ridesWriter } from '@/utils/writers.js';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type Ride, RideHash } from '@tmlmobilidade/go-types-operation';
@@ -50,7 +50,7 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 	await replicate<Ride>({
 
 		countDestinationDbFn: async () => {
-			const result = await labDb.operation.simplifiedRides.count(
+			const result = await labDb.operation.rides.count(
 				'DISTINCT hash',
 				'start_time_scheduled >= $1 AND start_time_scheduled < $2',
 				{ 1: timeChunk.start, 2: timeChunk.end },
@@ -65,7 +65,7 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 
 		deleteDestinationDbFn: async (ids: string[]) => {
 			await performInChunks(ids, async (chunk) => {
-				await labDb.operation.simplifiedRides.delete(
+				await labDb.operation.rides.delete(
 					'hash IN $1',
 					{ 1: chunk },
 				);
@@ -73,7 +73,7 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 		},
 
 		distinctDestinationDbFn: async () => {
-			const result = await labDb.operation.simplifiedRides.distinct(
+			const result = await labDb.operation.rides.distinct(
 				'hash',
 				'start_time_scheduled >= $1 AND start_time_scheduled < $2',
 				{ 1: timeChunk.start, 2: timeChunk.end },
@@ -94,7 +94,7 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 
 		writeSourceDocumentToDestinationDbFn: async (sourceDbDocument) => {
 			try {
-				await simplifiedRidesWriter.write(sourceDbDocument);
+				await ridesWriter.write(sourceDbDocument);
 
 				if (!sourceDbDocument.analyses) {
 					return;
@@ -131,7 +131,7 @@ export async function syncRides(timeChunk: PerformInTimeChunksItem) {
 	// Flush the writers
 
 	await Promise.all([
-		simplifiedRidesWriter.flush(),
+		ridesWriter.flush(),
 		rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.flush(),
 		rideAnalysisAtLeastOneVehicleEventOnLastStopWriter.flush(),
 		rideAnalysisExpectedApexValidationIntervalWriter.flush(),

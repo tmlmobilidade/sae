@@ -5,7 +5,7 @@ TRUNCATE DATABASE eta;
 -- ========================
 
 CREATE TABLE IF NOT EXISTS eta.hist_rides
-AS operation.simplified_rides;
+AS operation.rides;
 
 ALTER TABLE eta.hist_rides
 ADD COLUMN shape_polyline String CODEC(ZSTD),

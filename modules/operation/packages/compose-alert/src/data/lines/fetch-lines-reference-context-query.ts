@@ -22,7 +22,7 @@ WITH
 			route_long_name,
 			updated_at
 
-		FROM operation.simplified_rides
+		FROM operation.rides
 
 		WHERE
 			agency_id = $1

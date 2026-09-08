@@ -22,7 +22,7 @@ WITH
 	(
 		SELECT
 			*
-		FROM operation.simplified_rides
+		FROM operation.rides
 
 		WHERE
 			agency_id = $1
