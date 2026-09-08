@@ -4,6 +4,7 @@ import { PatternsController } from '@/endpoints/patterns/patterns.controller.js'
 import { authorizationMiddleware, FastifyService } from '@tmlmobilidade/go-clients-fastify';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
 
+import { getPatternStopHandler } from './handlers/get-stop.js';
 import { listPatternsStopsHandler } from './handlers/list-stops.js';
 
 /* * */
@@ -28,6 +29,12 @@ server.register(
 			'/stops',
 			{ preHandler: authorizationMiddleware(PermissionCatalog.all.lines.scope, [PermissionCatalog.all.lines.actions.read]) },
 			listPatternsStopsHandler,
+		);
+
+		instance.get(
+			'/stops/:stopId',
+			{ preHandler: authorizationMiddleware(PermissionCatalog.all.lines.scope, [PermissionCatalog.all.lines.actions.read]) },
+			getPatternStopHandler,
 		);
 
 		instance.get(

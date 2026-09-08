@@ -3,12 +3,9 @@
 /* * */
 
 import { ShapeEditorStopsItem } from '@/components/patterns/shape/shape-editor/ShapeEditorStopsItem';
-import { useStopsContext } from '@/contexts/Stops.context';
-import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type Stop } from '@tmlmobilidade/go-types-infrastructure';
 import { PopulatedPath } from '@tmlmobilidade/go-types-offer';
-import { DraggableList, Section, Text, useToast } from '@tmlmobilidade/ui';
-import { fetchData } from '@tmlmobilidade/utils';
+import { DraggableList, Section, Text } from '@tmlmobilidade/ui';
 import { useState } from 'react';
 
 import styles from './styles.module.css';
@@ -25,18 +22,11 @@ export function StopsList() {
 	// A. Setup variables
 
 	const stopsEditorContext = useStopsEditorContext();
-	const stopsContext = useStopsContext();
 
 	const [addStopIndex, setAddStopIndex] = useState<null | number>(null);
-	const [selectedStopId, setSelectedStopId] = useState<null | string>(null);
 	const [highlightedStopId, setHighlightedStopId] = useState<null | string>(null);
 
 	const path = stopsEditorContext.data.path as PopulatedPath[];
-
-	const stopOptions = stopsContext.data.raw.map(stop => ({
-		label: `${stop.name} (#${stop._id})`,
-		value: String(stop._id),
-	}));
 
 	//
 	// B. Handle actions
@@ -52,25 +42,15 @@ export function StopsList() {
 
 	const handleStartAddStop = (index: number) => {
 		setAddStopIndex(index);
-		setSelectedStopId(null);
 	};
 
 	const handleCancelAddStop = () => {
 		setAddStopIndex(null);
-		setSelectedStopId(null);
 	};
 
-	const handleSelectStop = async (stopId: null | string) => {
-		if (!stopId || addStopIndex === null) return;
-		setSelectedStopId(stopId);
-
-		const selectedStopResult = await fetchData<Stop>(API_ROUTES.infrastructure.STOPS_GET(stopId));
-		if (!selectedStopResult.isOk) {
-			useToast.error({ message: selectedStopResult.error, title: 'Erro ao carregar paragem' });
-			return;
-		}
-
-		void stopsEditorContext.actions.addStop(selectedStopResult.data, addStopIndex + 1);
+	const handleSelectStop = (stop: null | Stop) => {
+		if (!stop || addStopIndex === null) return;
+		void stopsEditorContext.actions.addStop(stop, addStopIndex + 1);
 		handleCancelAddStop();
 	};
 
@@ -108,10 +88,8 @@ export function StopsList() {
 										nextPathItem={nextPathItem}
 										onAdd={handleStartAddStop}
 										onCancel={handleCancelAddStop}
-										onSelect={stopId => void handleSelectStop(stopId)}
+										onSelect={handleSelectStop}
 										pathItem={pathItem}
-										selectedStopId={selectedStopId}
-										stopOptions={stopOptions}
 									/>
 								</Section>
 							</Section>

@@ -3,12 +3,14 @@
 /* * */
 
 import { IconCirclePlus, IconX } from '@tabler/icons-react';
+import { type Stop } from '@tmlmobilidade/go-types-infrastructure';
 import { PopulatedPath } from '@tmlmobilidade/go-types-offer';
-import { IconButton, Select, Text } from '@tmlmobilidade/ui';
+import { IconButton, Text } from '@tmlmobilidade/ui';
 
 import styles from './styles.module.css';
 
 import { useStopsEditorContext } from '../ShapeEditor.context';
+import { ShapeEditorStopSelect } from '../ShapeEditorStopSelect';
 
 /* * */
 
@@ -41,7 +43,7 @@ function SegmentInfo({ afterStopId, beforeStopId, distance }: {
 
 /* * */
 
-export function StopsListRow({ index, isAdding, nextPathItem, onAdd, onCancel, onSelect, pathItem, selectedStopId, stopOptions }: { index: number, isAdding: boolean, nextPathItem: PopulatedPath | undefined, onAdd: (index: number) => void, onCancel: () => void, onSelect: (stopId: null | string) => void, pathItem: PopulatedPath, selectedStopId: null | string, stopOptions: { label: string, value: string }[] }) {
+export function StopsListRow({ index, isAdding, nextPathItem, onAdd, onCancel, onSelect, pathItem }: { index: number, isAdding: boolean, nextPathItem: PopulatedPath | undefined, onAdd: (index: number) => void, onCancel: () => void, onSelect: (stop: null | Stop) => void, pathItem: PopulatedPath }) {
 	//
 
 	//
@@ -52,16 +54,10 @@ export function StopsListRow({ index, isAdding, nextPathItem, onAdd, onCancel, o
 			{isAdding ? (
 				<>
 					<div className={styles.addStopSelect}>
-						<Select
-							data={stopOptions}
+						<ShapeEditorStopSelect
+							excludeStopIds={[pathItem.stop_id]}
 							onChange={onSelect}
-							placeholder="Pesquisar paragem..."
-							value={selectedStopId}
-							styles={{
-								wrapper: {
-									border: 'none',
-								},
-							}}
+							value={null}
 						/>
 					</div>
 
