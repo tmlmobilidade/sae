@@ -23,15 +23,15 @@ export async function processGtfsStrictV29ExtTrips(context: ImportGtfsContext<Gt
 
 		const parseEachRow = async (data: GtfsStrictV29ExtTrips) => {
 			// Validate the current row against the proper type
-			const validatedData = GtfsStrictV29ExtTripsSchema.safeParse(data);
+			const validatedData = GtfsStrictV29ExtTripsSchema.parse(data);
 			// For each trip, check if the associated service_id was saved
 			// in the previous step or not. Include it if yes, skip otherwise.
-			if (!context.gtfs.calendar_dates[validatedData.data.service_id]) return;
+			if (!context.gtfs.calendar_dates[validatedData.service_id]) return;
 			// Save the exported row
-			context.gtfs.trips.write(validatedData.data);
+			context.gtfs.trips.write(validatedData);
 			// Reference the associated entities to filter them later.
-			context.referenced_route_ids.add(validatedData.data.route_id);
-			context.referenced_shape_ids.add(validatedData.data.shape_id);
+			context.referenced_route_ids.add(validatedData.route_id);
+			context.referenced_shape_ids.add(validatedData.shape_id);
 			// Log progress
 			if (context.counters.trips % 10000 === 0) Logger.info({ message: `Parsed ${context.counters.trips} trips.txt rows so far (${tripsParseTimer.get()})` });
 			// Increment the counter

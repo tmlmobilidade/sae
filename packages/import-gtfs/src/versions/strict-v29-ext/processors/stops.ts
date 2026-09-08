@@ -24,11 +24,11 @@ export async function processGtfsStrictV29ExtStops(context: ImportGtfsContext<Gt
 
 		const parseEachRow = async (data: GtfsStrictV29ExtStops) => {
 			// Validate the current row against the proper type
-			const validatedData = GtfsStrictV29ExtStopsSchema.safeParse(data);
+			const validatedData = GtfsStrictV29ExtStopsSchema.parse(data);
 			// Skip if stop already exists
-			if (context.gtfs.stops.get('stop_id', validatedData.data.stop_id)) return;
+			if (context.gtfs.stops.get('stop_id', validatedData.stop_id)) return;
 			// Save the exported row
-			context.gtfs.stops.write(validatedData.data);
+			context.gtfs.stops.write(validatedData);
 		};
 
 		//

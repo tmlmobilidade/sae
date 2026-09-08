@@ -24,6 +24,7 @@ export function initGtfsStrictV29SqlTables(): GtfsStrictV29SQLTables {
 			{ indexed: false, name: 'bikes_allowed', type: 'TEXT' },
 			{ indexed: false, name: 'block_id', type: 'TEXT' },
 			{ indexed: false, name: 'direction_id', not_null: true, type: 'TEXT' },
+			{ indexed: true, name: 'pattern_id', not_null: true, type: 'TEXT' },
 			{ indexed: false, name: 'route_id', not_null: true, type: 'TEXT' },
 			{ indexed: false, name: 'service_id', not_null: true, type: 'TEXT' },
 			{ indexed: false, name: 'shape_id', not_null: true, type: 'TEXT' },
