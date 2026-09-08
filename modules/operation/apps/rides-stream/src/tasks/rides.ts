@@ -50,11 +50,10 @@ export async function processRide(databaseOperation: ChangeStreamDocument<Ride>)
 		await simplifiedRidesWriter.write(databaseOperation.fullDocument);
 
 		if (!databaseOperation.fullDocument.analyses) {
-			Logger.info({ message: `No analyses found for ride: ${databaseOperation.fullDocument._id}` });
+			// Logger.info({ message: `No analyses found for ride: ${databaseOperation.fullDocument._id}` });
 			return;
 		}
 
-		//
 		await Promise.all([
 			rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter.write(databaseOperation.fullDocument.analyses.at_least_one_vehicle_event_on_first_stop),
 			rideAnalysisAtLeastOneVehicleEventOnLastStopWriter.write(databaseOperation.fullDocument.analyses.at_least_one_vehicle_event_on_last_stop),
@@ -72,12 +71,12 @@ export async function processRide(databaseOperation: ChangeStreamDocument<Ride>)
 			rideAnalysisSimpleThreeVehicleEventsWriter.write(databaseOperation.fullDocument.analyses.simple_three_vehicle_events),
 			rideAnalysisTransactionSequentialityWriter.write(databaseOperation.fullDocument.analyses.transaction_sequentiality),
 		]);
+
+		//
 	} catch (error) {
 		const errorMessage = error instanceof ZodError
 			? error.issues.map(issue => `${issue.path.join('.')} ${issue.message}`).join('; ')
 			: error instanceof Error ? error.message : String(error);
 		Logger.error({ message: `Error synchronizing ride or analyses: ${databaseOperation.fullDocument._id} - Reason: ${errorMessage}` });
 	}
-
-	//
 };

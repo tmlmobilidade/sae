@@ -33,8 +33,15 @@ async function main() {
 		// Get the earliest date from which we have data to sync,
 		// and perform the sync in time chunks until we reach the current date.
 
-		const earliestRide = await goDb.operation.rides.findOne({}, { sort: { start_time_scheduled: 1 } });
-		const latestRide = await goDb.operation.rides.findOne({}, { sort: { start_time_scheduled: -1 } });
+		const earliestRide = await goDb.operation.rides.findOne({}, {
+			projection: { _id: 1, start_time_scheduled: 1 },
+			sort: { start_time_scheduled: 1 },
+		});
+
+		const latestRide = await goDb.operation.rides.findOne({}, {
+			projection: { _id: 1, start_time_scheduled: 1 },
+			sort: { start_time_scheduled: -1 },
+		});
 
 		Logger.title(`Running sync from ${Dates.fromUnixMilliseconds(earliestRide.start_time_scheduled).toLocaleString('full', 'UTC')} to ${Dates.fromUnixMilliseconds(latestRide.start_time_scheduled).toLocaleString('full', 'UTC')}`);
 
@@ -79,4 +86,4 @@ async function main() {
 
 /* * */
 
-await runOnInterval(main, { intervalMs: '30m' });
+await runOnInterval(main, { intervalMs: '1m' });

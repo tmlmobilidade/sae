@@ -7,8 +7,8 @@ import { BatchWriter } from '@tmlmobilidade/go-utils-exec';
 /* * */
 
 export const simplifiedRidesWriter = new BatchWriter<SimplifiedRide>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.simplifiedRides.insert('JSONEachRow', data);
 	},
@@ -18,8 +18,8 @@ export const simplifiedRidesWriter = new BatchWriter<SimplifiedRide>({
 /* * */
 
 export const rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter = new BatchWriter<RideAnalysisAtLeastOneVehicleEventOnFirstStop>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisAtLeastOneVehicleEventOnFirstStop.insert('JSONEachRow', data);
 	},
@@ -29,8 +29,8 @@ export const rideAnalysisAtLeastOneVehicleEventOnFirstStopWriter = new BatchWrit
 /* * */
 
 export const rideAnalysisAtLeastOneVehicleEventOnLastStopWriter = new BatchWriter<RideAnalysisAtLeastOneVehicleEventOnLastStop>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisAtLeastOneVehicleEventOnLastStop.insert('JSONEachRow', data);
 	},
@@ -40,8 +40,8 @@ export const rideAnalysisAtLeastOneVehicleEventOnLastStopWriter = new BatchWrite
 /* * */
 
 export const rideAnalysisExpectedApexValidationIntervalWriter = new BatchWriter<RideAnalysisExpectedApexValidationInterval>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedApexValidationInterval.insert('JSONEachRow', data);
 	},
@@ -51,8 +51,8 @@ export const rideAnalysisExpectedApexValidationIntervalWriter = new BatchWriter<
 /* * */
 
 export const rideAnalysisExpectedDriverIdQtyWriter = new BatchWriter<RideAnalysisExpectedDriverIdQty>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedDriverIdQty.insert('JSONEachRow', data);
 	},
@@ -62,8 +62,8 @@ export const rideAnalysisExpectedDriverIdQtyWriter = new BatchWriter<RideAnalysi
 /* * */
 
 export const rideAnalysisExpectedStartTimeWriter = new BatchWriter<RideAnalysisExpectedStartTime>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedStartTime.insert('JSONEachRow', data);
 	},
@@ -73,8 +73,8 @@ export const rideAnalysisExpectedStartTimeWriter = new BatchWriter<RideAnalysisE
 /* * */
 
 export const rideAnalysisExpectedVehicleEventDelayWriter = new BatchWriter<RideAnalysisExpectedVehicleEventDelay>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedVehicleEventDelay.insert('JSONEachRow', data);
 	},
@@ -84,8 +84,8 @@ export const rideAnalysisExpectedVehicleEventDelayWriter = new BatchWriter<RideA
 /* * */
 
 export const rideAnalysisExpectedVehicleEventIntervalWriter = new BatchWriter<RideAnalysisExpectedVehicleEventInterval>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedVehicleEventInterval.insert('JSONEachRow', data);
 	},
@@ -95,8 +95,8 @@ export const rideAnalysisExpectedVehicleEventIntervalWriter = new BatchWriter<Ri
 /* * */
 
 export const rideAnalysisExpectedVehicleEventQtyWriter = new BatchWriter<RideAnalysisExpectedVehicleEventQty>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedVehicleEventQty.insert('JSONEachRow', data);
 	},
@@ -106,8 +106,8 @@ export const rideAnalysisExpectedVehicleEventQtyWriter = new BatchWriter<RideAna
 /* * */
 
 export const rideAnalysisExpectedVehicleIdQtyWriter = new BatchWriter<RideAnalysisExpectedVehicleIdQty>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisExpectedVehicleIdQty.insert('JSONEachRow', data);
 	},
@@ -117,8 +117,8 @@ export const rideAnalysisExpectedVehicleIdQtyWriter = new BatchWriter<RideAnalys
 /* * */
 
 export const rideAnalysisMatchingApexLocationsWriter = new BatchWriter<RideAnalysisMatchingApexLocations>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisMatchingApexLocations.insert('JSONEachRow', data);
 	},
@@ -128,8 +128,8 @@ export const rideAnalysisMatchingApexLocationsWriter = new BatchWriter<RideAnaly
 /* * */
 
 export const rideAnalysisMatchingVehicleIdsWriter = new BatchWriter<RideAnalysisMatchingVehicleIds>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisMatchingVehicleIds.insert('JSONEachRow', data);
 	},
@@ -139,8 +139,8 @@ export const rideAnalysisMatchingVehicleIdsWriter = new BatchWriter<RideAnalysis
 /* * */
 
 export const rideAnalysisSimpleOneApexValidationWriter = new BatchWriter<RideAnalysisSimpleOneApexValidation>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisSimpleOneApexValidation.insert('JSONEachRow', data);
 	},
@@ -150,8 +150,8 @@ export const rideAnalysisSimpleOneApexValidationWriter = new BatchWriter<RideAna
 /* * */
 
 export const rideAnalysisSimpleOneVehicleEventOrApexValidationWriter = new BatchWriter<RideAnalysisSimpleOneVehicleEventOrApexValidation>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisSimpleOneVehicleEventOrApexValidation.insert('JSONEachRow', data);
 	},
@@ -161,8 +161,8 @@ export const rideAnalysisSimpleOneVehicleEventOrApexValidationWriter = new Batch
 /* * */
 
 export const rideAnalysisSimpleThreeVehicleEventsWriter = new BatchWriter<RideAnalysisSimpleThreeVehicleEvents>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisSimpleThreeVehicleEvents.insert('JSONEachRow', data);
 	},
@@ -172,8 +172,8 @@ export const rideAnalysisSimpleThreeVehicleEventsWriter = new BatchWriter<RideAn
 /* * */
 
 export const rideAnalysisTransactionSequentialityWriter = new BatchWriter<RideAnalysisTransactionSequentiality>({
-	batch_size: 10_000,
-	// batch_timeout: 20_000,
+	batch_size: 50_000,
+	batch_timeout: 20_000,
 	insertFn: async (data) => {
 		await labDb.operation.rideAnalysisTransactionSequentiality.insert('JSONEachRow', data);
 	},

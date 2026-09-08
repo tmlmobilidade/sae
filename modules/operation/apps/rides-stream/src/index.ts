@@ -39,6 +39,7 @@ try {
 
 	//
 	// Watch for changes to the rides collection
+
 	ridesCollection
 		.watch(
 			[{ $match: { $or: [insertionFilter, updateFilter] } }],
