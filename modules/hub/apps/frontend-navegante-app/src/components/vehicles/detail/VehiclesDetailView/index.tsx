@@ -7,7 +7,7 @@ import { getAgencyLogo } from '@/lib/agency-logos-map';
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type HubV1ApiPattern } from '@tmlmobilidade/go-types-hub';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
-import { LineBadge, LineName, Section } from '@tmlmobilidade/ui';
+import { fetchApiData, LineBadge, LineName, Section } from '@tmlmobilidade/ui';
 import Image from 'next/image';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,9 +31,9 @@ export function VehiclesDetailView() {
 	//
 	// B. Fetch data
 
-	const { data: activePatternData } = useSWR<HubV1ApiPattern[]>(vehiclesDetailContext.data.vehicle?.shape_id && {
-		credentials: 'omit',
-		url: API_ROUTES.hub.NETWORK_PATTERNS(vehiclesDetailContext.data.vehicle.shape_id),
+	const { data: activePatternData } = useSWR(vehiclesDetailContext.data.vehicle?.shape_id && API_ROUTES.hub.NETWORK_PATTERNS(vehiclesDetailContext.data.vehicle.shape_id), {
+		fetcher: async (url: string) => await fetchApiData<HubV1ApiPattern[]>({ credentials: 'omit', url }),
+		refreshInterval: 5_000, // 5 seconds
 	});
 
 	const activeLineData = useMemo(() => {
