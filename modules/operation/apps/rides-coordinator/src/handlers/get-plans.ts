@@ -55,6 +55,7 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 			{
 				'$expr': { $ne: ['$hash', '$apps.rides_feeder.last_hash'] },
 				'apps.rides_feeder.status': { $nin: ['processing', 'error'] },
+				'attachments.operation_gtfs_normalized': { $ne: null },
 			},
 			{
 				limit: 1,
