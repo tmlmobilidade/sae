@@ -81,7 +81,7 @@ export async function fetchAnalysisData(rideData: Ride): Promise<AnalysisData> {
 	const vehicleEventsPromise = labDb.queryFromString<PickedSimplifiedVehicleEvent>(
 		`
 			SELECT created_at, driver_id, latitude, longitude, odometer, received_at, stop_id, vehicle_id
-			FROM simplified_vehicle_events
+			FROM operation.simplified_vehicle_events
 			WHERE created_at >= $1 AND created_at <= $2 AND agency_id = $3 AND trip_id = $4 AND extra_trip_id IS NULL
 		`,
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
