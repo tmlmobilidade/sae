@@ -7,7 +7,9 @@ import { runOnInterval, runWithConcurrency } from '@tmlmobilidade/go-utils-exec'
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
-import { examineRide } from './tasks/examine-ride.js';
+import { analyzeRide } from './tasks/analyze-ride.js';
+import { augmentRide } from './tasks/augment-ride.js';
+import { fetchAnalysisData } from './utils/fetch-analysis-data.js';
 import { writers } from './utils/writers.js';
 
 /* * */
@@ -55,8 +57,76 @@ export async function main() {
 	//
 	// Process each Ride in parallel
 
-	await runWithConcurrency(ridesBatch, 100, async (data, index) => {
-		await examineRide(data, index, ridesBatch.length);
+	await runWithConcurrency(ridesBatch, 100, async (rideData, index) => {
+		try {
+			//
+
+			const rideAnalysisTimer = new Timer();
+
+			//
+			// For this ride, fetch all the necessary data for analysis.
+			// This includes static data, like hashed shapes and trips, and dynamic data,
+			// like vehicle events and apex transactions. Request all data in parallel.
+
+			const fetchAnalysisDataTimer = new Timer();
+
+			const analysisData = await fetchAnalysisData(rideData);
+
+			const fetchAnalysisDataTime = fetchAnalysisDataTimer.get();
+
+			//
+			// Augment the current Ride with additional information retrieved
+			// from the fetched dynamic data. Run the analyzers on the augmented ride data.
+
+			const augmentedRideData = await augmentRide({
+				apex_banking_taps: analysisData.apex_banking_taps,
+				apex_locations: analysisData.apex_locations,
+				apex_refunds: analysisData.apex_refunds,
+				apex_sales: analysisData.apex_sales,
+				apex_validations: analysisData.apex_validations,
+				hashed_shape: analysisData.hashed_shape,
+				hashed_trip: analysisData.hashed_trip,
+				ride: rideData,
+				vehicle_events: analysisData.vehicle_events,
+			});
+
+			const analysesResult = await analyzeRide({
+				apex_banking_taps: analysisData.apex_banking_taps,
+				apex_locations: analysisData.apex_locations,
+				apex_refunds: analysisData.apex_refunds,
+				apex_sales: analysisData.apex_sales,
+				apex_validations: analysisData.apex_validations,
+				hashed_shape: analysisData.hashed_shape,
+				hashed_trip: analysisData.hashed_trip,
+				ride: augmentedRideData,
+				vehicle_events: analysisData.vehicle_events,
+			});
+
+			//
+			// Run the analyzers and count how many passed,
+			// how many failed and how many errored.
+
+			const skipAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'skip').map(([key]) => key);
+			const passAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'pass').map(([key]) => key);
+			const failAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'fail').map(([key]) => key);
+			const errorAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'error').map(([key]) => key);
+
+			Logger.info({ message: [
+				'[', { a: 'right', c: 7, t: `${ridesBatch.length - index}/${ridesBatch.length}` }, ']',
+				' F: ', { c: 5, t: fetchAnalysisDataTime },
+				' T: ', { c: 7, t: rideAnalysisTimer.get() },
+				{ c: 50, t: rideData._id },
+				{ c: 10, t: `SKIP: ${skipAnalysisCount.length} ` },
+				{ c: 10, t: `PASS: ${passAnalysisCount.length} ` },
+				{ c: 10, t: `FAIL: ${failAnalysisCount.length} ` },
+				{ c: 12, t: `ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]` },
+			] });
+
+			//
+		} catch (error) {
+			await goDb.operation.rides.updateById(rideData._id, { processing_status: 'error' });
+			Logger.error({ error, message: `An error occurred while processing a ride (${rideData._id}): ${error.message}` });
+		}
 	});
 
 	//
@@ -70,8 +140,6 @@ export async function main() {
 	void fetch('https://status.carrismetropolitana.pt/api/push/B52rdR5Luo30Y1RAtCpHDrn4MF7vXCZb');
 
 	Logger.terminate(`Run took ${globalTimer.get()}.`);
-
-	//
 };
 
 /* * */

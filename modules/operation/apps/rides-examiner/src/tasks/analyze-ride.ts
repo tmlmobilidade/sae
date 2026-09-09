@@ -1,5 +1,6 @@
 /* * */
 
+import { writers } from '@/utils/writers.js';
 import { type RideAnalysesRegistry } from '@tmlmobilidade/go-types-operation';
 
 import { atLeastOneVehicleEventOnFirstStopAnalyzer } from '../analyzers/at-least-one-vehicle-event-on-first-stop.js';
@@ -34,8 +35,12 @@ interface AnalyzeRideMetrics {
  * @param analysisData The analysis data to use for the analysis.
  * @returns The analysis results for the ride.
  */
-export function analyzeRide(analysisData: AnalysisData): RideAnalysesRegistry {
-	// Run each analyzer and store the results
+export async function analyzeRide(analysisData: AnalysisData): Promise<AnalyzeRideMetrics> {
+	//
+
+	//
+	// Run each analyzer and write the results to the database writers
+
 	const analyses: RideAnalysesRegistry = {
 		at_least_one_vehicle_event_on_first_stop: atLeastOneVehicleEventOnFirstStopAnalyzer(analysisData),
 		at_least_one_vehicle_event_on_last_stop: atLeastOneVehicleEventOnLastStopAnalyzer(analysisData),
@@ -54,19 +59,27 @@ export function analyzeRide(analysisData: AnalysisData): RideAnalysesRegistry {
 		simple_three_vehicle_events: simpleThreeVehicleEventsAnalyzer(analysisData),
 		transaction_sequentiality: transactionSequentialityAnalyzer(analysisData),
 	};
+
+	await Promise.all(
+		Object.entries(analyses).map(async ([analysisKey, analysisResult]) => {
+			await writers[analysisKey].write(analysisResult);
+		}),
+	);
+
+	//
 	// Setup a metrics object to track the results of the analyzers
+
 	const metrics: AnalyzeRideMetrics = { error: [], fail: [], pass: [], skip: [] };
-	// Update the metrics based on the analysis results
+
 	for (const analysisKey of Object.keys(analyses) as (keyof RideAnalysesRegistry)[]) {
 		// Get the analysis result
 		const analysisResult = analyses[analysisKey];
 		// Update the metrics based on the analysis result
-		if (analysisResult.grade_status === 'error') metrics.error.push(analysisKey);
-		else if (analysisResult.grade_status === 'fail') metrics.fail.push(analysisKey);
-		else if (analysisResult.grade_status === 'pass') metrics.pass.push(analysisKey);
-		else if (analysisResult.grade_status === 'skip') metrics.skip.push(analysisKey);
+		if (analysisResult?.grade_status === 'error') metrics.error.push(analysisKey);
+		else if (analysisResult?.grade_status === 'fail') metrics.fail.push(analysisKey);
+		else if (analysisResult?.grade_status === 'pass') metrics.pass.push(analysisKey);
+		else if (analysisResult?.grade_status === 'skip') metrics.skip.push(analysisKey);
 	}
 
-	// Return the analyses
-	return analyses;
+	return metrics;
 }

@@ -1,6 +1,10 @@
 /* * */
 
-import { type Ride } from '@tmlmobilidade/go-types-operation';
+import { writers } from '@/utils/writers.js';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
+import { getRideHash } from '@tmlmobilidade/go-operation-pckg-utils';
+import { type Ride, RideSchema } from '@tmlmobilidade/go-types-operation';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 
 import { type AnalysisData } from '../types/analysis-data.js';
 import { detectEndEvent } from '../utils/detect-end-event.js';
@@ -15,10 +19,10 @@ import { getObservedExtension } from '../utils/get-observed-extension.js';
  * @param analysisData The analysis data containing vehicle events, APEX transactions, and other related information.
  * @returns The original Ride with augmented data.
  */
-export function augmentRide(analysisData: AnalysisData): Ride {
+export async function augmentRide(analysisData: AnalysisData): Promise<Ride> {
 	//
 
-	const augmentedRide = analysisData.ride;
+	const augmentedRide = Object.assign({}, analysisData.ride);
 
 	//
 	// Add the seen_at timestamps from the first and last events
@@ -102,7 +106,24 @@ export function augmentRide(analysisData: AnalysisData): Ride {
 	augmentedRide.passengers_observed_banking_taps_amount = null;
 
 	//
+	// Validate the results and generate a unique hash for this ride.
+
+	const validatedRide = RideSchema.parse({
+		...augmentedRide,
+		hash: getRideHash(augmentedRide),
+		processing_status: 'complete',
+		updated_at: Dates.now('utc').unix_milliseconds,
+	});
+
+	//
+	// Perform the update and inserts into GoDB and LabDB.
+
+	await goDb.operation.rides.updateById(validatedRide._id, validatedRide);
+
+	await writers.rides.write(validatedRide);
+
+	//
 	// Return the augmented Ride to the caller
 
-	return augmentedRide;
+	return validatedRide;
 }
