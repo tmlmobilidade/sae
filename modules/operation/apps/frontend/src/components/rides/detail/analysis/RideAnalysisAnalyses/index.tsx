@@ -25,7 +25,7 @@ export function RideAnalysisAnalyses() {
 				<Section flexDirection="column" gap="xs" padding="none">
 					<Label size="sm">{item.key}</Label>
 					<Label>{t(`ride_analysis:${item.key}.label`)}</Label>
-					<Text size="sm">{t(`ride_analysis:${item.key}.description`)}</Text>
+					<Text size="sm" textWrap="wrap">{t(`ride_analysis:${item.key}.description`)}</Text>
 				</Section>
 			),
 			title: t('default:rides.analysis.RideAnalysisAnalyses.table.columns.id.label'),
