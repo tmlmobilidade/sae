@@ -8,7 +8,7 @@ import { RoutePlannerGoButton } from '@/components/routes/navigation/RoutePlanne
 import { type MotisItinerary } from '@/types/route-planner/models';
 import { filterAlertsByRoutePlannerItinerary, getRoutePlannerItineraryAlertFilters } from '@/utils/route-planner/itinerary/alerts';
 import { getRoutePlannerItineraryRealtimeStatus } from '@/utils/route-planner/itinerary/realtime';
-import { getMotisItineraryDurationSeconds, getMotisItineraryEnd, getMotisItineraryStart, getMotisItineraryWalkMinutes } from '@/utils/route-planner/planning/motis-plan-api';
+import { getItineraryWalkMinutes } from '@/utils/route-planner/planning/results';
 import { formatMotisPlanDuration, formatMotisPlanTime } from '@/utils/route-planner/presentation/format';
 import { IconAlertTriangle, IconWalk } from '@tabler/icons-react';
 import { type MouseEvent, useMemo } from 'react';
@@ -40,13 +40,11 @@ export function RoutePlannerItineraryCard({ isSelected = false, itinerary, onSel
 	//
 	// B. Transform data
 
-	const legs = useMemo(() => {
-		return Array.isArray(itinerary.legs) ? itinerary.legs : [];
-	}, [itinerary.legs]);
-	const start = getMotisItineraryStart(itinerary);
-	const end = getMotisItineraryEnd(itinerary);
-	const duration = formatMotisPlanDuration(getMotisItineraryDurationSeconds(itinerary));
-	const walkingMinutes = getMotisItineraryWalkMinutes(legs);
+	const legs = itinerary.legs;
+	const start = itinerary.startTime;
+	const end = itinerary.endTime;
+	const duration = formatMotisPlanDuration(itinerary.duration);
+	const walkingMinutes = getItineraryWalkMinutes(itinerary);
 
 	const realtimeStatus = useMemo(() => {
 		return getRoutePlannerItineraryRealtimeStatus(legs);

@@ -1,4 +1,4 @@
-import { getRoutePlannerCloseAction, getRoutePlannerItineraryDetailInitialSnap, getRoutePlannerMapFitFeatures, getRoutePlannerPlanStartTransition, getRoutePlannerStartTripTransition, getRoutePlannerTravelTimeModeTransition } from '@/utils/route-planner/planning/navigation';
+import { getRoutePlannerCloseAction, getRoutePlannerItineraryDetailInitialSnap, getRoutePlannerMapFitFeatures, getRoutePlannerTravelTimeModeTransition } from '@/utils/route-planner/planning/navigation';
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
@@ -55,31 +55,6 @@ describe('getRoutePlannerCloseAction', () => {
 			viewMode: 'itinerary-detail',
 			wasOpenedFromPlace: false,
 		}), 'dismiss-trip-sheets');
-	});
-});
-
-describe('getRoutePlannerStartTripTransition', () => {
-	it('selects the itinerary and enters navigation immediately', () => {
-		assert.deepEqual(getRoutePlannerStartTripTransition(2), {
-			isNavigating: true,
-			selectedItineraryIndex: 2,
-			viewMode: 'itinerary-detail',
-		});
-	});
-});
-
-describe('getRoutePlannerPlanStartTransition', () => {
-	it('opens the requested result view and selects its expected initial itinerary', () => {
-		assert.deepEqual(getRoutePlannerPlanStartTransition('results'), {
-			isNavigating: false,
-			selectedItineraryIndex: 0,
-			viewMode: 'results',
-		});
-		assert.deepEqual(getRoutePlannerPlanStartTransition('place-detail'), {
-			isNavigating: false,
-			selectedItineraryIndex: null,
-			viewMode: 'place-detail',
-		});
 	});
 });
 

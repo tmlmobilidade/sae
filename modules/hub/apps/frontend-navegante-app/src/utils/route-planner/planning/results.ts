@@ -1,5 +1,4 @@
 import { type MotisItinerary } from '@/types/route-planner/models';
-import { getMotisItineraryDurationSeconds, getMotisItineraryWalkMinutes, getMotisTransfersCount } from '@/utils/route-planner/planning/motis-plan-api';
 import { getMotisLegModeKind, isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
 
 /* * */
@@ -17,8 +16,7 @@ export interface RoutePlannerVisibleItinerary {
 /* * */
 
 export function getItineraryTransitModeFilters(itinerary: MotisItinerary): RoutePlannerModeFilter[] {
-	const legs = Array.isArray(itinerary.legs) ? itinerary.legs : [];
-	const modes = legs
+	const modes = itinerary.legs
 		.filter(leg => !isMotisWalkingLeg(leg))
 		.map(leg => normalizeModeFilter(getMotisLegModeKind(leg)));
 
@@ -34,11 +32,11 @@ export function sortVisibleItineraries(itineraries: RoutePlannerVisibleItinerary
 	const results = [...itineraries];
 
 	if (sortMode === 'fastest') {
-		return results.sort((a, b) => getMotisItineraryDurationSeconds(a.itinerary) - getMotisItineraryDurationSeconds(b.itinerary));
+		return results.sort((a, b) => a.itinerary.duration - b.itinerary.duration);
 	}
 
 	if (sortMode === 'fewer_transfers') {
-		return results.sort((a, b) => getItineraryTransfersCount(a.itinerary) - getItineraryTransfersCount(b.itinerary));
+		return results.sort((a, b) => a.itinerary.transfers - b.itinerary.transfers);
 	}
 
 	if (sortMode === 'least_walking') {
@@ -59,14 +57,9 @@ export function toggleRoutePlannerMode(enabledModes: Set<RoutePlannerModeFilter>
 
 /* * */
 
-function getItineraryTransfersCount(itinerary: MotisItinerary) {
-	const legs = Array.isArray(itinerary.legs) ? itinerary.legs : [];
-	return getMotisTransfersCount(itinerary.transfers, legs);
-}
-
-function getItineraryWalkMinutes(itinerary: MotisItinerary) {
-	const legs = Array.isArray(itinerary.legs) ? itinerary.legs : [];
-	return getMotisItineraryWalkMinutes(legs);
+export function getItineraryWalkMinutes(itinerary: MotisItinerary) {
+	const walkingSeconds = itinerary.legs.reduce((total, leg) => isMotisWalkingLeg(leg) ? total + leg.duration : total, 0);
+	return Math.max(0, Math.round(walkingSeconds / 60));
 }
 
 function normalizeModeFilter(mode: string): RoutePlannerModeFilter {

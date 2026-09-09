@@ -8,7 +8,6 @@ import { useRoutePlannerContext } from '@/components/routes/RoutePlanner.context
 import { useLinesByShortName } from '@/hooks/route-planner/useLinesByShortName';
 import { useRoutePlannerActiveLeg } from '@/hooks/route-planner/useRoutePlannerActiveLeg';
 import { getRoutePlannerItineraryRealtimeStatus } from '@/utils/route-planner/itinerary/realtime';
-import { getMotisItineraryDurationSeconds, getMotisItineraryEnd } from '@/utils/route-planner/planning/motis-plan-api';
 import { formatMotisPlanDuration } from '@/utils/route-planner/presentation/format';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,9 +33,9 @@ export function RoutePlannerItineraryDetail() {
 
 	const itinerary = routePlannerContext.data.selected_itinerary;
 	const isNavigating = routePlannerContext.flags.is_navigating;
-	const legs = useMemo(() => Array.isArray(itinerary?.legs) ? itinerary.legs : [], [itinerary?.legs]);
-	const duration = itinerary ? formatMotisPlanDuration(getMotisItineraryDurationSeconds(itinerary)) : null;
-	const end = itinerary ? getMotisItineraryEnd(itinerary) : undefined;
+	const legs = useMemo(() => itinerary?.legs ?? [], [itinerary?.legs]);
+	const duration = formatMotisPlanDuration(itinerary?.duration);
+	const end = itinerary?.endTime;
 	const routeDestinationLabel = routePlannerContext.data.destination?.label ?? t('default:routes.RoutePlanner.results.destination');
 	const routeOriginLabel = routePlannerContext.data.origin?.label ?? t('default:routes.RoutePlanner.results.origin');
 	const realtimeStatus = useMemo(() => {

@@ -1,4 +1,4 @@
-import { type RoutePlannerPlanViewMode, type RoutePlannerTravelTime, type RoutePlannerTravelTimeMode, type RoutePlannerViewMode } from '@/types/route-planner/models';
+import { type RoutePlannerTravelTime, type RoutePlannerTravelTimeMode, type RoutePlannerViewMode } from '@/types/route-planner/models';
 
 /* * */
 
@@ -13,18 +13,6 @@ export const ROUTE_PLANNER_ITINERARY_DETAIL_SNAP = {
 };
 
 export type RoutePlannerCloseAction = 'clear-route' | 'close-sheet' | 'dismiss-trip-sheets' | 'open-place-detail' | 'open-results';
-
-export interface RoutePlannerStartTripTransition {
-	isNavigating: true
-	selectedItineraryIndex: number
-	viewMode: 'itinerary-detail'
-}
-
-export interface RoutePlannerPlanStartTransition {
-	isNavigating: false
-	selectedItineraryIndex: null | number
-	viewMode: RoutePlannerPlanViewMode
-}
 
 interface GetRoutePlannerCloseActionOptions {
 	hasRouteContext: boolean
@@ -41,22 +29,6 @@ export function getRoutePlannerCloseAction({ hasRouteContext, isNavigating, view
 	if (viewMode === 'destination-search' && hasRouteContext) return 'open-results';
 
 	return 'close-sheet';
-}
-
-export function getRoutePlannerStartTripTransition(index: number): RoutePlannerStartTripTransition {
-	return {
-		isNavigating: true,
-		selectedItineraryIndex: index,
-		viewMode: 'itinerary-detail',
-	};
-}
-
-export function getRoutePlannerPlanStartTransition(viewMode: RoutePlannerPlanViewMode): RoutePlannerPlanStartTransition {
-	return {
-		isNavigating: false,
-		selectedItineraryIndex: viewMode === 'place-detail' ? null : 0,
-		viewMode,
-	};
 }
 
 export function getRoutePlannerTravelTimeModeTransition(current: RoutePlannerTravelTime, mode: RoutePlannerTravelTimeMode, currentDate = new Date()): RoutePlannerTravelTime {

@@ -36,7 +36,7 @@ export function RoutePlannerTimeFilter({ onClose }: RoutePlannerTimeFilterProps)
 		};
 
 		routePlannerContext.actions.setTravelTimeMode(mode);
-		void routePlannerContext.actions.planRoute(routePlannerContext.data.origin, routePlannerContext.data.destination, nextTravelTime);
+		void routePlannerContext.actions.planRoute({ destination: routePlannerContext.data.destination, origin: routePlannerContext.data.origin, travelTime: nextTravelTime });
 
 		if (mode === 'now') onClose();
 	};
@@ -51,7 +51,7 @@ export function RoutePlannerTimeFilter({ onClose }: RoutePlannerTimeFilterProps)
 		};
 
 		routePlannerContext.actions.setTravelTime(parsedDate);
-		void routePlannerContext.actions.planRoute(routePlannerContext.data.origin, routePlannerContext.data.destination, nextTravelTime);
+		void routePlannerContext.actions.planRoute({ destination: routePlannerContext.data.destination, origin: routePlannerContext.data.origin, travelTime: nextTravelTime });
 	};
 
 	//

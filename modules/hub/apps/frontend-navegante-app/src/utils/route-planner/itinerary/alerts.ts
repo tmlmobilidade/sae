@@ -1,5 +1,4 @@
-import { type MotisItinerary, type MotisPlanIntermediateStop, type RoutePlannerItineraryMapData } from '@/types/route-planner/models';
-import { getMotisLegTripIds, getMotisPlanPlaceStopId } from '@/utils/route-planner/planning/motis-plan-api';
+import { type MotisItinerary, type MotisPlanIntermediateStop, type MotisPlanLeg, type MotisPlanPlace, type RoutePlannerItineraryMapData } from '@/types/route-planner/models';
 import { getMotisLegRouteLabel, isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
 import { type HubAlert, type HubLine } from '@tmlmobilidade/go-types-hub';
 
@@ -42,6 +41,14 @@ function getIntermediateStopIds(stop: MotisPlanIntermediateStop) {
 		candidate.stopId,
 		candidate.stopCode,
 	].filter((value): value is string => typeof value === 'string' && value.length > 0);
+}
+
+function getMotisLegTripIds(leg: MotisPlanLeg) {
+	return typeof leg.tripId === 'string' && leg.tripId.length > 0 ? [leg.tripId] : [];
+}
+
+function getMotisPlanPlaceStopId(place: MotisPlanIntermediateStop | MotisPlanPlace | undefined) {
+	return place?.stopId || place?.stopCode;
 }
 
 function hasAnyMatchingValue(values: string[], selectedValues: Set<string>) {

@@ -3,8 +3,7 @@
 import { RoutePlannerLinePill } from '@/components/routes/common/RoutePlannerLinePill';
 import { RoutePlannerModeBadge } from '@/components/routes/common/RoutePlannerModeBadge';
 import { type MotisPlanLeg } from '@/types/route-planner/models';
-import { getMotisLegDurationSeconds } from '@/utils/route-planner/planning/motis-plan-api';
-import { formatMotisPlanDurationMinutes } from '@/utils/route-planner/presentation/format';
+import { getDurationMinutes } from '@/utils/route-planner/presentation/format';
 import { isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
 import { IconWalk } from '@tabler/icons-react';
 import { type HubLine } from '@tmlmobilidade/go-types-hub';
@@ -27,7 +26,7 @@ export function RoutePlannerLegStripItem({ leg, lineByShortName, showConnector }
 	//
 	// A. Transform data
 
-	const durationMinutes = formatMotisPlanDurationMinutes(getMotisLegDurationSeconds(leg));
+	const durationMinutes = getDurationMinutes(leg.duration);
 
 	//
 	// B. Render components

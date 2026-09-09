@@ -1,7 +1,6 @@
 import { type MotisItinerary, type MotisPlanLeg, type RoutePlannerLocation } from '@/types/route-planner/models';
 import { getMotisLegPathPositions, getMotisPlanPlacePosition } from '@/utils/route-planner/itinerary/geometry';
-import { getMotisLegDurationSeconds } from '@/utils/route-planner/planning/motis-plan-api';
-import { formatMotisPlanDurationMinutes } from '@/utils/route-planner/presentation/format';
+import { getDurationMinutes } from '@/utils/route-planner/presentation/format';
 import { isMotisWalkingLeg } from '@/utils/route-planner/presentation/modes';
 
 /* * */
@@ -24,7 +23,7 @@ export interface RoutePlannerActiveLegProgress {
 /* * */
 
 export function getRoutePlannerActiveLegProgress({ destination, itinerary, origin, userPosition }: GetRoutePlannerActiveLegProgressOptions): RoutePlannerActiveLegProgress {
-	const legs = Array.isArray(itinerary?.legs) ? itinerary.legs : [];
+	const legs = itinerary?.legs ?? [];
 	const activeLegIndex = itinerary && userPosition && legs.length > 0
 		? getMotisItineraryActiveLegIndex(itinerary, userPosition, origin, destination)
 		: 0;
@@ -42,14 +41,14 @@ export function getRoutePlannerActiveLegProgress({ destination, itinerary, origi
 
 	const remainingSeconds = userPosition
 		? getMotisLegRemainingSeconds(activeLeg, userPosition)
-		: getMotisLegDurationSeconds(activeLeg);
+		: activeLeg.duration;
 
 	return {
 		activeLeg,
 		activeLegIndex,
 		isTrackingLocation: Boolean(userPosition),
 		remainingDistanceMeters: getMotisLegRemainingDistanceMeters(activeLeg, userPosition),
-		remainingMinutes: formatMotisPlanDurationMinutes(remainingSeconds),
+		remainingMinutes: getDurationMinutes(remainingSeconds),
 	};
 }
 
@@ -61,7 +60,7 @@ export function getRoutePlannerActiveLegProgress({ destination, itinerary, origi
  * leg with the smallest distance.
  */
 export function getMotisItineraryActiveLegIndex(itinerary: MotisItinerary, userPosition: GeoJSON.Position, origin: null | RoutePlannerLocation, destination: null | RoutePlannerLocation) {
-	const legs = Array.isArray(itinerary.legs) ? itinerary.legs : [];
+	const legs = itinerary.legs;
 	if (legs.length === 0) return 0;
 
 	let closestLegIndex = 0;
@@ -87,7 +86,7 @@ export function getMotisItineraryActiveLegIndex(itinerary: MotisItinerary, userP
  * planned duration for non-walking legs (their progress isn't distance-estimated here).
  */
 export function getMotisLegRemainingSeconds(leg: MotisPlanLeg, userPosition: GeoJSON.Position) {
-	const totalSeconds = getMotisLegDurationSeconds(leg) ?? 0;
+	const totalSeconds = leg.duration;
 	if (!isMotisWalkingLeg(leg)) return totalSeconds;
 
 	const endPosition = getMotisPlanPlacePosition(leg.to);

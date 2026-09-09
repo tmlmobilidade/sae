@@ -30,7 +30,7 @@ export function formatMotisPlanDuration(seconds: number | undefined) {
 	return hours > 0 ? `${hours}h ${remainingMinutes}m` : `${minutes} min`;
 }
 
-export function formatMotisPlanDurationMinutes(seconds: number | undefined) {
+export function getDurationMinutes(seconds: number | undefined) {
 	if (!Number.isFinite(seconds)) return null;
 	return Math.max(0, Math.round((seconds || 0) / 60));
 }
