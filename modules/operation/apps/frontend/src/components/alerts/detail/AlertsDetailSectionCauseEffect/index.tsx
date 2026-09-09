@@ -61,6 +61,7 @@ export function AlertsDetailSectionCauseEffect() {
 		<Collapsible
 			description="A causa é o que aconteceu, o efeito é o que aconteceu como consequência."
 			title="Causa e Efeito"
+			defaultOpen
 		>
 			<Section>
 				<Grid columns="ab" gap="md">
@@ -98,6 +99,4 @@ export function AlertsDetailSectionCauseEffect() {
 			</Section>
 		</Collapsible>
 	);
-
-	//
 }

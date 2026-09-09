@@ -1,7 +1,7 @@
 'use client';
 
 import { type Alert, AlertReferenceTypeValues } from '@tmlmobilidade/go-types-operation';
-import { LoadingSection, NoDataLabel, Section, useStandardFormWatch } from '@tmlmobilidade/ui';
+import { Collapsible, LoadingSection, NoDataLabel, Section, useStandardFormWatch } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -75,15 +75,21 @@ export function AlertsDetailSectionReferences() {
 	}
 
 	return (
-		<ReferencesEditor
-			activePeriodEndDate={activePeriodEndDateValue}
-			activePeriodStartDate={activePeriodStartDateValue}
-			enabledReferenceTypes={preparedOptions}
-			onChangeReferences={handleChangeReferences}
-			onChangeReferenceType={handleChangeReferenceType}
-			selectedAgencyId={agencyIdValue}
-			selectedReferences={referencesValue}
-			selectedReferenceType={referenceTypeValue}
-		/>
+		<Collapsible
+			description="Linhas, paragens ou circulações impactadas por este alerta."
+			title="Referências"
+			defaultOpen
+		>
+			<ReferencesEditor
+				activePeriodEndDate={activePeriodEndDateValue}
+				activePeriodStartDate={activePeriodStartDateValue}
+				enabledReferenceTypes={preparedOptions}
+				onChangeReferences={handleChangeReferences}
+				onChangeReferenceType={handleChangeReferenceType}
+				selectedAgencyId={agencyIdValue}
+				selectedReferences={referencesValue}
+				selectedReferenceType={referenceTypeValue}
+			/>
+		</Collapsible>
 	);
 }

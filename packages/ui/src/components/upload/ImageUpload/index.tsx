@@ -25,8 +25,9 @@ export interface ImageUploadProps {
 	value?: string
 }
 
-/* * */
-
+/**
+ * @deprecated Use `UploadImage` instead.
+ */
 export function ImageUpload({
 	isDisabled,
 	isLoading,
