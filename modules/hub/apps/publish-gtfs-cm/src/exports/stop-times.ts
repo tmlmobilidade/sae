@@ -37,7 +37,12 @@ export async function exportStopTimesFile(context: ExportGtfsContext, planData: 
 	for await (const stopTimeItem of sqlTables.stop_times.stream('ORDER BY trip_id, stop_sequence ASC')) {
 		try {
 			const stopTimeData: GtfsStopTimes = stopTimeItem;
-			const stopId = allStopsMap.get(stopTimeData.stop_id);
+			let matchingStopId = allStopsMap.get(stopTimeData.stop_id);
+			if (!matchingStopId) {
+				const foundMissingStopData = await goDb.infrastructure.stops.findById(stopTimeData.stop_id);
+				if (!foundMissingStopData) throw new Error(`Stop time ${stopTimeData.stop_id} not found in stops map for agency ${planData.agency_id}`);
+				matchingStopId = foundMissingStopData._id;
+			}
 			const parsedStopTimesRow: HubV1GtfsStopTimesInput = {
 				arrival_time: stopTimeData.arrival_time,
 				continuous_drop_off: '0',
@@ -46,7 +51,7 @@ export async function exportStopTimesFile(context: ExportGtfsContext, planData: 
 				drop_off_type: stopTimeData.drop_off_type ?? '0',
 				pickup_type: stopTimeData.pickup_type ?? '0',
 				shape_dist_traveled: stopTimeData.shape_dist_traveled ?? 0,
-				stop_id: stopId,
+				stop_id: matchingStopId,
 				stop_sequence: stopTimeData.stop_sequence,
 				timepoint: stopTimeData.timepoint ?? '0',
 				trip_id: getQualifiedTripId(planData._id, planData.agency_id, stopTimeData.trip_id),
