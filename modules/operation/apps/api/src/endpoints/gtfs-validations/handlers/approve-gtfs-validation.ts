@@ -87,13 +87,15 @@ export async function approveGtfsValidationHandler(request: FastifyRequest<{ Par
 
 	const insertPlanResult = await goDb.operation.plans.insertOne(newPlanData);
 
+	console.log(`[approveGtfsValidationHandler()] Inserted plan with ID "${insertPlanResult._id}"`);
+
 	//
 	// Copy validation GTFS into the plan scope, then attach it to the plan.
 	// Failure modes (handled by storage saga + hooks):
 	// - copy fails → saga compensates blob/metadata; onRollback deletes the plan
 	// - plan update fails → onSuccess throws → onRollback deletes the plan → saga compensates the copy
 
-	await storageProvider.copy(validationData.file_id, 'plans', insertPlanResult._id, {
+	const copyResult = await storageProvider.copy(validationData.file_id, 'plans', insertPlanResult._id, {
 		onRollback: async () => {
 			await goDb.operation.plans.deleteById(insertPlanResult._id);
 			throw new Error('Failed to copy validation GTFS into the plan scope');
@@ -109,6 +111,8 @@ export async function approveGtfsValidationHandler(request: FastifyRequest<{ Par
 		},
 	});
 
+	console.log(`[approveGtfsValidationHandler()] Created a copy of the validation GTFS into the plan scope. Attachment ID: ${copyResult._id}`);
+
 	//
 	// Get a new hash for this plan
 
@@ -121,6 +125,8 @@ export async function approveGtfsValidationHandler(request: FastifyRequest<{ Par
 		});
 	}
 
+	console.log(`[approveGtfsValidationHandler()] Found the created plan with ID "${createdPlanData._id}" and operation GTFS attachment ID "${createdPlanData.attachments.operation_gtfs}"`);
+
 	const hashValue = await getPlanHash({
 		activeFrom: createdPlanData.active_from,
 		activeUntil: createdPlanData.active_until,
@@ -130,6 +136,8 @@ export async function approveGtfsValidationHandler(request: FastifyRequest<{ Par
 	});
 
 	const updatePlanHashResult = await goDb.operation.plans.updateById(createdPlanData._id, { hash: hashValue });
+
+	console.log(`[approveGtfsValidationHandler()] Updated the plan hash with value "${hashValue}"`);
 
 	//
 	// Return the success response

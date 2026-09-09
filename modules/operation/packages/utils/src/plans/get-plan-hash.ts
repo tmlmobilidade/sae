@@ -27,7 +27,7 @@ interface GetPlanHashParams {
 export async function getPlanHash({ activeFrom, activeUntil, operationGtfsAttachmentId, operationGtfsNormalizedAttachmentId, planId }: GetPlanHashParams): Promise<string> {
 	//
 
-	console.info({ message: `[getPlanHash()] Getting hash for plan ${planId}: activeFrom=${activeFrom}, activeUntil=${activeUntil}, operationGtfsAttachmentId=${operationGtfsAttachmentId}, operationGtfsNormalizedAttachmentId=${operationGtfsNormalizedAttachmentId}` });
+	console.info(`[getPlanHash()] Getting hash for plan ${planId}: activeFrom=${activeFrom}, activeUntil=${activeUntil}, operationGtfsAttachmentId=${operationGtfsAttachmentId}, operationGtfsNormalizedAttachmentId=${operationGtfsNormalizedAttachmentId}`);
 
 	//
 	// Check if all necessary data is present
