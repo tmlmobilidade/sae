@@ -75,8 +75,10 @@ export async function main() {
 			const fetchAnalysisDataTime = fetchAnalysisDataTimer.get();
 
 			//
-			// Augment the current Ride with additional information retrieved
-			// from the fetched dynamic data. Run the analyzers on the augmented ride data.
+			// Augment the current Ride with additional information
+			// retrieved from the fetched dynamic data.
+
+			const augmentRideTimer = new Timer();
 
 			const augmentedRideData = await augmentRide({
 				apex_banking_taps: analysisData.apex_banking_taps,
@@ -90,6 +92,13 @@ export async function main() {
 				vehicle_events: analysisData.vehicle_events,
 			});
 
+			const augmentRideTime = augmentRideTimer.get();
+
+			//
+			// Run the analyzers on the augmented ride data.
+
+			const analyzeRideTimer = new Timer();
+
 			const analysesResult = await analyzeRide({
 				apex_banking_taps: analysisData.apex_banking_taps,
 				apex_locations: analysisData.apex_locations,
@@ -102,24 +111,22 @@ export async function main() {
 				vehicle_events: analysisData.vehicle_events,
 			});
 
-			//
-			// Run the analyzers and count how many passed,
-			// how many failed and how many errored.
+			const analyzeRideTime = analyzeRideTimer.get();
 
-			const skipAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'skip').map(([key]) => key);
-			const passAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'pass').map(([key]) => key);
-			const failAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'fail').map(([key]) => key);
-			const errorAnalysisCount = Object.entries(analysesResult).filter(([, value]) => value?.grade_status === 'error').map(([key]) => key);
+			//
+			// Log the results of the analysis.
 
 			Logger.info({ message: [
 				'[', { a: 'right', c: 7, t: `${ridesBatch.length - index}/${ridesBatch.length}` }, ']',
-				' F: ', { c: 5, t: fetchAnalysisDataTime },
-				' T: ', { c: 7, t: rideAnalysisTimer.get() },
+				' FETCH: ', { c: 10, t: fetchAnalysisDataTime },
+				' AUGMENT: ', { c: 10, t: augmentRideTime },
+				' ANALYZE: ', { c: 10, t: analyzeRideTime },
+				' TOTAL: ', { c: 10, t: rideAnalysisTimer.get() },
 				{ c: 50, t: rideData._id },
-				{ c: 10, t: `SKIP: ${skipAnalysisCount.length} ` },
-				{ c: 10, t: `PASS: ${passAnalysisCount.length} ` },
-				{ c: 10, t: `FAIL: ${failAnalysisCount.length} ` },
-				{ c: 12, t: `ERROR: ${errorAnalysisCount.length} [${errorAnalysisCount.join('|')}]` },
+				{ c: 10, t: `SKIP: ${analysesResult.skip.length} ` },
+				{ c: 10, t: `PASS: ${analysesResult.pass.length} ` },
+				{ c: 10, t: `FAIL: ${analysesResult.fail.length} ` },
+				{ c: 12, t: `ERROR: ${analysesResult.error.length} [${analysesResult.error.join('|')}]` },
 			] });
 
 			//

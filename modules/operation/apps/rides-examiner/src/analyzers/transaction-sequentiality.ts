@@ -117,14 +117,6 @@ export function transactionSequentialityAnalyzer(analysisData: AnalysisData): Ri
 			});
 		}
 
-		//
-		// Build the remarks string in the format:
-		// 000000000: 12347, 12348, 12349 | 000000001: 12347, 12348, 12349 | ...
-
-		const missingGapsRemarks = Object
-			.entries(missingTransactions)
-			.map(([samSerialNumber, gaps]) => `${samSerialNumber}: ${gaps.join(', ')}`).join(' | ');
-
 		return RideAnalysisTransactionSequentialitySchema.parse({
 			agency_id: analysisData.ride.agency_id,
 			expected_transactions_qty: expectedTransactionsQty,
@@ -133,7 +125,7 @@ export function transactionSequentialityAnalyzer(analysisData: AnalysisData): Ri
 			missing_transactions_qty: missingTransactionsQty,
 			operational_date: analysisData.ride.operational_date,
 			reason: 'MISSING_TRANSACTIONS',
-			remarks: missingGapsRemarks,
+			remarks: null,
 			ride_id: analysisData.ride._id,
 			updated_at: Dates.now('utc').unix_milliseconds,
 		});
