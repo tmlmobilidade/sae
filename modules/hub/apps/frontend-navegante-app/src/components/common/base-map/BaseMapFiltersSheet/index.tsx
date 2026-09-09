@@ -1,8 +1,7 @@
 'use client';
 
 import { useMapContext } from '@/contexts/Map.context';
-import { getAgencyLogo } from '@/lib/agency-logos-map';
-import { AGENCY_NAMES_MAP } from '@/lib/agency-names-map';
+import { getAgencyDisplayInfo, getAgencyLogo } from '@/lib/agency-catalog';
 import { type BaseMapOverlayType } from '@/types/common/map';
 import { BASE_MAP_OPERATOR_IDS } from '@/utils/map/base-map-operators';
 import { IconAlertTriangle, IconBus, IconCheck } from '@tabler/icons-react';
@@ -84,12 +83,14 @@ export function BaseMapFiltersSheet() {
 				<div className={styles.operatorGrid}>
 					{BASE_MAP_OPERATOR_IDS.map((operatorId) => {
 						const isActive = !mapContext.data.excludedBaseMapOperatorIds.includes(operatorId);
-						const operatorName = AGENCY_NAMES_MAP[operatorId].full;
+						const operator = getAgencyDisplayInfo(operatorId);
+						const operatorLogo = getAgencyLogo(operatorId, '180x120', 'light');
+						if (!operator || !operatorLogo) return null;
 
 						return (
 							<button
 								key={operatorId}
-								aria-label={operatorName}
+								aria-label={operator.fullName}
 								aria-pressed={isActive}
 								className={styles.operatorButton}
 								data-active={isActive}
@@ -97,7 +98,7 @@ export function BaseMapFiltersSheet() {
 								type="button"
 							>
 								<span className={styles.operatorLogo}>
-									<Image alt="" height={35} src={getAgencyLogo(operatorId, '180x120', 'light')} width={52} />
+									<Image alt="" height={35} src={operatorLogo} width={52} />
 								</span>
 							</button>
 						);

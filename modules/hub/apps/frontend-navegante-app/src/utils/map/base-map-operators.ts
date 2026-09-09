@@ -1,16 +1,14 @@
-import { type BaseMapOperatorId } from '@/types/common/map';
+import { type BaseMapOperatorId, getAgencyMapOperatorId } from '@/lib/agency-catalog';
 
 /* * */
 
-export const BASE_MAP_OPERATOR_IDS = ['4', '2', '16', '15', 'CM', '1', '8', '3', '21'] as const satisfies readonly BaseMapOperatorId[];
+export const BASE_MAP_OPERATOR_IDS = ['IA9T6', 'IA2N9', 'N18KL', 'LTP61', 'CM', 'A3H3M', '7NTB1', 'KB1F6', 'HF16N'] as const satisfies readonly BaseMapOperatorId[];
 
 /* * */
 
 export function getBaseMapOperatorId(agencyId: string): BaseMapOperatorId | null {
-	if (['41', '42', '43', '44'].includes(agencyId)) return 'CM';
-	if (BASE_MAP_OPERATOR_IDS.includes(agencyId as BaseMapOperatorId)) return agencyId as BaseMapOperatorId;
-
-	return null;
+	if (agencyId === 'CM') return 'CM';
+	return getAgencyMapOperatorId(agencyId);
 }
 
 export function isBaseMapAgencyVisible(agencyId: string, excludedOperatorIds: BaseMapOperatorId[]): boolean {

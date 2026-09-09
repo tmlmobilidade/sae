@@ -1,5 +1,4 @@
-import { getAgencyLogo } from '@/lib/agency-logos-map';
-import { AGENCY_NAMES_MAP } from '@/lib/agency-names-map';
+import { getAgencyInfo, getAgencyLogo } from '@/lib/agency-catalog';
 import Image from 'next/image';
 
 import styles from './styles.module.css';
@@ -16,15 +15,16 @@ export function SearchStopAgencyLogos({ agencyIds }: SearchStopAgencyLogosProps)
 	return (
 		<em className={styles.stopAgencyLogos}>
 			{agencyIds.map((agencyId) => {
-				const agency = AGENCY_NAMES_MAP[agencyId as keyof typeof AGENCY_NAMES_MAP];
-				if (!agency) return null;
+				const agency = getAgencyInfo(agencyId);
+				const agencyLogo = getAgencyLogo(agencyId, '120x120', 'light');
+				if (!agency || !agencyLogo) return null;
 
 				return (
 					<Image
 						key={agencyId}
-						alt={agency.full}
+						alt={agency.fullName}
 						height={24}
-						src={getAgencyLogo(agencyId, '120x120', 'light')}
+						src={agencyLogo}
 						width={24}
 					/>
 				);

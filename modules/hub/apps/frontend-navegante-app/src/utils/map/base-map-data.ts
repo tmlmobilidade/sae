@@ -1,4 +1,4 @@
-import { type BaseMapOperatorId } from '@/types/common/map';
+import { type BaseMapOperatorId } from '@/lib/agency-catalog';
 import { isBaseMapAgencyVisible } from '@/utils/map/base-map-operators';
 import { getRoutePlannerRouteDirectionKey } from '@/utils/route-planner/itinerary/vehicles';
 

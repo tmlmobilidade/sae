@@ -2,7 +2,7 @@
 
 import { LineBadge } from '@/components/lines/common/LineBadge';
 import { useLinesDetailContext } from '@/components/lines/detail/LinesDetail.context';
-import { getAgencyLogo } from '@/lib/agency-logos-map';
+import { getAgencyLogo } from '@/lib/agency-catalog';
 import { Section, Surface } from '@tmlmobilidade/ui';
 import Image from 'next/image';
 
@@ -17,6 +17,7 @@ export function LinesDetailViewHeader() {
 	// A. Setup variables
 
 	const linesDetailContext = useLinesDetailContext();
+	const agencyLogo = getAgencyLogo(linesDetailContext.data.line.agency_id, '180x120', 'light');
 
 	//
 	// B. Render componentss
@@ -26,7 +27,7 @@ export function LinesDetailViewHeader() {
 			<Section gap="sm">
 				<div aria-hidden={true} className={styles.row}>
 					<LineBadge lineData={linesDetailContext.data.line} size="lg" />
-					<Image alt="" height={40} src={getAgencyLogo(linesDetailContext.data.line.agency_id, '180x120', 'light')} width={60} />
+					{agencyLogo && <Image alt="" height={40} src={agencyLogo} width={60} />}
 				</div>
 				<h1 aria-hidden={true} className={styles.lineName}>
 					{linesDetailContext.data.line.long_name}

@@ -3,7 +3,7 @@
 import { CopyBadge } from '@/components/common/display/CopyBadge';
 import { useLinesData } from '@/components/lines/use-lines-data';
 import { useVehiclesDetailContext } from '@/components/vehicles/detail/VehiclesDetail.context';
-import { getAgencyLogo } from '@/lib/agency-logos-map';
+import { getAgencyLogo } from '@/lib/agency-catalog';
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type HubPattern } from '@tmlmobilidade/go-types-hub';
 import { type ApiResponse } from '@tmlmobilidade/go-types-shared';
@@ -28,6 +28,7 @@ export function VehiclesDetailView() {
 
 	const { data: lines } = useLinesData();
 	const vehiclesDetailContext = useVehiclesDetailContext();
+	const agencyLogo = getAgencyLogo(vehiclesDetailContext.data.vehicle?.agency_id, '180x120', 'light');
 
 	//
 	// B. Fetch data
@@ -62,7 +63,7 @@ export function VehiclesDetailView() {
 
 				<div className={styles.lineInfoWrapper}>
 					<LineBadge color={activeLineData?.color} shortName={activeLineData?.short_name} size="full-width" textColor={activeLineData?.text_color} />
-					<Image alt="" height={40} src={getAgencyLogo(vehiclesDetailContext.data.vehicle?.agency_id, '180x120', 'light')} width={60} />
+					{agencyLogo && <Image alt="" height={40} src={agencyLogo} width={60} />}
 				</div>
 
 				<LineName

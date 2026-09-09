@@ -1,5 +1,6 @@
 'use client';
 
+import { VEHICLE_MAP_ICON_EXPRESSION } from '@/utils/map/vehicle-visibility';
 import { getBaseGeoJsonFeatureCollection } from '@tmlmobilidade/geo';
 import { Layer, Source } from '@vis.gl/react-maplibre';
 import { type DataDrivenPropertyValueSpecification } from 'maplibre-gl';
@@ -201,23 +202,7 @@ export function MapViewOverlayVehicles({ alwaysShowVehicles = false, presentBefo
 					'icon-allow-overlap': true,
 					'icon-anchor': 'center',
 					'icon-ignore-placement': true,
-					'icon-image': [
-						'match',
-						['to-string', ['get', 'agency_id']],
-						'IA9T6', 'map-vehicle-ccfl-bus',
-						'2IA2N9', 'map-vehicle-ml-train',
-						'N18KL', 'map-vehicle-cp-train',
-						'LTP61', 'map-vehicle-ttsl-boat',
-						'A3H3M', 'map-vehicle-tcb-bus',
-						'7NTB1', 'map-vehicle-fertagus-train',
-						'KB1F6', 'map-vehicle-mts-tram',
-						'HF16N', 'map-vehicle-mobi-bus',
-						'LA77N', 'map-vehicle-cmet-bus',
-						'BNA17', 'map-vehicle-cmet-bus',
-						'YA15B', 'map-vehicle-cmet-bus',
-						'A2L1N', 'map-vehicle-cmet-bus',
-						'map-vehicle-cmet-bus',
-					],
+					'icon-image': VEHICLE_MAP_ICON_EXPRESSION,
 					'icon-offset': [0, 0],
 					'icon-rotate': ['get', 'bearing'],
 					'icon-rotation-alignment': 'map',

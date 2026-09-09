@@ -1,25 +1,32 @@
+import { getAgencyDisplayInfo } from '@/lib/agency-catalog';
 import { getBaseMapAlertsMapData, getBaseMapVehiclesMapData } from '@/utils/map/base-map-data';
-import { getBaseMapOperatorId, isBaseMapAgencyVisible } from '@/utils/map/base-map-operators';
+import { BASE_MAP_OPERATOR_IDS, getBaseMapOperatorId, isBaseMapAgencyVisible } from '@/utils/map/base-map-operators';
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 /* * */
 
 describe('base-map operator normalization', () => {
-	it('groups Carris Metropolitana agencies 41 through 44 under CM', () => {
-		for (const agencyId of ['41', '42', '43', '44']) {
+	it('defines agency metadata for every selectable operator', () => {
+		for (const operatorId of BASE_MAP_OPERATOR_IDS) {
+			assert.ok(getAgencyDisplayInfo(operatorId));
+		}
+	});
+
+	it('groups Carris Metropolitana agencies under CM', () => {
+		for (const agencyId of ['A2L1N', 'BNA17', 'LA77N', 'YA15B']) {
 			assert.equal(getBaseMapOperatorId(agencyId), 'CM');
 		}
 	});
 
 	it('preserves configured operator IDs and leaves unknown agencies ungrouped', () => {
-		assert.equal(getBaseMapOperatorId('2'), '2');
+		assert.equal(getBaseMapOperatorId('IA2N9'), 'IA2N9');
 		assert.equal(getBaseMapOperatorId('CM'), 'CM');
 		assert.equal(getBaseMapOperatorId('unknown-agency'), null);
 	});
 
 	it('hides every CM agency together while keeping unknown agencies visible', () => {
-		for (const agencyId of ['41', '42', '43', '44']) {
+		for (const agencyId of ['A2L1N', 'BNA17', 'LA77N', 'YA15B']) {
 			assert.equal(isBaseMapAgencyVisible(agencyId, ['CM']), false);
 		}
 
@@ -29,9 +36,9 @@ describe('base-map operator normalization', () => {
 
 describe('base-map alert filtering order', () => {
 	const alerts = [
-		{ _id: 'route-alert', agency_id: '2' },
-		{ _id: 'focused-alert', agency_id: '3' },
-		{ _id: 'cm-alert', agency_id: '41' },
+		{ _id: 'route-alert', agency_id: 'IA2N9' },
+		{ _id: 'focused-alert', agency_id: 'KB1F6' },
+		{ _id: 'cm-alert', agency_id: 'LA77N' },
 	];
 	const alertsData = createAlertCollection(['route-alert', 'focused-alert', 'cm-alert']);
 	const routePlannerAlertsData = createAlertCollection(['route-alert', 'cm-alert']);
@@ -75,13 +82,13 @@ describe('base-map alert filtering order', () => {
 
 describe('base-map vehicle filtering order', () => {
 	const vehiclesData = createVehicleCollection([
-		{ agency_id: '2', direction_id: 0, route_id: 'route-a', shape_id: 'route-shape', vehicle_id: 'route-vehicle' },
-		{ agency_id: '3', direction_id: 1, route_id: 'route-b', shape_id: 'line-shape', vehicle_id: 'line-vehicle' },
-		{ agency_id: '4', direction_id: 1, route_id: 'route-c', shape_id: 'focused-shape', vehicle_id: 'focused-vehicle' },
-		{ agency_id: '41', direction_id: 0, route_id: 'route-d', shape_id: 'cm-shape', vehicle_id: 'cm-vehicle' },
+		{ agency_id: 'IA2N9', direction_id: 0, route_id: 'route-a', shape_id: 'route-shape', vehicle_id: 'route-vehicle' },
+		{ agency_id: 'KB1F6', direction_id: 1, route_id: 'route-b', shape_id: 'line-shape', vehicle_id: 'line-vehicle' },
+		{ agency_id: 'IA9T6', direction_id: 1, route_id: 'route-c', shape_id: 'focused-shape', vehicle_id: 'focused-vehicle' },
+		{ agency_id: 'LA77N', direction_id: 0, route_id: 'route-d', shape_id: 'cm-shape', vehicle_id: 'cm-vehicle' },
 		{ agency_id: 'unknown-agency', direction_id: 0, route_id: 'route-e', shape_id: 'unknown-shape', vehicle_id: 'unknown-vehicle' },
 	]);
-	const routePlannerRouteDirections = new Set(['[2]route-a:0']);
+	const routePlannerRouteDirections = new Set(['[IA2N9]route-a:0']);
 
 	it('starts from vehicles matching the selected itinerary route and direction', () => {
 		const result = getBaseMapVehiclesMapData({
@@ -133,7 +140,7 @@ describe('base-map vehicle filtering order', () => {
 
 	it('allows operator visibility to hide an otherwise focused vehicle', () => {
 		const result = getBaseMapVehiclesMapData({
-			excludedOperatorIds: ['4'],
+			excludedOperatorIds: ['IA9T6'],
 			focusedVehicleId: 'focused-vehicle',
 			lineDetailShapeIds: new Set(['line-shape']),
 			routePlannerRouteDirections,

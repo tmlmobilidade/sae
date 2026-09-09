@@ -1,26 +1,23 @@
+import { AGENCY_IDS, getAgencyInfo } from '@/lib/agency-catalog';
 import { type HubVehiclePosition } from '@tmlmobilidade/go-types-hub';
+import { type DataDrivenPropertyValueSpecification } from 'maplibre-gl';
 
 /* * */
 
-const ALLOWED_VEHICLE_AGENCY_IDS = new Set([
-	'7NTB1', // Fertagus
-	'A2L1N', // Alsa (CM)
-	'A3H3M', // TCB
-	'BNA17', // Rodoviária de Lisboa (CM)
-	'HF16N', // MobiCascais
-	'IA2N9', // Metro de Lisboa
-	'IA9T6', // Carris
-	'KB1F6', // Metro Transportes do Sul
-	'LA77N', // Viação Alvorada (CM)
-	'LTP61', // Transtejo
-	'N18KL', // Comboios de Portugal
-	'YA15B', // TST (CM)
-]);
+export const VEHICLE_MAP_ICON_EXPRESSION = [
+	'match',
+	['to-string', ['get', 'agency_id']],
+	...AGENCY_IDS.flatMap((agencyId) => {
+		const agency = getAgencyInfo(agencyId);
+		return agency ? [agencyId, agency.vehicleMapIcon] : [];
+	}),
+	'map-vehicle-cmet-bus',
+] as DataDrivenPropertyValueSpecification<string>;
 
 /* * */
 
 export function isVehicleIncludedInMap(vehicle: HubVehiclePosition) {
-	if (!ALLOWED_VEHICLE_AGENCY_IDS.has(vehicle.agency_id)) return false;
+	if (!getAgencyInfo(vehicle.agency_id)) return false;
 	if (!vehicle.trip_id || !vehicle.route_id) return false;
 	return vehicle.direction_id !== undefined && vehicle.direction_id !== null;
 }
