@@ -2,7 +2,7 @@
 
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type SidebarLogoPlatformResponse } from '@tmlmobilidade/go-types-core';
-import { type ApiResponse, type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
+import { type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 
@@ -32,9 +32,9 @@ export function useSidebarHeaderLogo(): UseSidebarHeaderLogoReturnType {
 	//
 	// B. Fetch data
 
-	const { data, error, isLoading, isValidating, mutate } = useSWR<ApiResponse<SidebarLogoPlatformResponse>>([API_ROUTES.core.PLATFORM_SIDEBAR_LOGO, currentThemeMode], {
+	const { data, error, isLoading, isValidating, mutate } = useSWR([API_ROUTES.core.PLATFORM_SIDEBAR_LOGO, currentThemeMode], {
 		fetcher: async ([url, themeMode]) => await fetchApiData<SidebarLogoPlatformResponse>({ body: { theme_mode: themeMode }, method: 'POST', url }),
-		refreshInterval: 10_000, // 10 seconds
+		refreshInterval: 600_000, // 10 minutes
 	});
 
 	//

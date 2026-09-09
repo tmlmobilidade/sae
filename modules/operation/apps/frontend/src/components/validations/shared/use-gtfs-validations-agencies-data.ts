@@ -2,7 +2,7 @@
 
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type GtfsValidationsAgencyItem, type GtfsValidationsAgencyRequest } from '@tmlmobilidade/go-operation-pckg-types';
-import { type ApiResponse, type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
+import { type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { fetchApiData, SelectDataItem } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -29,9 +29,9 @@ export function useGtfsValidationsAgenciesData(query: GtfsValidationsAgencyReque
 	//
 	// A. Fetch data
 
-	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<GtfsValidationsAgencyItem[]>>([API_ROUTES.operation.GTFS_VALIDATIONS_LIST_AGENCIES, query], {
+	const { data, error, isLoading, isValidating } = useSWR([API_ROUTES.operation.GTFS_VALIDATIONS_LIST_AGENCIES, query], {
 		fetcher: async ([url, query]) => await fetchApiData<GtfsValidationsAgencyItem[]>({ body: query, method: 'POST', url }),
-		refreshInterval: 10_000, // 10 seconds
+		refreshInterval: 300_000, // 5 minutes
 	});
 
 	//
