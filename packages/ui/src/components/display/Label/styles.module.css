@@ -5,6 +5,7 @@
 	padding: 0;
 	margin: 0;
 	line-height: 1.2;
+	text-wrap: wrap;
 }
 
 /* * */
@@ -27,6 +28,7 @@
 .label[data-single-line="true"] {
 	text-overflow: ellipsis;
 	line-clamp: 1;
+	text-wrap: nowrap;
 	white-space: nowrap;
 }
 
