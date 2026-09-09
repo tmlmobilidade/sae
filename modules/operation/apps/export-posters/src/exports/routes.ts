@@ -44,8 +44,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 			continue;
 		}
 		// If this line has multiple routes, sort them by route_id
-		// and add a suffix (A, B, C, ...) to the route_short_name
-		// to differentiate between them.
+		// and preserve their original route_short_name.
 		routesGroup.sort((a, b) => (a.route_id < b.route_id ? -1 : 1));
 		for (let i = 0; i < routesGroup.length; i++) {
 			const data = GtfsRoutesSchema.parse({
@@ -54,7 +53,7 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 				route_desc: routesGroup[i].route_desc ?? '',
 				route_id: routesGroup[i].route_id,
 				route_long_name: routesGroup[i].route_long_name,
-				route_short_name: `${routesGroup[i].route_short_name}${String.fromCharCode(65 + i)}`, // 65 is 'A' in ASCII
+				route_short_name: routesGroup[i].route_short_name,
 				route_text_color: routesGroup[i].route_text_color,
 				route_type: routesGroup[i].route_type,
 			});
