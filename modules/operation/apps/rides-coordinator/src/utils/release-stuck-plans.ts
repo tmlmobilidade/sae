@@ -14,11 +14,6 @@ const STUCK_PLAN_TIMEOUT_MS = 180_000; // 3 minutes
 export async function releaseStuckPlans() {
 	//
 
-	//
-	// Initialize the logger
-
-	Logger.init();
-
 	const globalTimer = new Timer();
 
 	//
@@ -38,14 +33,14 @@ export async function releaseStuckPlans() {
 	// Skip if no stuck plans found
 
 	if (!stuckPlanIds.length) {
-		Logger.info({ message: `No stuck plans found!` });
+		Logger.success(`No stuck plans found (${fetchTimer.get()})`);
 		return;
 	}
 
 	//
 	// Mark the plans as 'waiting' to be reprocessed.
 
-	Logger.info({ message: `Found ${stuckPlanIds.length} stuck plans that will be marked as 'waiting'.` });
+	Logger.info({ message: `Found ${stuckPlanIds.length} stuck plans that will be marked as 'waiting' (${fetchTimer.get()})` });
 
 	const plansCollection = await goDb.operation.plans.getCollection();
 

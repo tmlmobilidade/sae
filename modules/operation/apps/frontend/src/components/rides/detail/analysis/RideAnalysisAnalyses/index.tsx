@@ -18,29 +18,29 @@ export function RideAnalysisAnalyses() {
 
 	const { data: rideAnalysesData } = useRidesDetailRideAnalysesData();
 
-	const columns: DataTableColumn<[keyof RideAnalysesRegistry, RideAnalysesRegistry[keyof RideAnalysesRegistry]]>[] = [
+	const columns: DataTableColumn<{ key: keyof RideAnalysesRegistry, value: RideAnalysesRegistry[keyof RideAnalysesRegistry] }>[] = [
 		{
 			accessor: 'id',
 			render: item => (
 				<Section flexDirection="column" gap="xs" padding="none">
-					<Label size="sm">{item[0]}</Label>
-					<Label>{t(`ride_analysis:${item[0]}.label`)}</Label>
-					<Text size="sm">{t(`ride_analysis:${item[0]}.description`)}</Text>
+					<Label size="sm">{item.key}</Label>
+					<Label>{t(`ride_analysis:${item.key}.label`)}</Label>
+					<Text size="sm">{t(`ride_analysis:${item.key}.description`)}</Text>
 				</Section>
 			),
-			title: t('default:rides.analysis.RideAnalysisApexLocations.table.columns.created_at.label'),
+			title: t('default:rides.analysis.RideAnalysisAnalyses.table.columns.id.label'),
 			width: 500,
 		},
 		{
 			accessor: 'grade_status',
-			render: item => <GradeStatusDisplay tooltip={item[1].remarks} value={item[1].grade_status} />,
-			title: t('default:rides.analysis.RideAnalysisApexLocations.table.columns.stop_id.label'),
+			render: item => item.value ? <GradeStatusDisplay tooltip={item.value?.remarks} value={item.value?.grade_status} /> : 'N/A',
+			title: t('default:rides.analysis.RideAnalysisAnalyses.table.columns.grade_status.label'),
 			width: 100,
 		},
 		{
 			accessor: 'reason',
-			render: item => <Label>{item[1].reason}</Label>,
-			title: t('default:rides.analysis.RideAnalysisApexLocations.table.columns.vehicle_id.label'),
+			render: item => <Label>{item.value?.reason}</Label>,
+			title: t('default:rides.analysis.RideAnalysisAnalyses.table.columns.reason.label'),
 			width: 500,
 		},
 	];
@@ -48,11 +48,11 @@ export function RideAnalysisAnalyses() {
 	//
 	// B. Transform data
 
-	const rideAnalysesList: [keyof RideAnalysesRegistry, RideAnalysesRegistry[keyof RideAnalysesRegistry]][] = useMemo(() => {
+	const rideAnalysesList: { key: keyof RideAnalysesRegistry, value: null | RideAnalysesRegistry[keyof RideAnalysesRegistry] }[] = useMemo(() => {
 		if (!rideAnalysesData) return [];
 		return (Object.entries(rideAnalysesData) as [keyof RideAnalysesRegistry, RideAnalysesRegistry[keyof RideAnalysesRegistry]][])
 			.sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-			.map(([key, value]) => [key, value] as const);
+			.map(([key, value]) => ({ key, value }));
 	}, [rideAnalysesData]);
 
 	//
@@ -67,7 +67,7 @@ export function RideAnalysisAnalyses() {
 				<DataTable
 					columns={columns}
 					records={rideAnalysesList}
-					rowIdAccessor="0"
+					rowIdAccessor="key"
 				/>
 			</DataTableScroller>
 		</Collapsible>

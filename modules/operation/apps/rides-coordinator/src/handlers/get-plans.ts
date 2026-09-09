@@ -18,7 +18,7 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 	//
 
 	const timer = new Timer();
-	const sessionId = Math.random().toString(36).substring(2, 5).toUpperCase();
+	const sessionId = 'plans|' + Math.random().toString(36).substring(2, 5).toUpperCase();
 
 	try {
 		//

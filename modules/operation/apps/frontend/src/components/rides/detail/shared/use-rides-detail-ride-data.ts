@@ -16,6 +16,7 @@ interface UseRidesDetailRideDataReturnType {
 	error: null | string
 	isLoading: boolean
 	isValidating: boolean
+	mutate: () => void
 	timestamp: null | UnixMilliseconds
 }
 
@@ -32,7 +33,7 @@ export function useRidesDetailRideData(): UseRidesDetailRideDataReturnType {
 	//
 	// B. Fetch data
 
-	const { data, error, isLoading, isValidating } = useSWR<ApiResponse<ControllerRidesDetailRideItem>>(rideId && API_ROUTES.operation.RIDES_DETAIL_RIDE(rideId), {
+	const { data, error, isLoading, isValidating, mutate } = useSWR<ApiResponse<ControllerRidesDetailRideItem>>(rideId && API_ROUTES.operation.RIDES_DETAIL_RIDE(rideId), {
 		fetcher: async (url: string) => await fetchApiData<ControllerRidesDetailRideItem>({ url }),
 		refreshInterval: 10_000, // 10 seconds
 	});
@@ -45,6 +46,7 @@ export function useRidesDetailRideData(): UseRidesDetailRideDataReturnType {
 		error: error?.error,
 		isLoading,
 		isValidating,
+		mutate,
 		timestamp: data?.timestamp,
-	}), [data, error, isLoading, isValidating]);
+	}), [data, error, isLoading, isValidating, mutate]);
 };

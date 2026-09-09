@@ -170,6 +170,21 @@
 			}
 		},
 		"analysis": {
+			"RideAnalysisAnalyses": {
+				"table": {
+					"columns": {
+						"grade_status": {
+							"label": "Estado"
+						},
+						"id": {
+							"label": "ID"
+						},
+						"reason": {
+							"label": "Motivo"
+						}
+					}
+				}
+			},
 			"RideAnalysisApexBankingTaps": {
 				"description": "Taps bancários associados a esta circulação.",
 				"table": {

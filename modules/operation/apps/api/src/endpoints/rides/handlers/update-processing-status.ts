@@ -2,6 +2,7 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
+import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { hasPermissionResource } from '@tmlmobilidade/go-types-permissions';
 import { type ProcessingStatus } from '@tmlmobilidade/go-types-shared';
@@ -29,7 +30,7 @@ export async function updateProcessingStatusHandler(request: FastifyRequest<{ Bo
 	//
 	// Check if the user has permissions to update the processing status of the ride
 
-	const hasPermissionUpdateProcessingStatus = hasPermissionResource(request.me.permissions, {
+	const hasPermissionUpdateProcessingStatus = hasPermissionResource(request.permissions, {
 		requiredPermission: { action: 'analysis_reprocess', scope: 'rides' },
 		requiredValue: rideData.agency_id,
 		resourceKey: 'agency_ids',
@@ -46,6 +47,7 @@ export async function updateProcessingStatusHandler(request: FastifyRequest<{ Bo
 	// Update the Ride in goDb to 'waiting' status
 
 	const updatedRideResult = await goDb.operation.rides.updateById(request.params.id, { processing_status: 'waiting' });
+	await labDb.operation.rides.insert('JSONEachRow', [updatedRideResult]);
 
 	return sendSuccessApiResponse(reply, updatedRideResult);
 }

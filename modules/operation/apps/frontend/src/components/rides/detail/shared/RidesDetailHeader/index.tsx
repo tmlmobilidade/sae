@@ -36,7 +36,7 @@ export function RidesDetailHeader() {
 	const { rideId } = useRidesDetailRideId();
 	const { availableViews, currentView, setCurrentView } = useRidesDetailCurrentView();
 
-	const { data: rideData, isLoading: rideIsLoading, isValidating: rideIsValidating, timestamp: rideTimestamp } = useRidesDetailRideData();
+	const { data: rideData, isLoading: rideIsLoading, isValidating: rideIsValidating, mutate: ridesDetailRideMutate, timestamp: rideTimestamp } = useRidesDetailRideData();
 	const { isLoading: rideAnalysesIsLoading, isValidating: rideAnalysesIsValidating, timestamp: rideAnalysesTimestamp } = useRidesDetailRideAnalysesData();
 	const { isLoading: hashedTripIsLoading, isValidating: hashedTripIsValidating, timestamp: hashedTripTimestamp } = useRidesDetailHashedTripData();
 	const { isLoading: simplifiedApexBankingTapsIsLoading, isValidating: simplifiedApexBankingTapsIsValidating, timestamp: simplifiedApexBankingTapsTimestamp } = useRidesDetailApexBankingTapsData();
@@ -78,7 +78,9 @@ export function RidesDetailHeader() {
 
 	const { action: handleUpdateProcessingStatus, isLoading: isUpdatingRideProcessingStatus } = useHandleAction<Ride, ProcessingStatus>({
 		fetchFn: async data => await fetchApiData<Ride, { processing_status: ProcessingStatus }>({ body: { processing_status: data }, method: 'PUT', url: API_ROUTES.operation.RIDES_DETAIL_PROCESSING_STATUS(rideId) }),
-		onSuccess: () => {},
+		onSuccess: () => {
+			ridesDetailRideMutate();
+		},
 	});
 
 	// const handleToggleFavorite = () => {
