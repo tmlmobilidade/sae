@@ -7,8 +7,9 @@ import { Timer } from '@tmlmobilidade/timer';
 import { removeOldGtfsValidationsTask } from './tasks/gtfs-validations/remove-old-gtfs-validations.js';
 import { normalizePlansTask } from './tasks/plans/normalize-plans/normalize-plans.js';
 import { updatePlanHashesTask } from './tasks/plans/update-plan-hashes/update-plan-hashes.js';
-import { releaseStuckRidesTask } from './tasks/rides/release-stuck-rides.js';
 import { removeOrphanAnalysesTask } from './tasks/rides/remove-orphan-analyses.js';
+import { removeOrphanHashedShapesTask } from './tasks/rides/remove-orphan-hashed-shapes.js';
+import { removeOrphanHashedTripsTask } from './tasks/rides/remove-orphan-hashed-trips.js';
 import { removeOrphanRidesTask } from './tasks/rides/remove-orphan-rides.js';
 
 /* * */
@@ -47,11 +48,10 @@ async function reprocessStuckRides() {
 	/* * */
 	/* RIDES */
 
-	await releaseStuckRidesTask();
 	await removeOrphanRidesTask();
 	await removeOrphanAnalysesTask();
-	// await cleanupOrphanHashedTrips();
-	// await cleanupOrphanHashedShapes();
+	await removeOrphanHashedShapesTask();
+	await removeOrphanHashedTripsTask();
 
 	/* * */
 

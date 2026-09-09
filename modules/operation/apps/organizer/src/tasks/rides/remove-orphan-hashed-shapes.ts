@@ -1,10 +1,11 @@
 /* * */
 
+import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
 /**
- * Delete all HashedShapes that are not referenced by any Ride.
+ * Delete all Ride Analyses from Rides that do not exist anymore.
  */
 export async function removeOrphanHashedShapesTask() {
 	//
@@ -14,8 +15,17 @@ export async function removeOrphanHashedShapesTask() {
 	Logger.spacer(1);
 	Logger.info({ message: `Starting cleanup of orphan Hashed Shapes...` });
 
-	// TODO: Replace with goDb query
-	// await labDb.operation.hashedShapes.delete('_id NOT IN (SELECT DISTINCT hashed_shape_id FROM operation.rides)');
+	await labDb.command({
+		query: `
+			ALTER TABLE operation.hashed_shapes
+			DELETE WHERE _id NOT IN (
+				SELECT hashed_shape_id
+				FROM operation.rides
+			);
+		`,
+	});
 
-	Logger.success(`Hashed Shapes cleanup complete. Deleted orphan Hashed Shapes. (${timer.get()})`);
+	Logger.success(`Deleted orphan Hashed Shapes. (${timer.get()})`);
+
+	Logger.spacer(1);
 }

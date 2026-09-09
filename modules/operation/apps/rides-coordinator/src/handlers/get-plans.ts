@@ -3,10 +3,9 @@
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type RidesCoordinatorPlansResponse } from '@tmlmobilidade/go-operation-pckg-types';
 import { setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
-
-import { releaseStuckPlans } from '../utils/release-stuck-plans.js';
 
 /* * */
 
@@ -18,7 +17,7 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 	//
 
 	const timer = new Timer();
-	const sessionId = 'plans|' + Math.random().toString(36).substring(2, 5).toUpperCase();
+	const sessionId = Math.random().toString(36).substring(2, 5).toUpperCase();
 
 	try {
 		//
@@ -30,7 +29,7 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 		// sequentially. To do that, we implement a simple lock mechanism.
 
 		if (IS_BUSY) {
-			Logger.info({ message: `[${sessionId}] Waiting for another request to complete... (elapsed: ${timer.get()})` });
+			Logger.info({ message: `[plans] [${sessionId}] Waiting for another request to complete...` });
 			return { plan_id: null };
 		}
 
@@ -43,13 +42,27 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 		//
 		// Release stuck plans before fetching new ones
 
-		await releaseStuckPlans();
+		const plansCollection = await goDb.operation.plans.getCollection();
+
+		const updateResult = await plansCollection.updateMany(
+			{
+				'apps.rides_feeder.status': 'processing',
+				'apps.rides_feeder.timestamp': { $lt: Dates.now('utc').minus({ minutes: 3 }).unix_milliseconds },
+			},
+			{
+				$set: {
+					'apps.rides_feeder.last_hash': null,
+					'apps.rides_feeder.status': 'waiting',
+					'apps.rides_feeder.timestamp': Dates.now('utc').unix_milliseconds,
+				},
+			},
+		);
+
+		Logger.info({ message: `[plans] [${sessionId}] Released ${updateResult.modifiedCount} stuck plans. (${timer.get()})` });
 
 		//
 		// Find the next Plan that is waiting to be processed.
 		// Sort the query by descending date to prioritize the most recent Plans.
-
-		const fetchTimer = new Timer();
 
 		const foundWaitingPlans = await goDb.operation.plans.findMany(
 			{
@@ -65,13 +78,11 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 		);
 
 		/* === FOR TESTING === */
-		// const latestWaitingRides = await rides.findMany({ _id: 'DC0XN-44-20250303-4412_0_2|300|1955' })
+		// const foundWaitingPlans = await goDb.operation.plans.findMany({ _id: 'DC0XN-44-20250303-4412_0_2|300|1955' })
 		/* === FOR TESTING === */
 
-		const fetchTimerResult = fetchTimer.get();
-
 		if (!foundWaitingPlans.length) {
-			Logger.info({ message: `[${sessionId}] No plans waiting (fetch: ${fetchTimerResult})` });
+			Logger.info({ message: `[plans] [${sessionId}] No plans waiting to be processed (${timer.get()})` });
 			IS_BUSY = false;
 			return { plan_id: null };
 		}
@@ -80,11 +91,9 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 		// Mark the Plan as 'processing' to ensure the next batch of Plans does not include it,
 		// and return them to the caller instance.
 
-		const markTimer = new Timer();
-
 		await setPlanStatus(foundWaitingPlans[0]._id, 'rides_feeder', 'processing');
 
-		Logger.info({ message: `[${sessionId}] New plan: ${foundWaitingPlans[0]._id} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})` });
+		Logger.info({ message: `[plans] [${sessionId}] Waiting plan found: "${foundWaitingPlans[0]._id}" (${timer.get()})` });
 
 		//
 		// Reset the busy flag to allow other requests to be processed
@@ -96,7 +105,7 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 
 		//
 	} catch (error) {
-		Logger.error({ error, message: `[${sessionId}] Error getting plans: ${error.message}` });
+		Logger.error({ error, message: `[rides] [${sessionId}] Error getting rides: ${error.message}` });
 		IS_BUSY = false;
 		return { plan_id: null };
 	}

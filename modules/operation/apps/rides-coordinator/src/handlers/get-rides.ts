@@ -16,7 +16,7 @@ export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> 
 	//
 
 	const timer = new Timer();
-	const sessionId = 'rides|' + Math.random().toString(36).substring(2, 5).toUpperCase();
+	const sessionId = Math.random().toString(36).substring(2, 5).toUpperCase();
 
 	try {
 		//
@@ -28,7 +28,7 @@ export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> 
 		// sequentially. To do that, we implement a simple lock mechanism.
 
 		while (IS_BUSY) {
-			Logger.info({ message: `[${sessionId}] Waiting for another request to complete... (elapsed: ${timer.get()})` });
+			Logger.info({ message: `[rides] [${sessionId}] Waiting for another request to complete...` });
 			return { ride_ids: [] };
 		}
 
@@ -39,14 +39,29 @@ export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> 
 		IS_BUSY = true;
 
 		//
+		// Release stuck rides before fetching new ones
+
+		const ridesCollection = await goDb.operation.rides.getCollection();
+
+		const updateResult = await ridesCollection.updateMany(
+			{
+				processing_status: 'processing',
+				updated_at: { $lt: Dates.now('utc').minus({ minutes: 3 }).unix_milliseconds },
+			},
+			{
+				$set: { processing_status: 'waiting' },
+			},
+		);
+
+		Logger.info({ message: `[rides] [${sessionId}] Released ${updateResult.modifiedCount} stuck rides. (${timer.get()})` });
+
+		//
 		// Find all Ride IDs that are waiting analysis and which started before the current time,
 		// sorted in descending order to prioritize the most recent Rides.
 
-		const fetchTimer = new Timer();
-
 		const standardWindowInterval = Dates.now('utc').std_window;
 
-		const latestWaitingRides = await goDb.operation.rides.findMany(
+		const foundWaitingRides = await goDb.operation.rides.findMany(
 			{
 				processing_status: 'waiting',
 				start_time_scheduled: { $lte: standardWindowInterval.end },
@@ -59,13 +74,11 @@ export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> 
 		);
 
 		/* === FOR TESTING === */
-		// const latestWaitingRides = await rides.findMany({ _id: 'DC0XN-44-20250303-4412_0_2|300|1955' })
+		// const foundWaitingRides = await goDb.operation.rides.findMany({ _id: 'DC0XN-44-20250303-4412_0_2|300|1955' })
 		/* === FOR TESTING === */
 
-		const fetchTimerResult = fetchTimer.get();
-
-		if (!latestWaitingRides.length) {
-			Logger.info({ message: `[${sessionId}] No documents waiting | start_time_scheduled: ${standardWindowInterval.end} (fetch: ${fetchTimerResult})` });
+		if (!foundWaitingRides.length) {
+			Logger.info({ message: `[rides] [${sessionId}] No rides waiting to be processed. | stdWindowEnd = ${standardWindowInterval.end} (${timer.get()})` });
 			return { ride_ids: [] };
 		}
 
@@ -73,16 +86,18 @@ export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> 
 		// Mark those Rides as 'processing' to ensure the next batch of Rdes does not include them,
 		// and return them to the caller instance.
 
-		const markTimer = new Timer();
+		const foundWaitingRidesIds = foundWaitingRides.map(item => item._id);
 
-		const latestWaitingRidesIds = latestWaitingRides.map(item => item._id);
+		ridesCollection.updateMany({ _id: { $in: foundWaitingRidesIds } }, {
+			$set: {
+				processing_status: 'processing',
+				updated_at: Dates.now('utc').unix_milliseconds,
+			},
+		});
 
-		const updatePromises = latestWaitingRidesIds.map(id => goDb.operation.rides.updateById(id, { processing_status: 'processing' }));
-		await Promise.all(updatePromises);
+		Logger.info({ message: `[rides] [${sessionId}] New batch of ${foundWaitingRidesIds.length} rides. | operational_date: ${foundWaitingRides[foundWaitingRides.length - 1].operational_date} | start_time_scheduled: ${foundWaitingRides[foundWaitingRides.length - 1].start_time_scheduled} (${timer.get()})` });
 
-		Logger.info({ message: `[${sessionId}] New batch: Qty ${latestWaitingRidesIds.length} | operational_date: ${latestWaitingRides[latestWaitingRides.length - 1].operational_date} | start_time_scheduled: ${latestWaitingRides[latestWaitingRides.length - 1].start_time_scheduled} (fetch: ${fetchTimerResult} | total: ${markTimer.get()})` });
-
-		return { ride_ids: latestWaitingRidesIds };
+		return { ride_ids: foundWaitingRidesIds };
 
 		//
 	} catch (error) {
