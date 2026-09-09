@@ -3,7 +3,6 @@
 import { API_ROUTES, PAGE_ROUTES } from '@tmlmobilidade/consts';
 import { Plan } from '@tmlmobilidade/go-types-operation';
 import { AgencyTag, Button, Divider, fetchApiData, Grid, Label, ProcessingStatusDisplay, Section, Tooltip, useHandleAction, ValidityStatusDisplay } from '@tmlmobilidade/ui';
-import { useRouter } from 'next/navigation';
 
 import { AgencyDisplay } from '../../../common/AgencyDisplay';
 import { FeedInfoDisplay } from '../../../common/FeedInfoDisplay';
@@ -19,8 +18,6 @@ export function GtfsValidationsApprove() {
 	//
 	// A. Setup variables
 
-	const router = useRouter();
-
 	const { data: gtfsValidationData, isLoading } = useGtfsValidationsDetailData();
 
 	const { data: agenciesData } = useGtfsValidationsAgenciesData({
@@ -35,7 +32,7 @@ export function GtfsValidationsApprove() {
 		onSuccess: ({ data }) => {
 			if (!data?._id) return;
 			closeGtfsValidationsApproveModal();
-			router.push(PAGE_ROUTES.operation.PLANS_DETAIL(data._id));
+			window.location.href = PAGE_ROUTES.operation.PLANS_DETAIL(data._id);
 		},
 	});
 

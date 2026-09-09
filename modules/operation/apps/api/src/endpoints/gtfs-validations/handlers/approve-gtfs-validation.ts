@@ -90,18 +90,37 @@ export async function approveGtfsValidationHandler(request: FastifyRequest<{ Par
 	console.log(`[approveGtfsValidationHandler()] Inserted plan with ID "${insertPlanResult._id}"`);
 
 	//
-	// Copy validation GTFS into the plan scope, then attach it to the plan.
+	// Download the validation GTFS file from the storage provider and copy it into the plan scope.
 
-	const copyResult = await storageProvider.copy(validationData.file_id, 'plans', insertPlanResult._id);
+	const findGtfsValidationAttachmentResult = await storageProvider.findById(validationData.file_id);
 
-	const plansCollection = await goDb.operation.plans.getCollection();
+	const downloadResponse = await fetch(findGtfsValidationAttachmentResult.url);
+	const downloadArrayBuffer = await downloadResponse.arrayBuffer();
 
-	await plansCollection.updateOne(
-		{ _id: insertPlanResult._id },
-		{ $set: { 'attachments.operation_gtfs': copyResult._id } },
+	const updatedFileResult = await storageProvider.upload(
+		Buffer.from(downloadArrayBuffer),
+		{
+			created_by: 'system',
+			name: findGtfsValidationAttachmentResult.name,
+			resource_id: insertPlanResult._id,
+			scope: 'plans',
+			size: downloadArrayBuffer.byteLength,
+			type: 'application/zip',
+			updated_by: 'system',
+		},
+		{
+			onSuccess: async (_, result, session) => {
+				const plansCollection = await goDb.operation.plans.getCollection();
+				await plansCollection.updateOne(
+					{ _id: insertPlanResult._id },
+					{ $set: { 'attachments.operation_gtfs': result._id } },
+					{ session },
+				);
+			},
+		},
 	);
 
-	console.log(`[approveGtfsValidationHandler()] Created a copy of the validation GTFS into the plan scope. Attachment ID: ${copyResult._id}`);
+	console.log(`[approveGtfsValidationHandler()] Uploaded a copy of the validation GTFS file into the plan scope. Attachment ID: ${updatedFileResult._id}`);
 
 	//
 	// Get a new hash for this plan
