@@ -3,9 +3,9 @@
 import { RoutePlannerLocationSelector } from '@/components/routes/input/RoutePlannerLocationSelector';
 import { useRoutePlannerContext } from '@/components/routes/RoutePlanner.context';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
-import { getLastSearchQuery, subscribeToSearchQuery } from '@/utils/search/search-query';
+import { useTopSearchLabel } from '@/hooks/search/useTopSearchLabel';
 import { IconSearch } from '@tabler/icons-react';
-import { useEffect, useRef, useSyncExternalStore } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styles from './styles.module.css';
@@ -22,7 +22,7 @@ export function RoutePlannerTopSearch() {
 	const { setActiveBottomSheet } = useBottomSheet();
 	const routePlannerContext = useRoutePlannerContext();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const lastSearchQuery = useSyncExternalStore(subscribeToSearchQuery, getLastSearchQuery, getLastSearchQuery);
+	const selectedEntityLabel = useTopSearchLabel();
 
 	//
 	// B. Transform data
@@ -33,7 +33,7 @@ export function RoutePlannerTopSearch() {
 	const isDestinationSearchWithRouteInput = routePlannerContext.data.view_mode === 'destination-search' && hasRouteInputContext;
 	const isRouteInputView = ['itinerary-detail', 'results'].includes(routePlannerContext.data.view_mode) || isDestinationSearchWithRouteInput;
 	const shouldShowRouteInput = !isNavigating && isRouteInputView;
-	const searchLabel = isNavigating ? t('default:routes.RoutePlannerTopSearch.placeholder') : lastSearchQuery.trim() || t('default:action-bar.ActionBar.search.label');
+	const searchLabel = isNavigating ? t('default:routes.RoutePlannerTopSearch.placeholder') : selectedEntityLabel || t('default:action-bar.ActionBar.search.label');
 	const isRouteInputReadOnly = isPreviewDetail;
 
 	//

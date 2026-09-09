@@ -7,7 +7,7 @@ import { useSearch } from '@/hooks/search/useSearch';
 import { type SearchResult } from '@/types/common/search';
 import { type RoutePlannerLocation } from '@/types/route-planner/models';
 import { mapHubStopToRoutePlannerLocation } from '@/utils/route-planner/planning/locations';
-import { getLastSearchQuery, setLastSearchQuery, subscribeToSearchQuery } from '@/utils/search/search-query';
+import { getSearchDraft, setSearchDraft, subscribeToSearchDraft } from '@/utils/search/search-draft';
 import { IconSearch } from '@tabler/icons-react';
 import { type RefObject, useRef, useState, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,9 +32,9 @@ export function Search({ inputRef: inputRefProp, locationPicker = false, onLocat
 	const { t } = useTranslation();
 	const { setActiveBottomSheet } = useBottomSheet();
 	const routePlannerContext = useRoutePlannerContext();
-	const sharedQuery = useSyncExternalStore(subscribeToSearchQuery, getLastSearchQuery, getLastSearchQuery);
+	const searchDraft = useSyncExternalStore(subscribeToSearchDraft, getSearchDraft, getSearchDraft);
 	const [locationPickerQuery, setLocationPickerQuery] = useState('');
-	const query = locationPicker ? locationPickerQuery : sharedQuery;
+	const query = locationPicker ? locationPickerQuery : searchDraft;
 	const internalInputRef = useRef<HTMLInputElement>(null);
 	const inputRef = inputRefProp ?? internalInputRef;
 	const search = useSearch(query);
@@ -64,7 +64,7 @@ export function Search({ inputRef: inputRefProp, locationPicker = false, onLocat
 			return;
 		}
 
-		setLastSearchQuery(value);
+		setSearchDraft(value);
 	};
 
 	//

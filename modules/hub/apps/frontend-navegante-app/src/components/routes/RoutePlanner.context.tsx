@@ -7,7 +7,7 @@ import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
 import { type MotisItinerary, type RoutePlannerItineraryMapData, type RoutePlannerLocation, type RoutePlannerLocationSearchTarget, type RoutePlannerPlanViewMode, type RoutePlannerTravelTime, type RoutePlannerTravelTimeMode, type RoutePlannerViewMode } from '@/types/route-planner/models';
 import { buildRoutePlannerItineraryMapData } from '@/utils/route-planner/itinerary/geometry';
 import { getRoutePlannerTravelTimeModeTransition } from '@/utils/route-planner/planning/navigation';
-import { clearLastSearchQuery } from '@/utils/search/search-query';
+import { clearSearchDraft } from '@/utils/search/search-draft';
 import { createContext, type PropsWithChildren, useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -179,7 +179,7 @@ export function RoutePlannerContextProvider({ children }: PropsWithChildren) {
 
 	const endActiveTrip = useCallback(() => {
 		clearRoute();
-		clearLastSearchQuery();
+		clearSearchDraft();
 		clearActiveBottomSheets();
 	}, [clearActiveBottomSheets, clearRoute]);
 

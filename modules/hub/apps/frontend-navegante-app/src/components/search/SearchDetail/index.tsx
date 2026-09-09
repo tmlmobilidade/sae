@@ -3,6 +3,7 @@
 import { BottomSheet } from '@/components/common/bottom-sheet/BottomSheet';
 import { Search } from '@/components/search/Search';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
+import { clearSearchDraft } from '@/utils/search/search-draft';
 import { useRef, useState } from 'react';
 
 /* * */
@@ -25,6 +26,11 @@ export function SearchDetail() {
 		inputRef.current?.focus({ preventScroll: true });
 	};
 
+	const handleClose = () => {
+		clearSearchDraft();
+		closeActiveBottomSheet();
+	};
+
 	if (!isOpen && !isMounted) return null;
 
 	//
@@ -34,7 +40,7 @@ export function SearchDetail() {
 		<BottomSheet
 			avoidKeyboard={false}
 			headerMode="handle"
-			onClose={closeActiveBottomSheet}
+			onClose={handleClose}
 			onCloseEnd={() => setIsMounted(false)}
 			onOpenEnd={handleOpenEnd}
 			onOpenStart={() => setIsMounted(true)}
