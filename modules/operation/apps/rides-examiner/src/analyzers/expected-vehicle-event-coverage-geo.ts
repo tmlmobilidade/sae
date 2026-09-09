@@ -8,7 +8,7 @@ import { type AnalysisData } from '../types/analysis-data.js';
 
 /* * */
 
-const BUFFER_RADIUS = 50; // meters
+const BUFFER_RADIUS = 75; // meters
 
 /**
  * This analyzer tests if at least 90% of all stops are covered by at least one vehicle event,
