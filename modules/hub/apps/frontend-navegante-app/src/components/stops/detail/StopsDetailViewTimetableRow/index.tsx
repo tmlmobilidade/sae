@@ -1,9 +1,9 @@
 'use client';
 
 import { LineDisplay } from '@/components/lines/common/LineDisplay';
-import { type StopsDetailViewTimetableData } from '@/components/stops/detail/StopsDetail.context';
 import { StopsDetailViewTimetableClock } from '@/components/stops/detail/StopsDetailViewTimetableClock';
 import { StopsDetailViewTimetableRowArrival } from '@/components/stops/detail/StopsDetailViewTimetableRowArrival';
+import { type StopsDetailViewTimetableData } from '@/components/stops/detail/use-stop-detail-data';
 import { useSelectedTrip } from '@/hooks/transit/useSelectedTrip';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

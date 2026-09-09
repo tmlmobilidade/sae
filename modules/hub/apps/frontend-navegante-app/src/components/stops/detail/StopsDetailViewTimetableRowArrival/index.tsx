@@ -1,7 +1,7 @@
 'use client';
 
 import { LiveIcon } from '@/components/common/display/LiveIcon';
-import { type StopsDetailViewTimetableData } from '@/components/stops/detail/StopsDetail.context';
+import { type StopsDetailViewTimetableData } from '@/components/stops/detail/use-stop-detail-data';
 import { IconClockHour9 } from '@tabler/icons-react';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { useEffect, useState } from 'react';
