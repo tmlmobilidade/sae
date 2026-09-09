@@ -2,7 +2,7 @@
 
 import { mapDefaultConfig } from '@/constants/map';
 import { useMapContext } from '@/contexts/Map.context';
-import { useColorScheme } from '@mantine/hooks';
+import { useColorScheme } from '@tmlmobilidade/ui';
 import { loadMapAssets, MAP_ASSETS_ALERTS, MAP_ASSETS_MISC, MAP_ASSETS_SHAPES, MAP_ASSETS_STOPS, MAP_ASSETS_VEHICLES } from '@tmlmobilidade/ui';
 import Map, { type MapLayerMouseEvent, type MapLayerTouchEvent, MapRef, useMap } from '@vis.gl/react-maplibre';
 import { type MapLibreEvent } from 'maplibre-gl';

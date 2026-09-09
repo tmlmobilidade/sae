@@ -3,9 +3,8 @@
 import { AlertDetailContent } from '@/components/alerts/detail/AlertDetailContent';
 import { AlertDetailViewHeader } from '@/components/alerts/detail/AlertDetailViewHeader';
 import { useAlertsData } from '@/components/alerts/use-alerts-data';
-import { Space } from '@mantine/core';
 import { type HubAlert } from '@tmlmobilidade/go-types-hub';
-import { LoadingSection, Section } from '@tmlmobilidade/ui';
+import { LoadingSection, Section, Space } from '@tmlmobilidade/ui';
 
 /* * */
 

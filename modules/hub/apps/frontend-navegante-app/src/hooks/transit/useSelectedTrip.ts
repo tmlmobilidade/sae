@@ -1,6 +1,6 @@
 'use client';
 
-import { useSessionStorage } from '@mantine/hooks';
+import { useSessionStorage } from '@tmlmobilidade/ui';
 
 /* * */
 

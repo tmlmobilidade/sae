@@ -2,9 +2,8 @@
 
 /* * */
 import { AlertActivePeriodStart } from '@/components/alerts/common/AlertActivePeriod';
-import { Image } from '@mantine/core';
 import { type HubAlert } from '@tmlmobilidade/go-types-hub';
-import { Section } from '@tmlmobilidade/ui';
+import { Image, Section } from '@tmlmobilidade/ui';
 
 import styles from './styles.module.css';
 

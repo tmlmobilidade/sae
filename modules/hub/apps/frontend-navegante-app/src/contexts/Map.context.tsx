@@ -2,7 +2,7 @@
 
 import { useUserLocation } from '@/contexts/UserLocation.context';
 import { type BaseMapOperatorId, type BaseMapOverlayType } from '@/types/common/map';
-import { useSessionStorage } from '@mantine/hooks';
+import { useSessionStorage } from '@tmlmobilidade/ui';
 import { moveMapView } from '@tmlmobilidade/ui';
 import { type MapRef } from '@vis.gl/react-maplibre';
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';

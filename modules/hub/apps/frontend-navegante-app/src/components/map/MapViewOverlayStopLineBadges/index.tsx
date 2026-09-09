@@ -3,8 +3,8 @@
 import { useLinesData } from '@/components/lines/use-lines-data';
 import { MapViewOverlayStopsInteractiveLayerId } from '@/components/map/MapViewOverlayStops';
 import { useMapContext } from '@/contexts/Map.context';
-import { useDebouncedCallback } from '@mantine/hooks';
 import { type HubStop } from '@tmlmobilidade/go-types-hub';
+import { useDebouncedCallback } from '@tmlmobilidade/ui';
 import { Marker } from '@vis.gl/react-maplibre';
 import { useState } from 'react';
 

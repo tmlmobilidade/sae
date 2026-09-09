@@ -1,4 +1,5 @@
 export * from './calendar';
+export * from './carousel';
 export * from './comments';
 export * from './common';
 export * from './datatable';
@@ -15,5 +16,3 @@ export * from './status';
 export * from './tags';
 export * from './upload';
 export * from './wrapper';
-
-export { ScrollArea, Scroller } from '@mantine/core';

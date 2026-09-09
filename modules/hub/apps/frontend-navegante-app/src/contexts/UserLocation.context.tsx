@@ -2,7 +2,7 @@
 
 import { type UserLocation, type UserLocationError, type UserLocationTrackingMode } from '@/types/common/user-location';
 import { createUserLocationError, getDeviceOrientationBearing } from '@/utils/map/user-location';
-import { useSessionStorage } from '@mantine/hooks';
+import { useSessionStorage } from '@tmlmobilidade/ui';
 import { createContext, type PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 /* * */

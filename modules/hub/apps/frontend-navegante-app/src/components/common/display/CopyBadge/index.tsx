@@ -1,6 +1,6 @@
 'use client';
 
-import { useClipboard } from '@mantine/hooks';
+import { useClipboard } from '@tmlmobilidade/ui';
 import { useTranslation } from 'react-i18next';
 
 import styles from './styles.module.css';

@@ -32,6 +32,7 @@
 		"@dnd-kit/sortable": "10.0.0",
 		"@dnd-kit/utilities": "3.2.2",
 		"@hookform/resolvers": "5.9.1",
+		"@mantine/carousel": "9.5.2",
 		"@mantine/charts": "9.5.2",
 		"@mantine/core": "9.5.2",
 		"@mantine/dates": "9.5.2",

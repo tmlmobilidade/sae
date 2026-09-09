@@ -9,7 +9,6 @@ import { BaseProvider } from '@tmlmobilidade/ui';
 import { type Metadata } from 'next';
 import { type PropsWithChildren } from 'react';
 
-import '@mantine/carousel/styles.css';
 import '@/styles/reset.css';
 import '@/styles/navegante/font.css';
 import '@/styles/navegante/color.css';

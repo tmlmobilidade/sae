@@ -15,7 +15,7 @@ import { SearchDetail } from '@/components/search/SearchDetail';
 import { StopsDetail } from '@/components/stops/detail/StopsDetail';
 import { VehiclesDetail } from '@/components/vehicles/detail/VehiclesDetail';
 import { useBottomSheet } from '@/hooks/bottom-sheet/useBottomSheet';
-import { useColorScheme } from '@mantine/hooks';
+import { useColorScheme } from '@tmlmobilidade/ui';
 import { useEffect, useState } from 'react';
 
 /* * */
