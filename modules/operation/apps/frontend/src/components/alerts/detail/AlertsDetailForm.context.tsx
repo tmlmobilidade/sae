@@ -71,6 +71,15 @@ export function AlertsDetailFormContextProvider({ children }: PropsWithChildren)
 		},
 	});
 
+	const { action: handleDelete, isLoading: isDeleting } = useHandleAction({
+		fetchFn: async () => await fetchApiData<Alert>({ body: form.getValues(), method: 'DELETE', url: API_ROUTES.operation.ALERTS_DETAIL(alertId) }),
+		onSuccess: () => {
+			unblock();
+			alertsListMutate();
+			router.push(PAGE_ROUTES.operation.ALERTS_LIST);
+		},
+	});
+
 	//
 	// D. Setup flags
 
@@ -102,7 +111,25 @@ export function AlertsDetailFormContextProvider({ children }: PropsWithChildren)
 		return hasPermissionAgencyId && hasPermissionReferenceType;
 	}, [alertData?.agency_id, alertData?.reference_type, meData?.permissions]);
 
-	const { duplicateEnabled, editEnabled, updateEnabled } = useStandardFormCapabilities({
+	const hasDeletePermission = useMemo(() => {
+		const hasPermissionAgencyId = hasPermissionResource(meData?.permissions, {
+			requiredPermission: { action: 'delete', scope: 'alerts' },
+			requiredValue: alertData?.agency_id,
+			resourceKey: 'agency_ids',
+		});
+		const hasPermissionReferenceType = hasPermissionResource(meData?.permissions, {
+			requiredPermission: { action: 'delete', scope: 'alerts' },
+			requiredValue: alertData?.reference_type,
+			resourceKey: 'reference_types',
+		});
+		return hasPermissionAgencyId && hasPermissionReferenceType;
+	}, [alertData?.agency_id, alertData?.reference_type, meData?.permissions]);
+
+	const { deleteEnabled, duplicateEnabled, editEnabled, updateEnabled } = useStandardFormCapabilities({
+		delete: {
+			hasPermission: hasDeletePermission,
+			isDeleting: isDeleting,
+		},
 		duplicate: {
 			hasPermission: hasDuplicatePermission,
 			isDuplicating: isDuplicating,
@@ -128,10 +155,12 @@ export function AlertsDetailFormContextProvider({ children }: PropsWithChildren)
 
 	const stateValue: StandardFormContextValue<UpdateAlertDto> = useMemo(() => ({
 		actions: {
+			delete: handleDelete,
 			duplicate: handleDuplicate,
 			update: handleUpdate,
 		},
 		capabilities: {
+			deleteEnabled,
 			duplicateEnabled,
 			editEnabled,
 			updateEnabled,
@@ -144,7 +173,7 @@ export function AlertsDetailFormContextProvider({ children }: PropsWithChildren)
 			isUpdating,
 		},
 		unblock,
-	}), [editEnabled, form, handleUpdate, isUpdating, alertDataLoading, unblock, updateEnabled, isDirty, isValid]);
+	}), [handleDelete, handleDuplicate, handleUpdate, deleteEnabled, duplicateEnabled, editEnabled, updateEnabled, form, isDirty, isValid, alertDataLoading, isUpdating, unblock]);
 
 	return (
 		<AlertsDetailFormContext.Provider value={stateValue}>
