@@ -91,25 +91,15 @@ export async function approveGtfsValidationHandler(request: FastifyRequest<{ Par
 
 	//
 	// Copy validation GTFS into the plan scope, then attach it to the plan.
-	// Failure modes (handled by storage saga + hooks):
-	// - copy fails → saga compensates blob/metadata; onRollback deletes the plan
-	// - plan update fails → onSuccess throws → onRollback deletes the plan → saga compensates the copy
 
-	const copyResult = await storageProvider.copy(validationData.file_id, 'plans', insertPlanResult._id, {
-		onRollback: async () => {
-			await goDb.operation.plans.deleteById(insertPlanResult._id);
-			throw new Error('Failed to copy validation GTFS into the plan scope');
-		},
-		onSuccess: async (_, result, session) => {
-			// Update the plan in the database with the operation GTFS attachment ID
-			const plansCollection = await goDb.operation.plans.getCollection();
-			await plansCollection.updateOne(
-				{ _id: insertPlanResult._id },
-				{ $set: { 'attachments.operation_gtfs': result._id } },
-				{ session },
-			);
-		},
-	});
+	const copyResult = await storageProvider.copy(validationData.file_id, 'plans', insertPlanResult._id);
+
+	const plansCollection = await goDb.operation.plans.getCollection();
+
+	await plansCollection.updateOne(
+		{ _id: insertPlanResult._id },
+		{ $set: { 'attachments.operation_gtfs': copyResult._id } },
+	);
 
 	console.log(`[approveGtfsValidationHandler()] Created a copy of the validation GTFS into the plan scope. Attachment ID: ${copyResult._id}`);
 
