@@ -140,7 +140,7 @@ export function AlertsDetailSectionTextsAi() {
 					)}
 				</Section>
 
-				{(autoTextsValue && hasPermissionToUpdate) && (
+				{(autoTextsValue && hasPermissionToUpdate && (composeData || isLoadingComposeData || isValidatingComposeData)) && (
 					<>
 
 						<Divider lineStyle="dashed" />

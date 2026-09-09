@@ -45,6 +45,7 @@ export function AlertsDetailSectionDates() {
 		<Collapsible
 			description=""
 			title="Datas de Vigência e Agendamento"
+			defaultOpen
 		>
 
 			<Section gap="sm">
