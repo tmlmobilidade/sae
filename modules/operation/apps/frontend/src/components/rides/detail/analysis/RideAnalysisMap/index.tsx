@@ -219,6 +219,7 @@ export function RideAnalysisMap() {
 		<Collapsible
 			description={t('default:rides.analysis.RideAnalysisMap.description')}
 			title={t('default:rides.analysis.RideAnalysisMap.title')}
+			defaultOpen
 		>
 			<div className={styles.mapWrapper}>
 				<MapView id="RideAnalysisMap">

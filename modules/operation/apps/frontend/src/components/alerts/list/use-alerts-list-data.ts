@@ -2,7 +2,7 @@
 
 import { API_ROUTES } from '@tmlmobilidade/consts';
 import { type AlertsListFilters, type AlertsListItem } from '@tmlmobilidade/go-operation-pckg-types';
-import { type ApiResponse, type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
+import { type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { fetchApiData, useSearch } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -48,13 +48,13 @@ export function useAlertsListData(): UseAlertsListDataReturnType {
 	// B. Transform data
 
 	const query = useMemo<AlertsListFilters>(() => ({
-		active_period_end: filterActivePeriod.value_end,
-		active_period_start: filterActivePeriod.value_start,
+		active_period_filter_end: filterActivePeriod.value_end,
+		active_period_filter_start: filterActivePeriod.value_start,
 		agency_ids: filterAgency.value,
 		causes: filterCause.value,
 		effects: filterEffect.value,
-		publish_date_end: filterPublishDate.value_end,
-		publish_date_start: filterPublishDate.value_start,
+		publish_date_filter_end: filterPublishDate.value_end,
+		publish_date_filter_start: filterPublishDate.value_start,
 		publish_status: filterPublishStatus.value,
 		reference_type: filterReferenceType.value,
 	}), [filterAgency.value, filterPublishStatus.value, filterReferenceType.value, filterCause.value, filterEffect.value, filterActivePeriod.value_end, filterActivePeriod.value_start, filterPublishDate.value_end, filterPublishDate.value_start]);
@@ -62,7 +62,7 @@ export function useAlertsListData(): UseAlertsListDataReturnType {
 	//
 	// C. Fetch data
 
-	const { data, error, isLoading, isValidating, mutate } = useSWR<ApiResponse<AlertsListItem[]>>([API_ROUTES.operation.ALERTS_LIST, query], {
+	const { data, error, isLoading, isValidating, mutate } = useSWR([API_ROUTES.operation.ALERTS_LIST, query], {
 		fetcher: async ([url, query]) => await fetchApiData<AlertsListItem[]>({ body: query, method: 'POST', url }),
 		refreshInterval: 10_000, // 10 seconds
 	});

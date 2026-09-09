@@ -52,7 +52,7 @@ async function main() {
 
 		await performInTimeChunks({
 			endDate: latestRide.start_time_scheduled,
-			intervalHrs: 24,
+			intervalHrs: 12,
 			onChunk: async (chunk) => {
 				try {
 					await syncRides(chunk);
@@ -66,7 +66,7 @@ async function main() {
 					// the current chunk into smaller chunks
 					await performInTimeChunks({
 						endDate: chunk.end,
-						intervalHrs: 12, // 12 hours
+						intervalHrs: 6,
 						onChunk: async chunk => await syncRides(chunk),
 						order: 'desc',
 						startDate: chunk.start,

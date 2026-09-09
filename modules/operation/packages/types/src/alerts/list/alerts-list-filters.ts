@@ -8,10 +8,10 @@ import { z } from 'zod';
 
 export const AlertsListFiltersSchema = z.object({
 
-	active_period_end: UnixMillisecondsSchema
+	active_period_filter_end: UnixMillisecondsSchema
 		.optional(),
 
-	active_period_start: UnixMillisecondsSchema
+	active_period_filter_start: UnixMillisecondsSchema
 		.optional(),
 
 	agency_ids: z
@@ -26,9 +26,9 @@ export const AlertsListFiltersSchema = z.object({
 		.array(AlertEffectSchema)
 		.default([]),
 
-	publish_date_end: UnixMillisecondsSchema,
+	publish_date_filter_end: UnixMillisecondsSchema,
 
-	publish_date_start: UnixMillisecondsSchema,
+	publish_date_filter_start: UnixMillisecondsSchema,
 
 	publish_status: z
 		.array(PublishStatusSchema)
