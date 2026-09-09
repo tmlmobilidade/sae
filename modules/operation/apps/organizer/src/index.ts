@@ -8,6 +8,7 @@ import { removeOldGtfsValidationsTask } from './tasks/gtfs-validations/remove-ol
 import { normalizePlansTask } from './tasks/plans/normalize-plans/normalize-plans.js';
 import { updatePlanHashesTask } from './tasks/plans/update-plan-hashes/update-plan-hashes.js';
 import { releaseStuckRidesTask } from './tasks/rides/release-stuck-rides.js';
+import { removeOrphanAnalysesTask } from './tasks/rides/remove-orphan-analyses.js';
 import { removeOrphanRidesTask } from './tasks/rides/remove-orphan-rides.js';
 
 /* * */
@@ -48,6 +49,7 @@ async function reprocessStuckRides() {
 
 	await releaseStuckRidesTask();
 	await removeOrphanRidesTask();
+	await removeOrphanAnalysesTask();
 	// await cleanupOrphanHashedTrips();
 	// await cleanupOrphanHashedShapes();
 
