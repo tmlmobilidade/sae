@@ -8,6 +8,7 @@ import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
 import { examineRide } from './tasks/examine-ride.js';
+import { writers } from './utils/writers.js';
 
 /* * */
 
@@ -57,6 +58,11 @@ export async function main() {
 	await runWithConcurrency(ridesBatch, 100, async (data, index) => {
 		await examineRide(data, index, ridesBatch.length);
 	});
+
+	//
+	// Flush all the writers
+
+	await Promise.all(Object.values(writers).map(writer => writer.flush()));
 
 	//
 	// Send a signal to the uptime monitor
