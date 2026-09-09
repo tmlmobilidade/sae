@@ -61,7 +61,7 @@ export function RideAnalysisApexValidations() {
 			accessor: 'is_passenger',
 			render: item => <ApexValidationIsPassengerTag value={item.is_passenger} />,
 			title: t('default:rides.analysis.RideAnalysisApexValidations.table.columns.tx_valid.label'),
-			width: 100,
+			width: 125,
 		},
 		{
 			accessor: 'vehicle_id',
