@@ -6,8 +6,8 @@ import { Timer } from '@tmlmobilidade/timer';
 
 import { publishTripUpdates } from './tasks/eta/gtfs/publish-trip-updates.js';
 import { publishEtas } from './tasks/eta/simplified/publish-etas.js';
-import { publishVehiclesPositions } from './tasks/vehicles/publish-vehicle-positions.js';
-import { publishVehiclesMetadata } from './tasks/vehicles/publish-vehicles-metadata.js';
+import { publishVehiclesPositions } from './tasks/publish-vehicle-positions.js';
+import { publishVehiclesMetadata } from './tasks/publish-vehicles-metadata.js';
 
 /* * */
 

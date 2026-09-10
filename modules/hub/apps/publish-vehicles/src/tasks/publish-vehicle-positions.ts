@@ -14,8 +14,6 @@ import { calculateBearingInDegrees } from '@tmlmobilidade/go-utils-geo';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
-import { TTL_REALTIME } from '../../config.js';
-
 /* * */
 
 type QueryResult =
@@ -250,10 +248,10 @@ export async function publishVehiclesPositions() {
 
 	const saveTimer = new Timer();
 
-	await cacheDb.set('hub:v1:realtime:vehicles:positions:json', JSON.stringify(hubVehiclePositionsJson), TTL_REALTIME);
+	await cacheDb.set('hub:v1:realtime:vehicles:positions:json', JSON.stringify(hubVehiclePositionsJson), 600);
 	Logger.success(`Finished publishing latest vehicles positions (${saveTimer.get()})`);
 
-	await cacheDb.set('hub:v1:realtime:vehicles:positions:gtfs', JSON.stringify(validatedGtfsRtFeedMessage), TTL_REALTIME);
+	await cacheDb.set('hub:v1:realtime:vehicles:positions:gtfs', JSON.stringify(validatedGtfsRtFeedMessage), 600);
 	Logger.success(`Finished publishing latest vehicles positions GTFS-RT (${saveTimer.get()})`);
 
 	Logger.info({ message: `Run complete in ${timer.get()}` });
