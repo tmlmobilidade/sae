@@ -8,7 +8,6 @@ import { Timer } from '@tmlmobilidade/timer';
 
 import { aggregateHistNodeTravelTimes } from './process/aggregate-hist-node-travel-times.js';
 import { buildHistNodeTravelTimes } from './process/build-hist-node-travel-times.js';
-import { detectRideStartEndEvents } from './process/detect-ride-start-end-events.js';
 import { loadHistoricalShapeNodes } from './process/load-historical-shape-nodes.js';
 import { AppConfig } from './types/config.js';
 
