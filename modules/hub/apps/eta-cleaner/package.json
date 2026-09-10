@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/go-hub-eta-loader",
+	"name": "@tmlmobilidade/go-hub-eta-cleaner",
 	"version": "1.0.0",
 	"author": {
 		"email": "iso@tmlmobilidade.pt",
@@ -20,11 +20,8 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-interfaces-labdb": "*",
-		"@tmlmobilidade/go-types-geo": "*",
-		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
-		"@tmlmobilidade/go-utils-geo": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
 		"@tmlmobilidade/utils": "*"
