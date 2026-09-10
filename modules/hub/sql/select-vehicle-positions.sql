@@ -86,7 +86,7 @@ SELECT
 	concat('[', e.agency_id, ']', e.vehicle_id) AS vehicle_id,
 	e.stop_id,
 	toInt8OrNull(r.direction_id) AS direction_id,
-	r.route_id,
+	concat('[', e.agency_id, ']', r.route_id) AS route_id,
 	nullIf(r.route_short_name, '') AS route_short_name,
 	e.bearing,
 	e.current_status,
