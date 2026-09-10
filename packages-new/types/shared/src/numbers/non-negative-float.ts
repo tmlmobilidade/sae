@@ -28,3 +28,5 @@ export const NonNegativeFloatSchema = z
 	.union([z.string(), z.number()])
 	.transform(value => Number(value))
 	.pipe(z.number().nonnegative());
+
+export type NonNegativeFloat = z.infer<typeof NonNegativeFloatSchema>;

@@ -24,4 +24,7 @@ import { z } from 'zod';
 export const PercentSchema = z
 	.union([z.string(), z.number()])
 	.transform(value => Math.round(Number(value)))
-	.pipe(z.number().int().min(0).max(100));
+	.pipe(z.number().int().min(0).max(100))
+	.brand('Percent');
+
+export type Percent = z.infer<typeof PercentSchema>;
