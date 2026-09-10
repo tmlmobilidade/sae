@@ -36,6 +36,7 @@
 	"dependencies": {
 		"@tmlmobilidade/go-clients-ssh": "*",
 		"@tmlmobilidade/go-types-gtfs-rt": "*",
+		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/gtfs-rt": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/types": "*",

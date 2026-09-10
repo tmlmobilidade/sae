@@ -1,6 +1,6 @@
 /* * */
 
-import { VehiclesList } from '@/components/vehicles2/list/VehiclesList';
+import { VehiclesList } from '@/components/vehicles/list/VehiclesList';
 import { VehiclesListContextProvider } from '@/contexts/VehiclesList.context';
 import { PanesManager } from '@tmlmobilidade/ui';
 import { type PropsWithChildren } from 'react';

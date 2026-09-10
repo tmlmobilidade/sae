@@ -1,6 +1,6 @@
 /* * */
 
-import { UnixSecondsSchema } from '@tmlmobilidade/go-types-shared';
+import { NonNegativeIntegerSchema, PercentSchema, UnixSecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
 
 import { GtfsRtOccupancyStatusSchema } from '../shared/occupancy-status.js';
@@ -16,9 +16,9 @@ import { GtfsRtVehicleStopStatusSchema } from './vehicle-stop-status.js';
 export const GtfsRtVehiclePositionSchema = z.object({
 	congestion_level: GtfsRtCongestionLevelSchema.nullish(),
 	current_status: GtfsRtVehicleStopStatusSchema.nullish(),
-	current_stop_sequence: z.number().nullish(),
+	current_stop_sequence: NonNegativeIntegerSchema.nullish(),
 	multi_carriage_details: GtfsRtCarriageDetailsSchema.array().nullish(),
-	occupancy_percentage: z.number().nullish(),
+	occupancy_percentage: PercentSchema.nullish(),
 	occupancy_status: GtfsRtOccupancyStatusSchema.nullish(),
 	position: GtfsRtPositionSchema,
 	stop_id: z.string().nullish(),
