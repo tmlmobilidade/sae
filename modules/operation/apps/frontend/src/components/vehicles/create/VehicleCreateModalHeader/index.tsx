@@ -1,7 +1,7 @@
 'use client';
 
-import { VehicleCreateContext } from '@/components/vehicles2/create/VehicleCreate.context';
-import { closeCreateVehicleModal } from '@/components/vehicles2/create/VehicleCreate.modal';
+import { VehicleCreateContext } from '@/components/vehicles/create/VehicleCreate.context';
+import { closeCreateVehicleModal } from '@/components/vehicles/create/VehicleCreate.modal';
 import { IconUpload } from '@tabler/icons-react';
 import { Button, CloseButton, Spacer, Tag, Toolbar } from '@tmlmobilidade/ui';
 import { useContext } from 'react';

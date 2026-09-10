@@ -1,6 +1,6 @@
 /* * */
 
-import { closeCreateVehicleModal } from '@/components/vehicles2/create/VehicleCreate.modal';
+import { closeCreateVehicleModal } from '@/components/vehicles/create/VehicleCreate.modal';
 import { API_ROUTES, PAGE_ROUTES } from '@tmlmobilidade/consts';
 import { type CreateVehicleDto, CreateVehicleSchema, type Vehicle } from '@tmlmobilidade/go-types-operation';
 import { keepUrlParams, type UseFormReturnType, useToast, useTypicalForm } from '@tmlmobilidade/ui';

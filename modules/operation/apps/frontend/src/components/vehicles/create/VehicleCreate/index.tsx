@@ -1,6 +1,6 @@
 'use client';
 
-import { VehicleCreateModalHeader } from '@/components/vehicles2/create/VehicleCreateModalHeader';
+import { VehicleCreateModalHeader } from '@/components/vehicles/create/VehicleCreateModalHeader';
 import { Pane } from '@tmlmobilidade/ui';
 
 import { VehicleCreateInfos } from '../VehicleCreateInfos';

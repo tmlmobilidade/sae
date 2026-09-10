@@ -1,7 +1,7 @@
 'use client';
 
-import { VehiclesListFiltersBar } from '@/components/vehicles2/list/VehiclesListFiltersBar';
-import { VehiclesListHeader } from '@/components/vehicles2/list/VehiclesListHeader';
+import { VehiclesListFiltersBar } from '@/components/vehicles/list/VehiclesListFiltersBar';
+import { VehiclesListHeader } from '@/components/vehicles/list/VehiclesListHeader';
 import { useVehiclesListContext } from '@/contexts/VehiclesList.context';
 import { VehicleNormalized } from '@/types/normalized';
 import { FormatlLicensePlate } from '@/utils/formatLicencePlate';

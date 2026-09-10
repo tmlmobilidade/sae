@@ -1,7 +1,7 @@
 'use client';
 
 import { AgencySelect } from '@/components/common/AgencySelect';
-import { useVehicleCreateContext } from '@/components/vehicles2/create/VehicleCreate.context';
+import { useVehicleCreateContext } from '@/components/vehicles/create/VehicleCreate.context';
 import { Translations } from '@/lib/translations';
 import { VehicleEmissionValues, VehiclePropulsionValues, vehicleSchema, VehicleTypeValues } from '@tmlmobilidade/go-types-operation';
 import { Checkbox, DateInput, NumberInput, Section, Select, Spacer, TextInput } from '@tmlmobilidade/ui';

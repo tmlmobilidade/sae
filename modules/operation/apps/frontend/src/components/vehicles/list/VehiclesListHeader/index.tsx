@@ -1,7 +1,7 @@
 /* * */
 
-import { openCreateVehicleModal } from '@/components/vehicles2/create/VehicleCreate.modal';
-import { openVehicleListExportModal } from '@/components/vehicles2/list/VehicleListExportModal/VehicleListExportModal';
+import { openCreateVehicleModal } from '@/components/vehicles/create/VehicleCreate.modal';
+import { openVehicleListExportModal } from '@/components/vehicles/list/VehicleListExportModal/VehicleListExportModal';
 import { useVehiclesListContext } from '@/contexts/VehiclesList.context';
 import { IconFileDownload, IconPlus, IconUpload } from '@tabler/icons-react';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';

@@ -1,4 +1,4 @@
-import { closeImportVehicleModal } from '@/components/vehicles2/import/VehicleImport.modal';
+import { closeImportVehicleModal } from '@/components/vehicles/import/VehicleImport.modal';
 import { VehicleImportPreview } from '@/types/preview';
 import { parseTxtFile } from '@/utils/parseTxtFile';
 import { API_ROUTES } from '@tmlmobilidade/consts';
