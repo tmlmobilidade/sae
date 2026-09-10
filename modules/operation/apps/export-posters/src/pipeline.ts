@@ -35,6 +35,8 @@ export async function generatePlanPostersDownloadUrl(planData: Plan, exportId: s
 		fs.copyFileSync(requestZipPath, preservedRequestZipPath);
 		Logger.info({ message: `Preserved HiTouch request ZIP at ${preservedRequestZipPath}.` });
 
+		await postersController.generateToken();
+
 		Logger.info({ message: `Submitting poster GTFS for export ${exportId} to ZPHERES.` });
 		const pdfId = await postersController.generatePDF(exportConfig);
 		Logger.info({ message: `Created ZPHERES PDF job ${pdfId} for poster export ${exportId}.` });

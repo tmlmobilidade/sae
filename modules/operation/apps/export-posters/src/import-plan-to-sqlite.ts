@@ -146,11 +146,12 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 	//
 	// Package all exported TXT files into the ZIP archive
 
+	Logger.info({ message: `Creating HiTouch ZIP for Plan ${planData._id}...` });
 	const zipTimer = new Timer();
 	const outputPath = await createHitouchZip(exportConfig);
 	const outputSize = fs.statSync(outputPath).size;
 
-	Logger.info({ message: `Created ${outputPath} (${outputSize} bytes) in ${zipTimer.get()} seconds` });
+	Logger.info({ message: `Created ${outputPath} (${outputSize} bytes) in ${zipTimer.get()}` });
 
 	return exportConfig;
 }

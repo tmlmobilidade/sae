@@ -1,8 +1,8 @@
 /* * */
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { storageProvider } from '@tmlmobilidade/go-providers-storage';
 import { type FileExport } from '@tmlmobilidade/go-types-downloads';
+import { Logger } from '@tmlmobilidade/logger';
 
 /* * */
 
@@ -32,15 +32,17 @@ export async function exportPlanFile(fileExport: Extract<FileExport, { type: 'pl
 		//
 		// D. Get normalized GTFS attachment
 
-		const normalizedFileId = plan.attachments.operation_gtfs_normalized;
-		if (!normalizedFileId) throw new Error(`Plan ${plan._id} has no normalized GTFS attachment.`);
+		const sourceFileId = plan.attachments?.operation_gtfs_normalized;
+		if (!sourceFileId) throw new Error(`Plan ${plan._id} has no normalized GTFS attachment.`);
+
+		const file = await goDb.core.attachments.findById(sourceFileId);
+		if (!file) throw new Error(`Normalized GTFS attachment ${sourceFileId} for plan ${plan._id} not found.`);
 
 		//
-		// E. Copy normalized GTFS attachment to exports collection
+		// E. Export the existing normalized GTFS attachment
 
-		// Keep a separate export copy so later normalization does not remove this download.
-		const file = await storageProvider.copy(normalizedFileId, 'exports', fileExport._id);
 		await goDb.core.exports.updateById(fileExport._id, { file_id: file._id, processing_status: 'complete' });
+		Logger.success(`Plan GTFS export ${fileExport._id} completed.`);
 	} catch (error) {
 		//
 

@@ -1,40 +1,46 @@
 /* * */
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { ProcessingStatusSchema } from '@tmlmobilidade/go-types-shared';
 import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
 import { exportPlanPostersFile } from './export-plan-posters.js';
+import { claimPosterExport, recoverAbandonedPosterExports } from './processing.js';
 
 /* * */
 
 async function processWaitingExports(): Promise<void> {
+	Logger.init();
+
 	const globalTimer = new Timer();
+	await recoverAbandonedPosterExports();
 	const waitingExports = await goDb.core.exports.findMany({
-		processing_status: ProcessingStatusSchema.safeParse('waiting').data,
+		processing_status: 'waiting',
 		type: 'plan_posters',
 	});
 
 	Logger.info({ message: `Found ${waitingExports.length} waiting plan poster exports.` });
 
 	for (const fileExport of waitingExports) {
+		const claim = await claimPosterExport(fileExport._id);
+		if (!claim) continue;
 		try {
 			Logger.info({ message: `Processing plan poster export ${fileExport._id} for Plan ${(fileExport.properties as { plan_id?: string }).plan_id ?? 'unknown'}.` });
-			await goDb.core.exports.updateById(fileExport._id, { processing_status: 'processing' });
-
 			const downloadUrl = await exportPlanPostersFile(fileExport);
-			await goDb.core.exports.updateById(fileExport._id, { download_url: downloadUrl, file_id: null, processing_status: 'complete' });
+			await claim.complete(downloadUrl);
 
 			Logger.success(`Plan poster export ${fileExport._id} completed and download link saved.`);
 		} catch (error) {
 			Logger.error({ error, message: `Error processing plan poster export ${fileExport._id}.` });
-			await goDb.core.exports.updateById(fileExport._id, { processing_status: 'error' });
+			await claim.fail();
 		}
 	}
 
-	Logger.info({ message: `Plan poster exporter run completed in ${globalTimer.get()}.` });
+	//
+	// Log the completion of the run.
+
+	Logger.terminate(`completed in ${globalTimer.get()}s`);
 }
 
 /* * */
@@ -46,6 +52,6 @@ try {
 	Logger.error({ error, message: 'Error initializing Sentry Plans Export Posters' });
 }
 
-Logger.init();
+Logger.info({ message: `Poster worker ${process.pid} started; checking for abandoned exports.` });
 
 await runOnInterval(processWaitingExports, { intervalMs: '5s' });

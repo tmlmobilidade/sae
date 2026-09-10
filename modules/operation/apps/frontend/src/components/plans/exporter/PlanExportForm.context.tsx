@@ -99,6 +99,11 @@ export const PlanExportModalContextProvider = ({ children }: PropsWithChildren) 
 		const selectedPlan = plansData.data.find(plan => plan._id === planId && plan.agency_id === agencyId);
 		if (!selectedPlan) return;
 
+		if (!selectedPlan.attachments.operation_gtfs_normalized && !selectedPlan.attachments.operation_gtfs) {
+			useToast.error({ message: 'Este plano não tem um ficheiro GTFS para exportar.', title: 'Erro' });
+			return;
+		}
+
 		const createFileExportDto: CreateFileExportDto<PlanExportProperties> = {
 			created_by: 'will-be-set-by-api',
 			file_id: null,

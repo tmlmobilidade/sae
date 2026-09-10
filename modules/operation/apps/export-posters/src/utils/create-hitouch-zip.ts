@@ -1,6 +1,7 @@
 /* * */
 
 import { type ExportToHitouchConfig } from '@/types.js';
+import { Logger } from '@tmlmobilidade/logger';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ZipFile } from 'yazl';
@@ -8,6 +9,7 @@ import { ZipFile } from 'yazl';
 /* * */
 
 const UNSUPPORTED_HITOUCH_FILES = new Set(['feed_info.txt']);
+const ZIP_TIMEOUT_MS = 2 * 60_000;
 
 /* * */
 
@@ -40,6 +42,8 @@ export async function createHitouchZip(exportConfig: ExportToHitouchConfig): Pro
 		throw new Error(`Empty TXT files found in ${exportConfig.workdir}: ${emptyTextFiles.join(', ')}.`);
 	}
 
+	Logger.info({ message: `Zipping ${textFiles.length} HiTouch files from ${exportConfig.workdir}...` });
+
 	if (fs.existsSync(temporaryOutputPath)) {
 		fs.rmSync(temporaryOutputPath);
 	}
@@ -51,11 +55,31 @@ export async function createHitouchZip(exportConfig: ExportToHitouchConfig): Pro
 	}
 
 	await new Promise<void>((resolve, reject) => {
+		let settled = false;
 		const outputStream = fs.createWriteStream(temporaryOutputPath);
+		const timeout = setTimeout(() => {
+			fail(new Error(`Timed out creating ZIP after ${ZIP_TIMEOUT_MS / 1000}s: ${temporaryOutputPath}`));
+		}, ZIP_TIMEOUT_MS);
 
-		outputStream.on('close', resolve);
-		outputStream.on('error', reject);
-		outputZip.outputStream.on('error', reject);
+		const succeed = () => {
+			if (settled) return;
+			settled = true;
+			clearTimeout(timeout);
+			resolve();
+		};
+
+		const fail = (error: Error) => {
+			if (settled) return;
+			settled = true;
+			clearTimeout(timeout);
+			outputStream.destroy();
+			reject(error);
+		};
+
+		outputStream.on('finish', succeed);
+		outputStream.on('error', fail);
+		outputZip.on('error', fail);
+		outputZip.outputStream.on('error', fail);
 		outputZip.outputStream.pipe(outputStream);
 		outputZip.end();
 	});

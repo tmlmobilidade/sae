@@ -2,6 +2,7 @@
 
 import parametersConfig from '@/parameters.json' with { type: 'json' };
 import { type ExportToHitouchConfig } from '@/types.js';
+import { Logger } from '@tmlmobilidade/logger';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -14,6 +15,12 @@ export interface PDFStatus {
 	downloadLink?: string
 	status: string
 }
+
+/* * */
+
+const TOKEN_TIMEOUT_MS = 30_000;
+const GENERATE_TIMEOUT_MS = 5 * 60_000;
+const STATUS_TIMEOUT_MS = 30_000;
 
 /* * */
 
@@ -56,9 +63,12 @@ export class PostersController {
 			scope: getRequiredEnv('ZPHERES_API_SCOPE'),
 		});
 
+		Logger.info({ message: 'Requesting ZPHERES access token.' });
 		const response = await fetch(getRequiredEnv('ZPHERES_API_TOKEN_URL'), {
 			body,
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 			method: 'POST',
+			signal: AbortSignal.timeout(TOKEN_TIMEOUT_MS),
 		});
 
 		if (!response.ok) {
@@ -66,7 +76,10 @@ export class PostersController {
 			throw new Error(`Token request failed (${response.status}): ${responseBody.slice(0, 1_000)}`);
 		}
 
-		const tokenData = await response.json() as TokenResponse;
+		Logger.info({ message: 'Reading ZPHERES token response body.' });
+		const tokenData = await response.json().catch((error: unknown) => {
+			throw new Error('Failed to read ZPHERES token response body within the request timeout or parse it as JSON.', { cause: error });
+		}) as TokenResponse;
 
 		if (!tokenData.access_token || !tokenData.expires_in) {
 			throw new Error('Token response is missing access_token or expires_in.');
@@ -77,6 +90,7 @@ export class PostersController {
 
 		this.accessToken = tokenData.access_token;
 		this.tokenExpiresAt = Date.now() + Math.max(tokenData.expires_in - 60, 0) * 1_000;
+		Logger.info({ message: 'Received ZPHERES access token.' });
 
 		return this.accessToken;
 	}
@@ -120,21 +134,25 @@ export class PostersController {
 		//
 		// Append the HiTouch ZIP file and parameters to the request body
 
-		body.append('gtfs.zip', new Blob([new Uint8Array(gtfsZip)], { type: 'application/zip' }), path.basename(gtfsZipPath));
-		body.append('parameters.json', new Blob([parameters], { type: 'application/json' }), 'parameters.json');
+		body.append('gtfs.zip', new File([new Uint8Array(gtfsZip)], path.basename(gtfsZipPath), { type: 'application/zip' }));
+		body.append('parameters.json', new File([parameters], 'parameters.json', { type: 'application/json' }));
 
 		//
 		// Send the request to the API
 
+		Logger.info({ message: `Uploading HiTouch ZIP (${gtfsZipSize} bytes) to ZPHERES.` });
 		const response = await fetch(getRequiredEnv('ZPHERES_GENERATE_SVG_URL'), {
 			body,
+			duplex: 'half',
 			headers: {
 				'Authorization': `Bearer ${accessToken}`,
 				'ob2zphrs-customer': getRequiredEnv('OB_CUSTOMER'),
 				'ob2zphrs-user': getRequiredEnv('OB_USER'),
 			},
 			method: 'POST',
+			signal: AbortSignal.timeout(GENERATE_TIMEOUT_MS),
 		});
+		Logger.info({ message: `ZPHERES generate responded with ${response.status}.` });
 
 		if (!response.ok) {
 			const responseBody = await response.text();
@@ -166,6 +184,7 @@ export class PostersController {
 				'ob2zphrs-customer': getRequiredEnv('OB_CUSTOMER'),
 				'ob2zphrs-user': getRequiredEnv('OB_USER'),
 			},
+			signal: AbortSignal.timeout(STATUS_TIMEOUT_MS),
 		});
 
 		if (!response.ok) {
