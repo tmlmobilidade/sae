@@ -39,9 +39,9 @@ const main = async () => {
 
 	await publishVehiclesPositions();
 
-	if (ITERATION % 15 === 0) await publishVehiclesMetadata(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
-	if (ITERATION % 15 === 0) await publishTripUpdates(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
-	if (ITERATION % 15 === 0) await publishEtas(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
+	// if (ITERATION % 15 === 0) await publishVehiclesMetadata(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
+	// if (ITERATION % 15 === 0) await publishTripUpdates(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
+	// if (ITERATION % 15 === 0) await publishEtas(); // Every 15 iterations * 1s + execution time ≈ 30 seconds
 
 	ITERATION++;
 

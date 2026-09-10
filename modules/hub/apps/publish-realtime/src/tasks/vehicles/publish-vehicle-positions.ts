@@ -1,10 +1,12 @@
 /* * */
 
+import { getQualifiedRouteId, getQualifiedShapeId, getQualifiedTripId } from '@tmlmobilidade/go-hub-pckg-utils';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
+import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type GtfsRtFeedEntity, GtfsRtFeedEntitySchema, type GtfsRtFeedMessage, GtfsRtFeedMessageSchema } from '@tmlmobilidade/go-types-gtfs-rt';
-import { type HubV1ApiPlan, type HubV1ApiVehiclePosition, HubV1ApiVehiclePositionSchema } from '@tmlmobilidade/go-types-hub';
-import { type Ride } from '@tmlmobilidade/go-types-operation';
+import { type HubV1ApiVehiclePosition, HubV1ApiVehiclePositionSchema } from '@tmlmobilidade/go-types-hub';
+import { type Ride, Vehicle } from '@tmlmobilidade/go-types-operation';
 import { DegreesSchema, OperationalDateIntSchema, toCalendarDate, UnixSecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-events';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
@@ -17,7 +19,7 @@ import { TTL_REALTIME } from '../../config.js';
 /* * */
 
 type QueryResult =
-  Pick<Ride, 'direction_id' | 'route_id' | 'route_short_name' | 'shape_id'>
+  Pick<Ride, 'direction_id' | 'plan_id' | 'route_id' | 'route_short_name' | 'shape_id'>
   & Pick<SimplifiedVehicleEvent,
   | '_id'
   | 'agency_id'
@@ -48,12 +50,13 @@ export async function publishVehiclesPositions() {
 	//
 	// Retrieve active plans from the database
 
-	const approvedPlans = await cacheDb.get('hub:v1:plans:approved:json');
-	if (!approvedPlans) throw new Error('No approved plans found in API Cache');
+	const metadataTimer = new Timer();
 
-	const approvedPlansData: HubV1ApiPlan[] = JSON.parse(approvedPlans);
-	const activePlansData = approvedPlansData.filter(plan => plan.is_active);
-	if (!activePlansData.length) throw new Error('No active plans found in API Cache');
+	const vehiclesMetadata = await goDb.operation.vehicles.findMany({});
+
+	const vehiclesMetadataMap = new Map<string, Vehicle>(vehiclesMetadata.map(vehicle => [`${vehicle.agency_id}:${vehicle.vehicle_id}`, vehicle]));
+
+	Logger.info({ message: `Retrieved ${vehiclesMetadataMap.size} vehicles metadata in ${metadataTimer.get()}` });
 
 	//
 	// Retrieve the two latest vehicle positions for each vehicle,
@@ -79,6 +82,7 @@ export async function publishVehiclesPositions() {
 			sve.bearing,
 			r._id AS ride_id,
 			r.direction_id,
+			r.plan_id,
 			r.route_short_name,
 			r.route_id,
 			r.shape_id
@@ -109,8 +113,6 @@ export async function publishVehiclesPositions() {
 			AND r.trip_id = sve.trip_id
 	`);
 
-	Logger.info({ message: `LabDB query complete (${queryTimer.get()})` });
-
 	const vehiclePositionsMap = new Map<string, QueryResult[]>();
 
 	for (const position of latestVehiclePositions) {
@@ -131,7 +133,7 @@ export async function publishVehiclesPositions() {
 	const hubVehiclePositionsJson: HubV1ApiVehiclePosition[] = [];
 	const hubVehiclePositionsGtfsRt: GtfsRtFeedEntity[] = [];
 
-	for (const [, vehiclePositions] of vehiclePositionsMap.entries() as IterableIterator<[string, QueryResult[]]>) {
+	for (const [key, vehiclePositions] of vehiclePositionsMap.entries() as IterableIterator<[string, QueryResult[]]>) {
 		//
 
 		let currentPosition: QueryResult;
@@ -153,9 +155,13 @@ export async function publishVehiclesPositions() {
 
 		if (vehiclePositions.length === 2 && !bearingValue) {
 			const result = calculateBearingInDegrees([currentPosition.longitude, currentPosition.latitude], [previousPosition.longitude, previousPosition.latitude]);
-			console.log('calculated bearing', result);
-			bearingValue = result;
+			if (result) bearingValue = result;
 		}
+
+		//
+		// Retrieve the vehicle metadata
+
+		const vehicleMetadata = vehiclesMetadataMap.get(key);
 
 		//
 		// Transform the current position into
@@ -175,12 +181,12 @@ export async function publishVehiclesPositions() {
 			operational_date: currentPosition.operational_date,
 			received_at: currentPosition.received_at,
 			ride_id: currentPosition.ride_id,
-			route_id: currentPosition.route_id,
+			route_id: getQualifiedRouteId(currentPosition.agency_id, currentPosition.route_id),
 			route_short_name: currentPosition.route_short_name,
-			shape_id: currentPosition.shape_id,
+			shape_id: getQualifiedShapeId(currentPosition.plan_id, currentPosition.agency_id, currentPosition.shape_id),
 			speed: currentPosition.speed,
 			stop_id: currentPosition.stop_id,
-			trip_id: currentPosition.trip_id,
+			trip_id: getQualifiedTripId(currentPosition.plan_id, currentPosition.agency_id, currentPosition.trip_id),
 			vehicle_id: currentPosition.vehicle_id,
 		});
 
@@ -206,16 +212,16 @@ export async function publishVehiclesPositions() {
 				timestamp: UnixSecondsSchema.parse(currentPosition.created_at / 1000),
 				trip: {
 					direction_id: currentPosition.direction_id,
-					route_id: currentPosition.route_id,
+					route_id: getQualifiedRouteId(currentPosition.agency_id, currentPosition.route_id),
 					schedule_relationship: 'SCHEDULED',
 					start_date: OperationalDateIntSchema.parse(currentPosition.operational_date),
-					trip_id: currentPosition.trip_id,
+					trip_id: getQualifiedTripId(currentPosition.plan_id, currentPosition.agency_id, currentPosition.trip_id),
 				},
 				vehicle: {
 					id: currentPosition.vehicle_id,
-					label: '',
-					license_plate: '',
-					wheelchair_accessible: 'UNKNOWN',
+					label: vehicleMetadata?.license_plate,
+					license_plate: vehicleMetadata?.license_plate,
+					wheelchair_accessible: vehicleMetadata?.wheelchair ? 'WHEELCHAIR_ACCESSIBLE' : 'UNKNOWN',
 				},
 			},
 		});
