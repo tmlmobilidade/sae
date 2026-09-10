@@ -19,20 +19,16 @@
 	"dependencies": {
 		"@tmlmobilidade/external": "*",
 		"@tmlmobilidade/geo": "*",
-		"@tmlmobilidade/go-clients-ssh": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-interfaces-labdb": "*",
 		"@tmlmobilidade/go-interfaces-rawdb": "*",
-		"@tmlmobilidade/go-tracker-pckg-shared": "*",
 		"@tmlmobilidade/go-types-geo": "*",
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-vehicle-events": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
-		"@tmlmobilidade/gtfs-rt": "*",
 		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*"
+		"@tmlmobilidade/timer": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

@@ -17,11 +17,8 @@
 		"watch": "tsc-watch --onSuccess 'resolve-tspaths'"
 	},
 	"dependencies": {
-		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-types-apex": "*",
-		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/timer": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/utils": "*"
 	},
 	"devDependencies": {

@@ -17,31 +17,20 @@
 		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
-		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/geo": "*",
 		"@tmlmobilidade/go-hub-pckg-utils": "*",
 		"@tmlmobilidade/go-interfaces-cachedb": "*",
 		"@tmlmobilidade/go-types-geo": "*",
-		"@tmlmobilidade/go-types-gtfs": "*",
 		"@tmlmobilidade/go-types-hub": "*",
 		"@tmlmobilidade/go-types-shared": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
-		"@tmlmobilidade/go-utils-files": "*",
 		"@tmlmobilidade/go-utils-geo": "*",
 		"@tmlmobilidade/import-gtfs": "*",
 		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*",
-		"@tmlmobilidade/writers": "*",
-		"@turf/turf": "7.4.0",
-		"gtfs-types": "5.1.0",
-		"yazl": "3.3.1"
+		"@tmlmobilidade/timer": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",
 		"@types/node": "26.4.0",
-		"@types/yazl": "3.3.1",
 		"resolve-tspaths": "0.8.23",
 		"tsx": "4.23.12",
 		"typescript": "6.0.3"

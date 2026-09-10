@@ -28,12 +28,9 @@
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
-		"@tmlmobilidade/go-utils-files": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
-		"csv-parse": "7.0.2",
 		"csv-stringify": "6.8.3",
-		"papaparse": "5.7.0",
 		"yazl": "3.3.1"
 	},
 	"devDependencies": {

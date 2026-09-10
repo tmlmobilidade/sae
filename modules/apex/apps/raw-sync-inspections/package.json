@@ -26,8 +26,6 @@
 		"@tmlmobilidade/go-utils-exec": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*",
-		"@tmlmobilidade/writers": "*",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

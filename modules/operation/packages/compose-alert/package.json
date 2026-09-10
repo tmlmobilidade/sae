@@ -22,7 +22,6 @@
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
-		"@tmlmobilidade/utils": "*",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

@@ -23,8 +23,7 @@
 		"@tmlmobilidade/go-utils-exec": "*",
 		"@tmlmobilidade/go-utils-geo": "*",
 		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*"
+		"@tmlmobilidade/timer": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

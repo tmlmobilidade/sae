@@ -16,9 +16,6 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-types-core": "*",
-		"@tmlmobilidade/go-types-shared": "*",
-		"@tmlmobilidade/strings": "*",
-		"@tmlmobilidade/utils": "*",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

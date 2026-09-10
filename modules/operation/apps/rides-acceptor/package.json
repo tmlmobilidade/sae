@@ -20,12 +20,10 @@
 	"dependencies": {
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-interfaces-labdb": "*",
-		"@tmlmobilidade/go-operation-pckg-utils": "*",
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
 		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/normalizers": "*",
 		"@tmlmobilidade/timer": "*"
 	},
 	"devDependencies": {

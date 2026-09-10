@@ -17,7 +17,6 @@
 		"start": "tsx src/index.ts"
 	},
 	"dependencies": {
-		"@tmlmobilidade/logger": "*",
 		"@turf/turf": "7.4.0",
 		"yazl": "3.3.1"
 	},

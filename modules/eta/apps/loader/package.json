@@ -21,8 +21,7 @@
 	"dependencies": {
 		"@tmlmobilidade/go-eta-pckg-loader": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
-		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/utils": "*"
+		"@tmlmobilidade/logger": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

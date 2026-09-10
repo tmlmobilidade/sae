@@ -19,14 +19,10 @@
 	"dependencies": {
 		"@tmlmobilidade/consts": "*",
 		"@tmlmobilidade/go-clients-fastify": "*",
-		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-providers-locations": "*",
 		"@tmlmobilidade/go-types-geo": "*",
 		"@tmlmobilidade/go-types-locations": "*",
-		"@tmlmobilidade/interfaces": "*",
-		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/utils": "*",
-		"@turf/turf": "7.4.0",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

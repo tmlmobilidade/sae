@@ -18,13 +18,12 @@
 		"test": "tsx ./src/tests/index.ts"
 	},
 	"dependencies": {
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-performance-pckg-log": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/interfaces": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*",
 		"p-limit": "7.3.1"
 	},
 	"devDependencies": {

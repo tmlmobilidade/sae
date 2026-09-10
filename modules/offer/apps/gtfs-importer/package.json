@@ -17,20 +17,13 @@
 		"lint:fix": "eslint --fix ."
 	},
 	"dependencies": {
-		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
-		"@tmlmobilidade/go-utils-files": "*",
 		"@tmlmobilidade/geo": "*",
-		"@tmlmobilidade/go-clients-fastify": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-types-gtfs-strict": "*",
 		"@tmlmobilidade/go-types-offer": "*",
-		"@tmlmobilidade/interfaces": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/strings": "*",
-		"@tmlmobilidade/utils": "*",
 		"adm-zip": "0.6.0",
-		"formidable": "3.5.4",
 		"papaparse": "5.7.0"
 	},
 	"devDependencies": {

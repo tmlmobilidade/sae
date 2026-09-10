@@ -21,7 +21,6 @@
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-operation-pckg-compose-alert": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
-		"@tmlmobilidade/interfaces": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
 		"protobufjs": "8.8.0"

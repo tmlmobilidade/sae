@@ -18,15 +18,11 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-interfaces-pcgi-legacy": "*",
 		"@tmlmobilidade/go-interfaces-rawdb": "*",
 		"@tmlmobilidade/go-tracker-pckg-shared": "*",
 		"@tmlmobilidade/go-types-shared": "*",
-		"@tmlmobilidade/go-types-vehicle-events": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
 		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*",
 		"mongodb": "7.6.0"
 	},
 	"devDependencies": {
