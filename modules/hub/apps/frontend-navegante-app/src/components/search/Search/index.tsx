@@ -30,7 +30,7 @@ export function Search({ inputRef: inputRefProp, locationPicker = false, onLocat
 	// A. Setup variables
 
 	const { t } = useTranslation();
-	const { setActiveBottomSheet } = useBottomSheet();
+	const { push } = useBottomSheet();
 	const routePlannerContext = useRoutePlannerContext();
 	const searchDraft = useSyncExternalStore(subscribeToSearchDraft, getSearchDraft, getSearchDraft);
 	const [locationPickerQuery, setLocationPickerQuery] = useState('');
@@ -52,9 +52,9 @@ export function Search({ inputRef: inputRefProp, locationPicker = false, onLocat
 			return;
 		}
 
-		if (result.type === 'line') setActiveBottomSheet({ entityId: result.id, view: 'lines-detail' });
-		if (result.type === 'stop') setActiveBottomSheet({ entityId: result.id, view: 'stops-detail' });
-		if (result.type === 'alert') setActiveBottomSheet({ entityId: result.id, view: 'alerts-detail' });
+		if (result.type === 'line') push({ entityId: result.id, view: 'lines-detail' });
+		if (result.type === 'stop') push({ entityId: result.id, view: 'stops-detail' });
+		if (result.type === 'alert') push({ entityId: result.id, view: 'alerts-detail' });
 		if (result.type === 'poi') void routePlannerContext.actions.openPlace(result.entity);
 	};
 

@@ -12,7 +12,7 @@ export function LinesDetail() {
 	//
 	// A. Setup variables
 
-	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const { activeBottomSheet, pop } = useBottomSheet();
 	const isOpen = activeBottomSheet?.view === 'lines-detail';
 	const activeLineId = isOpen ? activeBottomSheet?.entityId : null;
 
@@ -20,7 +20,7 @@ export function LinesDetail() {
 
 	return (
 		<BottomSheet
-			onClose={closeActiveBottomSheet}
+			onClose={pop}
 			opened={isOpen}
 			withOverlay={false}
 			mapAware

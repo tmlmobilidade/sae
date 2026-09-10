@@ -25,6 +25,11 @@
     gap: 12px;
 }
 
+.status {
+    margin: 0;
+    color: var(--color-system-text-200);
+}
+
 .error {
     color: var(--color-route-status-error-text);
 }

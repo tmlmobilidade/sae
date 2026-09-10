@@ -13,7 +13,7 @@ export function StopsDetail() {
 	//
 	// A. Setup variables
 
-	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const { activeBottomSheet, pop } = useBottomSheet();
 	const isOpen = activeBottomSheet?.view === 'stops-detail';
 	const activeStopId = isOpen ? activeBottomSheet?.entityId : null;
 
@@ -22,7 +22,7 @@ export function StopsDetail() {
 
 	return (
 		<BottomSheet
-			onClose={closeActiveBottomSheet}
+			onClose={pop}
 			opened={isOpen}
 			withOverlay={false}
 			mapAware

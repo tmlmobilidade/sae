@@ -14,7 +14,7 @@ export function AlertsDetail() {
 	//
 	// A. Setup variables
 
-	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const { activeBottomSheet, pop } = useBottomSheet();
 	const { data: alerts } = useAlertsData();
 	const { t } = useTranslation();
 	const isOpen = activeBottomSheet?.view === 'alerts-detail';
@@ -27,7 +27,7 @@ export function AlertsDetail() {
 
 	return (
 		<BottomSheet
-			onClose={closeActiveBottomSheet}
+			onClose={pop}
 			opened={isOpen}
 			title={t('default:alerts.AlertsDetail.title')}
 		>

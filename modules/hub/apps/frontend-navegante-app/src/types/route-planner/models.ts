@@ -5,7 +5,8 @@ import type { Area as MotisApiArea, GeocodeResponse as MotisApiGeocodeResponse, 
 export type RoutePlannerTravelTimeMode = 'arrival' | 'departure' | 'now';
 export type RoutePlannerLocationSearchTarget = 'destination' | 'origin';
 export type RoutePlannerPlanViewMode = 'place-detail' | 'results';
-export type RoutePlannerViewMode = 'destination-search' | 'full-input' | 'itinerary-detail' | RoutePlannerPlanViewMode;
+export type RoutePlannerLocationSearchReturnView = RoutePlannerPlanViewMode;
+export type RoutePlannerViewMode = 'destination-search' | 'itinerary-detail' | RoutePlannerPlanViewMode;
 
 export type MotisLegModeKind = 'bike' | 'bus' | 'car' | 'elevator' | 'ferry' | 'plane' | 'rail' | 'scooter' | 'subway' | 'tram' | 'transit' | 'walk';
 

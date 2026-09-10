@@ -9,7 +9,3 @@ export interface BottomSheetSnapState {
 	snapIndex: null | number
 	snapPoint: null | number
 }
-
-export interface SetActiveBottomSheetOptions {
-	replace?: boolean
-}

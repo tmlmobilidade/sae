@@ -16,6 +16,7 @@ export function RoutePlannerPlaceDetail() {
 	const { t } = useTranslation();
 	const routePlannerContext = useRoutePlannerContext();
 	const destination = routePlannerContext.data.destination;
+	const origin = routePlannerContext.data.origin;
 
 	//
 	// B. Render components
@@ -28,6 +29,7 @@ export function RoutePlannerPlaceDetail() {
 			</div>
 
 			<h3>{t('default:routes.RoutePlanner.place_detail.how_to_get_here')}</h3>
+			{!origin && <p className={styles.status}>{t('default:routes.RoutePlanner.place_detail.select_origin')}</p>}
 			{routePlannerContext.flags.is_planning && <p>{t('default:routes.RoutePlanner.actions.planning')}</p>}
 			{routePlannerContext.data.plan_error && <p className={styles.error}>{routePlannerContext.data.plan_error}</p>}
 			<div className={styles.itineraries}>

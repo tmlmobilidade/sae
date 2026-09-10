@@ -13,7 +13,7 @@ export function VehiclesDetail() {
 	//
 	// A. Setup variables
 
-	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const { activeBottomSheet, pop } = useBottomSheet();
 	const isOpen = activeBottomSheet?.view === 'vehicles-detail';
 	const activeVehicleId = isOpen ? activeBottomSheet?.entityId : null;
 
@@ -22,7 +22,7 @@ export function VehiclesDetail() {
 
 	return (
 		<BottomSheet
-			onClose={closeActiveBottomSheet}
+			onClose={pop}
 			opened={isOpen}
 			size="fit"
 			withOverlay={false}

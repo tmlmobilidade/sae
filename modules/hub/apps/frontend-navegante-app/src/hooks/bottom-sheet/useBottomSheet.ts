@@ -1,6 +1,7 @@
 'use client';
 
-import { type BottomSheetNavigationEntry, type BottomSheetSnapState, type BottomSheetView, type SetActiveBottomSheetOptions } from '@/types/common/bottom-sheet';
+import { type BottomSheetNavigationEntry, type BottomSheetSnapState } from '@/types/common/bottom-sheet';
+import { reduceBottomSheetNavigation } from '@/utils/bottom-sheet/navigation';
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
 /* * */
@@ -8,10 +9,10 @@ import { useCallback, useMemo, useSyncExternalStore } from 'react';
 interface UseBottomSheetReturnType {
 	activeBottomSheet: BottomSheetNavigationEntry | null
 	activeBottomSheetSnap: BottomSheetSnapState
-	clearActiveBottomSheets: () => void
-	closeActiveBottomSheet: () => void
-	isBottomSheetInStack: (view: BottomSheetView) => boolean
-	setActiveBottomSheet: (value: BottomSheetNavigationEntry, options?: SetActiveBottomSheetOptions) => void
+	clear: () => void
+	pop: () => void
+	push: (value: BottomSheetNavigationEntry) => void
+	replaceActive: (value: BottomSheetNavigationEntry) => void
 	setActiveBottomSheetSnap: (value: BottomSheetSnapState) => void
 	snapActiveBottomSheet: (snapIndex: number) => boolean
 }
@@ -49,6 +50,7 @@ function getBottomSheetSnapSnapshot() {
 }
 
 function setBottomSheetNavigationStore(value: BottomSheetNavigationEntry[]) {
+	if (BOTTOM_SHEET_NAVIGATION_STORE === value) return;
 	BOTTOM_SHEET_NAVIGATION_STORE = value;
 	emitBottomSheetNavigationChange();
 }
@@ -73,10 +75,6 @@ function subscribeToBottomSheetSnap(listener: () => void) {
 	};
 }
 
-/**
- * A hook that provides the active bottom sheet, and a function to set it.
- * @returns An object with the active bottom sheet view and entity id, and a function to set it, and a function to close the active bottom sheet.
- */
 export function useBottomSheet(): UseBottomSheetReturnType {
 	//
 
@@ -105,11 +103,12 @@ export function useBottomSheet(): UseBottomSheetReturnType {
 	//
 	// C. Handle actions
 
-	const setActiveBottomSheet = useCallback((value: BottomSheetNavigationEntry, options?: SetActiveBottomSheetOptions) => {
-		// If replace is true, override the full navigation stack with the new value
-		if (options?.replace) setBottomSheetNavigationStore([{ entityId: value.entityId ?? null, view: value.view }]);
-		// Otherwise, append the new value to the navigation stack
-		else setBottomSheetNavigationStore([...BOTTOM_SHEET_NAVIGATION_STORE, { entityId: value.entityId ?? null, view: value.view }]);
+	const push = useCallback((value: BottomSheetNavigationEntry) => {
+		setBottomSheetNavigationStore(reduceBottomSheetNavigation(BOTTOM_SHEET_NAVIGATION_STORE, { entry: value, type: 'push' }));
+	}, []);
+
+	const replaceActive = useCallback((value: BottomSheetNavigationEntry) => {
+		setBottomSheetNavigationStore(reduceBottomSheetNavigation(BOTTOM_SHEET_NAVIGATION_STORE, { entry: value, type: 'replace-active' }));
 	}, []);
 
 	const setActiveBottomSheetSnap = useCallback((value: BottomSheetSnapState) => {
@@ -122,17 +121,13 @@ export function useBottomSheet(): UseBottomSheetReturnType {
 		return true;
 	}, []);
 
-	const closeActiveBottomSheet = useCallback(() => {
-		setBottomSheetNavigationStore(BOTTOM_SHEET_NAVIGATION_STORE.slice(0, -1));
+	const pop = useCallback(() => {
+		setBottomSheetNavigationStore(reduceBottomSheetNavigation(BOTTOM_SHEET_NAVIGATION_STORE, { type: 'pop' }));
 	}, []);
 
-	const clearActiveBottomSheets = useCallback(() => {
-		setBottomSheetNavigationStore([]);
+	const clear = useCallback(() => {
+		setBottomSheetNavigationStore(reduceBottomSheetNavigation(BOTTOM_SHEET_NAVIGATION_STORE, { type: 'clear' }));
 	}, []);
-
-	const isBottomSheetInStack = useCallback((view: BottomSheetView) => {
-		return bottomSheetNavigation.some(entry => entry.view === view);
-	}, [bottomSheetNavigation]);
 
 	//
 	// D. Return data
@@ -140,10 +135,10 @@ export function useBottomSheet(): UseBottomSheetReturnType {
 	return {
 		activeBottomSheet,
 		activeBottomSheetSnap,
-		clearActiveBottomSheets,
-		closeActiveBottomSheet,
-		isBottomSheetInStack,
-		setActiveBottomSheet,
+		clear,
+		pop,
+		push,
+		replaceActive,
 		setActiveBottomSheetSnap,
 		snapActiveBottomSheet,
 	};

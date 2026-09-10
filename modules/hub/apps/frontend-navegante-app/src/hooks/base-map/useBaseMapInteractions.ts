@@ -34,7 +34,7 @@ export function useBaseMapInteractions({ setUserLocationTrackingMode }: UseBaseM
 
 	const { t } = useTranslation();
 	const routePlannerContext = useRoutePlannerContext();
-	const { setActiveBottomSheet } = useBottomSheet();
+	const { replaceActive } = useBottomSheet();
 	const { collapseForMapInteraction } = useMapBottomSheet();
 	const { 'base-map': baseMap } = useMap();
 	const [selectedMapLocation, setSelectedMapLocation] = useState<MapLongPressLocation | null>(null);
@@ -55,19 +55,19 @@ export function useBaseMapInteractions({ setUserLocationTrackingMode }: UseBaseM
 		if (layerId === MapViewOverlayStopsInteractiveLayerId) {
 			if (!baseMap || baseMap.getZoom() <= MapViewOverlayStopsVisibleMinZoom) return;
 			if (!feature.properties._id) return;
-			setActiveBottomSheet({ entityId: String(feature.properties._id), view: 'stops-detail' });
+			replaceActive({ entityId: String(feature.properties._id), view: 'stops-detail' });
 			return;
 		}
 
 		if (layerId === MapViewStyleAlertsInteractiveLayerId) {
 			if (!feature.properties._id) return;
-			setActiveBottomSheet({ entityId: String(feature.properties._id), view: 'alerts-detail' });
+			replaceActive({ entityId: String(feature.properties._id), view: 'alerts-detail' });
 			return;
 		}
 
 		if (layerId === MapViewOverlayVehiclesInteractiveLayerId) {
 			if (!feature.properties.vehicle_id) return;
-			setActiveBottomSheet({ entityId: String(feature.properties.vehicle_id), view: 'vehicles-detail' });
+			replaceActive({ entityId: String(feature.properties.vehicle_id), view: 'vehicles-detail' });
 		}
 	};
 

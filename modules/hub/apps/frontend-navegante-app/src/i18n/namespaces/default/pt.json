@@ -193,17 +193,16 @@
 	"routes": {
 		"RoutePlanner": {
 			"actions": {
-				"plan": "Calcular rota",
 				"planning": "A calcular..."
 			},
 			"errors": {
-				"location_unavailable": "Não foi possível usar a sua localização atual. Escolha uma partida para calcular a rota.",
 				"missing_locations": "Escolha a partida e o destino antes de calcular a rota.",
 				"no_itineraries": "Nenhuma alternativa encontrada. Experimente outra data ou localizações mais próximas da rede.",
 				"unknown": "Não foi possível calcular a rota."
 			},
 			"place_detail": {
-				"how_to_get_here": "Como chegar aqui"
+				"how_to_get_here": "Como chegar aqui",
+				"select_origin": "Escolha uma partida para ver alternativas."
 			},
 			"results": {
 				"arrival_time_prefix": "Chegada às",
@@ -257,8 +256,7 @@
 				"walk_between": "Caminhar até {to}",
 				"walk_label": "A pé",
 				"walking_time": "{count, plural, =0 {Sem caminhada} one {# min a pé} other {# min a pé}}"
-			},
-			"title": "Planear Viagem"
+			}
 		},
 		"RoutePlannerInput": {
 			"destination": {
@@ -267,24 +265,7 @@
 			},
 			"origin": {
 				"label": "Partida",
-				"placeholder": "Escolher partida",
-				"useLocation": "Usar localização atual como partida"
-			},
-			"search": {
-				"error": "Erro ao pesquisar localizações",
-				"loading": "A pesquisar...",
-				"modes": {
-					"bus": "Autocarro",
-					"ferry": "Barco",
-					"rail": "Comboio",
-					"subway": "Metro",
-					"tram": "Elétrico"
-				},
-				"types": {
-					"address": "Morada",
-					"place": "Local",
-					"stop": "Paragem"
-				}
+				"placeholder": "Escolher partida"
 			},
 			"swap": "Trocar partida e destino",
 			"time": {

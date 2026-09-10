@@ -1,14 +1,15 @@
-import { getRoutePlannerCloseAction, getRoutePlannerItineraryDetailInitialSnap, getRoutePlannerMapFitFeatures, getRoutePlannerTravelTimeModeTransition } from '@/utils/route-planner/planning/navigation';
+import { getRoutePlannerBackAction, getRoutePlannerDismissAction, getRoutePlannerItineraryDetailInitialSnap, getRoutePlannerMapFitFeatures, getRoutePlannerTravelTimeModeTransition } from '@/utils/route-planner/planning/navigation';
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 /* * */
 
-describe('getRoutePlannerCloseAction', () => {
-	it('returns to route results when location search is dismissed with an existing route', () => {
-		const action = getRoutePlannerCloseAction({
+describe('route-planner navigation actions', () => {
+	it('returns to route results when navigating back from location search', () => {
+		const action = getRoutePlannerBackAction({
 			hasRouteContext: true,
 			isNavigating: false,
+			locationSearchReturnView: 'results',
 			viewMode: 'destination-search',
 			wasOpenedFromPlace: false,
 		});
@@ -16,45 +17,70 @@ describe('getRoutePlannerCloseAction', () => {
 		assert.equal(action, 'open-results');
 	});
 
-	it('closes an initial location search that has no route context', () => {
-		const action = getRoutePlannerCloseAction({
+	it('has no back destination for an initial location search', () => {
+		const action = getRoutePlannerBackAction({
 			hasRouteContext: false,
 			isNavigating: false,
+			locationSearchReturnView: 'results',
 			viewMode: 'destination-search',
 			wasOpenedFromPlace: false,
 		});
 
-		assert.equal(action, 'close-sheet');
+		assert.equal(action, null);
 	});
 
-	it('preserves the existing results and itinerary-detail close transitions', () => {
-		assert.equal(getRoutePlannerCloseAction({
+	it('returns to place detail when navigating back from origin selection', () => {
+		const action = getRoutePlannerBackAction({
+			hasRouteContext: false,
+			isNavigating: false,
+			locationSearchReturnView: 'place-detail',
+			viewMode: 'destination-search',
+			wasOpenedFromPlace: true,
+		});
+
+		assert.equal(action, 'open-place-detail');
+	});
+
+	it('preserves internal results and itinerary-detail back transitions', () => {
+		assert.equal(getRoutePlannerBackAction({
 			hasRouteContext: true,
 			isNavigating: false,
+			locationSearchReturnView: 'results',
 			viewMode: 'results',
 			wasOpenedFromPlace: false,
-		}), 'clear-route');
+		}), null);
 
-		assert.equal(getRoutePlannerCloseAction({
+		assert.equal(getRoutePlannerBackAction({
 			hasRouteContext: true,
 			isNavigating: false,
+			locationSearchReturnView: 'place-detail',
 			viewMode: 'results',
 			wasOpenedFromPlace: true,
 		}), 'open-place-detail');
 
-		assert.equal(getRoutePlannerCloseAction({
+		assert.equal(getRoutePlannerBackAction({
 			hasRouteContext: true,
 			isNavigating: false,
+			locationSearchReturnView: 'results',
 			viewMode: 'itinerary-detail',
 			wasOpenedFromPlace: false,
 		}), 'open-results');
 
-		assert.equal(getRoutePlannerCloseAction({
+		assert.equal(getRoutePlannerBackAction({
 			hasRouteContext: true,
 			isNavigating: true,
+			locationSearchReturnView: 'results',
 			viewMode: 'itinerary-detail',
 			wasOpenedFromPlace: false,
-		}), 'dismiss-trip-sheets');
+		}), null);
+	});
+
+	it('clears a non-navigation route when its sheet is dismissed', () => {
+		assert.equal(getRoutePlannerDismissAction({ isNavigating: false }), 'clear-route');
+	});
+
+	it('only hides the sheet when an active trip is dismissed', () => {
+		assert.equal(getRoutePlannerDismissAction({ isNavigating: true }), 'dismiss-trip-sheets');
 	});
 });
 

@@ -1,4 +1,4 @@
-import { type RoutePlannerTravelTime, type RoutePlannerTravelTimeMode, type RoutePlannerViewMode } from '@/types/route-planner/models';
+import { type RoutePlannerLocationSearchReturnView, type RoutePlannerTravelTime, type RoutePlannerTravelTimeMode, type RoutePlannerViewMode } from '@/types/route-planner/models';
 
 /* * */
 
@@ -12,23 +12,30 @@ export const ROUTE_PLANNER_ITINERARY_DETAIL_SNAP = {
 	preview: 2,
 };
 
-export type RoutePlannerCloseAction = 'clear-route' | 'close-sheet' | 'dismiss-trip-sheets' | 'open-place-detail' | 'open-results';
+export type RoutePlannerBackAction = 'open-place-detail' | 'open-results';
+export type RoutePlannerDismissAction = 'clear-route' | 'dismiss-trip-sheets';
 
-interface GetRoutePlannerCloseActionOptions {
+interface GetRoutePlannerBackActionOptions {
 	hasRouteContext: boolean
 	isNavigating: boolean
+	locationSearchReturnView: RoutePlannerLocationSearchReturnView
 	viewMode: RoutePlannerViewMode
 	wasOpenedFromPlace: boolean
 }
 
 /* * */
 
-export function getRoutePlannerCloseAction({ hasRouteContext, isNavigating, viewMode, wasOpenedFromPlace }: GetRoutePlannerCloseActionOptions): RoutePlannerCloseAction {
-	if (viewMode === 'itinerary-detail') return isNavigating ? 'dismiss-trip-sheets' : 'open-results';
-	if (viewMode === 'results') return wasOpenedFromPlace ? 'open-place-detail' : 'clear-route';
+export function getRoutePlannerBackAction({ hasRouteContext, isNavigating, locationSearchReturnView, viewMode, wasOpenedFromPlace }: GetRoutePlannerBackActionOptions): null | RoutePlannerBackAction {
+	if (viewMode === 'itinerary-detail') return isNavigating ? null : 'open-results';
+	if (viewMode === 'results') return wasOpenedFromPlace ? 'open-place-detail' : null;
+	if (viewMode === 'destination-search' && locationSearchReturnView === 'place-detail') return 'open-place-detail';
 	if (viewMode === 'destination-search' && hasRouteContext) return 'open-results';
 
-	return 'close-sheet';
+	return null;
+}
+
+export function getRoutePlannerDismissAction({ isNavigating }: { isNavigating: boolean }): RoutePlannerDismissAction {
+	return isNavigating ? 'dismiss-trip-sheets' : 'clear-route';
 }
 
 export function getRoutePlannerTravelTimeModeTransition(current: RoutePlannerTravelTime, mode: RoutePlannerTravelTimeMode, currentDate = new Date()): RoutePlannerTravelTime {

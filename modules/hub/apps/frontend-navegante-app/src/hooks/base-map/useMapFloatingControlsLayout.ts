@@ -50,10 +50,7 @@ export function useMapFloatingControlsLayout(): MapFloatingControlsLayout {
 	}
 
 	const isRouteSheet = activeBottomSheet.view === 'routes';
-	const isRouteSearch = isRouteSheet && (
-		routePlannerContext.data.view_mode === 'destination-search'
-		|| routePlannerContext.data.view_mode === 'full-input'
-	);
+	const isRouteSearch = isRouteSheet && routePlannerContext.data.view_mode === 'destination-search';
 	const isMapAwareDetailSheet = activeBottomSheet.view === 'lines-detail' || activeBottomSheet.view === 'stops-detail';
 	const isMapAwareSheet = isMapAwareDetailSheet || (isRouteSheet && !isRouteSearch);
 

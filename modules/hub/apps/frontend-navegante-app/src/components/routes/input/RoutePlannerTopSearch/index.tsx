@@ -19,7 +19,7 @@ export function RoutePlannerTopSearch() {
 	// A. Setup variables
 
 	const { t } = useTranslation();
-	const { setActiveBottomSheet } = useBottomSheet();
+	const { push } = useBottomSheet();
 	const routePlannerContext = useRoutePlannerContext();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const selectedEntityLabel = useTopSearchLabel();
@@ -27,11 +27,11 @@ export function RoutePlannerTopSearch() {
 	//
 	// B. Transform data
 
-	const hasRouteInputContext = !!routePlannerContext.data.origin && !!routePlannerContext.data.destination;
+	const hasRouteInputContext = !!routePlannerContext.data.origin || !!routePlannerContext.data.destination;
 	const isNavigating = routePlannerContext.flags.is_navigating;
 	const isPreviewDetail = routePlannerContext.data.view_mode === 'itinerary-detail' && !isNavigating;
 	const isDestinationSearchWithRouteInput = routePlannerContext.data.view_mode === 'destination-search' && hasRouteInputContext;
-	const isRouteInputView = ['itinerary-detail', 'results'].includes(routePlannerContext.data.view_mode) || isDestinationSearchWithRouteInput;
+	const isRouteInputView = ['itinerary-detail', 'place-detail', 'results'].includes(routePlannerContext.data.view_mode) || isDestinationSearchWithRouteInput;
 	const shouldShowRouteInput = !isNavigating && isRouteInputView;
 	const searchLabel = isNavigating ? t('default:routes.RoutePlannerTopSearch.placeholder') : selectedEntityLabel || t('default:action-bar.ActionBar.search.label');
 	const isRouteInputReadOnly = isPreviewDetail;
@@ -92,7 +92,7 @@ export function RoutePlannerTopSearch() {
 			)}
 
 			{!shouldShowRouteInput && (
-				<button className={styles.searchButton} onClick={() => setActiveBottomSheet({ view: 'search' })} type="button">
+				<button className={styles.searchButton} onClick={() => push({ view: 'search' })} type="button">
 					<IconSearch className={styles.searchIcon} size={24} />
 					<span className={styles.placeholder}>{searchLabel}</span>
 				</button>

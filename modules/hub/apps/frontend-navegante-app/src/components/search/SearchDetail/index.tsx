@@ -14,7 +14,7 @@ export function SearchDetail() {
 	//
 	// A. Setup variables
 
-	const { activeBottomSheet, closeActiveBottomSheet } = useBottomSheet();
+	const { activeBottomSheet, pop } = useBottomSheet();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const isOpen = activeBottomSheet?.view === 'search';
 	const [isMounted, setIsMounted] = useState(isOpen);
@@ -28,7 +28,7 @@ export function SearchDetail() {
 
 	const handleClose = () => {
 		clearSearchDraft();
-		closeActiveBottomSheet();
+		pop();
 	};
 
 	if (!isOpen && !isMounted) return null;

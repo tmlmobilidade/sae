@@ -19,13 +19,13 @@ export function AlertsCarouselSlide({ alert }: AlertsCarouselSlideProps) {
 	//
 	// A. Setup variables
 
-	const { setActiveBottomSheet } = useBottomSheet();
+	const { push } = useBottomSheet();
 
 	//
 	// B. Handle actions
 
 	const handleClick = () => {
-		setActiveBottomSheet({ entityId: alert._id, view: 'alerts-detail' });
+		push({ entityId: alert._id, view: 'alerts-detail' });
 	};
 
 	//
