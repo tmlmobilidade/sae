@@ -1,8 +1,9 @@
 import { AppConfig } from '@/lib/config.js';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 
-const CLEANUP_HIST_NODE_TRAVEL_TIMES_AGG_SQL = 'cleanup/7-delete-out-of-window-hist-node-travel-times-aggregation.sql';
+const CLEANUP_HIST_NODE_TRAVEL_TIMES_AGG_SQL = sqlPath('hub', 'eta/cleanup/7-delete-out-of-window-hist-node-travel-times-aggregation.sql');
 
 interface CleanupRowsResult {
 	rows_to_delete: number

@@ -1,8 +1,8 @@
 /* * */
 
-import { pipelinePath } from '@tmlmobilidade/go-hub-pckg-sql';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -29,7 +29,7 @@ export async function cacheEtasFromClickHouseByStop() {
 
 	Logger.info({ message: 'Retrieving trip stop ETAs grouped by stop from ClickHouse...' });
 
-	const etasByStop = await labDb.queryFromFile<ClickHouseEtaKeyValue>(pipelinePath('select-eta-by-stop.sql'));
+	const etasByStop = await labDb.queryFromFile<ClickHouseEtaKeyValue>(sqlPath('hub', 'publish-realtime/select-eta-by-stop.sql'));
 
 	await Promise.all(etasByStop.map(row => cacheDb.set(`hub:v1:realtime:eta:by-stop:${row.key}`, row.value, TTL_REALTIME)));
 

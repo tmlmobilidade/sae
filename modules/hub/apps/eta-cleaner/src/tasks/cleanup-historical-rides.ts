@@ -1,8 +1,9 @@
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 
 const KEEP_TABLE = 'eta._cleaner_hist_rides_keep';
-const CLEANUP_HIST_RIDES_SQL = 'eta/cleanup/4-delete-out-of-window-hist-rides.sql';
+const CLEANUP_HIST_RIDES_SQL = sqlPath('hub', 'eta/cleanup/4-delete-out-of-window-hist-rides.sql');
 
 interface CleanupRowsResult {
 	rows_to_delete: number

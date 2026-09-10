@@ -1,7 +1,8 @@
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 
-const CLEANUP_CURRENT_WAYPOINTS_SQL = 'eta/cleanup/3-delete-orphan-curr-waypoints.sql';
+const CLEANUP_CURRENT_WAYPOINTS_SQL = sqlPath('hub', 'eta/cleanup/3-delete-orphan-curr-waypoints.sql');
 
 interface CleanupRowsResult {
 	rows_to_delete: number

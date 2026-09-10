@@ -1,7 +1,8 @@
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 
-const CLEANUP_HIST_NODE_TRAVEL_TIMES_SQL = 'eta/cleanup/6-delete-orphan-hist-node-travel-times.sql';
+const CLEANUP_HIST_NODE_TRAVEL_TIMES_SQL = sqlPath('hub', 'eta/cleanup/6-delete-orphan-hist-node-travel-times.sql');
 
 interface CleanupRowsResult {
 	rows_to_delete: number

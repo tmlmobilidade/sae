@@ -22,6 +22,7 @@
 		"@tmlmobilidade/go-interfaces-labdb": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
+		"@tmlmobilidade/go-utils-sql": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
 		"@tmlmobilidade/utils": "*"

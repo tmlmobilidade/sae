@@ -1,7 +1,7 @@
 /* * */
 
-import { pipelinePath } from '@tmlmobilidade/go-hub-pckg-sql';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -21,7 +21,7 @@ export async function getClickHouseEtas(): Promise<TripStopEta[]> {
 
 	Logger.info({ message: 'Retrieving trip stop ETAs from ClickHouse...' });
 
-	const etas = await labDb.queryFromFile<TripStopEta>(pipelinePath('select-eta.sql'));
+	const etas = await labDb.queryFromFile<TripStopEta>(sqlPath('hub', 'publish-realtime/select-eta.sql'));
 
 	Logger.info({ message: `Found ${etas.length} trip stop ETAs in ${timer.get()}`, spacesAfterOrBefore: 1 });
 

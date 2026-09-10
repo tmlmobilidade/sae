@@ -1,8 +1,8 @@
 /* * */
 
-import { pipelinePath } from '@tmlmobilidade/go-eta-pckg-common';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { performInTimeChunks } from '@tmlmobilidade/go-utils-exec';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -31,16 +31,16 @@ export async function main(config: AppConfig) {
 	if (config.stages._1_bootstrap) {
 		Logger.title('1. Bootstrapping ETA');
 
-		await labDb.queryEachStatementFromFile(pipelinePath('eta/bootstrap/create-tables.sql'));
+		await labDb.queryEachStatementFromFile(sqlPath('hub', 'eta/bootstrap/create-tables.sql'));
 		Logger.progress({ message: 'Created base tables' });
 
-		await labDb.queryEachStatementFromFile(pipelinePath('eta/bootstrap/mv-sync-curr-vehicle-events.sql'));
+		await labDb.queryEachStatementFromFile(sqlPath('hub', 'eta/bootstrap/mv-sync-curr-vehicle-events.sql'));
 		Logger.progress({ message: 'Created MV: mv-sync-curr-vehicle-events' });
 
-		await labDb.queryEachStatementFromFile(pipelinePath('eta/bootstrap/mv-predict-node-etas.sql'));
+		await labDb.queryEachStatementFromFile(sqlPath('hub', 'eta/bootstrap/mv-predict-node-etas.sql'));
 		Logger.progress({ message: 'Created MV: mv-predict-node-etas' });
 
-		await labDb.queryEachStatementFromFile(pipelinePath('eta/bootstrap/mv-predict-trip-stop-etas.sql'));
+		await labDb.queryEachStatementFromFile(sqlPath('hub', 'eta/bootstrap/mv-predict-trip-stop-etas.sql'));
 		Logger.progress({ message: 'Created MV: mv-predict-trip-stop-etas' });
 	}
 
@@ -49,7 +49,7 @@ export async function main(config: AppConfig) {
 
 	if (config.stages._2_loadCurrentRides) {
 		Logger.title('2. Loading current rides');
-		await labDb.queryFromFile(pipelinePath('eta/loader/load-rides.sql'), {
+		await labDb.queryFromFile(sqlPath('hub', 'eta/loader/load-rides.sql'), {
 			agency_ids: config.agencyIds.join(','),
 			line_ids: undefined,
 			table_name: 'curr_rides',
@@ -65,7 +65,7 @@ export async function main(config: AppConfig) {
 
 	if (config.stages._3_loadHistoricalRides) {
 		Logger.title('3. Loading historical rides');
-		await labDb.queryFromFile(pipelinePath('eta/loader/load-rides.sql'), {
+		await labDb.queryFromFile(sqlPath('hub', 'eta/loader/load-rides.sql'), {
 			agency_ids: config.agencyIds.join(','),
 			line_ids: undefined,
 			table_name: 'hist_rides',
@@ -99,7 +99,7 @@ export async function main(config: AppConfig) {
 			intervalHrs: 24,
 			onChunk: async (chunk) => {
 				Logger.progress({ message: `[${chunk.index + 1}/${chunk.total}] historical vehicle events` });
-				await labDb.queryFromFile(pipelinePath('eta/loader/load-historical-vehicle-events.sql'), {
+				await labDb.queryFromFile(sqlPath('hub', 'eta/loader/load-historical-vehicle-events.sql'), {
 					chunk_end: chunk.end,
 					chunk_start: chunk.start,
 				});
@@ -126,10 +126,10 @@ export async function main(config: AppConfig) {
 	if (config.stages._7_loadCurrentWaypoints) {
 		Logger.title('7. Loading and snapping current waypoints');
 
-		await labDb.queryFromFile(pipelinePath('eta/loader/load-current-waypoints.sql'));
+		await labDb.queryFromFile(sqlPath('hub', 'eta/loader/load-current-waypoints.sql'));
 		Logger.progress({ message: 'Loaded current waypoints: curr_waypoints' });
 
-		await labDb.queryFromFile(pipelinePath('eta/loader/snap-waypoints.sql'));
+		await labDb.queryFromFile(sqlPath('hub', 'eta/loader/snap-waypoints.sql'));
 		Logger.progress({ message: 'Snapped waypoints: curr_waypoints_snapped' });
 	}
 

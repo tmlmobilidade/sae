@@ -64,15 +64,18 @@ RUN npm prune
 RUN node /app/.docker/scripts/trim-node-modules.js /app/node_modules
 RUN node /app/.docker/scripts/trim-workspaces.js /app/packages /app/modules /app/packages-new
 
-# Turbo prune may omit modules/*/sql; merge from build context when present.
-RUN --mount=type=bind,source=.,target=/ctx \
-    for d in /ctx/modules/*/sql; do \
-      if [ -d "$d" ]; then \
-        m=$(basename "$(dirname "$d")"); \
-        mkdir -p "/app/modules/$m"; \
-        cp -a "$d" "/app/modules/$m/"; \
-      fi \
-    done
+# SQL files under `modules/<module>/sql` are plain assets, not workspace packages,
+# so `turbo prune` never includes them and `trim-workspaces.js` never sees them.
+# Copy this module's SQL from the pruner stage, which still holds the full source
+# tree. Apps that read another module's SQL must extend this copy, otherwise
+# `sqlPath()` throws at startup with the list of paths it searched.
+RUN --mount=type=bind,from=pruner,source=/app,target=/ctx \
+    if [ -d "/ctx/modules/${MODULE}/sql" ]; then \
+      mkdir -p "/app/modules/${MODULE}"; \
+      cp -a "/ctx/modules/${MODULE}/sql" "/app/modules/${MODULE}/"; \
+    else \
+      echo "No SQL directory for module ${MODULE}, skipping."; \
+    fi
 
 
 # # #

@@ -1,8 +1,8 @@
 /* * */
 
-import { pipelinePath } from '@tmlmobilidade/go-hub-pckg-sql';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type GtfsRtTripUpdate } from '@tmlmobilidade/go-types-gtfs-rt';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -17,7 +17,7 @@ export async function getClickHouseTripUpdates(): Promise<GtfsRtTripUpdate[]> {
 
 	Logger.info({ message: 'Retrieving Estimated Time of Arrivals from ClickHouse...' });
 
-	const allTripUpdates = await labDb.queryFromFile<ClickHouseEtaGtfsResponse>(pipelinePath('select-eta-gtfs.sql'));
+	const allTripUpdates = await labDb.queryFromFile<ClickHouseEtaGtfsResponse>(sqlPath('hub', 'publish-realtime/select-eta-gtfs.sql'));
 
 	const tripUpdates: GtfsRtTripUpdate[] = allTripUpdates.map(row => JSON.parse(row.trip_update));
 

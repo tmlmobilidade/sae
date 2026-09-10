@@ -1,15 +1,15 @@
 /* * */
 
-import { pipelinePath } from '@tmlmobilidade/go-eta-pckg-common';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type UnixMilliseconds } from '@tmlmobilidade/go-types-shared';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { performInTimeChunks } from '@tmlmobilidade/go-utils-exec';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 
 /* * */
 
-const SQL_PATH = 'eta/loader/build-hist-node-travel-times.sql';
+const SQL_PATH = sqlPath('hub', 'eta/loader/build-hist-node-travel-times.sql');
 
 /* * */
 
@@ -34,7 +34,7 @@ export async function buildHistNodeTravelTimes(windowStart: UnixMilliseconds, wi
 				message: `[${chunk.index + 1}/${chunk.total}] hist_node_travel_times ${start.iso} [${chunk.start}] → ${end.iso} [${chunk.end}]`,
 			});
 
-			await labDb.queryFromFile(pipelinePath(SQL_PATH), { chunk_end: chunk.end, chunk_start: chunk.start });
+			await labDb.queryFromFile(SQL_PATH, { chunk_end: chunk.end, chunk_start: chunk.start });
 		},
 		order: 'desc',
 		startDate: windowStart,

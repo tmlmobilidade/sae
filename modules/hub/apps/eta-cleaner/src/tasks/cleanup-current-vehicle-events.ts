@@ -1,8 +1,9 @@
 import { AppConfig } from '@/lib/config.js';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { Logger } from '@tmlmobilidade/logger';
 
-const CLEANUP_CURRENT_VEHICLE_EVENTS_SQL = 'eta/cleanup/2-delete-out-of-window-curr-vehicle-events.sql';
+const CLEANUP_CURRENT_VEHICLE_EVENTS_SQL = sqlPath('hub', 'eta/cleanup/2-delete-out-of-window-curr-vehicle-events.sql');
 
 interface CleanupRowsResult {
 	rows_to_delete: number

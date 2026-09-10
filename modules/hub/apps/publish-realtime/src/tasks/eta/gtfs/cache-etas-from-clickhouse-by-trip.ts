@@ -1,10 +1,10 @@
 /* * */
 
 import { TTL_REALTIME } from '@/config.js';
-import { pipelinePath } from '@tmlmobilidade/go-hub-pckg-sql';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type GtfsRtTripUpdate } from '@tmlmobilidade/go-types-gtfs-rt';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { getEmptyGtfsRtFeedMessage } from '@tmlmobilidade/gtfs-rt';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
@@ -29,7 +29,7 @@ export async function cacheEtasFromClickHouseByTrip() {
 
 	Logger.info({ message: 'Retrieving GTFS-RT TripUpdates grouped by trip from ClickHouse...' });
 
-	const tripUpdatesByTrip = await labDb.queryFromFile<{ key: string, value: string }>(pipelinePath('select-eta-by-trip-gtfs.sql'));
+	const tripUpdatesByTrip = await labDb.queryFromFile<{ key: string, value: string }>(sqlPath('hub', 'publish-realtime/select-eta-by-trip-gtfs.sql'));
 
 	await Promise.all(tripUpdatesByTrip.map((row) => {
 		const tripUpdate = JSON.parse(row.value) as GtfsRtTripUpdate;
