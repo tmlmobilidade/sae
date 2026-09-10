@@ -16,7 +16,8 @@ ADD COLUMN first_stop_geohash String DEFAULT geohashEncode(first_stop_coordinate
 ADD COLUMN last_stop_id String,
 ADD COLUMN last_stop_name String,
 ADD COLUMN last_stop_coordinates Tuple(Float64, Float64),
-ADD COLUMN last_stop_geohash String DEFAULT geohashEncode(last_stop_coordinates.2, last_stop_coordinates.1, 7);
+ADD COLUMN last_stop_geohash String DEFAULT geohashEncode(last_stop_coordinates.2, last_stop_coordinates.1, 7),
+ADD COLUMN analysis_expected_vehicle_event_coverage_geo_grade Nullable(String);
 
 -- ========================
 -- Current Rides

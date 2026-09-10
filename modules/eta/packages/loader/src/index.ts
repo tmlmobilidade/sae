@@ -73,12 +73,12 @@ export async function loadEta(config: AppConfig) {
 			time_start: config.processing.historicalRidesStartTime,
 		});
 
-		Logger.progress({ message: 'Loaded historical rides: hist_rides' });
+		// Delete where analysis_expected_vehicle_event_coverage_geo_grade != 'pass'
+		await labDb.command({
+			query: `DELETE FROM eta.hist_rides WHERE ifNull(analysis_expected_vehicle_event_coverage_geo_grade, '') != 'pass'`,
+		});
 
-		//
-		// Detect ride start/end events
-		Logger.info({ message: 'Detecting ride start/end events' });
-		await detectRideStartEndEvents(config);
+		Logger.progress({ message: 'Loaded historical rides: hist_rides' });
 	}
 
 	//

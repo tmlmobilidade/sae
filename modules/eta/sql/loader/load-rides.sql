@@ -36,40 +36,56 @@ INSERT INTO eta.{table_name:Identifier} (
     first_stop_coordinates,
     last_stop_id,
     last_stop_name,
-    last_stop_coordinates
+    last_stop_coordinates,
+    analysis_expected_vehicle_event_coverage_geo_grade
 )
 WITH
     matched_rides AS (
         SELECT
-            _id,
-            agency_code,
-            agency_id,
-            toFixedString(toString(direction_id), 1) AS direction_id,
-            driver_ids,
-            end_time_observed,
-            end_time_scheduled,
-            hashed_trip_id,
-            headsign,
-            toUInt32(operational_date) AS operational_date,
-            plan_id,
-            route_id,
-            route_long_name,
-            route_short_name,
-            seen_first_at,
-            seen_last_at,
-            shape_id,
-            hashed_shape_id,
-            start_time_observed,
-            start_time_scheduled,
-            trip_id,
-            updated_at,
-            vehicle_ids
-        FROM operation.rides FINAL
-        WHERE
-            has(splitByChar(',', $agency_ids), agency_id)
-            AND ($line_ids = '' OR has(splitByChar(',', $line_ids), route_short_name))
-            AND start_time_scheduled >= $time_start
-            AND start_time_scheduled <= $time_end
+            *
+        FROM (
+            SELECT
+                _id,
+                agency_code,
+                agency_id,
+                toFixedString(toString(direction_id), 1) AS direction_id,
+                driver_ids,
+                end_time_observed,
+                end_time_scheduled,
+                hashed_trip_id,
+                headsign,
+                toUInt32(operational_date) AS operational_date,
+                plan_id,
+                route_id,
+                route_long_name,
+                route_short_name,
+                seen_first_at,
+                seen_last_at,
+                shape_id,
+                hashed_shape_id,
+                start_time_observed,
+                start_time_scheduled,
+                trip_id,
+                updated_at,
+                vehicle_ids,
+                row_number() OVER (PARTITION BY _id ORDER BY updated_at DESC) AS rn
+            FROM operation.rides
+            WHERE
+                has(splitByChar(',', $agency_ids), agency_id)
+                AND ($line_ids = '' OR has(splitByChar(',', $line_ids), route_short_name))
+                AND start_time_scheduled >= $time_start
+                AND start_time_scheduled <= $time_end
+        )
+        WHERE rn = 1
+       
+    ),
+    analysis_expected_vehicle_event_coverage_geo AS (
+        SELECT
+            ride_id,
+            argMax(grade_status, updated_at) AS grade_status
+        FROM operation.ride_analysis_expected_vehicle_event_coverage_geo
+        WHERE operational_date IN (SELECT DISTINCT operational_date FROM matched_rides)
+        GROUP BY ride_id
     ),
     trip_stops AS (
         SELECT
@@ -123,7 +139,9 @@ SELECT
     (toFloat64(t.first_stop_lat), toFloat64(t.first_stop_lon)) AS first_stop_coordinates,
     t.last_stop_id,
     t.last_stop_name,
-    (toFloat64(t.last_stop_lat), toFloat64(t.last_stop_lon)) AS last_stop_coordinates
+    (toFloat64(t.last_stop_lat), toFloat64(t.last_stop_lon)) AS last_stop_coordinates,
+    if(a.grade_status != '', a.grade_status, null) AS analysis_expected_vehicle_event_coverage_geo_grade
 FROM matched_rides AS r
 INNER JOIN trip_stops AS t ON r.hashed_trip_id = t.hashed_trip_id
-INNER JOIN hashed_shapes AS s ON r.hashed_shape_id = s.hashed_shape_id;
+INNER JOIN hashed_shapes AS s ON r.hashed_shape_id = s.hashed_shape_id
+LEFT JOIN analysis_expected_vehicle_event_coverage_geo AS a ON a.ride_id = r._id;
