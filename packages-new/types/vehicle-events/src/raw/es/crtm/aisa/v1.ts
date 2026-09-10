@@ -1,5 +1,6 @@
 /* * */
 
+import { GtfsTripDirectionSchema } from '@tmlmobilidade/go-types-gtfs';
 import { GtfsRtCongestionLevelSchema, GtfsRtOccupancyStatusSchema, GtfsRtScheduleRelationshipSchema } from '@tmlmobilidade/go-types-gtfs-rt';
 import { OperationalDateIntSchema, OperationalTimeSchema } from '@tmlmobilidade/go-types-shared';
 import { z } from 'zod';
@@ -30,7 +31,7 @@ export const RawVehicleEventEsCrtmAisaV1PayloadSchema = z.object({
 		stop_id: z.string().nullish(),
 		timestamp: z.number().nullish(),
 		trip: z.object({
-			direction_id: z.number().nullish(),
+			direction_id: GtfsTripDirectionSchema.nullish(),
 			route_id: z.string(),
 			schedule_relationship: GtfsRtScheduleRelationshipSchema.nullish(),
 			start_date: OperationalDateIntSchema.nullish(),
