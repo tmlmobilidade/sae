@@ -2,17 +2,18 @@
 
 import { getQualifiedRouteId, getQualifiedShapeId, getQualifiedTripId } from '@tmlmobilidade/go-hub-pckg-utils';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
-import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type GtfsRtFeedEntity, GtfsRtFeedEntitySchema, type GtfsRtFeedMessage, GtfsRtFeedMessageSchema } from '@tmlmobilidade/go-types-gtfs-rt';
 import { type HubV1ApiVehiclePosition, HubV1ApiVehiclePositionSchema } from '@tmlmobilidade/go-types-hub';
-import { type Ride, Vehicle } from '@tmlmobilidade/go-types-operation';
+import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { DegreesSchema, OperationalDateIntSchema, toCalendarDate, UnixSecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-events';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { calculateBearingInDegrees } from '@tmlmobilidade/go-utils-geo';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
+
+import { getVehiclesMetadataMap } from '../utils/get-vehicles-metadata-map.js';
 
 /* * */
 
@@ -46,15 +47,13 @@ export async function publishVehiclesPositions() {
 	const timer = new Timer();
 
 	//
-	// Retrieve active plans from the database
+	// Retrieve active plans from local cache
 
 	const metadataTimer = new Timer();
 
-	const vehiclesMetadata = await goDb.operation.vehicles.findMany({});
+	const vehiclesMetadata = await getVehiclesMetadataMap();
 
-	const vehiclesMetadataMap = new Map<string, Vehicle>(vehiclesMetadata.map(vehicle => [`${vehicle.agency_id}:${vehicle.vehicle_id}`, vehicle]));
-
-	Logger.info({ message: `Retrieved ${vehiclesMetadataMap.size} vehicles metadata in ${metadataTimer.get()}` });
+	Logger.info({ message: `Retrieved ${vehiclesMetadata.size} vehicle metadata in ${metadataTimer.get()}` });
 
 	//
 	// Retrieve the two latest vehicle positions for each vehicle,
@@ -159,7 +158,7 @@ export async function publishVehiclesPositions() {
 		//
 		// Retrieve the vehicle metadata
 
-		const vehicleMetadata = vehiclesMetadataMap.get(key);
+		const vehicleMetadata = vehiclesMetadata.get(key);
 
 		//
 		// Transform the current position into
@@ -185,7 +184,7 @@ export async function publishVehiclesPositions() {
 			speed: currentPosition.speed,
 			stop_id: currentPosition.stop_id,
 			trip_id: getQualifiedTripId(currentPosition.plan_id, currentPosition.agency_id, currentPosition.trip_id),
-			vehicle_id: currentPosition.vehicle_id,
+			vehicle_id: vehicleMetadata?._id ?? currentPosition.vehicle_id,
 		});
 
 		if (!hubV1Json.success) throw new Error(`Failed to parse Hub V1 API Vehicle Position: ${hubV1Json.error.message}`);
