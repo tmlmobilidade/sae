@@ -10,6 +10,7 @@
 INSERT INTO eta.curr_vehicle_events
 SELECT
     s._id AS _id,
+    s.agency_id AS agency_id,
     s.trip_id AS trip_id,
     s.vehicle_id AS vehicle_id,
     d.hashed_shape_id AS hashed_shape_id,
@@ -18,7 +19,8 @@ SELECT
     s.longitude AS longitude,
     s.speed AS speed,
     s.bearing AS bearing,
-    s.created_at AS created_at
+    s.created_at AS created_at,
+    s.received_at AS received_at
 FROM operation.simplified_vehicle_events AS s
 INNER JOIN eta.curr_rides AS d ON s.trip_id = d.trip_id
 INNER JOIN eta.hist_shape_nodes AS n ON d.hashed_shape_id = n.hashed_shape_id
@@ -26,6 +28,7 @@ WHERE s._id = {event_id:String}
   AND s.trip_id = {trip_id:String}
 GROUP BY
     s._id,
+    s.agency_id,
     s.trip_id,
     s.vehicle_id,
     d.hashed_shape_id,
@@ -33,4 +36,5 @@ GROUP BY
     s.longitude,
     s.speed,
     s.bearing,
-    s.created_at;
+    s.created_at,
+    s.received_at;
