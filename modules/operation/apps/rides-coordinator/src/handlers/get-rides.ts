@@ -74,7 +74,7 @@ export async function getRidesHandler(): Promise<RidesCoordinatorRidesResponse> 
 		);
 
 		/* === FOR TESTING === */
-		// const foundWaitingRides = await goDb.operation.rides.findMany({ _id: 'DC0XN-44-20250303-4412_0_2|300|1955' })
+		// const foundWaitingRides = await goDb.operation.rides.findMany({ _id: '2QDAD-43-20260908-3003_0_2_1130_1159_0_VER_DU' });
 		/* === FOR TESTING === */
 
 		if (!foundWaitingRides.length) {

@@ -89,8 +89,10 @@ export const rideAnalysisExpectedStartTimeTableSchema: ClickHouseTableSchema<Rid
 
 export const rideAnalysisExpectedVehicleEventCoverageGeoTableSchema: ClickHouseTableSchema<RideAnalysisExpectedVehicleEventCoverageGeo> = {
 	...rideAnalysisBaseTableSchema,
-	stops_coverage_absolute: { type: 'Nullable(UInt16) CODEC(T64, ZSTD)' },
-	stops_coverage_percentage: { type: 'Nullable(UInt8) CODEC(T64, ZSTD)' },
+	stops_covered_absolute: { type: 'Nullable(UInt16) CODEC(T64, ZSTD)' },
+	stops_covered_percentage: { type: 'Nullable(UInt8) CODEC(T64, ZSTD)' },
+	stops_not_covered_ids: { type: 'Array(LowCardinality(String))' },
+	stops_qty: { type: 'Nullable(UInt16) CODEC(T64, ZSTD)' },
 };
 
 /* * */

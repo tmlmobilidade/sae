@@ -4,7 +4,7 @@ import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 
-import { type AnalysisData, type PickedSimplifiedApexBankingTap, type PickedSimplifiedApexLocation, type PickedSimplifiedApexOnBoardRefund, type PickedSimplifiedApexOnBoardSale, type PickedSimplifiedApexValidation, type PickedSimplifiedVehicleEvent } from '../types/analysis-data.js';
+import { type AnalysisData, PickedHashedShape, PickedHashedTrip, type PickedSimplifiedApexBankingTap, type PickedSimplifiedApexLocation, type PickedSimplifiedApexOnBoardRefund, type PickedSimplifiedApexOnBoardSale, type PickedSimplifiedApexValidation, type PickedSimplifiedVehicleEvent } from '../types/analysis-data.js';
 
 /* * */
 
@@ -66,15 +66,25 @@ export async function fetchAnalysisData(rideData: Ride): Promise<AnalysisData> {
 		{ 1: standardWindowInterval.start, 2: standardWindowInterval.end, 3: rideData.agency_id, 4: rideData.trip_id },
 	);
 
-	const hashedShapePromise = labDb.operation.hashedShapes.select(
-		'shape_polyline',
-		'_id = $1',
+	const hashedShapePromise = labDb.queryFromString<PickedHashedShape>(
+		`
+			SELECT shape_polyline
+			FROM operation.hashed_shapes
+			WHERE _id = $1
+			ORDER BY updated_at DESC
+			LIMIT 1 BY _id
+		`,
 		{ 1: rideData.hashed_shape_id },
 	);
 
-	const hashedTripPromise = labDb.operation.hashedTrips.select(
-		'stop_id, stop_lat, stop_lon, stop_sequence',
-		'_id = $1',
+	const hashedTripPromise = labDb.queryFromString<PickedHashedTrip>(
+		`
+			SELECT stop_id, stop_lat, stop_lon, stop_sequence
+			FROM operation.hashed_trips
+			WHERE _id = $1
+			ORDER BY updated_at DESC
+			LIMIT 1 BY _id, stop_id, stop_sequence
+		`,
 		{ 1: rideData.hashed_trip_id },
 	);
 

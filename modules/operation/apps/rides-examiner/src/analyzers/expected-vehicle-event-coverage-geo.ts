@@ -30,8 +30,10 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 				reason: 'NO_PATH_DATA',
 				remarks: null,
 				ride_id: analysisData.ride._id,
-				stops_coverage_absolute: null,
-				stops_coverage_percentage: null,
+				stops_covered_absolute: null,
+				stops_covered_percentage: null,
+				stops_not_covered_ids: null,
+				stops_qty: null,
 				updated_at: Dates.now('utc').unix_milliseconds,
 			});
 		}
@@ -44,8 +46,10 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 				reason: 'NO_VEHICLE_EVENTS',
 				remarks: null,
 				ride_id: analysisData.ride._id,
-				stops_coverage_absolute: null,
-				stops_coverage_percentage: null,
+				stops_covered_absolute: null,
+				stops_covered_percentage: null,
+				stops_not_covered_ids: null,
+				stops_qty: null,
 				updated_at: Dates.now('utc').unix_milliseconds,
 			});
 		}
@@ -54,16 +58,18 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 		// Evaluate each vehicle event
 
 		const stopsWithVehicleEvents = new Set<string>();
+		const stopsWithoutVehicleEvents = new Set<string>(analysisData.hashed_trip.map(pathWaypoint => pathWaypoint.stop_id));
 
 		for (const pathWaypoint of analysisData.hashed_trip) {
-			for (const vehicleEvent of analysisData.vehicle_events) {
+			vehicleEventsLoop: for (const vehicleEvent of analysisData.vehicle_events) {
 				const distanceInMeters = getDistanceBetweenPositions(
 					[pathWaypoint.stop_lon, pathWaypoint.stop_lat],
 					[vehicleEvent.longitude, vehicleEvent.latitude],
 				);
 				if (distanceInMeters <= BUFFER_RADIUS) {
 					stopsWithVehicleEvents.add(pathWaypoint.stop_id);
-					break;
+					stopsWithoutVehicleEvents.delete(pathWaypoint.stop_id);
+					break vehicleEventsLoop;
 				}
 			}
 		}
@@ -84,8 +90,10 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 				reason: 'LESS_THAN_90_PCT_COVERAGE',
 				remarks: null,
 				ride_id: analysisData.ride._id,
-				stops_coverage_absolute: stopsWithVehicleEvents.size,
-				stops_coverage_percentage: stopsCoveragePercentage,
+				stops_covered_absolute: stopsWithVehicleEvents.size,
+				stops_covered_percentage: stopsCoveragePercentage,
+				stops_not_covered_ids: Array.from(stopsWithoutVehicleEvents.values()),
+				stops_qty: analysisData.hashed_trip.length,
 				updated_at: Dates.now('utc').unix_milliseconds,
 			});
 		}
@@ -97,8 +105,10 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 			reason: '90_PCT_OR_MORE_COVERAGE',
 			remarks: null,
 			ride_id: analysisData.ride._id,
-			stops_coverage_absolute: stopsWithVehicleEvents.size,
-			stops_coverage_percentage: stopsCoveragePercentage,
+			stops_covered_absolute: stopsWithVehicleEvents.size,
+			stops_covered_percentage: stopsCoveragePercentage,
+			stops_not_covered_ids: Array.from(stopsWithoutVehicleEvents.values()),
+			stops_qty: analysisData.hashed_trip.length,
 			updated_at: Dates.now('utc').unix_milliseconds,
 		});
 
@@ -111,8 +121,10 @@ export function expectedVehicleEventCoverageGeoAnalyzer(analysisData: AnalysisDa
 			reason: null,
 			remarks: error.message,
 			ride_id: analysisData.ride._id,
-			stops_coverage_absolute: null,
-			stops_coverage_percentage: null,
+			stops_covered_absolute: null,
+			stops_covered_percentage: null,
+			stops_not_covered_ids: null,
+			stops_qty: null,
 			updated_at: Dates.now('utc').unix_milliseconds,
 		});
 	}

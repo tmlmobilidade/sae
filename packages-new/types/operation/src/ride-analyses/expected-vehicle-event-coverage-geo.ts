@@ -8,8 +8,10 @@ import { z } from 'zod';
 
 export const RideAnalysisExpectedVehicleEventCoverageGeoSchema = RideAnalysisBaseSchema.extend({
 	reason: z.enum(['NO_PATH_DATA', 'NO_VEHICLE_EVENTS', 'LESS_THAN_90_PCT_COVERAGE', '90_PCT_OR_MORE_COVERAGE']).nullable().default(null),
-	stops_coverage_absolute: NonNegativeIntegerSchema.nullable().default(null),
-	stops_coverage_percentage: PercentSchema.nullable().default(null),
+	stops_covered_absolute: NonNegativeIntegerSchema.nullable().default(null),
+	stops_covered_percentage: PercentSchema.nullable().default(null),
+	stops_not_covered_ids: z.array(z.string()).nullable().default(null),
+	stops_qty: NonNegativeIntegerSchema.nullable().default(null),
 });
 
 /**
