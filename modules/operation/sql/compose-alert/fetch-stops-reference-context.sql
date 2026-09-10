@@ -1,6 +1,3 @@
-/* * */
-
-export const fetchStopsReferenceContextQuery = `
 WITH
 
 	/*
@@ -21,9 +18,9 @@ WITH
 		FROM operation.rides
 
 		WHERE
-			agency_id = $1
-			AND start_time_scheduled >= $2
-			AND start_time_scheduled <= $3
+			agency_id = $agency_id
+			AND start_time_scheduled >= $active_period_start_date
+			AND start_time_scheduled <= $active_period_end_date
 
 		ORDER BY
 			updated_at DESC
@@ -65,13 +62,13 @@ WITH
 		FROM operation.hashed_trips
 
 		WHERE
-			agency_id = $1
+			agency_id = $agency_id
 			AND _id IN (
 				SELECT
 					hashed_trip_id
 				FROM relevant_hashed_trip_ids
 			)
-			AND stop_id IN $4
+			AND stop_id IN $stop_ids
 
 		ORDER BY
 			updated_at DESC
@@ -97,4 +94,3 @@ GROUP BY
 
 ORDER BY
 	stop_id ASC;
-`;

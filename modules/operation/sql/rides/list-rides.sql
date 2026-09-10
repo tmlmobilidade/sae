@@ -1,6 +1,3 @@
-/* * */
-
-export const controllerRidesListQuery = `
 WITH
 
 	/*
@@ -341,4 +338,3 @@ ORDER BY
 	_id ASC
 
 LIMIT 10000;
-`;

@@ -34,7 +34,23 @@ export const SQL_FILES = {
 		'publish-realtime/select-eta.sql',
 		'publish-realtime/select-vehicle-positions.sql',
 	],
+	operation: [
+		'alerts/list-lines.sql',
+		'alerts/list-rides.sql',
+		'alerts/list-stops.sql',
+		'compose-alert/fetch-lines-reference-context.sql',
+		'compose-alert/fetch-rides-reference-context.sql',
+		'compose-alert/fetch-stops-reference-context.sql',
+		'rides/get-ride.sql',
+		'rides/list-rides.sql',
+	],
 	performance: [
 		'demand/by-agency-by-operational-date.sql',
+	],
+	tracker: [
+		'pt-tml-fertagus-rawdb-stream/find-trip-id.sql',
+		'pt-tml-ml-api-fetch/find-hashed-shape.sql',
+		'pt-tml-ml-api-fetch/find-hashed-trip.sql',
+		'pt-tml-ml-api-fetch/find-rides-for-train.sql',
 	],
 } as const;

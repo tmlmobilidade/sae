@@ -7,9 +7,8 @@ import { parseRawVehicleEventPtTmlFertagusV1 } from '@tmlmobilidade/go-tracker-p
 import { type RawVehicleEventPtTmlFertagusV1, type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-events';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { BatchWriter } from '@tmlmobilidade/go-utils-exec';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
-
-import { findTripIdQuery } from './find-trip-id-query.js';
 
 /* * */
 
@@ -47,11 +46,11 @@ async function findTripId(event: RawVehicleEventPtTmlFertagusV1['payload']): Pro
 
 	const startTimeScheduled = Dates.fromISO(event.startsAt).unix_milliseconds;
 
-	const foundRides = await labDb.queryFromString<{ trip_id: string }>(findTripIdQuery, {
-		1: AGENCY_ID,
-		2: startTimeScheduled,
-		3: event.stop_id_start,
-		4: event.stop_id_end,
+	const foundRides = await labDb.queryFromFile<{ trip_id: string }>(sqlPath('tracker', 'pt-tml-fertagus-rawdb-stream/find-trip-id.sql'), {
+		agency_id: AGENCY_ID,
+		first_stop_id: event.stop_id_start,
+		last_stop_id: event.stop_id_end,
+		start_time_scheduled: startTimeScheduled,
 	});
 
 	if (foundRides.length === 0) {

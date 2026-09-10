@@ -1,6 +1,3 @@
-/* * */
-
-export const alertsRidesQuery = `
 WITH
 
 	/*
@@ -124,4 +121,3 @@ ORDER BY
 	_id ASC
 
 LIMIT 10000;
-`;

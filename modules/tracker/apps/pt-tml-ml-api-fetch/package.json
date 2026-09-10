@@ -29,6 +29,7 @@
 		"@tmlmobilidade/go-types-vehicle-events": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
+		"@tmlmobilidade/go-utils-sql": "*",
 		"@tmlmobilidade/gtfs-rt": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",

@@ -1,6 +1,3 @@
-/* * */
-
-export const fetchLinesReferenceContextQuery = `
 WITH
 
 	/*
@@ -8,27 +5,25 @@ WITH
 	 * Latest ride versions
 	 * -----------------------------------------------------------------------
 	 *
-	 * Only rides for the requested agency, time range and route names are
-	 * relevant.
-	 *
 	 * Rides use ReplacingMergeTree(updated_at), so explicitly select the
-	 * latest version instead of using FINAL.
+	 * latest version of each ride.
 	 */
 	rides_latest AS
 	(
 		SELECT
 			_id,
+			headsign,
 			route_short_name,
-			route_long_name,
+			start_time_scheduled,
 			updated_at
 
 		FROM operation.rides
 
 		WHERE
-			agency_id = $1
-			AND start_time_scheduled >= $2
-			AND start_time_scheduled <= $3
-			AND route_short_name IN $4
+			agency_id = $agency_id
+			AND start_time_scheduled >= $active_period_start_date
+			AND start_time_scheduled <= $active_period_end_date
+			AND _id IN ($ride_ids)
 
 		ORDER BY
 			updated_at DESC
@@ -38,20 +33,16 @@ WITH
 
 /*
  * -------------------------------------------------------------------------
- * Final route result
+ * Final result
  * -------------------------------------------------------------------------
- *
- * A route can have many rides, so return one row per route_short_name.
  */
 SELECT
+	headsign,
 	route_short_name,
-	argMax(route_long_name, updated_at) AS route_long_name
+	start_time_scheduled
 
 FROM rides_latest
 
-GROUP BY
-	route_short_name
-
 ORDER BY
-	route_short_name ASC;
-`;
+	start_time_scheduled ASC,
+	_id ASC;

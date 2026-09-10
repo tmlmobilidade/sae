@@ -1,6 +1,3 @@
-/* * */
-
-export const controllerRidesDetailRideQuery = `
 WITH
 
 	/*
@@ -20,7 +17,7 @@ WITH
 			*
 		FROM operation.rides
 		WHERE
-			_id = $1
+			_id = $ride_id
 		ORDER BY
 			updated_at DESC
 		LIMIT 1 BY _id
@@ -100,4 +97,3 @@ SELECT
 FROM ride_view
 
 LIMIT 1;
-`;

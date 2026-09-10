@@ -22,6 +22,7 @@
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
+		"@tmlmobilidade/go-utils-sql": "*",
 		"@tmlmobilidade/utils": "*",
 		"zod": "3.25.76"
 	},

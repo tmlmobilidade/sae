@@ -2,8 +2,9 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type AlertsLinesFilters, AlertsLinesFiltersSchema, type AlertsLinesItem, AlertsLinesItemSchema, alertsLinesQuery, AlertsLinesQueryRow } from '@tmlmobilidade/go-operation-pckg-types';
+import { type AlertsLinesFilters, AlertsLinesFiltersSchema, type AlertsLinesItem, AlertsLinesItemSchema, AlertsLinesQueryRow } from '@tmlmobilidade/go-operation-pckg-types';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 
 /**
  * Get lines by query.
@@ -40,12 +41,12 @@ export async function listLines(request: FastifyRequest<{ Body: AlertsLinesFilte
 	// Build query parameters and execute the query
 
 	const params: Record<string, number | string> = {
-		1: validatedFilters.agency_id,
-		2: validatedFilters.start_time_scheduled_start,
-		3: validatedFilters.start_time_scheduled_end,
+		agency_id: validatedFilters.agency_id,
+		start_time_scheduled_end: validatedFilters.start_time_scheduled_end,
+		start_time_scheduled_start: validatedFilters.start_time_scheduled_start,
 	};
 
-	const queryResult = await labDb.queryFromString<AlertsLinesQueryRow>(alertsLinesQuery, params);
+	const queryResult = await labDb.queryFromFile<AlertsLinesQueryRow>(sqlPath('operation', 'alerts/list-lines.sql'), params);
 
 	//
 	// Parse and return the result

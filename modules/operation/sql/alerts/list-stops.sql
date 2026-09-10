@@ -1,6 +1,3 @@
-/* * */
-
-export const alertsStopsQuery = `
 WITH
 
 	/*
@@ -21,9 +18,9 @@ WITH
 		FROM operation.rides
 
 		WHERE
-			agency_id = $1
-			AND start_time_scheduled >= $2
-			AND start_time_scheduled <= $3
+			agency_id = $agency_id
+			AND start_time_scheduled >= $start_time_scheduled_start
+			AND start_time_scheduled <= $start_time_scheduled_end
 
 		ORDER BY
 			updated_at DESC
@@ -67,7 +64,7 @@ WITH
 		FROM operation.hashed_trips
 
 		WHERE
-			agency_id = $1
+			agency_id = $agency_id
 			AND _id IN (
 				SELECT
 					hashed_trip_id
@@ -148,4 +145,3 @@ GROUP BY
 
 ORDER BY
 	stop_name ASC;
-`;

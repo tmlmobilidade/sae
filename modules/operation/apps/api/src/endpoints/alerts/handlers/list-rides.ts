@@ -2,8 +2,10 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type AlertsRidesFilters, AlertsRidesFiltersSchema, type AlertsRidesItem, alertsRidesQuery } from '@tmlmobilidade/go-operation-pckg-types';
+import { type AlertsRidesFilters, AlertsRidesFiltersSchema, type AlertsRidesItem } from '@tmlmobilidade/go-operation-pckg-types';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
+import { readFile } from 'node:fs/promises';
 
 /**
  * Get rides by query.
@@ -57,7 +59,8 @@ export async function listRides(request: FastifyRequest<{ Body: AlertsRidesFilte
 		? `\n\tAND ${conditions.join('\n\tAND ')}`
 		: '';
 
-	const sql = alertsRidesQuery.replace('--DYNAMIC FILTERS HERE--', where);
+	const queryTemplate = await readFile(sqlPath('operation', 'alerts/list-rides.sql'), 'utf-8');
+	const sql = queryTemplate.replace('--DYNAMIC FILTERS HERE--', where);
 
 	const queryResult = await labDb.queryFromString<AlertsRidesItem>(sql, params);
 
