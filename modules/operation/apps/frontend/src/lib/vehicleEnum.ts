@@ -1,3 +1,5 @@
+import { VehicleType } from '@tmlmobilidade/go-types-operation';
+
 const EMISSION_MAP = {
 	1: 'EURO_I',
 	2: 'EURO_II',
@@ -18,13 +20,17 @@ const PROPULSION_MAP = {
 	8: 'natural_gas',
 } as const;
 
-const TYPOLOGY_MAP = {
+const TYPOLOGY_MAP: Record<number, VehicleType> = {
 	1: 'tram',
-	2: 'bus',
-	3: 'ship',
-	4: 'funicular',
-	5: 'metro',
-	6: 'train',
+	11: 'trolleybus',
+	12: 'monorail',
+	2: 'subway',
+	3: 'rail',
+	4: 'bus',
+	5: 'ferry',
+	6: 'cable_tram',
+	7: 'cable car',
+	8: 'funicular',
 } as const;
 
 export { EMISSION_MAP, PROPULSION_MAP, TYPOLOGY_MAP };
