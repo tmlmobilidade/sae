@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 /* * */
 
-const VehicleEmissionValues = [
+export const VehicleEmissionValues = [
 	'EURO_I',
 	'EURO_II',
 	'EURO_III',
@@ -13,5 +13,9 @@ const VehicleEmissionValues = [
 	'EURO_VI',
 ] as const;
 
-export const VehicleEmissionSchema = z.enum(VehicleEmissionValues);
+export const VehicleEmissionSchema = z
+	.string()
+	.transform(value => String(value).toLowerCase())
+	.pipe(z.enum(VehicleEmissionValues));
+
 export type VehicleEmission = z.infer<typeof VehicleEmissionSchema>;

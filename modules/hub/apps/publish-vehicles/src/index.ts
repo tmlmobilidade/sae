@@ -4,8 +4,6 @@ import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
-import { publishTripUpdates } from './tasks/eta/gtfs/publish-trip-updates.js';
-import { publishEtas } from './tasks/eta/simplified/publish-etas.js';
 import { publishVehiclesPositions } from './tasks/publish-vehicle-positions.js';
 import { publishVehiclesMetadata } from './tasks/publish-vehicles-metadata.js';
 

@@ -3,7 +3,7 @@
 import { AgencySelect } from '@/components/common/AgencySelect';
 import { useVehicleCreateContext } from '@/components/vehicles2/create/VehicleCreate.context';
 import { Translations } from '@/lib/translations';
-import { VehicleEmissionSchema, VehiclePropulsionSchema, vehicleSchema, VehicleTypologySchema } from '@tmlmobilidade/go-types-operation';
+import { VehicleEmissionValues, VehiclePropulsionValues, vehicleSchema, VehicleTypeValues } from '@tmlmobilidade/go-types-operation';
 import { Checkbox, DateInput, NumberInput, Section, Select, Spacer, TextInput } from '@tmlmobilidade/ui';
 
 /* * */
@@ -234,7 +234,7 @@ export function VehicleCreateInfos() {
 				label="Tipologia"
 				placeholder="Selecione a tipologia do veículo"
 				w="100%"
-				data={VehicleTypologySchema.options.map(value => ({
+				data={VehicleTypeValues.map(value => ({
 					label: Translations.TYPOLOGY[value],
 					value,
 				}))}
@@ -246,7 +246,7 @@ export function VehicleCreateInfos() {
 				label="Propulsão"
 				placeholder="Selecione a propulsão do veículo"
 				w="100%"
-				data={VehiclePropulsionSchema.options.map(value => ({
+				data={VehiclePropulsionValues.map(value => ({
 					label: Translations.PROPUNSIONAL[value],
 					value: value,
 				}))}
@@ -258,7 +258,7 @@ export function VehicleCreateInfos() {
 				label="Classe de emissão"
 				placeholder="Selecione a classe de emissão do veículo"
 				w="100%"
-				data={VehicleEmissionSchema.options.map(value => ({
+				data={VehicleEmissionValues.map(value => ({
 					label: Translations.EMISSION[value],
 					value: value,
 				}))}

@@ -2,7 +2,7 @@
 
 import { useVehiclesDetailContext } from '@/contexts/VehiclesDetail.context';
 import { Translations } from '@/lib/translations';
-import { VehicleEmissionSchema, VehiclePropulsionSchema, VehicleTypologySchema } from '@tmlmobilidade/go-types-operation';
+import { VehicleEmissionValues, VehiclePropulsionValues, VehicleTypeValues } from '@tmlmobilidade/go-types-operation';
 import { Collapsible, ErrorDisplay, Grid, LoadingOverlay, NumberInput, Section, Select, TextInput } from '@tmlmobilidade/ui';
 
 /* * */
@@ -60,7 +60,7 @@ export function VehicleDetailsSectionSpecifications() {
 
 					<Select
 						key={vehiclesDetailContext.data.form.key('typology')}
-						data={VehicleTypologySchema.options.map(value => ({ label: Translations.TYPOLOGY[value], value }))}
+						data={VehicleTypeValues.map(value => ({ label: Translations.TYPOLOGY[value], value }))}
 						disabled={vehiclesDetailContext.flags.read_only}
 						label="Tipologia"
 						{...vehiclesDetailContext.data.form.getInputProps('typology')}
@@ -68,7 +68,7 @@ export function VehicleDetailsSectionSpecifications() {
 
 					<Select
 						key={vehiclesDetailContext.data.form.key('propulsion')}
-						data={VehiclePropulsionSchema.options.map(value => ({ label: Translations.PROPUNSIONAL[value], value }))}
+						data={VehiclePropulsionValues.map(value => ({ label: Translations.PROPUNSIONAL[value], value }))}
 						disabled={vehiclesDetailContext.flags.read_only}
 						label="Propulsão"
 						{...vehiclesDetailContext.data.form.getInputProps('propulsion')}
@@ -76,7 +76,7 @@ export function VehicleDetailsSectionSpecifications() {
 
 					<Select
 						key={vehiclesDetailContext.data.form.key('emission')}
-						data={VehicleEmissionSchema.options.map(value => ({ label: Translations.EMISSION[value], value }))}
+						data={VehicleEmissionValues.map(value => ({ label: Translations.EMISSION[value], value }))}
 						disabled={vehiclesDetailContext.flags.read_only}
 						label="Classe de emissão"
 						{...vehiclesDetailContext.data.form.getInputProps('emission')}
