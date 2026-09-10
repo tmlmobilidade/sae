@@ -34,16 +34,11 @@
 		"watch": "tsc-watch --onSuccess 'resolve-tspaths'"
 	},
 	"dependencies": {
-		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-clients-mongo": "*",
 		"@tmlmobilidade/go-types-apex": "*",
-		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-types-vehicle-events": "*",
 		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/strings": "*",
 		"@tmlmobilidade/utils": "*",
-		"bcryptjs": "3.0.3",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

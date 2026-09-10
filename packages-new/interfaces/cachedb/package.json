@@ -35,9 +35,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-clients-redis": "*",
-		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/utils": "*",
-		"zod": "3.25.76"
+		"@tmlmobilidade/utils": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

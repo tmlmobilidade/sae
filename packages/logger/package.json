@@ -42,8 +42,7 @@
 	"dependencies": {
 		"@sentry/core": "10.72.0",
 		"@sentry/nextjs": "10.72.0",
-		"@sentry/node": "10.72.0",
-		"@tmlmobilidade/consts": "*"
+		"@sentry/node": "10.72.0"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

@@ -36,8 +36,7 @@
 	"dependencies": {
 		"@tmlmobilidade/consts": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
-		"@tmlmobilidade/go-types-locations": "*",
-		"@tmlmobilidade/utils": "*"
+		"@tmlmobilidade/go-types-locations": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

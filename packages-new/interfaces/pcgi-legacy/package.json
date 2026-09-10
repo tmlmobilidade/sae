@@ -35,10 +35,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-clients-mongo": "*",
-		"@tmlmobilidade/go-types-vehicle-events": "*",
-		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/utils": "*",
-		"zod": "3.25.76"
+		"@tmlmobilidade/utils": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",
