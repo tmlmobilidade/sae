@@ -18,6 +18,8 @@
 		"start": "node dist/index.js"
 	},
 	"dependencies": {
+		"@tmlmobilidade/go-core-pckg-types": "*",
+		"@tmlmobilidade/go-core-pckg-utils": "*",
 		"@tmlmobilidade/go-extractions-infrastructure-stops": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-types-extractions": "*",

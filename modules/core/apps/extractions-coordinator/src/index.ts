@@ -28,7 +28,7 @@ await (async function init() {
 	//
 	// Setup the API services
 
-	fastify.get('/plans', getPlansHandler);
+	fastify.get('/extractions', getExtractionsHandler);
 
 	//
 	// Start the API service
