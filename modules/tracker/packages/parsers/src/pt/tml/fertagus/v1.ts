@@ -10,10 +10,6 @@ import { findTripId } from './find-trip-id.js';
 export async function parseRawVehicleEventPtTmlFertagusV1(doc: RawVehicleEventPtTmlFertagusV1): Promise<null | SimplifiedVehicleEvent> {
 	//
 
-	//
-	// Return null if the document is invalid.
-	if (doc.payload.latitude == null || doc.payload.longitude == null || !doc.payload.train_id) return null;
-
 	// Find the trip ID for the event.
 	const tripId = await findTripId(doc.payload);
 	if (!tripId) return null;
