@@ -2,6 +2,7 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
+import { type HubV1ApiVehiclePosition } from '@tmlmobilidade/go-types-hub';
 import { Logger } from '@tmlmobilidade/logger';
 
 /**
@@ -9,14 +10,14 @@ import { Logger } from '@tmlmobilidade/logger';
  * @param request The request object.
  * @param reply The reply object.
  */
-export async function getVehiclePositionsJson(request: FastifyRequest, reply: FastifyReply<string>) {
+export async function getVehiclePositionsJson(request: FastifyRequest, reply: FastifyReply<HubV1ApiVehiclePosition[]>) {
 	//
 
-	const cachedData = await cacheDb.get('hub:v1:realtime:vehicles:positions:json');
+	const cachedData = await cacheDb.getNew<HubV1ApiVehiclePosition[]>('hub:v1:realtime:vehicles:positions:json');
 
 	reply.header('access-control-allow-origin', '*');
 
-	if (!cachedData) {
+	if (!cachedData.data) {
 		Logger.error({ message: '[hub/v1/realtime:getVehiclePositionsJson()] No cached data found for vehicles positions' });
 		return sendErrorApiResponse(reply, {
 			error: 'No cached data found for vehicles positions',
@@ -25,5 +26,8 @@ export async function getVehiclePositionsJson(request: FastifyRequest, reply: Fa
 		});
 	};
 
-	return sendSuccessApiResponse(reply, JSON.parse(cachedData), { max_age: '3s' });
+	return sendSuccessApiResponse(reply, cachedData.data, {
+		generated_at: cachedData.timestamp,
+		max_age: '3s',
+	});
 }

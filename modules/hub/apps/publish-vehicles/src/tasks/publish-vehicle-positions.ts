@@ -252,7 +252,7 @@ export async function publishVehiclesPositions() {
 
 	const saveTimer = new Timer();
 
-	await cacheDb.set('hub:v1:realtime:vehicles:positions:json', JSON.stringify(hubVehiclePositionsJson), 600);
+	await cacheDb.setNew('hub:v1:realtime:vehicles:positions:json', hubVehiclePositionsJson, 600);
 	Logger.success(`Finished publishing latest vehicles positions (${saveTimer.get()})`);
 
 	await cacheDb.set('hub:v1:realtime:vehicles:positions:gtfs', JSON.stringify(validatedGtfsRtFeedMessage), 600);

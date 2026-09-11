@@ -35,6 +35,8 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-clients-redis": "*",
+		"@tmlmobilidade/go-types-shared": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/utils": "*"
 	},
 	"devDependencies": {
