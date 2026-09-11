@@ -31,7 +31,7 @@ export function VehiclesDetailView() {
 	//
 	// B. Fetch data
 
-	const { data: activePatternData } = useSWR(vehiclesDetailContext.data.vehicle?.shape_id && API_ROUTES.hub.NETWORK_PATTERNS(vehiclesDetailContext.data.vehicle.shape_id), {
+	const { data: activePatternData } = useSWR(vehiclesDetailContext.data.vehicle?.pattern_id && API_ROUTES.hub.NETWORK_PATTERNS(vehiclesDetailContext.data.vehicle.pattern_id), {
 		fetcher: async (url: string) => await fetchApiData<HubV1ApiPattern[]>({ credentials: 'omit', url }),
 		refreshInterval: 5_000, // 5 seconds
 	});
@@ -48,7 +48,7 @@ export function VehiclesDetailView() {
 
 	const differenceInSeconds = useMemo(() => {
 		if (!vehiclesDetailContext.data.vehicle?.created_at) return;
-		const nowUnixMilliseconds = Dates.now('Europe/Lisbon').unix_milliseconds;
+		const nowUnixMilliseconds = Dates.now('local').unix_milliseconds;
 		const differenceInMilliseconds = nowUnixMilliseconds - vehiclesDetailContext.data.vehicle?.created_at;
 		const differenceInSeconds = differenceInMilliseconds / 1000;
 		return Math.round(differenceInSeconds);
