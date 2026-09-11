@@ -2,6 +2,9 @@
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { type ExtractionWorkerResult, type InfrastructureStopsV1ExtractionProperties, InfrastructureStopsV1ExtractionPropertiesSchema } from '@tmlmobilidade/go-types-extractions';
+import { BatchWriter } from '@tmlmobilidade/go-utils-exec';
+import fs from 'node:fs';
+import path from 'node:path';
 
 /**
  * Exports a batch of stops to a CSV file.
@@ -15,6 +18,22 @@ export async function extractInfrastructureStopsV1(properties: InfrastructureSto
 	// Validate the received properties
 
 	const validatedProperties = InfrastructureStopsV1ExtractionPropertiesSchema.parse(properties);
+
+	//
+	// Setup a temporary directory and a batch writer
+
+	const temporaryDirectory = fs.mkdtempDisposableSync('infrastructure-stops-v1-');
+
+	// const writer = new BatchWriter({
+	// 	batch_size: 100_000,
+	// 	insertFn: async (data) => {
+	// 		const dirPath = path.join(temporaryDirectory.path, 'stops.csv');
+	// 		const fileAlreadyExists = fs.existsSync(dirPath);
+	// 		const csvData = csvStringify(data, { header: !fileAlreadyExists });
+	// 		fs.appendFileSync(dirPath, csvData, { encoding: 'utf-8', flush: true });
+	// 	},
+	// 	title: 'calendar_dates',
+	// });
 
 	//
 	// Get the stops from the database
