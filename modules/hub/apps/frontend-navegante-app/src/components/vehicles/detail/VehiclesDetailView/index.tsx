@@ -49,12 +49,14 @@ export function VehiclesDetailView() {
 	}, [linesContext.data.lines, vehiclesDetailContext.data.vehicle?.route_short_name]);
 
 	useEffect(() => {
-		const interval = setInterval(() => {
+		const updateDifferenceInSeconds = () => {
 			const nowUnixMilliseconds = Dates.now('local').unix_milliseconds;
 			const differenceInMilliseconds = nowUnixMilliseconds - vehiclesDetailContext.data.vehicle?.created_at;
 			const differenceInSeconds = differenceInMilliseconds / 1000;
 			setDifferenceInSeconds(Math.round(differenceInSeconds));
-		}, 1000);
+		};
+		updateDifferenceInSeconds();
+		const interval = setInterval(updateDifferenceInSeconds, 1000);
 		return () => clearInterval(interval);
 	}, [vehiclesDetailContext.data.vehicle?.created_at]);
 
@@ -74,7 +76,7 @@ export function VehiclesDetailView() {
 
 				<CopyBadge value={vehiclesDetailContext.data.vehicle?.vehicle_id} />
 
-				<p className={styles.lastSeenLabel}>{t('default:vehicles.VehiclesDetailView.seen_seconds_ago', '', { count: differenceInSeconds })}</p>
+				{differenceInSeconds && <p className={styles.lastSeenLabel}>{t('default:vehicles.VehiclesDetailView.seen_seconds_ago', '', { count: differenceInSeconds })}</p>}
 
 			</div>
 		</Section>
