@@ -72,27 +72,6 @@ const MODULE_CONFIGS: Record<string, Record<Environment, ModuleConfigGroup>> = {
 		},
 	},
 
-	eta: {
-		dev: {
-			api_port: 52099,
-			api_url: 'http://localhost:52099',
-			cors_origin: true,
-			frontend_port: 51099,
-			frontend_url: 'http://localhost:51099/eta',
-		},
-		prd: {
-			api_url: 'https://go.tmlmobilidade.pt/eta/api',
-			cors_origin: DEFAULT_PRD_CONFIG.cors_origin,
-			frontend_url: 'https://go.tmlmobilidade.pt/eta',
-			...DEFAULT_PRD_CONFIG,
-		},
-		stg: {
-			api_url: `https://${process.env.ENVIRONMENT || process.env.NEXT_PUBLIC_ENVIRONMENT}.go-stg.tmlmobilidade.pt/eta/api`,
-			frontend_url: `https://${process.env.ENVIRONMENT || process.env.NEXT_PUBLIC_ENVIRONMENT}.go-stg.tmlmobilidade.pt/eta`,
-			...DEFAULT_STG_CONFIG,
-		},
-	},
-
 	exporter: {
 		dev: {
 			api_port: 52007,
@@ -151,28 +130,6 @@ const MODULE_CONFIGS: Record<string, Record<Environment, ModuleConfigGroup>> = {
 			api_url: `https://${process.env.ENVIRONMENT || process.env.NEXT_PUBLIC_ENVIRONMENT}.go-stg.tmlmobilidade.pt/infrastructure/api`,
 			frontend_url: `https://${process.env.ENVIRONMENT || process.env.NEXT_PUBLIC_ENVIRONMENT}.go-stg.tmlmobilidade.pt/infrastructure`,
 			...DEFAULT_STG_CONFIG,
-		},
-	},
-
-	locations: {
-		dev: {
-			api_port: 52005,
-			api_url: 'http://localhost:52005',
-			cors_origin: true,
-			frontend_port: 51005,
-			frontend_url: 'http://localhost:51005/locations',
-		},
-		prd: {
-			api_url: 'https://go.tmlmobilidade.pt/locations/api',
-			frontend_url: 'https://go.tmlmobilidade.pt/locations',
-			...DEFAULT_PRD_CONFIG,
-			cors_origin: true,
-		},
-		stg: {
-			api_url: `https://${process.env.ENVIRONMENT || process.env.NEXT_PUBLIC_ENVIRONMENT}.go-stg.tmlmobilidade.pt/locations/api`,
-			frontend_url: `https://${process.env.ENVIRONMENT || process.env.NEXT_PUBLIC_ENVIRONMENT}.go-stg.tmlmobilidade.pt/locations`,
-			...DEFAULT_STG_CONFIG,
-			cors_origin: true,
 		},
 	},
 
@@ -256,8 +213,6 @@ const MODULE_CONFIGS: Record<string, Record<Environment, ModuleConfigGroup>> = {
 		},
 	},
 } as const satisfies Record<string, Record<Environment, ModuleConfigGroup>>;
-
-/* * */
 
 /**
  * Retrieves the value of a specific property from the module configuration for a given module and environment.
