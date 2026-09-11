@@ -2,6 +2,7 @@ import { exportAgencyFile } from '@/exports/agency.js';
 import { exportCalendarFiles } from '@/exports/calendars.js';
 import { exportDayTypesFile } from '@/exports/day_types.js';
 import { exportRoutesFile } from '@/exports/routes.js';
+import { exportShapesFiles } from '@/exports/shapes.js';
 import { exportStopTimesFile } from '@/exports/stop-times.js';
 import { exportStopsFile } from '@/exports/stops.js';
 import { exportTripsFile } from '@/exports/trips.js';
@@ -133,9 +134,10 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 	const datesMap = buildDatesMap(exportConfig.date_range, agencyHolidays, agencyYearPeriods);
 
 	await exportCalendarFiles(sqlGtfs, exportConfig, datesMap);
-	await exportTripsFile(sqlGtfs, exportConfig);
+	const routeIds = await exportRoutesFile(sqlGtfs, exportConfig);
+	await exportTripsFile(sqlGtfs, exportConfig, routeIds);
 	await exportStopTimesFile(sqlGtfs, exportConfig);
-	await exportRoutesFile(sqlGtfs, exportConfig);
+	await exportShapesFiles(sqlGtfs, exportConfig);
 	await exportStopsFile(sqlGtfs, exportConfig);
 	await exportAgencyFile(planData, exportConfig);
 	// await exportFeedInfoFile(exportConfig); // feed_info.txt is intentionally excluded because HiTouch does not support it.

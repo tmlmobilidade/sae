@@ -1,6 +1,7 @@
 /* * */
 
 import { type ExportToHitouchConfig, type RoutesToCanvasExt } from '@/types.js';
+import { getPosterRouteId } from '@/utils/get-poster-route-id.js';
 import { GtfsRoutesSchema } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtRoutes } from '@tmlmobilidade/go-types-gtfs-strict';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
@@ -11,54 +12,39 @@ import Papa from 'papaparse';
 
 /* * */
 
-export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exportConfig: ExportToHitouchConfig) {
+export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exportConfig: ExportToHitouchConfig): Promise<Map<string, string>> {
 	//
 	// Export routes.txt
 
 	const routesCsv = new CsvWriter('routes.txt', `${exportConfig.workdir}/routes.txt`, { batch_size: 100000 });
 
 	//
-	// Get all routes and group them by line_id
+	// Keep one route per base ID, preferring the main (_0) route's metadata.
+	// Sorting gives a stable fallback when a family has no _0 route.
 
-	const routesByLineId: Record<string, GtfsStrictV29ExtRoutes[]> = {};
+	const mainRoutes = new Map<string, GtfsStrictV29ExtRoutes>();
+	const routeIds = new Map<string, string>();
 
-	sqlTables.routes.all().forEach((route) => {
-		if (!routesByLineId[route.line_id]) routesByLineId[route.line_id] = [];
-		routesByLineId[route.line_id].push(route);
-	});
-
-	for (const routesGroup of Object.values(routesByLineId)) {
-		// If this line only has one route, export it as is
-		if (routesGroup.length === 1) {
-			const data = GtfsRoutesSchema.parse({
-				agency_id: routesGroup[0].agency_id,
-				route_color: routesGroup[0].route_color,
-				route_desc: routesGroup[0].route_desc ?? '',
-				route_id: routesGroup[0].route_id,
-				route_long_name: routesGroup[0].route_long_name,
-				route_short_name: routesGroup[0].route_short_name,
-				route_text_color: routesGroup[0].route_text_color,
-				route_type: routesGroup[0].route_type,
-			});
-			await routesCsv.write(data);
-			continue;
+	for (const route of sqlTables.routes.all('ORDER BY route_id ASC')) {
+		const routeId = getPosterRouteId(route.route_id);
+		routeIds.set(route.route_id, routeId);
+		if (!mainRoutes.has(routeId) || route.route_id === `${routeId}_0`) {
+			mainRoutes.set(routeId, route);
 		}
-		// If this line has multiple routes, sort them by route_id
-		// and preserve their original route_short_name.
-		routesGroup.sort((a, b) => (a.route_id < b.route_id ? -1 : 1));
-		for (let i = 0; i < routesGroup.length; i++) {
-			const data = GtfsRoutesSchema.parse({
-				agency_id: routesGroup[i].agency_id,
-				route_color: routesGroup[i].route_color,
-				route_desc: routesGroup[i].route_desc ?? '',
-				route_id: routesGroup[i].route_id,
-				route_long_name: routesGroup[i].route_long_name,
-				route_short_name: routesGroup[i].route_short_name,
-				route_text_color: routesGroup[i].route_text_color,
-				route_type: routesGroup[i].route_type,
-			});
-			await routesCsv.write(data);
-		}
+	}
+
+	for (const [routeId, route] of mainRoutes) {
+		const data = GtfsRoutesSchema.parse({
+			agency_id: route.agency_id,
+			route_color: route.route_color,
+			route_desc: route.route_desc ?? '',
+			route_id: routeId,
+			route_long_name: route.route_long_name,
+			route_short_name: route.route_short_name,
+			route_text_color: route.route_text_color,
+			route_type: route.route_type,
+		});
+		await routesCsv.write(data);
 	}
 
 	await routesCsv.flush();
@@ -91,22 +77,32 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 		${canvasJoin}
 		${canvasFilter}
 		ORDER BY trips.route_id ASC, trips.direction_id ASC `,
-	).all(...canvasFilterParameters).map((row: { direction_id: number, route_id: string }): RoutesToCanvasExt => ({
-		canvas_profile: '08.01.RouteTimeTable.001',
-		direction_id: row.direction_id,
-		route_id: row.route_id,
-	}));
+	).all(...canvasFilterParameters).map((row: { direction_id: number, route_id: string }): RoutesToCanvasExt => {
+		const routeId = routeIds.get(row.route_id);
+		if (!routeId) throw new Error(`Cannot export canvas target: route ${row.route_id} was not exported.`);
+		return {
+			canvas_profile: '08.01.RouteTimeTable.001',
+			direction_id: row.direction_id,
+			route_id: routeId,
+		};
+	});
+	const uniqueRoutesToCanvasExtRows = Array.from(new Map(
+		routesToCanvasExtRows.map(row => [JSON.stringify([row.route_id, row.direction_id]), row]),
+	).values());
 
 	//
 	// If no route directions were found, skip the export
 
-	if (!routesToCanvasExtRows.length) return Logger.info({ message: 'Skipped routesToCanvasExt.txt file because no route directions were found.' });
+	if (!routesToCanvasExtRows.length) {
+		Logger.info({ message: 'Skipped routesToCanvasExt.txt file because no route directions were found.' });
+		return routeIds;
+	}
 
 	//
 	// Output the routes to canvas ext data
 
 	const routesToCanvasExtCsvData = '\uFEFF' + Papa.unparse(
-		{ data: routesToCanvasExtRows, fields: routesToCanvasExtFields },
+		{ data: uniqueRoutesToCanvasExtRows, fields: routesToCanvasExtFields },
 		{ newline: '\r\n' },
 	);
 
@@ -117,5 +113,5 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 
 	Logger.info({ message: 'Exported routesToCanvasExt.txt file.' });
 
-	//
+	return routeIds;
 }

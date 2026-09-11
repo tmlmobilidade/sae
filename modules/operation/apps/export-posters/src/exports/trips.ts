@@ -8,16 +8,19 @@ import { CsvWriter } from '@tmlmobilidade/writers';
 
 /* * */
 
-export async function exportTripsFile(sqlTables: GtfsStrictV29ExtSQLTables, exportConfig: ExportToHitouchConfig) {
+export async function exportTripsFile(sqlTables: GtfsStrictV29ExtSQLTables, exportConfig: ExportToHitouchConfig, routeIds: ReadonlyMap<string, string>) {
 	//
 	// Export trips.txt
 
 	const tripsCsv = new CsvWriter('trips.txt', `${exportConfig.workdir}/trips.txt`, { batch_size: 10000 });
 
-	for await (const tripData of sqlTables.trips.stream('ORDER BY trip_id ASC')) {
+	for (const tripData of sqlTables.trips.all('ORDER BY trip_id ASC')) {
+		const routeId = routeIds.get(tripData.route_id);
+		if (!routeId) throw new Error(`Cannot export trip ${tripData.trip_id}: route ${tripData.route_id} was not exported.`);
+
 		const data = GtfsTripsSchema.parse({
 			direction_id: tripData.direction_id,
-			route_id: tripData.route_id,
+			route_id: routeId,
 			service_id: tripData.service_id,
 			shape_id: tripData.shape_id,
 			trip_headsign: tripData.trip_headsign,
