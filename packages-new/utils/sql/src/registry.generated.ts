@@ -33,6 +33,7 @@ export const SQL_FILES = {
 		'publish-realtime/select-eta-gtfs.sql',
 		'publish-realtime/select-eta.sql',
 		'publish-realtime/select-vehicle-positions.sql',
+		'publish-vehicles/select-vehicle-positions.sql',
 	],
 	operation: [
 		'alerts/list-lines.sql',
