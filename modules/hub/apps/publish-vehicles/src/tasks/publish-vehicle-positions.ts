@@ -18,7 +18,7 @@ import { getVehiclesMetadataMap } from '../utils/get-vehicles-metadata-map.js';
 /* * */
 
 type QueryResult =
-  Pick<Ride, 'direction_id' | 'plan_id' | 'route_id' | 'route_short_name' | 'shape_id'>
+  Pick<Ride, 'direction_id' | 'operational_date' | 'plan_id' | 'route_id' | 'route_short_name' | 'shape_id'>
   & Pick<SimplifiedVehicleEvent,
   | '_id'
   | 'agency_id'
@@ -28,7 +28,6 @@ type QueryResult =
   | 'geohash'
   | 'latitude'
   | 'longitude'
-  | 'operational_date'
   | 'received_at'
   | 'speed'
   | 'stop_id'
@@ -62,29 +61,7 @@ export async function publishVehiclesPositions() {
 	const queryTimer = new Timer();
 
 	const latestVehiclePositions = await labDb.queryFromString<QueryResult>(`
-		SELECT
-			sve._id,
-			sve.agency_id,
-			sve.vehicle_id,
-			sve.created_at,
-			sve.current_status,
-			sve.geohash,
-			sve.latitude,
-			sve.longitude,
-			sve.operational_date,
-			sve.received_at,
-			sve.speed,
-			sve.stop_id,
-			sve.trip_id,
-			sve.bearing,
-			r._id AS ride_id,
-			r.direction_id,
-			r.plan_id,
-			r.route_short_name,
-			r.route_id,
-			r.shape_id
-		FROM
-		(
+		WITH latest_events AS (
 			SELECT
 				_id,
 				agency_id,
@@ -94,7 +71,6 @@ export async function publishVehiclesPositions() {
 				geohash,
 				latitude,
 				longitude,
-				operational_date,
 				received_at,
 				speed,
 				stop_id,
@@ -102,12 +78,64 @@ export async function publishVehiclesPositions() {
 				bearing
 			FROM operation.simplified_vehicle_events
 			WHERE created_at > toUnixTimestamp64Milli(now64(3) - INTERVAL 90 SECOND)
+			ORDER BY created_at DESC
 			LIMIT 2 BY agency_id, vehicle_id
-		) AS sve
-		ANY INNER JOIN operation.rides AS r
+		),
+
+		associated_rides AS (
+			SELECT
+				_id,
+				agency_id,
+				direction_id,
+				operational_date,
+				plan_id,
+				route_id,
+				route_short_name,
+				shape_id,
+				start_time_scheduled,
+				trip_id
+			FROM operation.rides
+			WHERE
+				start_time_scheduled BETWEEN
+					toUnixTimestamp64Milli(now64(3) - INTERVAL 10 HOUR)
+					AND toUnixTimestamp64Milli(now64(3) + INTERVAL 10 HOUR)
+				AND trip_id IN (
+					SELECT trip_id
+					FROM latest_events
+					WHERE trip_id != ''
+				)
+			ORDER BY updated_at DESC
+			LIMIT 1 BY _id
+		)
+
+		SELECT
+			sve._id,
+			sve.created_at,
+			sve.agency_id,
+			sve.latitude,
+			sve.longitude,
+			sve.received_at,
+			sve.trip_id,
+			sve.vehicle_id,
+			sve.stop_id,
+			sve.bearing,
+			sve.current_status,
+			sve.geohash,
+			sve.speed,
+			r.direction_id,
+			r.route_id,
+			r.plan_id,
+			r.operational_date,
+			r.route_short_name,
+			r.shape_id,
+			r._id AS ride_id
+		FROM latest_events AS sve
+		INNER JOIN associated_rides AS r
 			ON r.agency_id = sve.agency_id
-			AND r.operational_date = sve.operational_date
 			AND r.trip_id = sve.trip_id
+			AND r.start_time_scheduled BETWEEN
+				sve.created_at - 36000000
+				AND sve.created_at + 36000000;
 	`);
 
 	const vehiclePositionsMap = new Map<string, QueryResult[]>();
@@ -137,9 +165,8 @@ export async function publishVehiclesPositions() {
 		let previousPosition: null | QueryResult;
 
 		if (vehiclePositions.length === 2) {
-			const sortedPositionsDesc = vehiclePositions.sort((a, b) => a.created_at - b.created_at);
-			currentPosition = sortedPositionsDesc[0];
-			previousPosition = sortedPositionsDesc[1];
+			currentPosition = vehiclePositions[0];
+			previousPosition = vehiclePositions[1];
 		} else {
 			currentPosition = vehiclePositions[0];
 			previousPosition = null;
