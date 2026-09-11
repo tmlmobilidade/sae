@@ -24,7 +24,7 @@ import { parseRawVehicleEventPtTmpUnirUt6V1 } from './pt/tmp/unir/ut6/v1.js';
 
 /* * */
 
-export const PARSER_MAP: Record<RawVehicleEvent['version'], (vehicleEvent: RawVehicleEvent) => null | SimplifiedVehicleEvent> = {
+export const PARSER_MAP: Record<RawVehicleEvent['version'], (vehicleEvent: RawVehicleEvent) => Promise<null | SimplifiedVehicleEvent>> = {
 	'es-crtm-aisa-v1': parseRawVehicleEventEsCrtmAisaV1,
 	'es-crtm-la-veloz-v1': parseRawVehicleEventEsCrtmLaVelozV1,
 	'pt-tml-ccfl-v1': parseRawVehicleEventPtTmlCcflV1,

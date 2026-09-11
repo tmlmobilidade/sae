@@ -48,7 +48,7 @@ export async function handleStreamRawVehicleEventIntoSimplifiedVehicleEvent({ ba
 		const parser = PARSER_MAP[databaseOperation.fullDocument.version];
 		if (!parser) throw new Error(`No parser found for version ${databaseOperation.fullDocument.version}. Skipping document with _id "${databaseOperation.fullDocument._id}"...`);
 
-		const newSimplifiedVehicleEventDocument = parser(databaseOperation.fullDocument);
+		const newSimplifiedVehicleEventDocument = await parser(databaseOperation.fullDocument);
 		if (!newSimplifiedVehicleEventDocument) throw new Error(`Failed to parse document with _id "${databaseOperation.fullDocument._id}". Skipping...`);
 
 		//
