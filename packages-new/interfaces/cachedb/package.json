@@ -37,7 +37,7 @@
 		"@tmlmobilidade/go-clients-redis": "*",
 		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
-		"@tmlmobilidade/utils": "*"
+		"@tmlmobilidade/go-utils-exec": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

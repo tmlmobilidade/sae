@@ -5,7 +5,7 @@ import { Dates } from '@tmlmobilidade/go-utils-dates';
 
 /* * */
 
-export function parseRawVehicleEventPtTmlTcbV1(doc: RawVehicleEventPtTmlTcbV1): null | SimplifiedVehicleEvent {
+export async function parseRawVehicleEventPtTmlTcbV1(doc: RawVehicleEventPtTmlTcbV1): Promise<null | SimplifiedVehicleEvent> {
 	return SimplifiedVehicleEventSchema.parse({
 		_id: doc._id,
 		agency_id: doc.agency_id,

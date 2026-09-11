@@ -1,18 +1,20 @@
 /* * */
 
-import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { type RawVehicleEventPtTmlFertagusV1, type SimplifiedVehicleEvent, SimplifiedVehicleEventSchema } from '@tmlmobilidade/go-types-vehicle-events';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
+
+import { findTripId } from './find-trip-id.js';
 
 /* * */
 
-export function parseRawVehicleEventPtTmlFertagusV1(doc: RawVehicleEventPtTmlFertagusV1, tripId?: string): null | SimplifiedVehicleEvent {
-	if (
-		doc.payload.latitude == null
-		|| doc.payload.longitude == null
-		|| !doc.payload.train_id
-		|| !tripId
-	) return null;
+export async function parseRawVehicleEventPtTmlFertagusV1(doc: RawVehicleEventPtTmlFertagusV1): Promise<null | SimplifiedVehicleEvent> {
+	//
 
+	// Find the trip ID for the event.
+	const tripId = await findTripId(doc.payload);
+	if (!tripId) return null;
+
+	// Parse the event.
 	return SimplifiedVehicleEventSchema.parse({
 		_id: doc._id,
 		agency_id: doc.agency_id,

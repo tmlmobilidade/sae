@@ -116,7 +116,7 @@ export async function syncVehicleEvents(timeChunk: PerformInTimeChunksItem, conf
 				const parser = PARSER_MAP[sourceDbDocument.version];
 				if (!parser) throw new Error(`No parser found for version ${sourceDbDocument.version}. Skipping document with _id "${sourceDbDocument._id}"...`);
 				// Parse the vehicle event into a simplified vehicle event
-				const newSimplifiedVehicleEventDocument = parser(sourceDbDocument);
+				const newSimplifiedVehicleEventDocument = await parser(sourceDbDocument);
 				if (!newSimplifiedVehicleEventDocument) throw new Error(`Failed to parse document with _id "${sourceDbDocument._id}". Skipping...`);
 				// Write the simplified vehicle event document to the destination database
 				await writer.write(newSimplifiedVehicleEventDocument, { flushCallback: setRidesAsWaiting });

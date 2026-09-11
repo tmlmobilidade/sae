@@ -3,7 +3,7 @@
 import { externalClients } from '@tmlmobilidade/external';
 import { TrainsResponse } from '@tmlmobilidade/external/dist/clients/fertagus/types.js';
 import { rawDb } from '@tmlmobilidade/go-interfaces-rawdb';
-import { type HashableRawVehicleEvent, type RawVehicleEventPtTmlFertagusV1 } from '@tmlmobilidade/go-types-vehicle-events';
+import { type HashableRawVehicleEvent, type RawVehicleEventPtTmlFertagusV1, RawVehicleEventPtTmlFertagusV1PayloadSchema } from '@tmlmobilidade/go-types-vehicle-events';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { runOnInterval } from '@tmlmobilidade/go-utils-exec';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
@@ -52,6 +52,8 @@ const main = async () => {
 	for (const event of response ?? []) {
 		try {
 			//
+			const result = RawVehicleEventPtTmlFertagusV1PayloadSchema.safeParse(event);
+			if (!result.success) continue;
 
 			const hashableRawEvent: HashableRawVehicleEvent<RawVehicleEventPtTmlFertagusV1> = {
 				agency_id: '7NTB1',

@@ -7,12 +7,12 @@ import { z } from 'zod';
 
 export const RawVehicleEventPtTmlFertagusV1PayloadSchema = z.object({
 	date: z.string(),
-	latitude: z.number().nullable().default(null),
-	longitude: z.number().nullable().default(null),
-	startsAt: z.string().nullable().default(null),
-	stop_id_end: z.string().nullable().default(null),
-	stop_id_start: z.string().nullable().default(null),
-	train_id: z.number().nullable().default(null),
+	latitude: z.number(),
+	longitude: z.number(),
+	startsAt: z.string(),
+	stop_id_end: z.string(),
+	stop_id_start: z.string(),
+	train_id: z.number(),
 });
 
 export type RawVehicleEventPtTmlFertagusV1Payload = z.infer<typeof RawVehicleEventPtTmlFertagusV1PayloadSchema>;

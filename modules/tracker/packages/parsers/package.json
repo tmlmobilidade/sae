@@ -15,10 +15,12 @@
 		"watch": "tsc-watch --onSuccess 'resolve-tspaths'"
 	},
 	"dependencies": {
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-clients-mongo": "*",
+		"@tmlmobilidade/go-interfaces-labdb": "*",
 		"@tmlmobilidade/go-types-vehicle-events": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
+		"@tmlmobilidade/go-utils-sql": "*",
 		"@tmlmobilidade/logger": "*"
 	},
 	"devDependencies": {

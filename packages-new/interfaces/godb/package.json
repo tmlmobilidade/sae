@@ -44,9 +44,9 @@
 		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
+		"@tmlmobilidade/go-utils-exec": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/strings": "*",
-		"@tmlmobilidade/utils": "*",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

@@ -2,8 +2,7 @@
  * Creates a recursive async proxy for a singleton class that delays method and property access until the instance is initialized.
  * Supports nested property chains like `await proxy.core.agencies.findById(id)` by recursively wrapping each property access
  * in a new proxy, resolving the full path only when the chain is invoked (called as a function or awaited).
- *
- * @param cls - A class with a static `getInstance` method that returns a promise resolving to the class instance.
+ * @param cls A class with a static `getInstance` method that returns a promise resolving to the class instance.
  * @returns A proxy object that intercepts property access and method calls, ensuring the instance is initialized before resolving.
  */
 export function asyncSingletonProxy<T extends object>(cls: { getInstance: () => Promise<T> }): T {

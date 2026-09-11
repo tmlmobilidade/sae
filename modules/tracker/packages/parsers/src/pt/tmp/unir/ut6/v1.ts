@@ -1,11 +1,11 @@
 /* * */
 
-import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { type RawVehicleEventPtTmpUnirUt6V1, type SimplifiedVehicleEvent, SimplifiedVehicleEventSchema } from '@tmlmobilidade/go-types-vehicle-events';
+import { Dates } from '@tmlmobilidade/go-utils-dates';
 
 /* * */
 
-export function parseRawVehicleEventPtTmpUnirUt6V1(doc: RawVehicleEventPtTmpUnirUt6V1): null | SimplifiedVehicleEvent {
+export async function parseRawVehicleEventPtTmpUnirUt6V1(doc: RawVehicleEventPtTmpUnirUt6V1): Promise<null | SimplifiedVehicleEvent> {
 	return SimplifiedVehicleEventSchema.parse({
 		_id: doc._id,
 		agency_id: doc.agency_id,
