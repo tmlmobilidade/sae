@@ -43,7 +43,7 @@ export async function setRidesAsWaiting(data: SimplifiedVehicleEvent[]) {
 						$gte: standardWindowInterval.start,
 						$lte: standardWindowInterval.end,
 					},
-					trip_id: item.trip_id,
+					trip_id: item.trip_id ?? undefined,
 				};
 			});
 
