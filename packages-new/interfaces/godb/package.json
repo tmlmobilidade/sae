@@ -37,7 +37,7 @@
 		"@tmlmobilidade/consts": "*",
 		"@tmlmobilidade/go-clients-mongo": "*",
 		"@tmlmobilidade/go-types-core": "*",
-		"@tmlmobilidade/go-types-downloads": "*",
+		"@tmlmobilidade/go-types-extractions": "*",
 		"@tmlmobilidade/go-types-infrastructure": "*",
 		"@tmlmobilidade/go-types-locations": "*",
 		"@tmlmobilidade/go-types-offer": "*",

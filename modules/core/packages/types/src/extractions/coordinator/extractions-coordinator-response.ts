@@ -5,7 +5,7 @@ import { z } from 'zod';
 /* * */
 
 export const ExtractionsCoordinatorResponseSchema = z.object({
-	extraction_id: z.string(),
+	extraction_id: z.string().nullable(),
 });
 
 /**
