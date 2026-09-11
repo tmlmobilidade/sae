@@ -3,6 +3,7 @@
 import { DAY_TYPES } from '@/day-types.js';
 import { getFormattedDates, getPeriodName, getWeekdayNames } from '@/get-names.js';
 import { type CalendarAssignmentsExt, type CalendarExt, type DayTypeConfig, type ExportToHitouchConfig, type GtfsDate } from '@/types.js';
+import { yieldToEventLoop } from '@/utils/yield-to-event-loop.js';
 import { type GtfsCalendar, type GtfsCalendarDates } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtStopTimes, type GtfsStrictV29ExtTrips } from '@tmlmobilidade/go-types-gtfs-strict';
 import { type OperationalDate, OperationalDateIntSchema, validateOperationalDate } from '@tmlmobilidade/go-types-shared';
@@ -180,6 +181,8 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 
 			//
 		}
+
+		await yieldToEventLoop();
 
 		//
 	}
@@ -385,6 +388,7 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 	const calendarAssignmentsExtRows: CalendarAssignmentsExt[] = [];
 	const calendarExtFields: (keyof CalendarExt)[] = ['service_id', 'index', 'comment'];
 	const calendarExtRows: CalendarExt[] = [];
+	let exportedDates = 0;
 
 	//
 	// Loop through each service_id and output the calendar files
@@ -457,6 +461,8 @@ export async function exportCalendarFiles(sqlTables: GtfsStrictV29ExtSQLTables, 
 				service_id: serviceIdData._id,
 			};
 			await calendarDatesCsv.write(data);
+			exportedDates++;
+			await yieldToEventLoop(exportedDates);
 		}
 	}
 

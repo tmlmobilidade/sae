@@ -1,6 +1,7 @@
 /* * */
 
 import { type ExportToHitouchConfig } from '@/types.js';
+import { yieldToEventLoop } from '@/utils/yield-to-event-loop.js';
 import { GtfsTripsSchema } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
@@ -13,6 +14,7 @@ export async function exportTripsFile(sqlTables: GtfsStrictV29ExtSQLTables, expo
 	// Export trips.txt
 
 	const tripsCsv = new CsvWriter('trips.txt', `${exportConfig.workdir}/trips.txt`, { batch_size: 10000 });
+	let exportedRows = 0;
 
 	for (const tripData of sqlTables.trips.all('ORDER BY trip_id ASC')) {
 		const routeId = routeIds.get(tripData.route_id);
@@ -28,6 +30,8 @@ export async function exportTripsFile(sqlTables: GtfsStrictV29ExtSQLTables, expo
 			wheelchair_accessible: tripData.wheelchair_accessible ?? '0',
 		});
 		await tripsCsv.write(data);
+		exportedRows++;
+		await yieldToEventLoop(exportedRows);
 	}
 
 	await tripsCsv.flush();

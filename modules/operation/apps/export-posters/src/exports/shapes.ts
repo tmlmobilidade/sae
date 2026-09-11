@@ -2,6 +2,7 @@
 
 import { type ExportToHitouchConfig } from '@/types.js';
 import { buildVariantNotes } from '@/utils/build-variant-notes.js';
+import { yieldToEventLoop } from '@/utils/yield-to-event-loop.js';
 import { GtfsShapesSchema } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
@@ -25,6 +26,7 @@ export async function exportShapesFiles(sqlTables: GtfsStrictV29ExtSQLTables, ex
 	const shapesExtCsv = new CsvWriter('shapesExt.txt', `${exportConfig.workdir}/shapesExt.txt`, { batch_size: 10000, include_bom: true, new_line_character: '\r\n' });
 	const extensionFields = ['shape_id', 'sequence_number', 'priority_number', 'note', 'direction_description', 'via_text'] as const;
 	const exportedShapeIds = new Set<string>();
+	let exportedRows = 0;
 
 	//
 	// Export shapes
@@ -36,6 +38,8 @@ export async function exportShapesFiles(sqlTables: GtfsStrictV29ExtSQLTables, ex
 		const sequence = shapeSequences.get(shapeData.shape_id);
 		if (!sequence) continue;
 		await shapesCsv.write(GtfsShapesSchema.parse(shapeData));
+		exportedRows++;
+		await yieldToEventLoop(exportedRows);
 		if (exportedShapeIds.has(shapeData.shape_id)) continue;
 
 		//

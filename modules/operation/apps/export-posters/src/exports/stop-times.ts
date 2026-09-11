@@ -2,6 +2,7 @@
 
 import { type ExportToHitouchConfig } from '@/types.js';
 import { buildVariantNotes } from '@/utils/build-variant-notes.js';
+import { yieldToEventLoop } from '@/utils/yield-to-event-loop.js';
 import { GtfsStopTimesSchema } from '@tmlmobilidade/go-types-gtfs';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
@@ -20,6 +21,7 @@ export async function exportStopTimesFile(sqlTables: GtfsStrictV29ExtSQLTables, 
 	let previousTripId: string | undefined;
 	let routeStopSequence = 0;
 	let annotationsCount = 0;
+	let exportedRows = 0;
 
 	for (const stopTimeData of sqlTables.stop_times.all('ORDER BY trip_id ASC, stop_sequence ASC')) {
 		if (stopTimeData.trip_id !== previousTripId) {
@@ -39,6 +41,8 @@ export async function exportStopTimesFile(sqlTables: GtfsStrictV29ExtSQLTables, 
 			trip_id: stopTimeData.trip_id,
 		});
 		await stopTimesCsv.write(data);
+		exportedRows++;
+		await yieldToEventLoop(exportedRows);
 
 		const annotation = variantNotes.get(stopTimeData.trip_id);
 		if (!annotation) continue;

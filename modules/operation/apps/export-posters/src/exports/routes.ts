@@ -52,16 +52,19 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 	Logger.info({ message: 'Exported routes.txt file.' });
 
 	//
+
+	//
+	// If the content mode is stops, skip the export.
+
+	if (exportConfig.content_mode === 'stops') {
+		Logger.info({ message: 'Skipped routesToCanvasExt.txt file for stop export.' });
+		return routeIds;
+	}
+
+	//
 	// Export route canvas profiles by route and direction.
 
 	const routesToCanvasExtFields: (keyof RoutesToCanvasExt)[] = ['route_id', 'canvas_profile', 'direction_id'];
-	const stopPlaceholders = exportConfig.stop_ids.map(() => '?').join(', ');
-	const isStopExport = exportConfig.content_mode === 'stops' && exportConfig.stop_ids.length > 0;
-	const canvasJoin = isStopExport ? 'INNER JOIN stop_times ON stop_times.trip_id = trips.trip_id' : '';
-	const canvasFilter = isStopExport
-		? `WHERE stop_times.stop_id ${exportConfig.stops_mode === 'exclude' ? 'NOT IN' : 'IN'} (${stopPlaceholders})`
-		: '';
-	const canvasFilterParameters = isStopExport ? exportConfig.stop_ids : [];
 
 	// Line filtering is temporarily disabled while PDF exports use stop filters only.
 	// const lineIdMatchExpression = exportConfig.line_codes
@@ -74,10 +77,8 @@ export async function exportRoutesFile(sqlTables: GtfsStrictV29ExtSQLTables, exp
 	const routesToCanvasExtRows = sqlTables._db.databaseInstance.prepare(
 		` SELECT DISTINCT trips.route_id, trips.direction_id
 		FROM trips
-		${canvasJoin}
-		${canvasFilter}
 		ORDER BY trips.route_id ASC, trips.direction_id ASC `,
-	).all(...canvasFilterParameters).map((row: { direction_id: number, route_id: string }): RoutesToCanvasExt => {
+	).all().map((row: { direction_id: number, route_id: string }): RoutesToCanvasExt => {
 		const routeId = routeIds.get(row.route_id);
 		if (!routeId) throw new Error(`Cannot export canvas target: route ${row.route_id} was not exported.`);
 		return {

@@ -9,6 +9,7 @@ import { exportTripsFile } from '@/exports/trips.js';
 import { type ExportToHitouchConfig } from '@/types.js';
 import { buildDatesMap } from '@/utils/build-dates-map.js';
 import { createHitouchZip } from '@/utils/create-hitouch-zip.js';
+import { yieldToEventLoop } from '@/utils/yield-to-event-loop.js';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { storageProvider } from '@tmlmobilidade/go-providers-storage';
 import { type PlanPostersContentMode, type PlanPostersFilterMode } from '@tmlmobilidade/go-types-downloads';
@@ -134,11 +135,17 @@ export async function importPlanToSqlite(planData: Plan, options?: { canvas_prof
 	const datesMap = buildDatesMap(exportConfig.date_range, agencyHolidays, agencyYearPeriods);
 
 	await exportCalendarFiles(sqlGtfs, exportConfig, datesMap);
+	await yieldToEventLoop();
 	const routeIds = await exportRoutesFile(sqlGtfs, exportConfig);
+	await yieldToEventLoop();
 	await exportTripsFile(sqlGtfs, exportConfig, routeIds);
+	await yieldToEventLoop();
 	await exportStopTimesFile(sqlGtfs, exportConfig);
+	await yieldToEventLoop();
 	await exportShapesFiles(sqlGtfs, exportConfig);
+	await yieldToEventLoop();
 	await exportStopsFile(sqlGtfs, exportConfig);
+	await yieldToEventLoop();
 	await exportAgencyFile(planData, exportConfig);
 	// await exportFeedInfoFile(exportConfig); // feed_info.txt is intentionally excluded because HiTouch does not support it.
 	await exportDayTypesFile(exportConfig);

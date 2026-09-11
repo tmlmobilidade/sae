@@ -1,6 +1,7 @@
 /* * */
 
 import { type ExportToHitouchConfig, type StopsToCanvasExt } from '@/types.js';
+import { yieldToEventLoop } from '@/utils/yield-to-event-loop.js';
 import { type GtfsStrictV29ExtStops } from '@tmlmobilidade/go-types-gtfs-strict';
 import { type GtfsStrictV29ExtSQLTables } from '@tmlmobilidade/import-gtfs';
 import { Logger } from '@tmlmobilidade/logger';
@@ -15,6 +16,7 @@ export async function exportStopsFile(sqlTables: GtfsStrictV29ExtSQLTables, expo
 	// Export stops.txt
 
 	const stopsCsv = new CsvWriter('stops.txt', `${exportConfig.workdir}/stops.txt`, { batch_size: 100000 });
+	let exportedRows = 0;
 
 	for (const stopData of sqlTables.stops.all('WHERE stop_id IN (SELECT DISTINCT stop_id FROM stop_times)')) {
 		const data: GtfsStrictV29ExtStops = {
@@ -32,6 +34,8 @@ export async function exportStopsFile(sqlTables: GtfsStrictV29ExtSQLTables, expo
 			wheelchair_boarding: stopData.wheelchair_boarding,
 		};
 		await stopsCsv.write(data);
+		exportedRows++;
+		await yieldToEventLoop(exportedRows);
 	}
 
 	await stopsCsv.flush();

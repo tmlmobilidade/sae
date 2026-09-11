@@ -1,24 +1,19 @@
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { UnixMillisecondsSchema } from '@tmlmobilidade/go-types-shared';
-import { Logger } from '@tmlmobilidade/logger';
 
 /* * */
 
-const STALE_AFTER_MS = 5 * 60_000;
-
-export async function recoverAbandonedPosterExports(): Promise<void> {
-	const collection = await goDb.core.exports.getCollection();
-	const result = await collection.updateMany({
-		processing_status: 'processing',
-		type: 'plan_posters',
-		updated_at: { $lt: UnixMillisecondsSchema.parse(Date.now() - STALE_AFTER_MS) },
-	}, { $set: { processing_status: 'error', updated_at: UnixMillisecondsSchema.parse(Date.now()) } });
-	if (result.modifiedCount) {
-		Logger.info({ message: `Marked ${result.modifiedCount} abandoned poster exports as error (no heartbeat for 5 minutes).` });
-	}
-}
-
+/**
+ * Claim a poster export.
+ * @param id - The ID of the poster export to claim.
+ * @returns A function to update the status of the poster export.
+ */
 export async function claimPosterExport(id: string) {
+	//
+
+	//
+	// Get the collection.
+
 	const collection = await goDb.core.exports.getCollection();
 	let updatedAt = UnixMillisecondsSchema.parse(Date.now());
 	const claimed = await collection.findOneAndUpdate({ _id: id, processing_status: 'waiting', type: 'plan_posters' }, {
@@ -26,10 +21,12 @@ export async function claimPosterExport(id: string) {
 	}, { returnDocument: 'after' });
 	if (!claimed) return null;
 
-	// Serialize heartbeats and completion, using the timestamp as a revision so a
-	// recovered or externally changed job cannot be overwritten by an old worker.
 	let pending = Promise.resolve();
 	let finished = false;
+
+	//
+	// Update the status of the poster export.
+
 	const update = (status: 'complete' | 'error' | 'processing', downloadUrl?: string) => {
 		const operation = pending.then(async () => {
 			if (finished) return;
@@ -41,16 +38,26 @@ export async function claimPosterExport(id: string) {
 					updated_at: nextUpdatedAt,
 				},
 			});
+			//
+			// If the poster export is no longer owned by this worker, throw an error.
+
 			if (!result.matchedCount) {
 				finished = true;
 				throw new Error(`Poster export ${id} is no longer owned by this worker.`);
 			}
+
+			//
+			// Update the timestamp and status of the poster export.
+
 			updatedAt = nextUpdatedAt;
 			finished = status !== 'processing';
 		});
 		pending = operation.catch(() => {});
 		return operation;
 	};
+
+	//
+	// Return the update functions.
 
 	return {
 		complete: (downloadUrl: string) => update('complete', downloadUrl),

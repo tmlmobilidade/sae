@@ -6,7 +6,7 @@ import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
 import { exportPlanPostersFile } from './export-plan-posters.js';
-import { claimPosterExport, recoverAbandonedPosterExports } from './processing.js';
+import { claimPosterExport } from './processing.js';
 
 /* * */
 
@@ -14,7 +14,6 @@ async function processWaitingExports(): Promise<void> {
 	Logger.init();
 
 	const globalTimer = new Timer();
-	await recoverAbandonedPosterExports();
 	const waitingExports = await goDb.core.exports.findMany({
 		processing_status: 'waiting',
 		type: 'plan_posters',
