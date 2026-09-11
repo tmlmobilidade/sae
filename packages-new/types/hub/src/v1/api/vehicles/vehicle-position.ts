@@ -12,6 +12,7 @@ export const HubV1ApiVehiclePositionSchema = z.object({
 	_id: z.string(),
 	agency_id: z.string(),
 	bearing: DegreesSchema.nullable().default(null),
+	bearing_method: z.enum(['measured', 'inferred', 'kept_prev_value', 'skipped']).default('skipped'),
 	calendar_date: CalendarDateSchema,
 	created_at: UnixMillisecondsSchema,
 	current_status: GtfsRtVehicleStopStatusSchema.nullable().default(null),

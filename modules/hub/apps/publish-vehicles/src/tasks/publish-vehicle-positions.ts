@@ -9,7 +9,7 @@ import { type Ride } from '@tmlmobilidade/go-types-operation';
 import { DegreesSchema, OperationalDateIntSchema, toCalendarDate, UnixSecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { type SimplifiedVehicleEvent } from '@tmlmobilidade/go-types-vehicle-events';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
-import { calculateBearingInDegrees } from '@tmlmobilidade/go-utils-geo';
+import { calculateBearingInDegrees, getDistanceBetweenPositions } from '@tmlmobilidade/go-utils-geo';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
 
@@ -177,10 +177,23 @@ export async function publishVehiclesPositions() {
 		// and if the current position does not already have a bearing value.
 
 		let bearingValue: null | number = currentPosition.bearing;
+		let bearingMethod: HubV1ApiVehiclePosition['bearing_method'] = currentPosition.bearing ? 'measured' : 'skipped';
 
-		if (previousPosition && !bearingValue) {
-			const result = calculateBearingInDegrees([currentPosition.longitude, currentPosition.latitude], [previousPosition.longitude, previousPosition.latitude]);
-			if (result) bearingValue = result;
+		if (!currentPosition.bearing && previousPosition) {
+			const distanceBetweenPositions = getDistanceBetweenPositions([currentPosition.longitude, currentPosition.latitude], [previousPosition.longitude, previousPosition.latitude]);
+			if (distanceBetweenPositions < 50 && previousPosition.bearing) {
+				// Accept the previous position's bearing value if the distance
+				// between the positions is less than 50 meters.
+				bearingValue = previousPosition.bearing;
+				bearingMethod = 'kept_prev_value';
+			} else {
+				// Otherwise, calculate the bearing between the positions.
+				const result = calculateBearingInDegrees([currentPosition.longitude, currentPosition.latitude], [previousPosition.longitude, previousPosition.latitude]);
+				if (result) {
+					bearingValue = result;
+					bearingMethod = 'inferred';
+				}
+			}
 		}
 
 		//
@@ -196,6 +209,7 @@ export async function publishVehiclesPositions() {
 			_id: currentPosition._id,
 			agency_id: currentPosition.agency_id,
 			bearing: bearingValue ? DegreesSchema.parse(bearingValue) : undefined,
+			bearing_method: bearingMethod,
 			calendar_date: toCalendarDate(currentPosition.operational_date),
 			created_at: currentPosition.created_at,
 			current_status: currentPosition.current_status,

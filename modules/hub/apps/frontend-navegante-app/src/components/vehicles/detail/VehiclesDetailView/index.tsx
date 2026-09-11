@@ -78,6 +78,8 @@ export function VehiclesDetailView() {
 
 				{differenceInSeconds && <p className={styles.lastSeenLabel}>{t('default:vehicles.VehiclesDetailView.seen_seconds_ago', '', { count: differenceInSeconds })}</p>}
 
+				<CopyBadge value={`${vehiclesDetailContext.data.vehicle?.bearing || '-'} | ${vehiclesDetailContext.data.vehicle?.bearing_method || '-'}`} />
+
 			</div>
 		</Section>
 	);
