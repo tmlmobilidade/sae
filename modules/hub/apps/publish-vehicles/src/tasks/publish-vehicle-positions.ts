@@ -1,6 +1,6 @@
 /* * */
 
-import { getQualifiedRouteId, getQualifiedShapeId, getQualifiedTripId } from '@tmlmobilidade/go-hub-pckg-utils';
+import { getQualifiedRouteId, getQualifiedShapeId, getQualifiedTripId, getQualifiedVehicleId } from '@tmlmobilidade/go-hub-pckg-utils';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type GtfsRtFeedEntity, GtfsRtFeedEntitySchema, type GtfsRtFeedMessage, GtfsRtFeedMessageSchema } from '@tmlmobilidade/go-types-gtfs-rt';
@@ -184,7 +184,7 @@ export async function publishVehiclesPositions() {
 			speed: currentPosition.speed,
 			stop_id: currentPosition.stop_id,
 			trip_id: getQualifiedTripId(currentPosition.plan_id, currentPosition.agency_id, currentPosition.trip_id),
-			vehicle_id: vehicleMetadata?._id ?? currentPosition.vehicle_id,
+			vehicle_id: getQualifiedVehicleId(currentPosition.agency_id, currentPosition.vehicle_id),
 		});
 
 		if (!hubV1Json.success) throw new Error(`Failed to parse Hub V1 API Vehicle Position: ${hubV1Json.error.message}`);
@@ -215,7 +215,7 @@ export async function publishVehiclesPositions() {
 					trip_id: getQualifiedTripId(currentPosition.plan_id, currentPosition.agency_id, currentPosition.trip_id),
 				},
 				vehicle: {
-					id: currentPosition.vehicle_id,
+					id: getQualifiedVehicleId(currentPosition.agency_id, currentPosition.vehicle_id),
 					label: vehicleMetadata?.license_plate,
 					license_plate: vehicleMetadata?.license_plate,
 					wheelchair_accessible: vehicleMetadata?.wheelchair ? 'WHEELCHAIR_ACCESSIBLE' : 'UNKNOWN',
