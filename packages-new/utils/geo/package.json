@@ -37,6 +37,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-types-geo": "*",
+		"@tmlmobilidade/go-types-shared": "*",
 		"ngeohash": "0.6.4"
 	},
 	"devDependencies": {

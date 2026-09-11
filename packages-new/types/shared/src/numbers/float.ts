@@ -25,3 +25,5 @@ import { z } from 'zod';
 export const FloatSchema = z
 	.union([z.string(), z.number()])
 	.transform(value => Number(value));
+
+export type Float = z.infer<typeof FloatSchema>;

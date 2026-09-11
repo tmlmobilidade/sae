@@ -36,7 +36,6 @@
 	"dependencies": {
 		"@tmlmobilidade/go-types-geo": "*",
 		"@tmlmobilidade/go-types-shared": "*",
-		"luxon": "3.7.2",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

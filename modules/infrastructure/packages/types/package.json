@@ -19,7 +19,6 @@
 		"@tmlmobilidade/go-types-geo": "*",
 		"@tmlmobilidade/go-types-infrastructure": "*",
 		"@tmlmobilidade/go-types-locations": "*",
-		"@tmlmobilidade/go-types-operation": "*",
 		"@tmlmobilidade/go-types-permissions": "*",
 		"@tmlmobilidade/go-types-shared": "*",
 		"zod": "3.25.76"

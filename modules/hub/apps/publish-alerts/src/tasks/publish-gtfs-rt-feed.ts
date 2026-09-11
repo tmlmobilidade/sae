@@ -55,7 +55,7 @@ export async function publishGtfsRtFeed() {
 		header: {
 			gtfs_realtime_version: '2.0',
 			incrementality: 'FULL_DATASET',
-			timestamp: Dates.now('Europe/Lisbon').unix_milliseconds,
+			timestamp: Dates.now('Europe/Lisbon').unix_seconds,
 		},
 	};
 

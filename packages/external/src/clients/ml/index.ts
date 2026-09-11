@@ -1,6 +1,7 @@
 /* * */
 
 import { type GtfsRtFeedMessage } from '@tmlmobilidade/go-types-gtfs-rt';
+import { UnixSecondsSchema } from '@tmlmobilidade/go-types-shared';
 import { type ServiceAlertResponse } from '@tmlmobilidade/types';
 import { IncomingMessage } from 'node:http';
 import https from 'node:https';
@@ -210,7 +211,7 @@ export const MlClient = Object.freeze({
 			header: {
 				gtfs_realtime_version: '2.0',
 				incrementality: 'FULL_DATASET',
-				timestamp: now,
+				timestamp: UnixSecondsSchema.parse(now / 100),
 			},
 		};
 	},

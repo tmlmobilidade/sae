@@ -7,7 +7,7 @@
 		},
 		"rootDir": "src",
 		"strictNullChecks": true,
-		"types": ["node", "geojson"]
+		"types": ["node"]
 	},
 	"include": ["src"],
 	"exclude": ["node_modules", "dist"]

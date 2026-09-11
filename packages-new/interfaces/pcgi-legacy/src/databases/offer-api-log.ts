@@ -1,7 +1,8 @@
 /* * */
 
-import { MongoInterfaceTemplate } from '@/interface.template.js';
 import { type Db, type MongoClient } from '@tmlmobilidade/go-clients-mongo';
+
+import { MongoInterfaceTemplate } from '../interface.template.js';
 
 /* * */
 

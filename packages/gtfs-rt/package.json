@@ -35,6 +35,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-types-gtfs-rt": "*",
+		"@tmlmobilidade/go-types-shared": "*",
 		"protobufjs": "8.8.0"
 	},
 	"devDependencies": {

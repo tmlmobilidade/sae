@@ -38,8 +38,7 @@
 		"@tmlmobilidade/go-types-core": "*",
 		"@tmlmobilidade/go-types-offer": "*",
 		"@tmlmobilidade/go-types-shared": "*",
-		"luxon": "3.7.2",
-		"zod": "3.25.76"
+		"luxon": "3.7.2"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

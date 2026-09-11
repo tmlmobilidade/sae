@@ -23,10 +23,7 @@
 		"vkm:dates": "dotenv-run -f ../../environments/staging/secrets/.env -- tsx src/scripts/vkm-export-alignment/compare-circulation-dates.ts"
 	},
 	"dependencies": {
-		"@tmlmobilidade/consts": "*",
 		"@tmlmobilidade/dates": "*",
-		"@tmlmobilidade/go-utils-files": "*",
-		"@tmlmobilidade/go-clients-fastify": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-providers-locations": "*",
 		"@tmlmobilidade/go-providers-storage": "*",
@@ -40,15 +37,12 @@
 		"@tmlmobilidade/go-types-shared": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
+		"@tmlmobilidade/go-utils-files": "*",
 		"@tmlmobilidade/interfaces": "*",
 		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/strings": "*",
 		"@tmlmobilidade/types": "*",
-		"@tmlmobilidade/utils": "*",
 		"@tmlmobilidade/writers": "*",
-		"adm-zip": "0.6.0",
-		"formidable": "3.5.4",
-		"papaparse": "5.7.0"
+		"adm-zip": "0.6.0"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

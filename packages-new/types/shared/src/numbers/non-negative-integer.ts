@@ -27,3 +27,5 @@ export const NonNegativeIntegerSchema = z
 	.union([z.string(), z.number()])
 	.transform(value => Math.round(Number(value)))
 	.pipe(z.number().int().nonnegative());
+
+export type NonNegativeInteger = z.infer<typeof NonNegativeIntegerSchema>;

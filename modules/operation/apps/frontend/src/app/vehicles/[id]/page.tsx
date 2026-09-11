@@ -1,6 +1,6 @@
 /* * */
 
-import { VehicleDetails } from '@/components/vehicles2/detail/VehicleDetails';
+import { VehicleDetails } from '@/components/vehicles/detail/VehicleDetails';
 import { VehiclesDetailContextProvider } from '@/contexts/VehiclesDetail.context';
 
 /* * */

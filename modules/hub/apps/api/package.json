@@ -17,7 +17,6 @@
 		"lint:fix": "eslint ./src --fix"
 	},
 	"dependencies": {
-		"@fastify/websocket": "11.3.0",
 		"@tmlmobilidade/consts": "*",
 		"@tmlmobilidade/go-clients-fastify": "*",
 		"@tmlmobilidade/go-interfaces-cachedb": "*",
@@ -27,8 +26,7 @@
 		"@tmlmobilidade/go-types-performance": "*",
 		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/gtfs-rt": "*",
-		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/rss": "*"
+		"@tmlmobilidade/logger": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/eslint": "*",

@@ -29,3 +29,5 @@ export const IntegerSchema = z
 	.union([z.string(), z.number()])
 	.transform(value => Math.round(Number(value)))
 	.pipe(z.number().int());
+
+export type Integer = z.infer<typeof IntegerSchema>;

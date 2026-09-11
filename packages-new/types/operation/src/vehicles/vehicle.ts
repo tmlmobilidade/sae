@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { VehicleEmissionSchema } from './emission.js';
 import { VehiclePropulsionSchema } from './propulsion.js';
-import { VehicleTypologySchema } from './typology.js';
+import { VehicleTypeSchema } from './typology.js';
 
 /* * */
 
@@ -25,7 +25,7 @@ export const vehicleSchema = BaseDocumentSchema.extend({
 	available_standing: z.number().nullable().default(null),
 	emission: VehicleEmissionSchema.nullable().default(null),
 	propulsion: VehiclePropulsionSchema.nullable().default(null),
-	typology: VehicleTypologySchema.nullable().default(null),
+	typology: VehicleTypeSchema.nullable().default(null),
 
 	// Vehicle functionalities
 	bicycles: z.boolean().default(false),

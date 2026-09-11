@@ -35,11 +35,6 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-types-geo": "*",
-		"@tmlmobilidade/go-types-gtfs": "*",
-		"@tmlmobilidade/go-types-operation": "*",
-		"@tmlmobilidade/go-types-shared": "*",
-		"@types/geojson": "7946.0.16",
-		"gtfs-types": "5.1.0",
 		"zod": "3.25.76"
 	},
 	"devDependencies": {

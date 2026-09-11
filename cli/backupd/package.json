@@ -15,18 +15,13 @@
 		"start": "npm run build && node dist/index.js"
 	},
 	"dependencies": {
-		"@tmlmobilidade/consts": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
-		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-providers-emails": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/interfaces": "*",
-		"@tmlmobilidade/logger": "*",
-		"@tmlmobilidade/utils": "*",
 		"archiver": "8.0.0",
 		"mongodb": "7.6.0",
 		"nodemailer": "9.0.6",
 		"pg": "8.23.0",
-		"resolve-tspaths": "0.8.23",
 		"yaml": "2.9.0"
 	},
 	"devDependencies": {
@@ -34,6 +29,7 @@
 		"@types/archiver": "8.0.0",
 		"@types/node": "26.4.0",
 		"@types/nodemailer": "8.0.1",
+		"resolve-tspaths": "0.8.23",
 		"typescript": "6.0.3"
 	}
 }

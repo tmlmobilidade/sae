@@ -23,12 +23,9 @@
 		"@tmlmobilidade/go-interfaces-cachedb": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
 		"@tmlmobilidade/go-providers-storage": "*",
-		"@tmlmobilidade/go-infrastructure-pckg-utils": "*",
 		"@tmlmobilidade/go-types-hub": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*",
-		"@tmlmobilidade/utils": "*",
-		"adm-zip": "0.6.0",
 		"p-limit": "7.3.1"
 	},
 	"devDependencies": {

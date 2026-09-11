@@ -36,8 +36,7 @@
 	"dependencies": {
 		"@clickhouse/client": "1.23.1",
 		"@tmlmobilidade/go-clients-ssh": "*",
-		"@tmlmobilidade/logger": "*",
-		"zod": "3.25.76"
+		"@tmlmobilidade/logger": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",
