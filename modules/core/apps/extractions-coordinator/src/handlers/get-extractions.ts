@@ -2,7 +2,6 @@
 
 import { type ExtractionsCoordinatorResponse } from '@tmlmobilidade/go-core-pckg-types';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { setPlanStatus } from '@tmlmobilidade/go-operation-pckg-utils';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
 import { Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
@@ -40,73 +39,70 @@ export async function getExtractionsHandler(): Promise<ExtractionsCoordinatorRes
 		IS_BUSY = true;
 
 		//
-		// Release stuck plans before fetching new ones
+		// Release stuck extractions before fetching new ones
 
-		const plansCollection = await goDb.operation.plans.getCollection();
+		const extractionsCollection = await goDb.core.extractions.getCollection();
 
-		const updateResult = await plansCollection.updateMany(
+		const updateResult = await extractionsCollection.updateMany(
 			{
-				'apps.rides_feeder.status': 'processing',
-				'apps.rides_feeder.timestamp': { $lt: Dates.now('utc').minus({ minutes: 3 }).unix_milliseconds },
+				processing_status: 'processing',
+				updated_at: { $lt: Dates.now('utc').minus({ minutes: 3 }).unix_milliseconds },
 			},
 			{
 				$set: {
-					'apps.rides_feeder.last_hash': null,
-					'apps.rides_feeder.status': 'waiting',
-					'apps.rides_feeder.timestamp': Dates.now('utc').unix_milliseconds,
+					processing_status: 'waiting',
+					updated_at: Dates.now('utc').unix_milliseconds,
 				},
 			},
 		);
 
-		Logger.info({ message: `[plans] [${sessionId}] Released ${updateResult.modifiedCount} stuck plans. (${timer.get()})` });
+		Logger.info({ message: `[extractions] [${sessionId}] Released ${updateResult.modifiedCount} stuck extractions. (${timer.get()})` });
 
 		//
-		// Find the next Plan that is waiting to be processed.
-		// Sort the query by descending date to prioritize the most recent Plans.
+		// Find the next Extraction that is waiting to be processed.
+		// Sort the query by descending date to prioritize the most recent Extractions.
 
-		const foundWaitingPlans = await goDb.operation.plans.findMany(
+		const foundWaitingExtractions = await goDb.core.extractions.findMany(
 			{
-				'$expr': { $ne: ['$hash', '$apps.rides_feeder.last_hash'] },
-				'apps.rides_feeder.status': { $nin: ['processing', 'error'] },
-				'attachments.operation_gtfs_normalized': { $ne: null },
+				processing_status: 'waiting',
 			},
 			{
 				limit: 1,
 				projection: { _id: 1 },
-				sort: { active_from: -1 },
+				sort: { created_at: 1 },
 			},
 		);
 
 		/* === FOR TESTING === */
-		// const foundWaitingPlans = await goDb.operation.plans.findMany({ _id: 'DC0XN-44-20250303-4412_0_2|300|1955' })
+		// const foundWaitingExtractions = await goDb.core.extractions.findMany({ _id: '7NAYB' })
 		/* === FOR TESTING === */
 
-		if (!foundWaitingPlans.length) {
-			Logger.info({ message: `[plans] [${sessionId}] No plans waiting to be processed (${timer.get()})` });
+		if (!foundWaitingExtractions.length) {
+			Logger.info({ message: `[extractions] [${sessionId}] No extractions waiting to be processed (${timer.get()})` });
 			IS_BUSY = false;
-			return { plan_id: null };
+			return { extraction_id: null };
 		}
 
 		//
-		// Mark the Plan as 'processing' to ensure the next batch of Plans does not include it,
+		// Mark the Extraction as 'processing' to ensure the next batch of Extractions does not include it,
 		// and return them to the caller instance.
 
-		await setPlanStatus(foundWaitingPlans[0]._id, 'rides_feeder', 'processing');
+		await goDb.core.extractions.updateById(foundWaitingExtractions[0]._id, { processing_status: 'processing' });
 
-		Logger.info({ message: `[plans] [${sessionId}] Waiting plan found: "${foundWaitingPlans[0]._id}" (${timer.get()})` });
+		Logger.info({ message: `[extractions] [${sessionId}] Waiting extraction found: "${foundWaitingExtractions[0]._id}" (${timer.get()})` });
 
 		//
 		// Reset the busy flag to allow other requests to be processed
-		// and return the Plan ID to the caller instance.
+		// and return the Extraction ID to the caller instance.
 
 		IS_BUSY = false;
 
-		return { plan_id: foundWaitingPlans[0]._id };
+		return { extraction_id: foundWaitingExtractions[0]._id };
 
 		//
 	} catch (error) {
-		Logger.error({ error, message: `[rides] [${sessionId}] Error getting rides: ${error.message}` });
+		Logger.error({ error, message: `[extractions] [${sessionId}] Error getting extractions: ${error.message}` });
 		IS_BUSY = false;
-		return { plan_id: null };
+		return { extraction_id: null };
 	}
 }

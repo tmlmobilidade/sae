@@ -105,7 +105,7 @@ export async function getPlansHandler(): Promise<RidesCoordinatorPlansResponse> 
 
 		//
 	} catch (error) {
-		Logger.error({ error, message: `[rides] [${sessionId}] Error getting rides: ${error.message}` });
+		Logger.error({ error, message: `[plans] [${sessionId}] Error getting plans: ${error.message}` });
 		IS_BUSY = false;
 		return { plan_id: null };
 	}

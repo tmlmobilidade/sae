@@ -5,7 +5,7 @@ import { z } from 'zod';
 /* * */
 
 export const RidesCoordinatorPlansResponseSchema = z.object({
-	plan_id: z.string(),
+	plan_id: z.string().nullable(),
 });
 
 /**
