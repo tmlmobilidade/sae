@@ -1,6 +1,6 @@
 /* * */
 
-import { getQualifiedRouteId, getQualifiedShapeId, getQualifiedTripId, getQualifiedVehicleId } from '@tmlmobilidade/go-hub-pckg-utils';
+import { getQualifiedPatternId, getQualifiedRouteId, getQualifiedShapeId, getQualifiedTripId, getQualifiedVehicleId } from '@tmlmobilidade/go-hub-pckg-utils';
 import { cacheDb } from '@tmlmobilidade/go-interfaces-cachedb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type GtfsRtFeedEntity, GtfsRtFeedEntitySchema, type GtfsRtFeedMessage, GtfsRtFeedMessageSchema } from '@tmlmobilidade/go-types-gtfs-rt';
@@ -115,7 +115,7 @@ export async function publishVehiclesPositions() {
 	for (const position of latestVehiclePositions) {
 		const key = `${position.agency_id}:${position.vehicle_id}`;
 		if (!vehiclePositionsMap.has(key)) vehiclePositionsMap.set(key, []);
-		vehiclePositionsMap.get(key).push(position);
+		vehiclePositionsMap.get(key)?.push(position);
 	}
 
 	Logger.info({ message: `Got ${latestVehiclePositions.length} vehicle positions for ${vehiclePositionsMap.size} vehicles from LabDB (${queryTimer.get()})` });
@@ -142,15 +142,16 @@ export async function publishVehiclesPositions() {
 			previousPosition = sortedPositionsDesc[1];
 		} else {
 			currentPosition = vehiclePositions[0];
+			previousPosition = null;
 		}
 
 		//
 		// Calculate the bearing if two positions are available
 		// and if the current position does not already have a bearing value.
 
-		let bearingValue: number | undefined = currentPosition.bearing;
+		let bearingValue: null | number = currentPosition.bearing;
 
-		if (vehiclePositions.length === 2 && !bearingValue) {
+		if (previousPosition && !bearingValue) {
 			const result = calculateBearingInDegrees([currentPosition.longitude, currentPosition.latitude], [previousPosition.longitude, previousPosition.latitude]);
 			if (result) bearingValue = result;
 		}
@@ -174,8 +175,10 @@ export async function publishVehiclesPositions() {
 			direction_id: currentPosition.direction_id,
 			geohash: currentPosition.geohash,
 			latitude: currentPosition.latitude,
+			license_plate: vehicleMetadata?.license_plate,
 			longitude: currentPosition.longitude,
 			operational_date: currentPosition.operational_date,
+			pattern_id: getQualifiedPatternId(currentPosition.agency_id, currentPosition.shape_id),
 			received_at: currentPosition.received_at,
 			ride_id: currentPosition.ride_id,
 			route_id: getQualifiedRouteId(currentPosition.agency_id, currentPosition.route_id),
@@ -188,6 +191,8 @@ export async function publishVehiclesPositions() {
 		});
 
 		if (!hubV1Json.success) throw new Error(`Failed to parse Hub V1 API Vehicle Position: ${hubV1Json.error.message}`);
+
+		if (currentPosition.vehicle_id === '2031') console.log(hubV1Json.data);
 
 		hubVehiclePositionsJson.push(hubV1Json.data);
 
