@@ -35,7 +35,7 @@
 	},
 	"dependencies": {
 		"@tmlmobilidade/go-clients-mongo": "*",
-		"@tmlmobilidade/utils": "*"
+		"@tmlmobilidade/go-utils-exec": "*"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",

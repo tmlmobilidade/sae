@@ -2,7 +2,7 @@
 
 import { type RedisClientType, RedisDatabaseClient } from '@tmlmobilidade/go-clients-redis';
 import { Dates } from '@tmlmobilidade/go-utils-dates';
-import { asyncSingletonProxy } from '@tmlmobilidade/utils';
+import { asyncSingletonProxy } from '@tmlmobilidade/go-utils-exec';
 
 import { type CacheDbKey } from './keys.js';
 import { CachedData } from './types.js';

@@ -1,7 +1,7 @@
 /* * */
 
 import { ClickHouseClient, ClickHouseDatabaseClient, queryEachStatementFromFile, queryFromFile, queryFromString } from '@tmlmobilidade/go-clients-clickhouse';
-import { asyncSingletonProxy } from '@tmlmobilidade/utils';
+import { asyncSingletonProxy } from '@tmlmobilidade/go-utils-exec';
 
 import { OperationDatabase } from './databases/operation.js';
 import { PerformanceDatabase } from './databases/performance.js';

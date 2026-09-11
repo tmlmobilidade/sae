@@ -1,7 +1,7 @@
 /* * */
 
 import { type MongoClient, MongoDatabaseClient } from '@tmlmobilidade/go-clients-mongo';
-import { asyncSingletonProxy } from '@tmlmobilidade/utils';
+import { asyncSingletonProxy } from '@tmlmobilidade/go-utils-exec';
 
 import { ApexDatabase } from './databases/apex.js';
 import { CoreManagementCopyDatabase } from './databases/core-management.js';
