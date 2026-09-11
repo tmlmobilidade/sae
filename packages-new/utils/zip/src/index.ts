@@ -1,3 +1,3 @@
-export * from './batch/index.js';
-export * from './unzip/index.js';
-export * from './lifecycle/index.js';
+export * from './get-zip-file-hash.js';
+export * from './unzip-file.js';
+export * from './zip-directory.js';

@@ -36,12 +36,15 @@
 		"watch": "tsc-watch --onSuccess 'resolve-tspaths'"
 	},
 	"dependencies": {
-		"unzipper": "0.12.5"
+		"@tmlmobilidade/go-utils-fs": "*",
+		"yauzl": "3.4.0",
+		"yazl": "3.3.1"
 	},
 	"devDependencies": {
 		"@tmlmobilidade/go-utils-tsconfig": "*",
 		"@types/node": "26.4.0",
-		"@types/unzipper": "0.10.11",
+		"@types/yauzl": "3.4.0",
+		"@types/yazl": "3.3.1",
 		"resolve-tspaths": "0.8.23",
 		"tsc-watch": "7.2.1",
 		"typescript": "6.0.3"

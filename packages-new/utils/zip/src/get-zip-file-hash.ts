@@ -1,11 +1,10 @@
 /* * */
 
+import { getDirectoryFiles } from '@tmlmobilidade/go-utils-fs';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import unzipper from 'unzipper';
-
-import { getDirectoryFiles } from './get-directory-files.js';
 
 /**
  * Calculates a deterministic SHA-256 hash of the contents of a `.zip` file.

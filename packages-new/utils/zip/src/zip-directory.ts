@@ -1,9 +1,8 @@
 /* * */
 
+import { setDirectoryPermissions } from '@tmlmobilidade/go-utils-fs';
 import fs from 'node:fs';
 import unzipper from 'unzipper';
-
-import { setDirectoryPermissions } from './set-directory-permissions.js';
 
 /**
  * Unzips a zip file into a directory in stream mode, avoiding memory issues.
@@ -15,7 +14,7 @@ import { setDirectoryPermissions } from './set-directory-permissions.js';
  * Defaults to `0o666` (read and write for owner, group and others).
  * @returns A promise that resolves when the file is unzipped.
  */
-export async function unzipFile(zipFilePath: string, outputDir: string, dirPermissionsMode = 0o666) {
+export async function zipDirectory(zipFilePath: string, outputDir: string, dirPermissionsMode = 0o666) {
 	await fs
 		.createReadStream(zipFilePath)
 		.pipe(unzipper.Extract({ path: outputDir }))
