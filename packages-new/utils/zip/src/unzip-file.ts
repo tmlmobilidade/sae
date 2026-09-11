@@ -7,9 +7,7 @@ import { pipeline } from 'node:stream/promises';
 import yauzl from 'yauzl';
 
 /**
- * Unzips a zip file into a directory in stream mode, avoiding memory issues.
- * This also calls the `setDirectoryPermissions` function to override
- * the permissions of the unzipped files, if any were preserved in the zip file.
+ * Unzips a zip file into a directory using Yauzl.
  * @param zipFilePath The path to the zip file to unzip.
  * @param outputDir The path to the directory to unzip the file to.
  * @param dirPermissionsMode The mode to set the permissions of the unzipped directory to.

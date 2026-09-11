@@ -1,23 +1,62 @@
 /* * */
 
-import { setDirectoryPermissions } from '@tmlmobilidade/go-utils-fs';
 import fs from 'node:fs';
-import unzipper from 'unzipper';
+import path from 'node:path';
+import { ZipFile } from 'yazl';
 
 /**
- * Unzips a zip file into a directory in stream mode, avoiding memory issues.
- * This also calls the `setDirectoryPermissions` function to override
- * the permissions of the unzipped files, if any were preserved in the zip file.
- * @param zipFilePath The path to the zip file to unzip.
- * @param outputDir The path to the directory to unzip the file to.
- * @param dirPermissionsMode The mode to set the permissions of the unzipped directory to.
- * Defaults to `0o666` (read and write for owner, group and others).
- * @returns A promise that resolves when the file is unzipped.
+ * Zips a directory into a zip file using Yazl.
+ * @param inputDir The path to the directory to zip.
+ * @param outputZipFilePath The path to the zip file to create.
+ * @returns A promise that resolves when the directory is zipped.
  */
-export async function zipDirectory(zipFilePath: string, outputDir: string, dirPermissionsMode = 0o666) {
-	await fs
-		.createReadStream(zipFilePath)
-		.pipe(unzipper.Extract({ path: outputDir }))
-		.promise();
-	setDirectoryPermissions(outputDir, dirPermissionsMode);
+export async function zipDirectory(inputDir: string, outputZipFilePath: string) {
+	//
+
+	//
+	// Check if the input directory exists
+
+	if (!fs.existsSync(inputDir)) throw new Error(`Input directory ${inputDir} does not exist`);
+
+	//
+	// Setup a new instance of Yazl and include all files in the input directory
+
+	const outputZip = new ZipFile();
+
+	await new Promise<void>((resolve, reject) => {
+		try {
+			//
+
+			//
+			// Read the working directory contents
+
+			const inputDirContents = fs.readdirSync(inputDir, { withFileTypes: true });
+
+			//
+			// Add each file to the zip
+
+			for (const inputDirFile of inputDirContents) {
+				if (!inputDirFile.isFile()) continue;
+				const filePath = path.join(inputDir, inputDirFile.name);
+				outputZip.addFile(filePath, inputDirFile.name, { compress: true });
+			}
+
+			//
+			// Setup a write stream to the final zip file
+
+			outputZip.outputStream
+				.pipe(fs.createWriteStream(outputZipFilePath))
+				.on('close', resolve);
+
+			//
+			// Finalize the zip creation, which triggers
+			// the piping and writing process.
+
+			outputZip.end();
+
+			//
+		} catch (error) {
+			reject(error);
+		}
+	});
 }

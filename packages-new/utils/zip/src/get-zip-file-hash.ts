@@ -4,7 +4,8 @@ import { getDirectoryFiles } from '@tmlmobilidade/go-utils-fs';
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import unzipper from 'unzipper';
+
+import { unzipFile } from './unzip-file.js';
 
 /**
  * Calculates a deterministic SHA-256 hash of the contents of a `.zip` file.
@@ -29,15 +30,12 @@ export async function getZipFileHash(filePath: string): Promise<string> {
 		//
 		// Extract the ZIP file into the temporary directory.
 
-		await fs
-			.createReadStream(filePath)
-			.pipe(unzipper.Extract({ path: temporaryDirectory.path }))
-			.promise();
+		await unzipFile(filePath, temporaryDirectory.path);
 
 		//
 		// Find all extracted files.
 
-		const sortedExtractedFilePaths = await getDirectoryFiles(temporaryDirectory.path);
+		const sortedExtractedFilePaths = getDirectoryFiles(temporaryDirectory.path);
 
 		//
 		// Initialize the list of files to hash.
