@@ -157,7 +157,8 @@ export class SQLiteTableInstance<T> {
 	 */
 	distinct<K extends keyof T>(col: K): T[K][] {
 		const sql = `SELECT DISTINCT ${String(col)} FROM ${this.tableName}`;
-		return this.databaseInstance.prepare(sql).all().map(row => row[String(col)]);
+		const rows = this.databaseInstance.prepare(sql).all() as T[K][];
+		return rows.map(row => row[String(col)]);
 	}
 
 	/**
