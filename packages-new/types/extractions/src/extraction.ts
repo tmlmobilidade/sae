@@ -6,8 +6,8 @@ import { InfrastructureStopsV1ExtractionSchema } from './infrastructure/stops/v1
 
 /* * */
 
-export const ExtractionsRegistySchema = z.discriminatedUnion('version', [
+export const ExtractionSchema = z.discriminatedUnion('version', [
 	InfrastructureStopsV1ExtractionSchema,
 ]);
 
-export type ExtractionsRegisty = z.infer<typeof ExtractionsRegistySchema>;
+export type Extraction = z.infer<typeof ExtractionSchema>;
