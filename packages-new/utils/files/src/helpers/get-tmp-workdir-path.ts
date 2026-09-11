@@ -11,6 +11,8 @@ import { isBrowser } from './is-browser.js';
  * Gets the temporary working directory path for a given ID.
  * @param id The ID to get the temporary working directory path for.
  * @returns The temporary working directory path.
+ * @deprecated Use `fs.mkdtempDisposableSync('prefix-to-my-function-')` instead to get
+ * a safe, native temporary directory path.
  */
 export function getTmpWorkdirPath(id?: string, createIfNotExists?: boolean): string {
 	//
