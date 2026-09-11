@@ -2,8 +2,10 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type ControllerRidesListFilters, ControllerRidesListFiltersSchema, type ControllerRidesListItem, controllerRidesListQuery } from '@tmlmobilidade/go-operation-pckg-types';
+import { type ControllerRidesListFilters, ControllerRidesListFiltersSchema, type ControllerRidesListItem } from '@tmlmobilidade/go-operation-pckg-types';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
+import { readFile } from 'node:fs/promises';
 
 /**
  * Get rides by query.
@@ -198,7 +200,8 @@ export async function listRidesHandler(request: FastifyRequest<{ Body: Controlle
 		? `\n\tAND ${conditions.join('\n\tAND ')}`
 		: '';
 
-	const sql = controllerRidesListQuery.replace('--DYNAMIC FILTERS HERE--', where);
+	const queryTemplate = await readFile(sqlPath('operation', 'rides/list-rides.sql'), 'utf-8');
+	const sql = queryTemplate.replace('--DYNAMIC FILTERS HERE--', where);
 
 	const queryResult = await labDb.queryFromString<ControllerRidesListItem>(sql, params);
 

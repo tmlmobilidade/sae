@@ -2,7 +2,8 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type ControllerRidesDetailRideItem, ControllerRidesDetailRideItemSchema, controllerRidesDetailRideQuery } from '@tmlmobilidade/go-operation-pckg-types';
+import { type ControllerRidesDetailRideItem, ControllerRidesDetailRideItemSchema } from '@tmlmobilidade/go-operation-pckg-types';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 
 /**
  * Get a ride by its ID.
@@ -26,13 +27,13 @@ export async function getRideHandler(request: FastifyRequest<{ Params: { id: str
 	// Build query parameters
 
 	const params: Record<string, number | string> = {
-		1: request.params.id,
+		ride_id: request.params.id,
 	};
 
 	//
 	// Execute the query
 
-	const queryResult = await labDb.queryFromString<ControllerRidesDetailRideItem>(controllerRidesDetailRideQuery, params);
+	const queryResult = await labDb.queryFromFile<ControllerRidesDetailRideItem>(sqlPath('operation', 'rides/get-ride.sql'), params);
 
 	//
 	// Parse and return the result

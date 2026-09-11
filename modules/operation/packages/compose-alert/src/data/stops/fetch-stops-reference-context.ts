@@ -2,9 +2,9 @@
 
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type AlertsComposeRequest } from '@tmlmobilidade/go-operation-pckg-types';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 
 import { type FetchStopsReferenceContextItem } from './fetch-stops-reference-context-item.js';
-import { fetchStopsReferenceContextQuery } from './fetch-stops-reference-context-query.js';
 
 /**
  * Extracts the stops public names from the request.
@@ -18,16 +18,16 @@ export async function fetchStopsReferenceContext(request: AlertsComposeRequest):
 	// Build the query parameters from the request data
 
 	const params: Record<string, number | string | string[]> = {
-		1: request.agency_id,
-		2: request.active_period_start_date,
-		3: request.active_period_end_date,
-		4: request.references.map(reference => reference.parent_id),
+		active_period_end_date: request.active_period_end_date,
+		active_period_start_date: request.active_period_start_date,
+		agency_id: request.agency_id,
+		stop_ids: request.references.map(reference => reference.parent_id),
 	};
 
 	//
 	// Execute the query and return the stops public names
 
-	const queryResult = await labDb.queryFromString<FetchStopsReferenceContextItem>(fetchStopsReferenceContextQuery, params);
+	const queryResult = await labDb.queryFromFile<FetchStopsReferenceContextItem>(sqlPath('operation', 'compose-alert/fetch-stops-reference-context.sql'), params);
 
 	if (!queryResult?.length) throw new Error(`No stops found for the request.`);
 

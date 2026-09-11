@@ -125,7 +125,7 @@ class LabDbClass {
 	 *   end_date: '2024-12-31',
 	 * });
 	*/
-	public async queryFromFile<T>(filePath: string, params?: Record<string, number | string>): ReturnType<typeof queryFromFile<T>> {
+	public async queryFromFile<T>(filePath: string, params?: Record<string, number | string | string[]>): ReturnType<typeof queryFromFile<T>> {
 		return await queryFromFile<T>(this.clickhouseClient, filePath, params);
 	}
 

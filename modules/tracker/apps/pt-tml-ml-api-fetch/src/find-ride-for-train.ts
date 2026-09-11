@@ -3,9 +3,9 @@
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
 import { type Dates } from '@tmlmobilidade/go-utils-dates';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 
 import { enrichTripPathWithStopCodes } from './enrich-trip-path-with-stop-codes.js';
-import { findHashedShapeQuery, findHashedTripQuery, findRidesForTrainQuery } from './find-rides-for-train-query.js';
 import { type AggregationResult, ML_AGENCY_ID } from './types.js';
 
 /* * */
@@ -38,20 +38,20 @@ export async function findRideForTrain({ destinationId, now }: FindRideForTrainP
 
 	if (!destinationStop) return null;
 
-	const rides = await labDb.operation.rides.queryFromString(findRidesForTrainQuery, {
-		1: ML_AGENCY_ID,
-		2: destinationStop.name,
-		3: now.minus({ hours: 1 }).unix_milliseconds,
-		4: now.plus({ hours: 1 }).unix_milliseconds,
+	const rides = await labDb.operation.rides.queryFromFile(sqlPath('tracker', 'pt-tml-ml-api-fetch/find-rides-for-train.sql'), {
+		agency_id: ML_AGENCY_ID,
+		headsign: destinationStop.name,
+		start_time_scheduled_max: now.plus({ hours: 1 }).unix_milliseconds,
+		start_time_scheduled_min: now.minus({ hours: 1 }).unix_milliseconds,
 	});
 
 	const ride = rides[Math.floor(rides.length / 2)];
 	if (!ride) return null;
 
-	const path = await labDb.operation.hashedTrips.queryFromString(findHashedTripQuery, { 1: ride.hashed_trip_id });
+	const path = await labDb.operation.hashedTrips.queryFromFile(sqlPath('tracker', 'pt-tml-ml-api-fetch/find-hashed-trip.sql'), { hashed_trip_id: ride.hashed_trip_id });
 	if (!path.length) return null;
 
-	const shape = await labDb.operation.hashedShapes.queryFromString(findHashedShapeQuery, { 1: ride.hashed_shape_id });
+	const shape = await labDb.operation.hashedShapes.queryFromFile(sqlPath('tracker', 'pt-tml-ml-api-fetch/find-hashed-shape.sql'), { hashed_shape_id: ride.hashed_shape_id });
 	if (!shape.length) return null;
 
 	return {

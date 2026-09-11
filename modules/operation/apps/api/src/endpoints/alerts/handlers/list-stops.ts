@@ -2,8 +2,9 @@
 
 import { type FastifyReply, type FastifyRequest, sendErrorApiResponse, sendSuccessApiResponse } from '@tmlmobilidade/go-clients-fastify';
 import { labDb } from '@tmlmobilidade/go-interfaces-labdb';
-import { type AlertsStopsFilters, AlertsStopsFiltersSchema, type AlertsStopsItem, AlertsStopsItemSchema, alertsStopsQuery, AlertsStopsQueryRow } from '@tmlmobilidade/go-operation-pckg-types';
+import { type AlertsStopsFilters, AlertsStopsFiltersSchema, type AlertsStopsItem, AlertsStopsItemSchema, AlertsStopsQueryRow } from '@tmlmobilidade/go-operation-pckg-types';
 import { PermissionCatalog } from '@tmlmobilidade/go-types-permissions';
+import { sqlPath } from '@tmlmobilidade/go-utils-sql';
 
 /**
  * Get stops by query.
@@ -40,12 +41,12 @@ export async function listStops(request: FastifyRequest<{ Body: AlertsStopsFilte
 	// Build query parameters and execute the query
 
 	const params: Record<string, number | string> = {
-		1: validatedFilters.agency_id,
-		2: validatedFilters.start_time_scheduled_start,
-		3: validatedFilters.start_time_scheduled_end,
+		agency_id: validatedFilters.agency_id,
+		start_time_scheduled_end: validatedFilters.start_time_scheduled_end,
+		start_time_scheduled_start: validatedFilters.start_time_scheduled_start,
 	};
 
-	const queryResult = await labDb.queryFromString<AlertsStopsQueryRow>(alertsStopsQuery, params);
+	const queryResult = await labDb.queryFromFile<AlertsStopsQueryRow>(sqlPath('operation', 'alerts/list-stops.sql'), params);
 
 	//
 	// Parse and return the result
