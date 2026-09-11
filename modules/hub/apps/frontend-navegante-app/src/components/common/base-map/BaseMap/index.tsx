@@ -47,7 +47,7 @@ export function BaseMap() {
 
 	const focusedVehiclePatternId = useMemo(() => {
 		if (!focusedVehicleId) return null;
-		return vehiclesContext.data.vehicles.find(vehicle => vehicle.vehicle_id === focusedVehicleId)?.shape_id ?? null;
+		return vehiclesContext.data.vehicles.find(vehicle => vehicle.vehicle_id === focusedVehicleId)?.pattern_id ?? null;
 	}, [focusedVehicleId, vehiclesContext.data.vehicles]);
 
 	const { data: patternsData } = useSWR(focusedVehiclePatternId && API_ROUTES.hub.NETWORK_PATTERNS(focusedVehiclePatternId), {

@@ -23,7 +23,7 @@ export async function getVehiclesMetadataMap(): Promise<Map<string, HubV1ApiVehi
 	//
 	// If the local cache is still valid, return it immediately
 
-	const cacheIsExpired = LOCAL_CACHE_TIMESTAMP < Dates.now('utc').minus({ minutes: 10 }).unix_milliseconds;
+	const cacheIsExpired = LOCAL_CACHE_TIMESTAMP && LOCAL_CACHE_TIMESTAMP < Dates.now('utc').minus({ minutes: 10 }).unix_milliseconds;
 
 	if (!cacheIsExpired && LOCAL_CACHE_DATA.size > 0) return LOCAL_CACHE_DATA;
 

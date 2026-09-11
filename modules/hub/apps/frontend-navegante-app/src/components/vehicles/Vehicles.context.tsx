@@ -49,7 +49,6 @@ export function VehiclesContextProvider({ children }: PropsWithChildren) {
 	//
 	// A. Fetch data
 
-	// <HubV1ApiVehiclePosition[], Error>
 	const { data: allVehiclesPositionsData, isLoading: allVehiclesPositionsLoading } = useSWR(API_ROUTES.hub.REALTIME_VEHICLES_POSITIONS, {
 		fetcher: async (url: string) => await fetchApiData<HubV1ApiVehiclePosition[]>({ credentials: 'omit', url }),
 		refreshInterval: 5_000, // 5 seconds
