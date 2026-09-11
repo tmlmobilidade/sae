@@ -61,7 +61,7 @@ export async function publishVehiclesPositions() {
 
 	const queryTimer = new Timer();
 
-	const latestVehiclePositions = await labDb.queryFromFile<QueryResult>(sqlPath('hub', 'publish-realtime/select-vehicle-positions.sql'));
+	const latestVehiclePositions = await labDb.queryFromFile<QueryResult>(sqlPath('hub', 'publish-vehicles/select-vehicle-positions.sql'));
 
 	const vehiclePositionsMap = new Map<string, QueryResult[]>();
 
