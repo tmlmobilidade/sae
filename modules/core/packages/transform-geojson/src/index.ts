@@ -146,8 +146,7 @@ const formatFeatures = async () => {
 			localityFeature.geometry = turf.rewind(localityFeature.geometry, { reverse: true });
 
 			parsedFeatures.push(localityFeature);
-		}
-		catch (error) {
+		} catch (error) {
 			console.log(error);
 			console.log(localityFeature);
 		}
