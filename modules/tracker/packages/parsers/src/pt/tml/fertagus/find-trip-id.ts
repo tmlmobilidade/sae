@@ -25,7 +25,7 @@ export async function findTripId(event: RawVehicleEventPtTmlFertagusV1['payload'
 	const cached = ridesMap.get(rideKey);
 	if (cached) return cached;
 
-	const startTimeScheduled = Dates.fromISO(event.startsAt).unix_milliseconds;
+	const startTimeScheduled = Dates.fromISO(event.startsAt).setZone('Europe/Lisbon', 'offset_only').unix_milliseconds;
 
 	const foundRides = await labDb.queryFromFile<{ trip_id: string }>(sqlPath('tracker', 'pt-tml-fertagus-rawdb-stream/find-trip-id.sql'), {
 		agency_id: '7NTB1',
