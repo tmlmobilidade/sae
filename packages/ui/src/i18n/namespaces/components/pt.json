@@ -83,13 +83,8 @@
 			"year_periods": "Períodos do Ano",
 			"zones": "Zonas"
 		},
-		"SidebarExports": {
-			"label": "Exportações",
-			"no_exports": "Sem exportações disponíveis",
-			"title": "Exportações"
-		},
-		"SidebarExportsItem": {
-			"no_name": "Sem nome"
+		"SidebarExtractions": {
+			"tooltip": "Exportações"
 		},
 		"SidebarGroups": {
 			"core": "Base",

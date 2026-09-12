@@ -44,7 +44,6 @@ export function SidebarHeader() {
 					<SidebarHeaderGreeting />
 					<IconButton
 						aria-label={toggleAriaLabel}
-						color="var(--color-system-text-200)"
 						icon={toggleIcon}
 						onClick={sidebarContext.presentation.toggleIsPinned}
 						tooltip={toggleAriaLabel}
