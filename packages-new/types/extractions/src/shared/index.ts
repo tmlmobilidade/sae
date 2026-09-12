@@ -1,2 +1,3 @@
 export * from './base.js';
-export * from './worker-result.js';
+export * from './task-context.js';
+export * from './task-result.js';

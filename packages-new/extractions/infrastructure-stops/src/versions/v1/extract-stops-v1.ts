@@ -1,7 +1,7 @@
 /* * */
 
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
-import { type ExtractionWorkerResult, type InfrastructureStopsV1ExtractionProperties, InfrastructureStopsV1ExtractionPropertiesSchema } from '@tmlmobilidade/go-types-extractions';
+import { type ExtractionTaskContext, type ExtractionTaskResult, type InfrastructureStopsV1Extraction, InfrastructureStopsV1ExtractionPropertiesSchema } from '@tmlmobilidade/go-types-extractions';
 import { BatchWriter } from '@tmlmobilidade/go-utils-exec';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,13 +11,13 @@ import path from 'node:path';
  * @param fileExport - The file export object.
  * @returns The path to the exported file.
  */
-export async function extractInfrastructureStopsV1(properties: InfrastructureStopsV1ExtractionProperties): Promise<ExtractionWorkerResult> {
+export async function extractInfrastructureStopsV1(context: ExtractionTaskContext, extraction: InfrastructureStopsV1Extraction): Promise<ExtractionTaskResult> {
 	//
 
 	//
 	// Validate the received properties
 
-	const validatedProperties = InfrastructureStopsV1ExtractionPropertiesSchema.parse(properties);
+	const validatedProperties = InfrastructureStopsV1ExtractionPropertiesSchema.parse(extraction.properties);
 
 	//
 	// Setup a temporary directory and a batch writer
@@ -46,8 +46,6 @@ export async function extractInfrastructureStopsV1(properties: InfrastructureSto
 	// Export the stops to a CSV file
 
 	return {
-		duration: null,
-		path: 'stops.csv',
-		size: 0,
+		attachment_name: 'stops.csv',
 	};
 }

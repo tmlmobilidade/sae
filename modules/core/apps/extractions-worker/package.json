@@ -1,5 +1,5 @@
 {
-	"name": "@tmlmobilidade/go-core-extractor-worker",
+	"name": "@tmlmobilidade/go-core-extractions-worker",
 	"version": "1.0.0",
 	"author": {
 		"email": "iso@tmlmobilidade.pt",
@@ -22,10 +22,11 @@
 		"@tmlmobilidade/go-core-pckg-utils": "*",
 		"@tmlmobilidade/go-extractions-infrastructure-stops": "*",
 		"@tmlmobilidade/go-interfaces-godb": "*",
+		"@tmlmobilidade/go-providers-storage": "*",
+		"@tmlmobilidade/go-types-core": "*",
 		"@tmlmobilidade/go-types-extractions": "*",
-		"@tmlmobilidade/go-types-permissions": "*",
-		"@tmlmobilidade/go-utils-dates": "*",
 		"@tmlmobilidade/go-utils-exec": "*",
+		"@tmlmobilidade/go-utils-zip": "*",
 		"@tmlmobilidade/logger": "*",
 		"@tmlmobilidade/timer": "*"
 	},

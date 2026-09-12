@@ -3,11 +3,16 @@
 import { type ExtractionsCoordinatorResponse } from '@tmlmobilidade/go-core-pckg-types';
 import { getExtractionsCoordinatorUrl } from '@tmlmobilidade/go-core-pckg-utils';
 import { goDb } from '@tmlmobilidade/go-interfaces-godb';
+import { type ExtractionTaskContext } from '@tmlmobilidade/go-types-extractions';
 import { runOnInterval, startHeartbeat } from '@tmlmobilidade/go-utils-exec';
+import { zipDirectory } from '@tmlmobilidade/go-utils-zip';
 import { initSentryNode, Logger } from '@tmlmobilidade/logger';
 import { Timer } from '@tmlmobilidade/timer';
-import { ZipFile } from 'yazl';
+import fs from 'node:fs';
+import path from 'node:path';
 
+import { sendEmailNotification } from './utils/send-email-notification.js';
+import { uploadTaskResult } from './utils/upload-task-result.js';
 import { VERSIONS_MAP } from './versions.js';
 
 /* * */
@@ -30,7 +35,7 @@ async function main() {
 	const globalTimer = new Timer();
 
 	//
-	// Ask the coordinator for a new Plan ID to process
+	// Ask the coordinator for a new Extraction ID to process
 
 	const fetchCoordinatorTimer = new Timer();
 
@@ -71,76 +76,74 @@ async function main() {
 		//
 
 		//
-		// From the extraction version, run the appropriate task.
+		// Initialize the extraction context
+
+		const temporaryDirectory = fs.mkdtempDisposableSync(`extraction-${extractionId}-`);
+
+		const zipFilePath = path.join(temporaryDirectory.path, `${extractionId}.zip`);
+
+		const context: ExtractionTaskContext = {
+			output_path: temporaryDirectory.path,
+		};
+
+		//
+		// Based on the extraction version, run the appropriate task.
+
+		const taskTimer = new Timer();
 
 		const taskRunner = VERSIONS_MAP[currentExtraction.version];
 		if (!taskRunner) throw new Error(`No task runner found for version: ${currentExtraction.version}`);
 
-		const result = await taskRunner(currentExtraction.properties);
+		const taskResult = await taskRunner(context, currentExtraction);
 
-		heartbeat.stop();
+		Logger.success(`Ran extraction "${extractionId}" task in ${taskTimer.get()}.`);
 
 		//
-		// Zip the exported GTFS files into a single archive.
-		// YAZL is used here for its focus on performance and low memory usage.
+		// Zip the extracted directory with the extraction files
 
 		const zipTimer = new Timer();
 
-		Logger.info({ message: 'Zipping new GTFS archive...' });
+		await zipDirectory(temporaryDirectory.path, zipFilePath);
 
-		const outputZip = new ZipFile();
-
-		await new Promise<void>((resolve, reject) => {
-			try {
-				// Read the working directory contents
-				const workdirDirContents = fs.readdirSync(context.paths.extracted_dir_path, { withFileTypes: true });
-				// Add each file to the zip
-				for (const outputDirFile of workdirDirContents) {
-					if (!outputDirFile.isFile()) continue;
-					const filePath = path.join(context.paths.extracted_dir_path, outputDirFile.name);
-					outputZip.addFile(filePath, outputDirFile.name);
-				}
-				// Setup a write stream to the final zip file
-				outputZip.outputStream
-					.pipe(fs.createWriteStream(context.paths.operation_gtfs_normalized_file_path))
-					.on('close', resolve);
-				// Finalize the zip creation, which triggers
-				// the piping and writing process.
-				outputZip.end();
-			} catch (error) {
-				reject(error);
-			}
-		});
-
-		Logger.success(`Zipped new GTFS archive in ${zipTimer.get()}.`);
+		Logger.success(`Zipped new extraction "${extractionId}" output directory in ${zipTimer.get()}.`);
 
 		//
-		// Upload the new GTFS archive to the storage provider.
+		// Upload the new extraction zip file to the storage provider.
 
-		const updatedOperationGtfsNormalizedBuffer = fs.readFileSync(context.paths.operation_gtfs_normalized_file_path);
+		const uploadResult = await uploadTaskResult({
+			attachment_name: taskResult.attachment_name,
+			created_by: currentExtraction.created_by,
+			extraction_id: extractionId,
+			updated_by: currentExtraction.updated_by,
+			zip_file_path: zipFilePath,
+		});
 
-		const updatedFileResult = await storageProvider.upload(
-			updatedOperationGtfsNormalizedBuffer,
-			{
-				created_by: 'system',
-				name: `plan-${planData._id}-normalized.zip`,
-				resource_id: planData._id,
-				scope: 'plans',
-				size: updatedOperationGtfsNormalizedBuffer.byteLength,
-				type: 'application/zip',
-				updated_by: 'system',
-			},
-			{
-				onSuccess: async (_, result, session) => {
-					const plansCollection = await goDb.operation.plans.getCollection();
-					await plansCollection.updateOne(
-						{ _id: planData._id },
-						{ $set: { 'attachments.operation_gtfs_normalized': result._id } },
-						{ session },
-					);
-				},
-			},
-		);
+		//
+		// Send email notification, if enabled
+
+		if (currentExtraction.send_email_notification) {
+			await sendEmailNotification({
+				attachment_name: taskResult.attachment_name,
+				extraction_id: extractionId,
+				user_id: currentExtraction.created_by as string,
+			});
+		}
+
+		//
+		// Update the extraction in the database.
+		// Stop the heartbeat before the update to avoid race conditions.
+
+		const updateExtractionTimer = new Timer();
+
+		heartbeat.stop();
+
+		await goDb.core.extractions.updateById(extractionId, {
+			attachment_id: uploadResult._id,
+			processing_status: 'complete',
+			retries: currentExtraction.retries + 1,
+		});
+
+		Logger.success(`Updated extraction "${extractionId}" in the database and stopped heartbeat in ${updateExtractionTimer.get()}.`);
 
 		//
 	} catch (error) {
