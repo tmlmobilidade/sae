@@ -1,5 +1,11 @@
 {
+	"ExtractionsListFilterProcessingStatus": {
+		"label": "Estado"
+	},
+	"ExtractionsListFilterScope": {
+		"label": "Grupo"
+	},
 	"ExtractionsListHeader": {
-		"title": "Extrações"
+		"title": "Exportações"
 	}
 }

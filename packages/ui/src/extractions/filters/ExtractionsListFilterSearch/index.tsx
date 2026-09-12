@@ -1,6 +1,7 @@
 /* * */
 
-import { SearchField } from '../../filters';
+import { SearchField } from '@tmlmobilidade/ui';
+
 import { useExtractionsListFilterSearch } from './use-extractions-list-filter-search';
 
 /* * */

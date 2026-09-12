@@ -4,7 +4,7 @@ import { CloseButton, Label, LoadingActivity, Spacer, Toolbar } from '@tmlmobili
 import { useTranslation } from 'react-i18next';
 
 import { closeExtractionsListModal } from '../ExtractionsList.modal';
-import { ExtractionsListFilterSearch } from '../ExtractionsListFilterSearch';
+import { ExtractionsListFilterSearch } from '../filters/ExtractionsListFilterSearch';
 import { useExtractionsListData } from '../use-extractions-list-data';
 
 /* * */

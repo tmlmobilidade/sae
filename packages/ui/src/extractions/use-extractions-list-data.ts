@@ -7,7 +7,7 @@ import { fetchApiData, useSearch } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 import useSWR from 'swr';
 
-import { useExtractionsListFilterSearch } from './ExtractionsListFilterSearch/use-extractions-list-filter-search';
+import { useExtractionsListFilterSearch } from './filters/ExtractionsListFilterSearch/use-extractions-list-filter-search';
 
 /* * */
 
