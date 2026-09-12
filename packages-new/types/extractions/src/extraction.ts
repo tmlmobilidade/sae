@@ -2,7 +2,7 @@
 
 import { z } from 'zod';
 
-import { InfrastructureStopsV1ExtractionSchema } from './infrastructure/stops/v1.js';
+import { InfrastructureStopsV1ExtractionSchema } from './modules/infrastructure/stops/v1/extraction.js';
 
 /* * */
 
