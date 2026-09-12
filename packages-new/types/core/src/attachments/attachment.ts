@@ -8,7 +8,6 @@ import { z } from 'zod';
 export const AttachmentSchema = BaseDocumentSchema
 	.omit({ is_locked: true })
 	.extend({
-		created_by: z.string(),
 		description: z.string().nullish(),
 		metadata: z.record(z.unknown()).nullish(),
 		name: z.string(),
@@ -16,7 +15,6 @@ export const AttachmentSchema = BaseDocumentSchema
 		scope: z.string(),
 		size: z.number().describe('size in bytes'),
 		type: z.string().describe('mime type'),
-		updated_by: z.string(),
 		url: z.string().nullish(),
 	});
 

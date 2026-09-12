@@ -73,7 +73,7 @@ export class SshTunnel {
 		} catch (error) {
 			if (error.code === 'EADDRINUSE') {
 				Logger.info({ message: `Port "${this.config.serverOptions.port}" already in use. Retrying with a different port...` });
-				this.config.serverOptions.port++;
+				this.config.serverOptions.port = (this.config.serverOptions.port ?? 2345) + 1;
 				return await this.connect();
 			} else if (this.retries < (this.options?.maxRetries || 3)) {
 				Logger.error({ error, message: 'Failed to connect to SSH Tunnel.' });

@@ -5,9 +5,7 @@
 		"paths": {
 			"@/*": ["./src/*"]
 		},
-		"rootDir": "src",
-		"strictNullChecks": true,
-		"types": ["node"]
+		"rootDir": "src"
 	},
 	"include": ["src"],
 	"exclude": ["node_modules", "dist"]

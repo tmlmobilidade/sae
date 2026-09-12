@@ -1,6 +1,6 @@
 /* * */
 
-import { asyncSingletonProxy } from '@tmlmobilidade/utils';
+import { asyncSingletonProxy } from '@tmlmobilidade/go-utils-exec';
 import nodemailer from 'nodemailer';
 
 /* * */
@@ -50,6 +50,7 @@ export class EmailProvider {
 			if (!process.env.TML_PROVIDER_EMAIL_AUTH_USER) throw new Error('Missing required environment variable: TML_PROVIDER_EMAIL_AUTH_USER');
 			if (!process.env.TML_PROVIDER_EMAIL_FROM) throw new Error('Missing required environment variable: TML_PROVIDER_EMAIL_FROM');
 			const accessToken = await this.getRefreshToken();
+			if (!accessToken) throw new Error('Failed to get refresh token');
 			// Connect to the SMTP server
 			this._smtpTransporter = this.createSmtpTransporter(accessToken);
 			return this._smtpTransporter;
@@ -67,6 +68,7 @@ export class EmailProvider {
 		try {
 			const currentAccessToken = this._refreshToken.token;
 			const accessToken = await this.getRefreshToken();
+			if (!accessToken) throw new Error('Failed to get refresh token');
 			if (accessToken !== currentAccessToken) this._smtpTransporter = this.createSmtpTransporter(accessToken);
 			await this._smtpTransporter.sendMail({
 				...this._smtpTransporter.options,
@@ -100,8 +102,13 @@ export class EmailProvider {
 	 * Fetch and cache the Microsoft OAuth2 access token.
 	 */
 	private async getRefreshToken() {
+		// Check for required environment variables
+		if (!process.env.TML_PROVIDER_EMAIL_AUTH_CLIENT_ID) throw new Error('Missing required environment variable: TML_PROVIDER_EMAIL_AUTH_CLIENT_ID');
+		if (!process.env.TML_PROVIDER_EMAIL_AUTH_CLIENT_SECRET) throw new Error('Missing required environment variable: TML_PROVIDER_EMAIL_AUTH_CLIENT_SECRET');
+		if (!process.env.TML_PROVIDER_EMAIL_AUTH_ACCESS_URL) throw new Error('Missing required environment variable: TML_PROVIDER_EMAIL_AUTH_ACCESS_URL');
+		// Return the cached token if it is still valid
 		if (this._refreshToken.token && this._refreshToken.expiresAt && this._refreshToken.expiresAt > Date.now()) return this._refreshToken.token;
-
+		// Fetch the new token
 		const requestBody = new URLSearchParams({
 			client_id: process.env.TML_PROVIDER_EMAIL_AUTH_CLIENT_ID,
 			client_secret: process.env.TML_PROVIDER_EMAIL_AUTH_CLIENT_SECRET,

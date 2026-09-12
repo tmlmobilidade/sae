@@ -6,6 +6,7 @@ import { ToolbarActions, useMeData } from '@tmlmobilidade/ui';
 import { useMemo } from 'react';
 
 import { openStopsCreateModal } from '../../create/StopsCreate.modal';
+import { openStopsExtractModal } from '../../extract/StopsExtract.modal';
 
 /* * */
 
@@ -27,7 +28,7 @@ export function StopsListHeaderMenu() {
 			actions.push({
 				icon: <IconFileDownload />,
 				label: 'Exportar Paragens',
-				onClick: () => {},
+				onClick: openStopsExtractModal,
 			});
 		}
 		return actions;

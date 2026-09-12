@@ -1,9 +1,9 @@
 /* * */
 
-import { type Transport } from 'nodemailer';
+import { type SendMailOptions } from 'nodemailer';
 
 export interface SendEmailProps<T> {
-	attachments?: Transport['mailer']['options']['attachments']
+	attachments?: SendMailOptions['attachments']
 	data: T
 	to: string | string[]
 }

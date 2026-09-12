@@ -102,7 +102,7 @@ export class OCIGenerativeAIProvider {
 					topK: 1,
 					topP: 0.95,
 				},
-				compartmentId: process.env.OCI_AI_COMPARTMENT,
+				compartmentId: process.env.OCI_AI_COMPARTMENT || '-',
 				servingMode: {
 					modelId: availableAiModels['google.gemini-2.5-flash'].ocid,
 					servingType: 'ON_DEMAND',
@@ -117,7 +117,7 @@ export class OCIGenerativeAIProvider {
 
 		const chatResponse = await this.ociClient.chat(chatRequest);
 
-		if (!('chatResult' in chatResponse)) {
+		if (!chatResponse || !('chatResult' in chatResponse)) {
 			throw new Error('Invalid response from OCI Generative AI service: ' + JSON.stringify(chatResponse));
 		}
 

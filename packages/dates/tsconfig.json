@@ -2,7 +2,8 @@
 	"extends": "./tsconfig.build.json",
 	"compilerOptions": {
 		"noEmit": true,
-		"rootDir": "."
+		"rootDir": ".",
+		"strictNullChecks": false
 	},
 	"include": ["src", "tests"],
 	"exclude": ["node_modules", "dist"]

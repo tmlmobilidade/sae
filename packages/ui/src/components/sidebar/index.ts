@@ -1,6 +1,5 @@
 export * from './Sidebar';
-export * from './SidebarExports';
-export * from './SidebarExportsItem';
+export * from './SidebarExtractions';
 export * from './SidebarFooter';
 export * from './SidebarHeaderGreeting';
 export * from './SidebarNavigationGroupItem';

@@ -1,0 +1,35 @@
+{
+	"name": "@tmlmobilidade/go-core-extractions-coordinator",
+	"version": "1.0.0",
+	"author": {
+		"email": "iso@tmlmobilidade.pt",
+		"name": "TML-ISO"
+	},
+	"license": "AGPL-3.0-or-later",
+	"type": "module",
+	"files": ["dist"],
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "tsc && resolve-tspaths",
+		"dev": "tsx watch src/index.ts",
+		"lint": "eslint . --fix && tsc --noEmit",
+		"lint:fix": "eslint ./src --fix",
+		"start": "node dist/index.js"
+	},
+	"dependencies": {
+		"@tmlmobilidade/go-core-pckg-types": "*",
+		"@tmlmobilidade/go-interfaces-godb": "*",
+		"@tmlmobilidade/go-utils-dates": "*",
+		"@tmlmobilidade/logger": "*",
+		"@tmlmobilidade/timer": "*",
+		"fastify": "5.12.1"
+	},
+	"devDependencies": {
+		"@tmlmobilidade/go-utils-tsconfig": "*",
+		"@types/node": "26.4.0",
+		"resolve-tspaths": "0.8.23",
+		"tsx": "4.23.12",
+		"typescript": "6.0.3"
+	}
+}

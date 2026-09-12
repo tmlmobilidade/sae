@@ -7,7 +7,26 @@
 	height: 40px;
 	min-height: 40px;
 	border: 2px solid transparent;
+	border-radius: var(--border-radius-sm);
 }
+
+/* * */
+/* VARIANT / DEFAULT */
+
+.root[data-variant='default'] {
+	--ai-color: var(--color-system-text-200);
+	color: var(--color-system-text-200);
+	background-color: var(--color-system-background-100);
+	border: unset;
+	box-shadow: 0 1px 3px 0 var(--color-system-shadow-100);
+}
+
+.root[data-variant='default']:hover {
+	background-color: var(--color-system-background-300);
+}
+
+/* * */
+/* VARIANT / PRIMARY */
 
 .root[data-variant='primary'] {
 	--ai-color: var(--color-contrast);

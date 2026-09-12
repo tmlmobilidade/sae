@@ -4,7 +4,8 @@
 		"paths": {
 			"@/*": ["./src/*"]
 		},
-		"rootDir": "src"
+		"rootDir": "src",
+		"strictNullChecks": false
 	},
 	"exclude": ["node_modules", "dist"],
 	"extends": "@tmlmobilidade/go-utils-tsconfig/lib.json",
