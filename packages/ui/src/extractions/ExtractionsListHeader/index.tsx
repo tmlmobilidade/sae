@@ -1,9 +1,11 @@
 'use client';
 
-import { CloseButton, Spacer, Tag, Toolbar } from '@tmlmobilidade/ui';
+import { CloseButton, Label, LoadingActivity, Spacer, Toolbar } from '@tmlmobilidade/ui';
 import { useTranslation } from 'react-i18next';
 
 import { closeExtractionsListModal } from '../ExtractionsList.modal';
+import { ExtractionsListFilterSearch } from '../ExtractionsListFilterSearch';
+import { useExtractionsListData } from '../use-extractions-list-data';
 
 /* * */
 
@@ -15,14 +17,18 @@ export function ExtractionsListHeader() {
 
 	const { t } = useTranslation();
 
+	const { isLoading, isValidating, timestamp } = useExtractionsListData();
+
 	//
 	// B. Render components
 
 	return (
 		<Toolbar>
 			<CloseButton onClick={closeExtractionsListModal} type="close" />
-			<Tag label={t('default:organizations.create.Header.title')} variant="secondary" />
+			<Label size="lg" caps singleLine>{t('shared:extractions.ExtractionsListHeader.title')}</Label>
+			<LoadingActivity isLoading={isLoading} isValidating={isValidating} timestamp={timestamp} />
 			<Spacer />
+			<ExtractionsListFilterSearch />
 		</Toolbar>
 	);
 }
