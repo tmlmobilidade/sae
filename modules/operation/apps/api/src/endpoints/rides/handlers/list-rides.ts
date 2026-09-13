@@ -54,11 +54,15 @@ export async function listRidesHandler(request: FastifyRequest<{ Body: Controlle
 	//
 	// Build query parameters
 
+	const search = validatedFilters.search?.trim() || null;
+
 	const params: Record<string, number | string> = {
 		1: validatedFilters.start_time_scheduled_start,
 		2: validatedFilters.start_time_scheduled_end,
-		3: validatedFilters.search ?? '',
 	};
+
+	// $3 is the exact-ride id and only exists in the query when a search term is given.
+	if (search) params[3] = search;
 
 	let paramIndex = 4;
 
@@ -70,7 +74,19 @@ export async function listRidesHandler(request: FastifyRequest<{ Body: Controlle
 
 	//
 	// Build WHERE conditions
+	//
+	// The SQL template has three injection points:
+	//
+	//   --RIDE FILTERS HERE--      inside the read of operation.rides, before the latest
+	//                              version is selected. Only attributes that are identical
+	//                              across every version of a ride may go here (agency, route,
+	//                              id/headsign search), so the primary key can prune the read.
+	//   --ANALYSIS FILTERS HERE--  inside each analysis read (agency only).
+	//   --DERIVED FILTERS HERE--   after deduplication and status derivation, for attributes
+	//                              that change between versions (driver/vehicle ids) and for
+	//                              every derived status or grade.
 
+	const rideConditions: string[] = [];
 	const conditions: string[] = [];
 
 	//
@@ -78,7 +94,7 @@ export async function listRidesHandler(request: FastifyRequest<{ Body: Controlle
 
 	if (validatedFilters.agency_ids.length) {
 		const placeholders = validatedFilters.agency_ids.map(addParam);
-		conditions.push(`agency_id IN (${placeholders.join(', ')})`);
+		rideConditions.push(`agency_id IN (${placeholders.join(', ')})`);
 	}
 
 	//
@@ -86,7 +102,7 @@ export async function listRidesHandler(request: FastifyRequest<{ Body: Controlle
 
 	if (validatedFilters.route_short_names?.length) {
 		const placeholders = validatedFilters.route_short_names.map(addParam);
-		conditions.push(`route_short_name IN (${placeholders.join(', ')})`);
+		rideConditions.push(`route_short_name IN (${placeholders.join(', ')})`);
 	}
 
 	//
@@ -182,26 +198,27 @@ export async function listRidesHandler(request: FastifyRequest<{ Body: Controlle
 	//
 	// Search
 
-	if (validatedFilters.search) {
-		const search = validatedFilters.search.trim();
+	if (search) {
 		const partialSearch = addParam(`%${search}%`);
-		conditions.push(`
-			(
-				_id ILIKE ${partialSearch}
-				OR headsign ILIKE ${partialSearch}
-			)
-		`);
+		rideConditions.push(`(_id ILIKE ${partialSearch} OR headsign ILIKE ${partialSearch})`);
 	}
 
 	//
-	// Append the dynamic filters to the query
+	// Assemble the query.
+	//
+	// The exact-ride branch (a UNION ALL that adds the ride whose id is exactly the search
+	// term, even outside the date range) is a scan of every part of operation.rides because
+	// _id is the last column of the sorting key. It is only kept when there is a search term.
+	// The ride filters are applied to that branch as well, so permission filters still hold.
 
-	const where = conditions.length
-		? `\n\tAND ${conditions.join('\n\tAND ')}`
-		: '';
+	const joinConditions = (items: string[]): string => (items.length ? `\n\t\t\t\tAND ${items.join('\n\t\t\t\tAND ')}` : '');
 
 	const queryTemplate = await readFile(sqlPath('operation', 'rides/list-rides.sql'), 'utf-8');
-	const sql = queryTemplate.replace('--DYNAMIC FILTERS HERE--', where);
+
+	const sql = queryTemplate
+		.replace(/--EXACT RIDE BRANCH START--([\s\S]*?)--EXACT RIDE BRANCH END--/, (_, branch: string) => (search ? branch : ''))
+		.replaceAll('--RIDE FILTERS HERE--', joinConditions(rideConditions))
+		.replace('--DERIVED FILTERS HERE--', joinConditions(conditions));
 
 	const queryResult = await labDb.queryFromString<ControllerRidesListItem>(sql, params);
 

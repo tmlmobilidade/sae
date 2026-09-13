@@ -8,66 +8,116 @@ WITH
 
 	/*
 	 * -----------------------------------------------------------------------
-	 * Exact Ride version
+	 * Operational date bounds
 	 * -----------------------------------------------------------------------
 	 *
-	 * Select the exact ride version explicitly by its ID using
-	 * text search parameter $3.
+	 * operation.rides and the analysis tables are partitioned by
+	 * intDiv(operational_date, 100) and carry a min-max index on
+	 * operational_date. Deriving the bounds from the scheduled start range
+	 * (padded by one day on each side, because an operational day does not
+	 * coincide with a calendar day) lets ClickHouse prune partitions and
+	 * parts before reading anything, and removes the need to ask the ride
+	 * set for its operational dates.
 	 */
-	exact_ride AS
-	(
-		SELECT
-			*
-		FROM operation.rides
-		WHERE
-			_id = $3
-		ORDER BY
-			updated_at DESC
-		LIMIT 1 BY _id
-	),
-
-	/*
-	 * -----------------------------------------------------------------------
-	 * Latest Ride version
-	 * -----------------------------------------------------------------------
-	 *
-	 * Rides use ReplacingMergeTree(updated_at).
-	 *
-	 * Select the latest physical version explicitly instead of using FINAL.
-	 *
-	 * The scheduled start time range is applied before LIMIT BY so that
-	 * ClickHouse can discard irrelevant data as early as possible.
-	 */
-	rides_latest AS
-	(
-		SELECT
-			*
-		FROM operation.rides
-		WHERE
-			start_time_scheduled >= $1
-			AND start_time_scheduled <= $2
-		ORDER BY
-			updated_at DESC
-		LIMIT 1 BY _id
-	),
+	toYYYYMMDD(fromUnixTimestamp64Milli(toInt64($1)) - INTERVAL 1 DAY) AS operational_date_from,
+	toYYYYMMDD(fromUnixTimestamp64Milli(toInt64($2)) + INTERVAL 1 DAY) AS operational_date_to,
 
 	/*
 	 * -----------------------------------------------------------------------
 	 * Rides available to this query
 	 * -----------------------------------------------------------------------
 	 *
-	 * The exact Ride is added to the normal date-filtered set.
+	 * Rides use ReplacingMergeTree(updated_at). The latest physical version
+	 * is selected explicitly (ORDER BY updated_at DESC LIMIT 1 BY _id)
+	 * instead of using FINAL.
 	 *
-	 * DISTINCT prevents the exact Ride from appearing twice when it already
-	 * belongs to the requested date range.
+	 * Only the columns the response needs are read, so the sort and the
+	 * per-part statistics loading are proportional to that projection and
+	 * not to the full table width.
+	 *
+	 * The RIDE FILTERS marker receives the filters on attributes that are
+	 * identical across every version of a ride (agency, route, search on
+	 * id/headsign). Applying them before LIMIT BY lets the primary key
+	 * (agency_id first) prune the read and keeps the sort small. Filters on
+	 * attributes that change between versions (driver_ids, vehicle_ids and
+	 * every derived status/grade) must stay in the final WHERE.
+	 *
+	 * The exact-ride branch is only present when a search term is given.
+	 * It adds the ride whose id is exactly the search term even when it is
+	 * outside the requested date range. The LIMIT BY over the union keeps a
+	 * single version when that ride is also part of the range.
 	 */
 	rides_for_query AS
 	(
-		SELECT *
-		FROM rides_latest
-		UNION DISTINCT
-		SELECT *
-		FROM exact_ride
+		SELECT
+			_id,
+			agency_id,
+			driver_ids,
+			end_time_observed,
+			end_time_scheduled,
+			headsign,
+			operational_date,
+			passengers_observed,
+			seen_last_at,
+			shape_id,
+			start_time_observed,
+			start_time_scheduled,
+			timezone,
+			updated_at,
+			vehicle_ids
+		FROM
+		(
+			SELECT
+				_id,
+				agency_id,
+				driver_ids,
+				end_time_observed,
+				end_time_scheduled,
+				headsign,
+				operational_date,
+				passengers_observed,
+				seen_last_at,
+				shape_id,
+				start_time_observed,
+				start_time_scheduled,
+				timezone,
+				updated_at,
+				vehicle_ids
+			FROM operation.rides
+			WHERE
+				operational_date BETWEEN operational_date_from AND operational_date_to
+				AND start_time_scheduled >= $1
+				AND start_time_scheduled <= $2
+				--RIDE FILTERS HERE--
+
+			--EXACT RIDE BRANCH START--
+			UNION ALL
+
+			SELECT
+				_id,
+				agency_id,
+				driver_ids,
+				end_time_observed,
+				end_time_scheduled,
+				headsign,
+				operational_date,
+				passengers_observed,
+				seen_last_at,
+				shape_id,
+				start_time_observed,
+				start_time_scheduled,
+				timezone,
+				updated_at,
+				vehicle_ids
+			FROM operation.rides
+			WHERE
+				_id = $3
+				--RIDE FILTERS HERE--
+			--EXACT RIDE BRANCH END--
+		)
+		ORDER BY
+			updated_at DESC
+		LIMIT 1 BY _id
 	),
 
 	/*
@@ -80,7 +130,13 @@ WITH
 	 * argMax() returns the grade from the latest version without requiring
 	 * FINAL.
 	 *
-	 * Only rides in the selected date range are considered.
+	 * The same operational date bounds prune the analysis partitions, and
+	 * the ANALYSIS FILTERS marker receives the agency filter, so each table
+	 * is read once for the requested range instead of being driven by a
+	 * subquery over the ride set.
+	 *
+	 * An exact-ride hit outside the requested date range is returned
+	 * without grades.
 	 */
 
 	analysis_at_least_one_vehicle_event_on_last_stop AS
@@ -89,11 +145,7 @@ WITH
 			ride_id,
 			argMax(grade_status, updated_at) AS grade_status
 		FROM operation.ride_analysis_at_least_one_vehicle_event_on_last_stop
-		WHERE operational_date IN
-		(
-			SELECT DISTINCT operational_date
-			FROM rides_for_query
-		)
+		WHERE operational_date BETWEEN operational_date_from AND operational_date_to
 		GROUP BY ride_id
 	),
 
@@ -103,11 +155,7 @@ WITH
 			ride_id,
 			argMax(grade_status, updated_at) AS grade_status
 		FROM operation.ride_analysis_expected_apex_validation_interval
-		WHERE operational_date IN
-		(
-			SELECT DISTINCT operational_date
-			FROM rides_for_query
-		)
+		WHERE operational_date BETWEEN operational_date_from AND operational_date_to
 		GROUP BY ride_id
 	),
 
@@ -117,11 +165,7 @@ WITH
 			ride_id,
 			argMax(grade_status, updated_at) AS grade_status
 		FROM operation.ride_analysis_simple_three_vehicle_events
-		WHERE operational_date IN
-		(
-			SELECT DISTINCT operational_date
-			FROM rides_for_query
-		)
+		WHERE operational_date BETWEEN operational_date_from AND operational_date_to
 		GROUP BY ride_id
 	),
 
@@ -131,11 +175,7 @@ WITH
 			ride_id,
 			argMax(grade_status, updated_at) AS grade_status
 		FROM operation.ride_analysis_transaction_sequentiality
-		WHERE operational_date IN
-		(
-			SELECT DISTINCT operational_date
-			FROM rides_for_query
-		)
+		WHERE operational_date BETWEEN operational_date_from AND operational_date_to
 		GROUP BY ride_id
 	),
 
@@ -331,10 +371,18 @@ FROM ride_view
 
 WHERE
 	1 = 1
-	--DYNAMIC FILTERS HERE--
+	--DERIVED FILTERS HERE--
 
 ORDER BY
 	start_time_scheduled ASC,
 	_id ASC
 
-LIMIT 10000;
+LIMIT 10000
+
+/*
+ * Per-part column statistics (ClickHouse 26.x) are loaded for every part of
+ * every referenced table at plan time, which costs several seconds on
+ * operation.rides regardless of the date range. The primary key and the
+ * min-max index prune the same parts without them.
+ */
+SETTINGS use_statistics = 0
